@@ -1,0 +1,8 @@
+\\192.168.1.2\indi10
+login indi10
+password 20671
+
+http://dev.ekka.com.ua/indicator/
+\\192.168.100.1\slava
+login slava
+password 17184

@@ -1,0 +1,12 @@
+diff a/app/build.gradle b/app/build.gradle	(rejected hunks)
+@@ -78,6 +78,10 @@
+     implementation 'org.greenrobot:eventbus:3.0.0'
+ 
+ 
++    // https://mvnrepository.com/artifact/org.ini4j/ini4j
++    //для обработки ini файлов
++    implementation group: 'org.ini4j', name: 'ini4j', version: '0.5.1'
++
+ 
+ 
+ }

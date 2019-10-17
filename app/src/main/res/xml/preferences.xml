@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="@string/preferenceScreen"
+    android:background="#041A37">
+
+    <PreferenceCategory android:title="О программе">
+        <EditTextPreference
+
+            android:title="@string/resonance"
+
+            android:summary=""
+            android:key="app_version"
+            android:selectable="false"
+            android:persistent="false"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Настройки коммуникации">
+        <ListPreference
+
+            android:title="Выбор канала связи"
+            android:summary="Bluetooth или USB"
+            android:key="chooseDeviceForConnect"
+            android:defaultValue="BLUETOOTH"/>
+   </PreferenceCategory>
+
+<!-- настройки BLUETOOTH-->
+    <PreferenceCategory
+        android:title="Bluetooth"
+        android:key="CategoryBluetooth">
+    <PreferenceScreen
+        android:title="Настройки BlueTooth"
+
+        android:summary="Стыковка и выбор устройства, количество попыток для подключения">
+
+        <Preference
+            android:textColor="#FF0000"
+            android:title="Настройки Bluetooth"
+            android:summary="Поиск и стыковка устройств"
+            android:key="BTActivity"/>
+
+
+        <ListPreference
+            android:title="Выбор Bluetooth устройства"
+            android:summary="Выбор из списка уже состыкованных устройств"
+            android:key="deviceBTForConnect"
+            android:defaultValue="*** УСТРОЙСТВО НЕ ВЫБРАНО ***"/>
+
+        <EditTextPreference
+            android:title="Количество попыток для подключения к адаптеру"
+            android:inputType="number"
+            android:summary="10"
+            android:defaultValue="10"
+            android:key="tryToConnect" />
+    </PreferenceScreen>
+    </PreferenceCategory>
+
+    <!-- настройки USB-->
+    <PreferenceCategory
+        android:title="USB"
+        android:key="CategoryUSB">
+        <PreferenceScreen
+            android:title="Настройки USB"
+
+            android:summary="параметры канала"
+            android:defaultValue="..." >
+        <ListPreference
+            android:title="Скорость обмена"
+            android:entries="@array/entriesSpeed"
+            android:entryValues="@array/entriesSpeed"
+            android:key="listOfSpeedUSB"
+            android:defaultValue="9600" >
+        </ListPreference>
+            <ListPreference
+                android:title="Количество стоповых бит"
+                android:entries="@array/entriesStopBits"
+                android:entryValues="@array/entriesStopBits"
+                android:key="listOfStopBitsUSB"
+                android:defaultValue="1" >
+            </ListPreference>
+            <ListPreference
+                android:title="Паритет"
+                android:entries="@array/entriesParity"
+                android:entryValues="@array/entriesParity"
+                android:key="listOfParityUSB"
+                android:defaultValue="NONE" >
+            </ListPreference>
+
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+    <!-- настройки Обновлений-->
+    <PreferenceCategory
+        android:title="Загрузка данных"
+        android:key="CategoryLoadData">
+        <PreferenceScreen
+            android:title="Настройки загрузки"
+
+            android:summary="IP адрес и порт сервера, настройки автоматической загрузки"
+            android:defaultValue="..." >
+            <EditTextPreference
+                android:title="IP адрес сервера"
+                android:name="urlServer"
+                android:summary="IP адрес сервера"
+                android:defaultValue="192.168.1.145"
+                android:key="urlServer" />
+            <EditTextPreference
+                android:title="Порт сервера"
+                android:name="portServer"
+                android:inputType="number"
+                android:summary="..."
+                android:defaultValue="1234"
+                android:key="portServer" />
+            <Preference
+                android:title="Загрузить данные"
+                android:summary="Загрузка данных с сервера"
+                android:key="runLoadData">
+
+                <!--intent
+                    android:action="android.intent.action.VIEW"
+                    android:targetPackage="com.resonance.cashdisplay"/-->
+                    <!--android:targetClass="com.resonance.cashdisplay.LoadDataActivity"-->
+
+
+            </Preference>
+            <CheckBoxPreference
+                android:title="Загружать(обновлять) данные при старте приложения"
+                android:defaultValue="false"
+                android:summary="разрешить/запретить загрузку данных с сервера при старте приложения"
+                android:key="checkboxLoadEnable" />
+            <!--EditTextPreference
+                android:dependency="checkboxLoadEnable"
+                android:title="Периодичность проверки данных (митут)"
+                android:name="loadtimeout"
+                android:inputType="number"
+                android:summary="60"
+                android:defaultValue="60"
+                android:key="loadtimeout" /-->
+
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+    <!--Настройки видео ролика-->
+    <PreferenceCategory
+        android:title="Настройки медиа"
+        android:key="CategoryMedia">
+
+        <PreferenceScreen
+            android:title="Настройки медиа"
+            android:key="CategoryVideo"
+
+            android:summary="разрешение/запрет проигрывания, выбор источника для хранения/чтения,тайм-аут воспроизведения">
+
+        <CheckBoxPreference
+            android:title="Разрешить проигрывание ролика"
+            android:defaultValue="false"
+            android:summary="разрешить/запретить проигрывание рекламного ролика"
+            android:key="checkboxVideoEnable" />
+        <EditTextPreference
+
+            android:title="Тайм-аут проигрывания ролика(секунд)"
+            android:name="videotimeout"
+            android:inputType="number"
+            android:summary="60"
+            android:defaultValue="60"
+            android:key="videotimeout" />
+        <Preference
+
+            android:title="Папка содержащая рекламные видео файлы"
+
+            android:summary="..."
+            android:defaultValue=""
+            android:key="folderForMedia" />
+        </PreferenceScreen>
+        <!--RingtonePreference
+            android:name="Ringtone Preference"
+            android:summary="Select a ringtone"
+            android:title="Ringtones"
+            android:key="ringtonePref" />
+        <PreferenceScreen
+            android:key="SecondPrefScreen"
+            android:title="Second PreferenceScreen"
+            android:summary="This is a second PreferenceScreen">
+            <EditTextPreference
+                android:name="An other EditText Preference"
+                android:summary="This is a preference in the second PreferenceScreen"
+                android:title="Edit text"
+                android:key="SecondEditTextPref" />
+        </PreferenceScreen>
+        <Preference
+            android:title="Custom Preference"
+            android:summary="This works almost like a button"
+            android:key="customPref" /-->
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Настройки фоновых изображений">
+        <Preference
+
+            android:title="Папка содержащая изображения"
+            android:summary="..."
+            android:defaultValue=""
+            android:key="folderForImages" />
+</PreferenceCategory>
+
+
+
+</PreferenceScreen>

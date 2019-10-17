@@ -1,0 +1,166 @@
+import java.text.SimpleDateFormat
+
+apply plugin: 'com.android.application'
+
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
+    dataBinding {
+        enabled = true
+    }
+
+    signingConfigs {
+        debug {
+
+        }// здесь никаких изменений нет
+        release {
+            storeFile file('D:\\Projects\\Key\\.signing\\KeyStore.jks')
+            storePassword '123456'
+            keyAlias = 'KeyAlias'
+            keyPassword '123456'
+            if (project.hasProperty("Keys.repo")) {
+
+                def projectPropsFile = file(project.property("Keys.repo") + "/cashdisplay.properties")
+                if (projectPropsFile.exists()) {
+                    Properties props = new Properties()
+                    props.load(new FileInputStream(projectPropsFile))
+                    storeFile file(file(project.property("Keys.repo") + props['RELEASE_STORE_FILE']))
+                    storePassword props['RELEASE_STORE_PASS']
+                    keyAlias props['RELEASE_ALIAS']
+                    keyPassword props['RELEASE_KEY_PASS']
+                }
+            }
+        }
+    }
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+    String currentDateandTime = sdf.format(new Date());
+    defaultConfig {
+        applicationId "com.resonance.cashdisplay"
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode 43
+        versionName "6.3.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+            }
+    }
+
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
+
+        //Отключение проверки ошибок процессора аннотаций
+        javaCompileOptions
+                {
+                    annotationProcessorOptions {
+                        includeCompileClasspath false
+                    }
+                }
+        project.ext.set("archivesBaseName", "CashboxDisplay-" + defaultConfig.versionCode);
+
+    }
+    buildTypes {
+        release {
+
+            minifyEnabled false
+
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled false
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+    }
+    productFlavors {
+    }
+}
+
+// игнорируем библиотеки поддержки v4
+configurations.all {exclude group: 'com.android.support', module: 'support-v4'}
+
+
+dependencies {
+
+
+
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+    //implementation files('/libs/core.jar')
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.android.support:support-v4:28.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    //web
+    implementation files('libs/com.google.gson_2.3/com.google.gson.jar')
+    implementation files('libs/org.restlet.ext.json.jar')
+    implementation files('libs/org.restlet.ext.jackson.jar')
+
+    //implementation files('libs/org.restlet.jar')
+    //web
+
+
+   //02.07.2019
+   // implementation files('libs/android-bsf-api-3.1.jar')
+
+    // https://mvnrepository.com/artifact/com.sun.net.httpserver/http
+    implementation 'com.sun.net.httpserver:http:20070405'   // 01.07.2019
+    // https://mvnrepository.com/artifact/org.restlet.android/org.restlet
+    //!!!just only this restlet version is working stability
+    implementation group: 'org.restlet.android', name: 'org.restlet', version: '2.1.0'
+
+    // https://mvnrepository.com/artifact/org.osgi/org.osgi.core
+    compileOnly 'org.osgi:org.osgi.core:5.0.0'
+
+    // https://mvnrepository.com/artifact/org.restlet/org.restlet.ext.json
+
+    // compileOnly group: 'org.restlet', name: 'org.restlet.ext.json', version: '1.1.1'
+
+    //smb(v1)
+    implementation 'jcifs:jcifs:1.3.17'
+
+    //bus events
+    implementation 'org.greenrobot:eventbus:3.0.0'
+
+    //для ini файлов
+    implementation 'org.ini4j:ini4j:0.5.1'
+
+    //smbj(v2)
+    implementation 'org.slf4j:slf4j-simple:1.7.25'
+    // https://mvnrepository.com/artifact/com.hierynomus/smbj
+    implementation 'com.hierynomus:smbj:0.9.1'
+
+    //FTP
+    implementation 'commons-net:commons-net:3.6'
+
+    // RecyclerView for slideview
+    implementation group: 'com.android.support', name: 'recyclerview-v7', version: '28.0.0'
+
+    //  implementation fileTree(dir: 'microlog4android-core/build/libs', include: 'microlog4android-core*.jar')
+    //  implementation fileTree(dir: 'microlog4android-slf4j-impl/build/libs', include: 'microlog4android-slf4j-impl*.jar')
+    implementation project(':AndroidAsync')
+    implementation 'at.amartinz:execution:1.0.0'
+    implementation 'at.amartinz:hardware:1.0.1'
+
+
+}

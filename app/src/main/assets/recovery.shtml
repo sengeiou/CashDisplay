@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title></title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+</head>
+
+<body>
+  <div id="content" class="snap-content">
+    <div id="toolbar">
+      <a href="#" id="open-left"></a>
+      <h1>Обновление FW </h1>
+      <div align="left" style="margin-top: 2%; margin-left: 10%;">
+        <div>
+          <p>Укажите файл с обновлением
+          </p>
+          <input type="file" id="upfile" name="upfile" />
+          <button type="button" id="send" name="send">Отправить</button>
+        </div>
+        <p>
+          <input type="radio" name="updtype" id="radfw"> Обновление FW
+          <input type="radio" name="updtype" id="radweb" checked> Обновление WEB интерфейса
+        </p>
+        <p>Результат: <span id="txtHint">отправка не производилась</span></p>
+        <div align="left">
+          <p>
+            <i><b>Текущая версия FW:  <!--#call gitversion --></b></i>
+          </p>
+        </div>
+        <script type="text/javascript">
+          document.querySelector('#upfile').value = "";
+          document.querySelector('#upfile').addEventListener('change', function(e) {
+            var fileext = document.querySelector('#upfile').files[0].name.split('.').pop();
+            switch (fileext) {
+              case "bin":
+                document.querySelector('#radfw').checked = true;
+                break;
+              case "img":
+                document.querySelector('#radweb').checked = true;
+                break;
+              default:
+            }
+          });
+          document.querySelector('#send').addEventListener('click', function(e) {
+            var HTTP_STATUS_CODES = {
+              'CODE_200': 'OK',
+              'CODE_201': 'Created',
+              'CODE_202': 'Accepted',
+              'CODE_203': 'Non-Authoritative Information',
+              'CODE_204': 'No Content',
+              'CODE_205': 'Reset Content',
+              'CODE_206': 'Partial Content',
+              'CODE_300': 'Multiple Choices',
+              'CODE_301': 'Moved Permanently',
+              'CODE_302': 'Found',
+              'CODE_303': 'See Other',
+              'CODE_304': 'Not Modified',
+              'CODE_305': 'Use Proxy',
+              'CODE_307': 'Temporary Redirect',
+              'CODE_400': 'Bad Request',
+              'CODE_401': 'Unauthorized',
+              'CODE_402': 'Payment Required',
+              'CODE_403': 'Forbidden',
+              'CODE_404': 'Not Found',
+              'CODE_405': 'Method Not Allowed',
+              'CODE_406': 'Not Acceptable',
+              'CODE_407': 'Proxy Authentication Required',
+              'CODE_408': 'Request Timeout',
+              'CODE_409': 'Conflict',
+              'CODE_410': 'Gone',
+              'CODE_411': 'Length Required',
+              'CODE_412': 'Precondition Failed',
+              'CODE_413': 'Request Entity Too Large',
+              'CODE_414': 'Request-URI Too Long',
+              'CODE_415': 'Unsupported Media Type',
+              'CODE_416': 'Requested Range Not Satisfiable',
+              'CODE_417': 'Expectation Failed',
+              'CODE_500': 'Internal Server Error',
+              'CODE_501': 'Not Implemented',
+              'CODE_502': 'Bad Gateway',
+              'CODE_503': 'Service Unavailable',
+              'CODE_504': 'Gateway Timeout',
+              'CODE_505': 'HTTP Version Not Supported'
+            };
+
+            var file = document.querySelector('#upfile').files[0];
+            if (file === undefined || file === null) {
+              document.getElementById("txtHint").innerHTML = "файл не указан! повторите выбор файла";
+              return;
+            }
+
+            document.getElementById("txtHint").innerHTML = "инициализация отправки файла обновлений";
+
+            var fd = new FormData();
+            fd.append("updfile", file);
+
+            var xhr = new XMLHttpRequest();
+            //xhr.timeout = 10000;
+
+            xhr.upload.onprogress = function(e) {
+              if (e.lengthComputable) {
+                document.getElementById("txtHint").innerHTML = e.loaded + ' из ' + e.total + ' загружено';
+                console.log(e.loaded + ' / ' + e.total + ' uploaded');
+              }
+            };
+
+            xhr.onload = xhr.onerror = function() {
+              console.log('status ' + this.status);
+              var errorstr = 'неизвестная ошибка';
+              switch (this.status) {
+                case 200:
+                  errorstr = 'файл успешно отправлен. Перезагрузите устройство';
+                  document.write(this.responseText);
+                  document.close();
+                  break;
+                default:
+                  var status = this.status;
+                  if (status == 0) {
+                    status = 504;
+                  }
+                  if (HTTP_STATUS_CODES['CODE_'.concat(status)]) {
+                    status = status + ': ' + HTTP_STATUS_CODES['CODE_'.concat(status)];
+                  }
+                  errorstr = 'ошибка отправки файла (' + status + ')';
+              }
+              document.getElementById("txtHint").innerHTML = errorstr;
+            };
+
+            xhr.open('POST', 'recoveryupload', true);
+            if (document.querySelector('#radweb').checked) {
+              xhr.setRequestHeader('updtype', '0');
+            } else {
+              xhr.setRequestHeader('updtype', '1');
+            }
+            xhr.send(fd);
+          }, false);
+        </script>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

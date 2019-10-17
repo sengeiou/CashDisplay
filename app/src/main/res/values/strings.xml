@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">Индикатор клиента</string>
+    <string name="action_settings">Настройки системы</string>
+    <string name="bt_settings">Настройки системы</string>
+    <string name="title_activity_setup_bt">Выберите устройство</string>
+    <string name="title_setting_activity">Настройки приложения</string>
+    <string name="CloseButtonBTSetting">Закрыть и повторить подключение</string>
+    <string name="preferenceScreen">preferenceScreen</string>
+
+    <string name="resonance">"Copyright ЧАО \"Резонанс\" http://www.ekka.com.ua/   2019"</string>
+
+    <string name="connect_to_server">Підключення до сервера</string>
+    <string name="get_data_Img">перевірка файлiв зображень</string>
+    <string name="get_data_Video">перевірка вiдео файлiв</string>
+    <string name="get_data_Slide">перевірка слайд-файлiв</string>
+    <string name="get_data_ScreenFiles">перевірка файлiв фонових зображень</string>
+    <string name="try_connect_to_source">перевiрка вмісту файлового ресурсу</string>
+
+
+    <string-array name="entriesSpeed">
+        <item>9600</item>
+        <item>19200</item>
+        <item>57600</item>
+        <item>115200</item>
+    </string-array>
+    <string-array name="entriesStopBits">
+        <item>"1"</item>
+        <item>"1.5"</item>
+        <item>"2"</item>
+    </string-array>
+
+    <string-array name="entriesParity">
+        <item>"NONE"</item>
+        <item>"ODD"</item>
+        <item>"EVEN"</item>
+    </string-array>
+
+    <string name="title_activity_slide_view">SlideViewActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content"></string>
+
+    <string name="title_activity_video">VideoActivity</string>
+
+
+</resources>
