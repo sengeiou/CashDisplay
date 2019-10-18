@@ -13,6 +13,10 @@ android {
     signingConfigs {
         debug {
 
+        storeFile file('D:\\Projects\\Key\\.signing\\KeyStore.jks')
+            storePassword '123456'
+            keyPassword '123456'
+            keyAlias = 'KeyAlias'
         }// здесь никаких изменений нет
         release {
             storeFile file('D:\\Projects\\Key\\.signing\\KeyStore.jks')
@@ -74,7 +78,7 @@ android {
         }
         debug {
             minifyEnabled false
-            applicationIdSuffix ".debug"
+//            applicationIdSuffix ".debug"
             versionNameSuffix "-debug"
 
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
