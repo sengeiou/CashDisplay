@@ -3,49 +3,29 @@ package com.resonance.cashdisplay.eth;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
-//import android.util.Log;
-//import android.util.Log;
-
 
 import com.resonance.cashdisplay.MainActivity;
 
 import org.ini4j.Ini;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.StringReader;
 import java.lang.reflect.Field;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
+//import android.util.Log;
+//import android.util.Log;
 
 public class Modify_SU_Preferences {
 
@@ -86,30 +66,30 @@ public class Modify_SU_Preferences {
         index += FOUND_PARAM.length();
         int res = Integer.valueOf(Str.substring(index, index + 1));
 
-        return (res == 1 ? true : false);
+        return (res == 1);
     }
 
 
     //необходима проверка наличия файла
-    public void Checkfile_user_info() {
-        File FileCfgSU = new File(file_user_info);
-        if (FileCfgSU.exists()) {
+    public void checkfileUserInfo() {
+        File fileCfgSU = new File(file_user_info);
+        if (fileCfgSU.exists()) {
             Log.w(TAG, "File:" + file_user_info + " is exist");
             return;
         }
 
         try {
-            InputStream is = MainActivity.mContext.getAssets().open(FileCfgSU.getName());
+            InputStream is = MainActivity.context.getAssets().open(fileCfgSU.getName());
             if (is != null) {
                 byte[] bufRead = new byte[500];
                 int totalRead = is.read(bufRead);
-                Log.d(TAG, "File:" + FileCfgSU.getName() + " read:" + new String(bufRead, 0, totalRead));
+                Log.d(TAG, "File:" + fileCfgSU.getName() + " read:" + new String(bufRead, 0, totalRead));
                 is.close();
 
                 if (totalRead <= 0) return;
 
                 try {
-                    saveTofile(new String(bufRead, 0, totalRead), file_user_info);
+                    saveToFile(new String(bufRead, 0, totalRead), file_user_info);
                     Log.d(TAG, "user_info save complete ");
                 } catch (FileNotFoundException e) {
                     Log.e(TAG, "user_info FileNotFoundException, File:" + file_user_info + "  " + e);
@@ -121,12 +101,9 @@ public class Modify_SU_Preferences {
         } catch (IOException e) {
             Log.e(TAG, "IOException Checkfile_user_info:" + file_user_info);
         }
-
     }
 
-
-    private static boolean IsPatched(String xmlFile) {
-
+    private static boolean isPatched(String xmlFile) {
 
         final String REGEX_REAU = "<boolean name=.reauthenticate.\\svalue=.false.\\s/>";
         final String REGEX_NOTIFY = "<boolean name=.config_default_notify.\\svalue=.false.\\s/>";
@@ -135,33 +112,31 @@ public class Modify_SU_Preferences {
         File FileCfgSU = new File(xmlFile);
         if (!FileCfgSU.exists()) {
             Log.e(TAG, "File:" + xmlFile + " is NOT exist");
-
             return false;
         }
 
-
-        String TmpStr = executeCmd("cat " + xmlFile, 2000);
-
+        String tmpStr = executeCmd("cat " + xmlFile, 2000);
 
         boolean bReauAlreadyModify = false;
         boolean bNotifyAlreadyModify = false;
         boolean bsuperuserAlreadyModify = true;
 
         Pattern p = Pattern.compile(REGEX_REAU);
-        Matcher m = p.matcher(TmpStr);
+        Matcher m = p.matcher(tmpStr);
         if (m.find()) {//уже модифицирован
             Log.d(TAG, "reauthenticate already modified");
             bReauAlreadyModify = true;
         }
+
         p = Pattern.compile(REGEX_NOTIFY);
-        m = p.matcher(TmpStr);
+        m = p.matcher(tmpStr);
         if (m.find()) {//уже модифицирован
             Log.d(TAG, "default_notify already modified");
             bNotifyAlreadyModify = true;
         }
 
         p = Pattern.compile(REGEX_SU);
-        m = p.matcher(TmpStr);
+        m = p.matcher(tmpStr);
         if (m.find()) {//уже модифицирован
             Log.d(TAG, "superuser already modified");
             bsuperuserAlreadyModify = true;
@@ -172,41 +147,36 @@ public class Modify_SU_Preferences {
         return (bReauAlreadyModify & bNotifyAlreadyModify & bsuperuserAlreadyModify);
     }
 
-    public static synchronized String executeCmd(String Cmd, long timeout) {
+    public static synchronized String executeCmd(String cmd, long timeout) {
 
-        long StopTime = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(timeout);
-        long StartTime = System.nanoTime();
+        long stopTime = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(timeout);
+        long startTime = System.nanoTime();
         String result = "";
-
 
         int cnt = 0;
         char[] buf = new char[1024];
 
-
         DataOutputStream outputStream = null;
         BufferedReader reader = null;
         try {
-
             Process su;
-            Log.d(TAG, "Exec Cmd: " + Cmd);
+            Log.d(TAG, "Exec Cmd: " + cmd);
 
             if (timeout > 0) {
                 su = Runtime.getRuntime().exec("su");
                 outputStream = new DataOutputStream(su.getOutputStream());
                 reader = new BufferedReader(new InputStreamReader(su.getInputStream()));
 
-                outputStream.writeBytes(Cmd + "\n");//" && echo \"DONE\"
+                outputStream.writeBytes(cmd + "\n");//" && echo \"DONE\"
                 outputStream.flush();
 
-
                 while (!reader.ready()) {
-                    if (StopTime <= System.nanoTime()) {
+                    if (stopTime <= System.nanoTime()) {
                         result = "TIMEOUT";
                         break;
                     }
                     Thread.currentThread().sleep(100);
                 }
-                ;
 
                 while (reader.ready()) {
                     cnt = reader.read(buf, 0, buf.length);
@@ -215,12 +185,12 @@ public class Modify_SU_Preferences {
                 outputStream.writeBytes("exit\n");
                 outputStream.flush();
             } else {
-                su = Runtime.getRuntime().exec(new String[]{"su", "-c", Cmd});
+                su = Runtime.getRuntime().exec(new String[]{"su", "-c", cmd});
                 su.waitFor();
                 result = (su.exitValue() == 0 ? "OK" : "ERROR");
             }
 
-            Log.w(TAG, "Time for execute: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - StartTime) + "ms,  result: " + result);
+            Log.w(TAG, "Time for execute: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + "ms,  result: " + result);
 
         } catch (IOException e) {
             Log.e(TAG, "executeCmd IOException Error: " + e.getMessage());
@@ -253,18 +223,16 @@ public class Modify_SU_Preferences {
         return result;
     }
 
-
-    private static void saveTofile(String StrData, String to) throws IOException {
+    private static void saveToFile(String strData, String to) throws IOException {
 
         File newFile = new File(to);
         executeCmd("touch " + newFile, 3000);//разрешения на запись
         executeCmd("chmod -R 0666 " + newFile, 3000);//разрешения на запись
         newFile.createNewFile();
 
-
         FileOutputStream output = new FileOutputStream(newFile);
 
-        byte[] buf = StrData.getBytes();
+        byte[] buf = strData.getBytes();
 
         output.write(buf, 0, buf.length);
         output.flush();
@@ -298,21 +266,18 @@ public class Modify_SU_Preferences {
 
         Log.d(TAG, "tryChangingSuperSuDefaultAccess....");
 
-
         String packageName = context.getPackageName();
         PackageManager pm = context.getPackageManager();
-
 
         // Get the preferences for SuperSu
         Context packageContext = context.createPackageContext("eu.chainfire.supersu", 0);
         SharedPreferences superSuPrefs = PreferenceManager.getDefaultSharedPreferences(packageContext);
         File superSuPrefsFile = getSharedPreferencesFile(superSuPrefs);
 
-        if (IsPatched(superSuPrefsFile.getPath())) {
+        if (isPatched(superSuPrefsFile.getPath())) {
             Log.d(TAG, "Already patched SU Preferences file : " + superSuPrefsFile.getName());
             return;
         }
-
 
         // Copy SuperSu preferences to our app's shared_prefs directory
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -354,30 +319,27 @@ public class Modify_SU_Preferences {
 
 
     public static void setSystemUIEnabled(boolean enabled) {
-
         executeCmd(enabled ? CMD_SHOW_NAVIGATION_BAR : CMD_HIDE_NAVIGATION_BAR, 500);//3000
-
     }
+
+    private static SetupRootCallback setupRootCallback;
 
     public interface SetupRootCallback {
         void onSetupRoot(final int result);
     }
 
-    private static SetupRootCallback callback_onSetupRoot;
-
-
-    public void callback_onSetupRoot(SetupRootCallback cback) {
-        callback_onSetupRoot = cback;
+    public void setSetupRootCallback(SetupRootCallback cback) {
+        setupRootCallback = cback;
     }
 
-    public void event_RootIsSet(final int result) {
-        callback_onSetupRoot.onSetupRoot(result);
+    private void rootIsSetEvent(final int result) {
+        setupRootCallback.onSetupRoot(result);
     }
 
     private boolean checkRoot() {
         boolean result = false;
-        String TmpStr = Modify_SU_Preferences.executeCmd(CMD_ROOT, 10000);//10000
-        if (TmpStr.contains("root")) {
+        String tmpStr = Modify_SU_Preferences.executeCmd(CMD_ROOT, 10000);//10000
+        if (tmpStr.contains("root")) {
             Modify_SU_Preferences.executeCmd("sync ", 0);//2000
             result = true;
         } else {
@@ -389,8 +351,8 @@ public class Modify_SU_Preferences {
 
     private void modify_CFG_SU_File() {
 
-        File CfgSU = new File(URI_SU_CFG);
-        if (!CfgSU.exists()) {
+        File cfgSU = new File(URI_SU_CFG);
+        if (!cfgSU.exists()) {
             Log.e(TAG, "File:" + URI_SU_CFG + " is NOT exist");
             return;
         }
@@ -399,7 +361,7 @@ public class Modify_SU_Preferences {
         //...определить готовность ситемы
         Modify_SU_Preferences.executeCmd("ls -l " + URI_SU_CFG, 10000);
 
-        if ((!CfgSU.canRead()) && (!CfgSU.canWrite())) {
+        if ((!cfgSU.canRead()) && (!cfgSU.canWrite())) {
             Log.e(TAG, "File: " + URI_SU_CFG + " is can't read");
             return;
         }
@@ -424,11 +386,7 @@ public class Modify_SU_Preferences {
         ;
     }
 
-    public synchronized boolean isRooted() {
-        return isRooted;
-    }
-
-    public void VerifyRootRights() {
+    public void verifyRootRights() {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -442,13 +400,12 @@ public class Modify_SU_Preferences {
                             Modify_SU_Preferences.executeCmd("busybox pkill -KILL eu.chainfire.supersu", 0);//3000//разрешения на запись
                             //ps -Z посмотреть процесс
                             modify_CFG_SU_File();
-                            Checkfile_user_info();
+                            checkfileUserInfo();
                             Modify_SU_Preferences.tryChangingSuperSuDefaultAccess(mContext);
-
-                            event_RootIsSet(1);
+                            rootIsSetEvent(1);
                         } else {
                             Log.d(TAG, "VerifyRootRights... not allowed");
-                            event_RootIsSet(0);
+                            rootIsSetEvent(0);
                             try {
                                 Thread.sleep(2000);
                             } catch (InterruptedException e) {
@@ -458,19 +415,9 @@ public class Modify_SU_Preferences {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
-
                 } while (!isRooted);
-
-
             }
-
-
         });
         thread.start();
-
-
     }
-
-
 }

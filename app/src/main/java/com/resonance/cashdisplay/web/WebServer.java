@@ -1,51 +1,28 @@
 package  com.resonance.cashdisplay.web;
 
 import android.content.Context;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
-//import android.util.Log;
 
 import com.resonance.cashdisplay.Log;
-import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.PreferenceParams;
 import com.resonance.cashdisplay.PreferencesValues;
+import com.resonance.cashdisplay.eth.EthernetSettings;
 
-import com.resonance.cashdisplay.eth.Eth_Settings;
-import com.resonance.cashdisplay.web.StaticContentRestlet;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.restlet.Application;
 import org.restlet.Component;
-import org.restlet.Request;
-import org.restlet.Response;
 import org.restlet.Restlet;
 import org.restlet.data.ChallengeScheme;
-import org.restlet.data.MediaType;
 import org.restlet.data.Parameter;
 import org.restlet.data.Protocol;
-import org.restlet.representation.StringRepresentation;
-import org.restlet.resource.Directory;
-import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
-import org.restlet.routing.Router;
 import org.restlet.security.ChallengeAuthenticator;
 import org.restlet.security.MapVerifier;
-import org.restlet.security.SecretVerifier;
-import org.restlet.security.Verifier;
 import org.restlet.util.Series;
-import org.restlet.util.ServerList;
-
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
 
 import static com.resonance.cashdisplay.web.WebStatus.CLEAR_QUEUE_WEB_MESSAGE;
+
+//import android.util.Log;
 
 public class WebServer extends ServerResource {
 
@@ -190,7 +167,7 @@ public class WebServer extends ServerResource {
                     try {
                         component.start();
 
-                        Log.d(TAG, "Web server started : "+ Eth_Settings.getNetworkInterfaceIpAddress());
+                        Log.d(TAG, "Web server started : "+ EthernetSettings.getNetworkInterfaceIpAddress());
                     } catch (final Exception e) {
                         e.printStackTrace();
                     }

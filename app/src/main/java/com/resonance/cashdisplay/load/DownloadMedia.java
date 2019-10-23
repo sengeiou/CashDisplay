@@ -5,17 +5,15 @@ import android.content.Intent;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-//import android.util.Log;
 import android.widget.Toast;
 
-//import com.resonance.FileOperation;
 import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.FileOperation;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.PreferenceParams;
 import com.resonance.cashdisplay.PreferencesValues;
-import com.resonance.cashdisplay.eth.Eth_Settings;
+import com.resonance.cashdisplay.eth.EthernetSettings;
 import com.resonance.cashdisplay.slide_show.VideoSlideService;
 
 import java.io.File;
@@ -31,6 +29,9 @@ import static com.resonance.cashdisplay.PreferenceParams.DEF_PROTOCOL;
 import static com.resonance.cashdisplay.PreferenceParams._FTP;
 import static com.resonance.cashdisplay.PreferenceParams._SMB1;
 import static com.resonance.cashdisplay.PreferenceParams._SMB2;
+
+//import android.util.Log;
+//import com.resonance.FileOperation;
 
 
 /**
@@ -396,7 +397,7 @@ public class DownloadMedia  {
      */
     public static void resetMediaPlay(){
         Intent i = new Intent(VideoSlideService.VIDEO_SLIDE_RESET_TIME);
-        MainActivity.mContext.sendBroadcast(i);
+        MainActivity.context.sendBroadcast(i);
 
     }
 
@@ -412,7 +413,7 @@ public class DownloadMedia  {
         c = Calendar.getInstance();
         c.setTime(currentDate);
 
-        mLogFile = new File( Environment.getExternalStorageDirectory(),  "Download "+ Eth_Settings.getNetworkInterfaceIpAddress()+" "+dateFormat.format(c.getTime())+".log" );
+        mLogFile = new File( Environment.getExternalStorageDirectory(),  "Download "+ EthernetSettings.getNetworkInterfaceIpAddress()+" "+dateFormat.format(c.getTime())+".log" );
 
         //удалим существующий файл
         if ( mLogFile.exists() )

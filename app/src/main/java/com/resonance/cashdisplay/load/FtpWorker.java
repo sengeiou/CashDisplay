@@ -2,7 +2,6 @@ package com.resonance.cashdisplay.load;
 
 import android.content.Context;
 import android.os.AsyncTask;
-//import android.util.Log;
 
 import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.Log;
@@ -16,10 +15,8 @@ import org.apache.commons.net.ftp.FTPReply;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
@@ -30,11 +27,12 @@ import java.util.HashMap;
 import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_BAD_ARGUMENTS;
 import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_CONNECTION_ERROR;
 import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_IO_ERROR;
-
 import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_NOT_FREE_MEMORY;
 import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_NOT_SUPPORT_PROTOCOL;
 import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR;
 import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_SUCCESSFULL;
+
+//import android.util.Log;
 
 
 public class FtpWorker{
@@ -58,9 +56,9 @@ public class FtpWorker{
 
     private class FtpTask extends AsyncTask<HashMap<String , Object>, Void, Integer> {
 
-        downloadResult resultImg = new downloadResult();
-        downloadResult resultVideo = new downloadResult();
-        downloadResult resultSlide = new downloadResult();
+        DownloadResult resultImg = new DownloadResult();
+        DownloadResult resultVideo = new DownloadResult();
+        DownloadResult resultSlide = new DownloadResult();
 
 
 
@@ -241,9 +239,9 @@ public class FtpWorker{
 
 /***************************************************************************************************************/
 
-    private downloadResult download_Routine (String DestinationDir, String share, String folder, String[] extension){
+    private DownloadResult download_Routine (String DestinationDir, String share, String folder, String[] extension){
 
-        downloadResult down_result =  new downloadResult();
+        DownloadResult down_result =  new DownloadResult();
         String[] FilesAlreadyExists = null;//список файлов уже существующих
 
         //получим список файлов уже существующих
@@ -282,7 +280,7 @@ public class FtpWorker{
             // Log.d(TAG, "File:"+mFileArray[i].getName()+"  "+mFileArray[i].isDirectory());
             if (mFileArray[i].isDirectory()) continue;
 
-            if (ExtSDSource.getAvailableMemory(MainActivity.mContext, ExtSDSource.DEFAULT_SD)<mFileArray[i].getSize())
+            if (ExtSDSource.getAvailableMemory(MainActivity.context, ExtSDSource.DEFAULT_SD)<mFileArray[i].getSize())
             {
                 Log.e(TAG, "Not free memory");
                 down_result.HasError = DOWNLOAD_RESULT_NOT_FREE_MEMORY;

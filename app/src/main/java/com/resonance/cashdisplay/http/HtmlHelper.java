@@ -16,7 +16,7 @@ import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
-public class html_Helper {
+public class HtmlHelper {
 
     private static final String TAG = "html_Helper";
 
@@ -69,7 +69,7 @@ public class html_Helper {
 
     @Nullable private static InputStream loadPathInternal(final String path) {
         try {
-            return MainActivity.mContext.getAssets().open(path);
+            return MainActivity.context.getAssets().open(path);
         } catch (Exception exc) {
             Log.e(TAG, "loadPathInternal",exc);
         }
@@ -93,7 +93,7 @@ public class html_Helper {
         InputStreamReader reader = null;
         BufferedReader br = null;
         try {
-            htmlStream = MainActivity.mContext.getAssets().open(path);
+            htmlStream = MainActivity.context.getAssets().open(path);
             reader = new InputStreamReader(htmlStream);
             br = new BufferedReader(reader);
             String line;

@@ -6,47 +6,27 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.NetworkOnMainThreadException;
-//import android.util.Log;
-
 
 import com.resonance.cashdisplay.eth.Modify_SU_Preferences;
 
-
-//import org.ini4j.Wini;
-
 import org.ini4j.Ini;
-import org.ini4j.Wini;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
-
+//import android.util.Log;
+//import org.ini4j.Wini;
 
 
 public class UpdateFirmware {
@@ -60,37 +40,37 @@ public class UpdateFirmware {
 
     public static final String FILE_SETTING = "settings.ini";
     public static final String UPDATE_URI = "http://dev.ekka.com.ua/indicator/";
-    public static final String LOCAL_DIR = Environment.getExternalStorageDirectory()+"/Documents/";
+    public static final String LOCAL_DIR = Environment.getExternalStorageDirectory() + "/Documents/";
 
 
     private static int TypeFileLoad = 0;
-    public static String Path_To_Apk_File ="";
+    public static String Path_To_Apk_File = "";
 
     public UpdateFirmware(Context context) {
         this.mContext = context;
 
     }
 
-    private void unregisterReceiver(){
+    private void unregisterReceiver() {
 
         mContext.unregisterReceiver(br);
     }
-    private void registerReceiver(){
+
+    private void registerReceiver() {
 
         mContext.registerReceiver(br, new IntentFilter(BROADCAST_ACTION));
     }
 
-    BroadcastReceiver br = new BroadcastReceiver()
-    {
+    BroadcastReceiver br = new BroadcastReceiver() {
         // действия при получении сообщений
         @Override
         public void onReceive(Context context, Intent intent) {
             int status = intent.getIntExtra(PARAM_RESULT, -1);
             Log.d(TAG, "onReceive: " + status);
-            if (status==0) {
+            if (status == 0) {
                 if (TypeFileLoad == 1) {
                     treatment_SettingFile();
-                }else if (TypeFileLoad == 2){
+                } else if (TypeFileLoad == 2) {
                     unregisterReceiver();
                     ResultForFirmWareFile();
 
@@ -105,9 +85,9 @@ public class UpdateFirmware {
     /**
      * Инициация обновления ПО
      */
-    public void update()
-    {
-        if (TypeFileLoad>0)
+    public void update() {
+
+        if (TypeFileLoad > 0)
             return;
 
         //Проверка директории
@@ -118,9 +98,9 @@ public class UpdateFirmware {
         }
 
         if (!dir.exists() || !dir.isDirectory()) {
-            Log.e(TAG, "Ошибка создания :"+LOCAL_DIR);
+            Log.e(TAG, "Ошибка создания :" + LOCAL_DIR);
             MainActivity.httpServer.SendQueWebStatus("операція не виконана, сталася помилка системи # 101", true);
-            return ;
+            return;
         }
         registerReceiver();
         TypeFileLoad = 1;
@@ -130,48 +110,48 @@ public class UpdateFirmware {
     /**
      * Загрузчик обновления ПО
      */
-    private void treatment_SettingFile()
-    {
-            try {
-                Ini ini = new Ini(new File(LOCAL_DIR+FILE_SETTING));
-                String build = ini.get("default", "build");
-                build = build.replaceAll("\"","");
-                String file_name = ini.get("default", "file_name");
-                file_name = file_name.replaceAll("\"","");
+    private void treatment_SettingFile() {
+        try {
+            Ini ini = new Ini(new File(LOCAL_DIR + FILE_SETTING));
+            String build = ini.get("default", "build");
+            build = build.replaceAll("\"", "");
+            String file_name = ini.get("default", "file_name");
+            file_name = file_name.replaceAll("\"", "");
 
-                Log.w(TAG, "build: " + build+" file_name:"+file_name);
+            Log.w(TAG, "build: " + build + " file_name:" + file_name);
 
-                boolean EnableUpdate = false;
+            boolean EnableUpdate = false;
 
-                if (Integer.parseInt(build)>BuildConfig.VERSION_CODE)
-                    EnableUpdate = true;
-
-
-                if (EnableUpdate) {
-                    MainActivity.httpServer.SendQueWebStatus("доступна версія ПЗ: " + build, true);
-                    TypeFileLoad = 2;
-                    Path_To_Apk_File = LOCAL_DIR + file_name + ".apk";
+            if (Integer.parseInt(build) > BuildConfig.VERSION_CODE)
+                EnableUpdate = true;
 
 
-                    new DownloadSettingsTask().execute(file_name+".apk");
-                }else{
-                    MainActivity.httpServer.SendQueWebStatus("Вже встановлена остання версія ПЗ", true);
-                    TypeFileLoad = 0;
-                    return;
-                }
+            if (EnableUpdate) {
+                MainActivity.httpServer.SendQueWebStatus("доступна версія ПЗ: " + build, true);
+                TypeFileLoad = 2;
+                Path_To_Apk_File = LOCAL_DIR + file_name + ".apk";
 
-            } catch (FileNotFoundException e) {
-                Log.e(TAG, "FileNotFoundException: " + LOCAL_DIR+FILE_SETTING + " " + e);
-            } catch (IOException e) {
-                Log.e(TAG, "IOException: " + LOCAL_DIR+FILE_SETTING + " " + e);
-                MainActivity.httpServer.SendQueWebStatus("ПОМИЛКА "+e.getMessage(), true);
 
-            };
+                new DownloadSettingsTask().execute(file_name + ".apk");
+            } else {
+                MainActivity.httpServer.SendQueWebStatus("Вже встановлена остання версія ПЗ", true);
+                TypeFileLoad = 0;
+                return;
+            }
+
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "FileNotFoundException: " + LOCAL_DIR + FILE_SETTING + " " + e);
+        } catch (IOException e) {
+            Log.e(TAG, "IOException: " + LOCAL_DIR + FILE_SETTING + " " + e);
+            MainActivity.httpServer.SendQueWebStatus("ПОМИЛКА " + e.getMessage(), true);
+
+        }
+        ;
 
     }
 
 
-    public void ResultForFirmWareFile(){
+    public void ResultForFirmWareFile() {
 
         updateAPK(Path_To_Apk_File);
         TypeFileLoad = 0;
@@ -179,10 +159,11 @@ public class UpdateFirmware {
 
     /**
      * Установка APK
+     *
      * @param fileName
      */
     private void updateAPK(final String fileName) {
-        Log.d(TAG, "updateAPK" + fileName );
+        Log.d(TAG, "updateAPK" + fileName);
         File apkFile = new File(fileName);
         if (!apkFile.exists()) {
             Log.d(TAG, "APK file " + fileName + " not exist");
@@ -203,7 +184,7 @@ public class UpdateFirmware {
         });
 
         thread.start();
-   }
+    }
 
 
     /**
@@ -220,9 +201,6 @@ public class UpdateFirmware {
         mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 8000, mPendingIntent);
 
     }
-
-
-
 
 
     private static int crc32(String str) {
@@ -244,13 +222,13 @@ public class UpdateFirmware {
         @Override
         protected Integer doInBackground(Object... params) {
 
-        Log.d(TAG, "DownloadSettingsTask... ");
+            Log.d(TAG, "DownloadSettingsTask... ");
 
 
-            File fileSetting = new File(LOCAL_DIR+ params[0]);
+            File fileSetting = new File(LOCAL_DIR + params[0]);
 
             HttpURLConnection connection = null;
-           // OutputStreamWriter outputStreamWriter = null;
+            // OutputStreamWriter outputStreamWriter = null;
             FileOutputStream fos = null;
             try {
                 URL url = new URL(UPDATE_URI + params[0]);
@@ -264,18 +242,17 @@ public class UpdateFirmware {
 
                 Log.d(TAG, " UpdateFirmware... " + connection.getResponseMessage() + " code: " + connection.getResponseCode());
 
-                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK)
-                {
+                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     InputStream in = new BufferedInputStream(connection.getInputStream());
-                   // outputStreamWriter = new OutputStreamWriter(new FileOutputStream(fileSetting));
+                    // outputStreamWriter = new OutputStreamWriter(new FileOutputStream(fileSetting));
 
 
                     Log.d(TAG, " UpdateFirmware... connection.getContentLength: " + connection.getContentLength());
 
                     fos = new FileOutputStream(fileSetting);
 
-                   // BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-                   // StringBuilder sb = new StringBuilder();
+                    // BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+                    // StringBuilder sb = new StringBuilder();
 
                     byte[] buffer = new byte[8192];
                     int len;
@@ -286,26 +263,25 @@ public class UpdateFirmware {
                         //Log.d(TAG, ">>" + new String(buffer, 0, len));
                         fos.write(buffer, 0, len);
 
-                        totalbytes+=len;
-                        int percent = (int)(totalbytes*100/connection.getContentLength());
+                        totalbytes += len;
+                        int percent = (int) (totalbytes * 100 / connection.getContentLength());
 
                         //if (percent%10)
 
 
-                            if (prevValuePercent!=percent) {
-                                MainActivity.httpServer.SendQueWebStatus("завантаження даних..." + percent + " %", true);
-                               // Log.d(TAG, ">>" + percent);
-                                prevValuePercent=percent;
-                            }
+                        if (prevValuePercent != percent) {
+                            MainActivity.httpServer.SendQueWebStatus("завантаження даних..." + percent + " %", true);
+                            // Log.d(TAG, ">>" + percent);
+                            prevValuePercent = percent;
+                        }
 
                     }
 
-                } else if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND){
+                } else if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
                     Log.e(TAG, "Путь:  " + url.getFile() + " не найден");
                     MainActivity.httpServer.SendQueWebStatus("не знайдено сервер оновлень  " + HttpURLConnection.HTTP_NOT_FOUND, true);
                     return 2;
-                }
-                else {
+                } else {
                     Log.e(TAG, "*** ERROR:  " + connection.getResponseCode());
                     MainActivity.httpServer.SendQueWebStatus("Помилки при завантаженнi. Перевiрте налаштунки мережi. ", true);
                     return 3;
@@ -319,15 +295,15 @@ public class UpdateFirmware {
                 //if (e.getMessage().contains("Unable to resolve host"))
                 MainActivity.httpServer.SendQueWebStatus("не знайдено сервер оновлень. Перевiрте налаштунки мережi. " + e.getLocalizedMessage(), true);
                 return 5;
-            } finally
-            {
+            } finally {
 
                 try {
                     if (fos != null)
                         fos.close();
                 } catch (IOException e) {
 
-                };
+                }
+                ;
 
                 if (connection != null)
                     connection.disconnect();
@@ -341,7 +317,6 @@ public class UpdateFirmware {
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
             Log.d(TAG, "DownloadTask result : " + result);
-
 
 
             Intent intent = new Intent(BROADCAST_ACTION);
@@ -359,17 +334,16 @@ public class UpdateFirmware {
 
     public int[] convertVersionToInt(String versionName) {
 
-        int[] arr = new int[]{0,0,0};
+        int[] arr = new int[]{0, 0, 0};
 
 
         if (versionName.matches("^(\\d{1,4})\\.(\\d{1,4})\\.(\\d{1,4})$")) {
             String[] groups = versionName.split("\\.");
 
-            for (int i = 0; i < 3; i++)
-            {
+            for (int i = 0; i < 3; i++) {
                 String segment = groups[i];
                 if (segment == null || segment.length() <= 0) {
-                    return(new int[]{0,0,0});
+                    return (new int[]{0, 0, 0});
                 }
 
                 int value = 0;
@@ -377,13 +351,13 @@ public class UpdateFirmware {
                     arr[i] = Integer.parseInt(segment);
 
                 } catch (NumberFormatException e) {
-                    return(new int[]{0,0,0});
+                    return (new int[]{0, 0, 0});
                 }
 
             }
             return arr;
         }
-        return(new int[]{0,0,0});
+        return (new int[]{0, 0, 0});
     }
 
 }

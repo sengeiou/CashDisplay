@@ -22,7 +22,7 @@ public class ShoppingListWorker {
 
     private final static String TAG = "ShoppingListWorker";
 
-    private final byte SYMBOL_SEPARATOR = (byte)0x03;
+    private final byte SYMBOL_SEPARATOR = (byte) 0x03;
 
     public static final String FINISH_SHOPPING_LIST_ALERT = "finish_shopping_list_alert";
     public static final String DEBUG_ALERT = "Debug_Alert";
@@ -30,44 +30,42 @@ public class ShoppingListWorker {
     public static final String TOTAL_COUNT_SHOPPING_LIST_ALERT = "TotalCount_TovarList";
     public static final String SCROLL_SHOPPING_LIST_ALERT = "Scroll_TovarList";
 
-    private static long TotalSumm = 0;
+    private static long totalSumm = 0;
     private static Context mContext;
 
-    private static BlockingQueue<Integer> needScroll_Queue ;//обеспечивает передачу событий для скроллинга списка товаров
+    private static BlockingQueue<Integer> needScrollQueue;//обеспечивает передачу событий для скроллинга списка товаров
 
     public static AdapterShoppingList adapterShoppingList;
-    public static ArrayList<ItemShoppingList> ArrayShoppingList;
+    public static ArrayList<ItemShoppingList> arrayShoppingList;
 
 
     /**
-     *
      * @param context
      */
-    public ShoppingListWorker(Context context){
+    public ShoppingListWorker(Context context) {
         mContext = context;
-        needScroll_Queue = new ArrayBlockingQueue<Integer>(50);
-        needScroll_Queue.clear();
+        needScrollQueue = new ArrayBlockingQueue<Integer>(50);
+        needScrollQueue.clear();
 
-        ArrayShoppingList = new ArrayList<ItemShoppingList>();
-        adapterShoppingList = new AdapterShoppingList(ArrayShoppingList,mContext);
+        arrayShoppingList = new ArrayList<ItemShoppingList>();
+        adapterShoppingList = new AdapterShoppingList(arrayShoppingList, mContext);
 
-        RunUpdateThread();
+        runUpdateThread();
 
         Log.d(TAG, "ShoppingListWorker");
     }
 
     /**
      * Добавлен вывод на экран потоковой информации
+     *
      * @param msg
      */
-    public void ADD_DEBUG(final String msg){
+    public void ADD_DEBUG(final String msg) {
 
         final int start = MainActivity.textViewDEBUG.getText().length();
 
-        MainActivity.textViewDEBUG.post(new Runnable()
-        {
-            public void run()
-            {
+        MainActivity.textViewDEBUG.post(new Runnable() {
+            public void run() {
                 MainActivity.textViewDEBUG.append(msg + "\n");
                 int end = MainActivity.textViewDEBUG.getText().length();
 
@@ -83,18 +81,16 @@ public class ShoppingListWorker {
         });
     }
 
-    public void CloseDisplayShoppingList()
-    {
-        ArrayShoppingList.clear();
+    public void closeDisplayShoppingList() {
+        arrayShoppingList.clear();
         adapterShoppingList.notifyDataSetChanged();
     }
 
-    public void UpdateScreen(final int position)
-    {
+    public void updateScreen(final int position) {
         adapterShoppingList.notifyDataSetChanged();
-        ScrollToPosition(position);//
-        Update_TotalSumm();
-        Update_TotalCount();
+        scrollToPosition(position);
+        updateTotalSumm();
+        updateTotalCount();
     }
 
 
@@ -102,115 +98,109 @@ public class ShoppingListWorker {
 
     /**
      * Добавляет товар в список
+     *
      * @param param строка "сырых" данных
      */
-    public void Add_TovarList(String param)
-    {
+    public void addTovarList(String param) {
 
-        //Log.d(TAG, "Add_TovarList :"+param);
+        //Log.d(TAG, "addTovarList :"+param);
         final ItemShoppingList item = ParseData(param);
-        if (item.getIndexPosition()<0) return;
+        if (item.getIndexPosition() < 0) return;
 
-        if (item.getIndexPosition() <= ArrayShoppingList.size())
-        {
+        if (item.getIndexPosition() <= arrayShoppingList.size()) {
             ADD_DEBUG(param);
 
-            ArrayShoppingList.add(item.getIndexPosition(), item);
+            arrayShoppingList.add(item.getIndexPosition(), item);
 
-            UpdateScreen(item.getIndexPosition());
-        }else {
+            updateScreen(item.getIndexPosition());
+        } else {
             showToast("Невiрнi параметри при внесеннi товару, необхідно очистити чек!");
-            Log.d(TAG, " ОШИБКА, количество товаров в списке: " + ArrayShoppingList.size()+", добавляется товар на позицию:"+item.getIndexPosition());
+            Log.d(TAG, " ОШИБКА, количество товаров в списке: " + arrayShoppingList.size() + ", добавляется товар на позицию:" + item.getIndexPosition());
         }
 
     }
 
     /**
      * Очистка списка товаров
-     * @param param  строка "сырых" данных
+     *
+     * @param param строка "сырых" данных
      */
-    public void Clear_TovarList(String param)
-    {
-        ArrayShoppingList.clear();
+    public void clearTovarList(String param) {
+        arrayShoppingList.clear();
         MainActivity.imageViewTovar.setImageBitmap(null);
-        UpdateScreen((ArrayShoppingList.size()>0)?ArrayShoppingList.size()-1:-1);
-        Log.d(TAG, "Clear_TovarList :"+param);
+        updateScreen((arrayShoppingList.size() > 0) ? arrayShoppingList.size() - 1 : -1);
+        Log.d(TAG, "clearTovarList :" + param);
         ADD_DEBUG(param);
-
     }
 
     /**
      * Вставляет товар в указанную позицию списка
+     *
      * @param param строка "сырых" данных
      */
-    public void SetPosition_TovarList(String param)
-    {
+    public void setPositionTovarList(String param) {
 
-        Log.d(TAG, "SetPosition_TovarList :"+param);
+        Log.d(TAG, "setPositionTovarList :" + param);
         ADD_DEBUG(param);
-        if (ArrayShoppingList.size() >0)
-        {
-            final  ItemShoppingList item = ParseData(param);
+        if (arrayShoppingList.size() > 0) {
+            final ItemShoppingList item = ParseData(param);
 
-            if (item.getIndexPosition()<0) return;
+            if (item.getIndexPosition() < 0) return;
 
-            if (item.getIndexPosition()<ArrayShoppingList.size()) {
+            if (item.getIndexPosition() < arrayShoppingList.size()) {
 
-                ItemShoppingList dummy_item = ArrayShoppingList.get(item.getIndexPosition());
-                if ((dummy_item.getCount()!=item.getCount())||(dummy_item.getSumm()!=item.getSumm())||(!dummy_item.getCodTovara().equals(item.getCodTovara())))
-                {
+                ItemShoppingList dummy_item = arrayShoppingList.get(item.getIndexPosition());
+                if ((dummy_item.getCount() != item.getCount()) || (dummy_item.getSumm() != item.getSumm()) || (!dummy_item.getCodTovara().equals(item.getCodTovara()))) {
 
-                    ArrayShoppingList.set(item.getIndexPosition(), item);
-                    UpdateScreen(item.getIndexPosition());
+                    arrayShoppingList.set(item.getIndexPosition(), item);
+                    updateScreen(item.getIndexPosition());
                 }
-            }else{
-                Add_TovarList(param);
+            } else {
+                addTovarList(param);
             }
-        }else {
-            Add_TovarList(param);
+        } else {
+            addTovarList(param);
         }
     }
 
     /**
      * Удаление товара в указанной позиции
+     *
      * @param param строка "сырых" данных
      */
-    public void DeletePosition_TovarList(String param){
+    public void deletePositionTovarList(String param) {
         ADD_DEBUG(param);
 
         int indexPosition = Integer.valueOf(param.substring(0, 2));//2
 
-        if (ArrayShoppingList.size()>0)
-        {
-            if((ArrayShoppingList.size()-1) >=indexPosition)
-            {
-                ArrayShoppingList.remove(indexPosition);
+        if (arrayShoppingList.size() > 0) {
+            if ((arrayShoppingList.size() - 1) >= indexPosition) {
+                arrayShoppingList.remove(indexPosition);
             }
-            UpdateScreen((ArrayShoppingList.size()>0)?ArrayShoppingList.size()-1:0);
+            updateScreen((arrayShoppingList.size() > 0) ? arrayShoppingList.size() - 1 : 0);
         }
-        Log.d(TAG, "DeletePosition_TovarList :"+indexPosition);
+        Log.d(TAG, "deletePositionTovarList :" + indexPosition);
     }
 
     /**
      * Пересчет суммы по списку товаров
      */
-    private void Update_TotalSumm()
-    {
-        TotalSumm = 0;
+    private void updateTotalSumm() {
+        totalSumm = 0;
 
-        for (int i = 0; i < ArrayShoppingList.size(); i++) {
-            ItemShoppingList selectedItem = ArrayShoppingList.get(i);
-            TotalSumm += selectedItem.getSumm();
+        for (int i = 0; i < arrayShoppingList.size(); i++) {
+            ItemShoppingList selectedItem = arrayShoppingList.get(i);
+            totalSumm += selectedItem.getSumm();
         }
 
         MainActivity.tv_TotalSumm.post(new Runnable() {
             public void run() {
-                MainActivity.tv_TotalSumm.setText(String.format("%.2f",(float)(((float)TotalSumm)/100)).replace(",","."));
+                MainActivity.tv_TotalSumm.setText(String.format("%.2f", (float) (((float) totalSumm) / 100)).replace(",", "."));
             }
         });
         MainActivity.textViewDEBUG.post(new Runnable() {
             public void run() {
-                MainActivity.textViewDEBUG.append("MSG_TS: "+TotalSumm + "\n");
+                MainActivity.textViewDEBUG.append("MSG_TS: " + totalSumm + "\n");
             }
         });
     }
@@ -218,96 +208,113 @@ public class ShoppingListWorker {
     /**
      * Пересчет количества товаров в списке
      */
-    private void Update_TotalCount()
-    {
-       MainActivity.tv_TotalCount.post(new Runnable() {
+    private void updateTotalCount() {
+        MainActivity.tv_TotalCount.post(new Runnable() {
             public void run() {
-                MainActivity.tv_TotalCount.setText((""+ArrayShoppingList.size()).replace(",","."));
+                MainActivity.tv_TotalCount.setText(("" + arrayShoppingList.size()).replace(",", "."));
             }
         });
         MainActivity.textViewDEBUG.post(new Runnable() {
             public void run() {
-                MainActivity.textViewDEBUG.append("MSG_TC: "+ArrayShoppingList.size() + "\n");
+                MainActivity.textViewDEBUG.append("MSG_TC: " + arrayShoppingList.size() + "\n");
             }
         });
 
 
-        if (MainActivity.listView.getCount()==0){
+        if (MainActivity.listView.getCount() == 0) {
             MainActivity.imageViewTovar.setVisibility(View.INVISIBLE);
-        }else
-        {
+        } else {
             MainActivity.imageViewTovar.setVisibility(View.VISIBLE);
         }
     }
 
-    private void ScrollToPosition(final int index){
-        if (needScroll_Queue.remainingCapacity()>0){
-            needScroll_Queue.add(index);
+    private void scrollToPosition(final int index) {
+        if (needScrollQueue.remainingCapacity() > 0) {
+            needScrollQueue.add(index);
         }
     }
 
 
     /**
      * Парсер данных с ResPos
-     * @param param  строка "сырых" данных
-     * @return  ItemShoppingList
+     *
+     * @param param строка "сырых" данных
+     * @return ItemShoppingList
      */
-    private ItemShoppingList ParseData(String param)
-    {
+    private ItemShoppingList ParseData(String param) {
         ItemShoppingList item = new ItemShoppingList();
-        try
-        {
+        try {
             int index = 0;
-            int next_separator = param.indexOf(SYMBOL_SEPARATOR,index);
-            if(next_separator<0) {item.setIndexPosition(-1); return item;}
+            int nextSeparator = param.indexOf(SYMBOL_SEPARATOR, index);
+            if (nextSeparator < 0) {
+                item.setIndexPosition(-1);
+                return item;
+            }
 
-            item.setIndexPosition(Integer.valueOf(param.substring(index, next_separator)));
-            index = next_separator+1;
+            item.setIndexPosition(Integer.valueOf(param.substring(index, nextSeparator)));
+            index = nextSeparator + 1;
 
             //код товара
-            next_separator = param.indexOf(SYMBOL_SEPARATOR,index);
-            if(next_separator<0) {item.setIndexPosition(-1); return item;}
+            nextSeparator = param.indexOf(SYMBOL_SEPARATOR, index);
+            if (nextSeparator < 0) {
+                item.setIndexPosition(-1);
+                return item;
+            }
 
-            item.setCodTovara(param.substring(index, next_separator));
-            index = next_separator+1;
+            item.setCodTovara(param.substring(index, nextSeparator));
+            index = nextSeparator + 1;
 
             //делимость
-            next_separator = param.indexOf(SYMBOL_SEPARATOR,index);
-            if(next_separator<0) {item.setIndexPosition(-1); return item;}
+            nextSeparator = param.indexOf(SYMBOL_SEPARATOR, index);
+            if (nextSeparator < 0) {
+                item.setIndexPosition(-1);
+                return item;
+            }
 
-            item.setDivisible(Integer.valueOf(param.substring(index, next_separator)));
-            index = next_separator+1;
+            item.setDivisible(Integer.valueOf(param.substring(index, nextSeparator)));
+            index = nextSeparator + 1;
 
             //количество
-            next_separator = param.indexOf(SYMBOL_SEPARATOR,index);
-            if(next_separator<0) {item.setIndexPosition(-1); return item;}
+            nextSeparator = param.indexOf(SYMBOL_SEPARATOR, index);
+            if (nextSeparator < 0) {
+                item.setIndexPosition(-1);
+                return item;
+            }
 
-            item.setCount(Long.valueOf(param.substring(index, next_separator)));
-            index = next_separator+1;
+            item.setCount(Long.valueOf(param.substring(index, nextSeparator)));
+            index = nextSeparator + 1;
 
             //цена
-            next_separator = param.indexOf(SYMBOL_SEPARATOR,index);
-            if(next_separator<0) {item.setIndexPosition(-1); return item;}
+            nextSeparator = param.indexOf(SYMBOL_SEPARATOR, index);
+            if (nextSeparator < 0) {
+                item.setIndexPosition(-1);
+                return item;
+            }
 
-            item.setPrice(Long.valueOf(param.substring(index, next_separator)));
-            index = next_separator+1;
+            item.setPrice(Long.valueOf(param.substring(index, nextSeparator)));
+            index = nextSeparator + 1;
 
             //Сумма
-            next_separator = param.indexOf(SYMBOL_SEPARATOR,index);
-            if(next_separator<0) {item.setIndexPosition(-1); return item;}
+            nextSeparator = param.indexOf(SYMBOL_SEPARATOR, index);
+            if (nextSeparator < 0) {
+                item.setIndexPosition(-1);
+                return item;
+            }
 
-            item.setSumm(Long.valueOf(param.substring(index, next_separator)));
-            index = next_separator+1;
+            item.setSumm(Long.valueOf(param.substring(index, nextSeparator)));
+            index = nextSeparator + 1;
 
             //Наименование
-            next_separator = param.indexOf(SYMBOL_SEPARATOR,index);
-            if(next_separator<0) {item.setIndexPosition(-1); return item;}
+            nextSeparator = param.indexOf(SYMBOL_SEPARATOR, index);
+            if (nextSeparator < 0) {
+                item.setIndexPosition(-1);
+                return item;
+            }
 
-            item.setNameTovara(param.substring(index, next_separator));
+            item.setNameTovara(param.substring(index, nextSeparator));
 
-        }catch (Exception e)
-        {
-            Log.e(TAG, "ERROR ParseData :"+e);
+        } catch (Exception e) {
+            Log.e(TAG, "ERROR ParseData :" + e);
         }
         return item;
     }
@@ -315,21 +322,18 @@ public class ShoppingListWorker {
     /**
      * Поток принимает события для скроллирования списка товара и установки изображения
      */
-    public void RunUpdateThread() {
+    public void runUpdateThread() {
 
-        Thread update_thread = new Thread(new Runnable() {
+        Thread updateThread = new Thread(new Runnable() {
             int indexScroll = 0;
-            @Override
-            public void run()
-            {
 
-                while(true)
-                {
-                    try
-                    {
-                        if (!needScroll_Queue.isEmpty())
-                        {
-                            indexScroll = needScroll_Queue.take();
+            @Override
+            public void run() {
+
+                while (true) {
+                    try {
+                        if (!needScrollQueue.isEmpty()) {
+                            indexScroll = needScrollQueue.take();
 
                             MainActivity.listView.post(new Runnable() {
                                 @Override
@@ -359,9 +363,8 @@ public class ShoppingListWorker {
 
                             }
 
-                            }else
-                        {
-                            if (MainActivity.listView.getSelectedItemPosition()!=indexScroll){
+                        } else {
+                            if (MainActivity.listView.getSelectedItemPosition() != indexScroll) {
                                 MainActivity.listView.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -378,24 +381,17 @@ public class ShoppingListWorker {
 
                     } catch (Exception e) {
 
-                        Log.e(TAG, "Exception:"+e);
+                        Log.e(TAG, "Exception:" + e);
 
                     }
                 }
-
-
-
             }
         });
-        update_thread.start();
+        updateThread.start();
     }
-
-
-
 
     public void showToast(String message) {
         Toast myToast = Toast.makeText(mContext, message, Toast.LENGTH_LONG);
         myToast.show();
     }
-
 }

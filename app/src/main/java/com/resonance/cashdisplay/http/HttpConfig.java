@@ -1,6 +1,6 @@
 package com.resonance.cashdisplay.http;
 
-public class http_Config {
+public class HttpConfig {
     private transient static final String TAG = "http_Config";
 
     public final int port = 8182;
@@ -9,19 +9,19 @@ public class http_Config {
     public String username = "admin";
     public String password = "admin";
 
-    private transient static http_Config instance;
+    private transient static HttpConfig instance;
 
-    private http_Config() { }
+    private HttpConfig() { }
 
-    public static http_Config get() {
+    public static HttpConfig get() {
         if (instance == null) {
-            final http_Config config = new http_Config();
+            final HttpConfig config = new HttpConfig();
             instance = config;
         }
         return instance;
     }
 
-    public http_Config save() {
+    public HttpConfig save() {
         return this;
     }
 

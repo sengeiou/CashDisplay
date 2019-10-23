@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -17,18 +16,15 @@ import com.koushikdutta.async.http.server.AsyncHttpServer;
 import com.koushikdutta.async.http.server.AsyncHttpServerRequest;
 import com.koushikdutta.async.http.server.AsyncHttpServerResponse;
 import com.koushikdutta.async.http.server.HttpServerRequestCallback;
-
 import com.resonance.cashdisplay.BuildConfig;
 import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.PreferenceParams;
 import com.resonance.cashdisplay.PreferencesValues;
-import com.resonance.cashdisplay.eth.Eth_Settings;
 import com.resonance.cashdisplay.eth.Modify_SU_Preferences;
 import com.resonance.cashdisplay.load.DownloadMedia;
 import com.resonance.cashdisplay.sound.Sound;
-import com.resonance.cashdisplay.web.StaticContentRestlet;
 import com.resonance.cashdisplay.web.WebStatus;
 
 import org.json.JSONException;
@@ -37,12 +33,12 @@ import org.json.JSONObject;
 import static com.resonance.cashdisplay.uart.UartWorker.UART_CHANGE_SETTINGS;
 import static com.resonance.cashdisplay.web.WebStatus.CLEAR_QUEUE_WEB_MESSAGE;
 
-public class http_Server {
+public class HttpServer {
 
     public static String HTTP_HALT_EVENT = "http_halt_event";
     private AsyncHttpServer mServer = null;
     private AsyncServer mAsyncServer = null;//new AsyncServer();
-    private http_Config http_config = null;
+    private HttpConfig http_config = null;
     public WebStatus webStatus;
     private static final String TAG = "http_Server";
     private final int STAT_IDLE = 0;
@@ -57,11 +53,11 @@ public class http_Server {
     private Context mContext;
     private int counttemp = 0;
 
-    public http_Server(Context context, WebStatus webstat)
-    {
+    public HttpServer(Context context, WebStatus webstat) {
+
         mContext = context;
         webStatus = webstat;
-       // createServerAsync();
+        // createServerAsync();
 
         final Thread t = new Thread() {
             @Override
@@ -80,14 +76,13 @@ public class http_Server {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(HTTP_HALT_EVENT);
         mContext.registerReceiver(httphaltEvent, intentFilter);
-
-}
+    }
 
     BroadcastReceiver httphaltEvent = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            if (counttemp>0)return;
+            if (counttemp > 0) return;
 
             counttemp++;
 
@@ -109,23 +104,22 @@ public class http_Server {
                 };
                 t.run();
             }
+        }
 
-        };
+        ;
     };
-
 
 
     private void createServerAsync() {
         if (mServer != null) {
             return;
         }
-        http_config = http_Config.get();
+        http_config = HttpConfig.get();
 
         mServer = new AsyncHttpServer();
         mServer.setContext(mContext);
         mAsyncServer = new AsyncServer();
         Log.w(TAG, "[!] Server created");
-
 
         mServer.get("/", LoginCallback);
         mServer.get("/getsettings", getSettingsCallback);
@@ -154,10 +148,10 @@ public class http_Server {
             Log.d(TAG, "** LoginCallback:" + request.getPath());
 
             final String path = remapPath(request.getPath());
-            Log.d(TAG, "** LoginCallback:" + request.getPath()+", path:"+path);
+            Log.d(TAG, "** LoginCallback:" + request.getPath() + ", path:" + path);
 
             response.getHeaders().set("Content-Type", ContentTypes.getInstance().getContentType(path));
-            response.send(html_Helper.loadPathAsString(path));
+            response.send(HtmlHelper.loadPathAsString(path));
 
         }
     };
@@ -170,7 +164,7 @@ public class http_Server {
             }
             Log.d(TAG, "** /getsettings:" + request.getPath());
             iCurStatus = STAT_LOAD_FILES;
-            iCurStatusMsg =  "Пiдключено";
+            iCurStatusMsg = "Пiдключено";
 
             try {
                 JSONObject requestBody = new JSONObject();
@@ -202,17 +196,15 @@ public class http_Server {
                 requestBody.put("def_background_img", prefValues.sDefaultBackGroundImage);
 
                 requestBody.put("time_slide_image", prefValues.sTimeSlideImage);
-                requestBody.put("option_video_slide", (prefValues.sVideoOrSlide==PreferenceParams._VIDEO?true:false));
+                requestBody.put("option_video_slide", (prefValues.sVideoOrSlide == PreferenceParams._VIDEO ? true : false));
 
-                requestBody.put("image_screen_shoppinglist", prefValues.Background_shoppingList);
-                requestBody.put("image_screen_cash_not_work", prefValues.Background_CashNotWork);
-                requestBody.put("image_screen_thanks", prefValues.Background_Thanks);
-
+                requestBody.put("image_screen_shoppinglist", prefValues.backgroundShoppingList);
+                requestBody.put("image_screen_cash_not_work", prefValues.backgroundCashNotWork);
+                requestBody.put("image_screen_thanks", prefValues.backgroundThanks);
 
                 Log.d(TAG, "Send JSON: " + requestBody.toString());
                 response.send(requestBody.toString());
                 System.gc();
-
             } catch (JSONException e) {
                 Log.e(TAG, "JSONException:" + e.getMessage());
             }
@@ -233,7 +225,6 @@ public class http_Server {
             PreferenceParams prefParams = new PreferenceParams();
             PreferencesValues prefValues = prefParams.getParameters();
             try {
-
                 JSONObject jsonObject = new JSONObject(requestBody.toString());
                 Log.d(TAG, "Save settings: " + jsonObject.toString());
 
@@ -267,31 +258,27 @@ public class http_Server {
                 prefValues.sProtocol = jsonObject.get("protocol").toString();
                 prefValues.sDefaultBackGroundImage = jsonObject.get("def_background_img").toString();
 
-
                 String tmpTimeSlideImg = jsonObject.get("time_slide_image").toString();
                 prefValues.sTimeSlideImage = Integer.parseInt(tmpTimeSlideImg.length() > 0 ? tmpTimeSlideImg : "10");
                 String tmpvideo_slide = jsonObject.get("option_video_slide").toString();
                 prefValues.sVideoOrSlide = (tmpvideo_slide.equals("true") ? PreferenceParams._VIDEO : PreferenceParams._SLIDE);
 
-                prefValues.Background_shoppingList = (String) jsonObject.get("image_screen_shoppinglist");
-                prefValues.Background_CashNotWork = (String) jsonObject.get("image_screen_cash_not_work");
-                prefValues.Background_Thanks = (String) jsonObject.get("image_screen_thanks");
+                prefValues.backgroundShoppingList = (String) jsonObject.get("image_screen_shoppinglist");
+                prefValues.backgroundCashNotWork = (String) jsonObject.get("image_screen_cash_not_work");
+                prefValues.backgroundThanks = (String) jsonObject.get("image_screen_thanks");
 
                 prefValues.sPathToScreenImg = (String) jsonObject.get("host_screen_img");
 
                 prefParams.setParameters(prefValues);
 
-
-                MainActivity.ethernetSettings.ApplyEthernetSettings();//контроль измененмя сетевых настроек
+                MainActivity.ethernetSettings.applyEthernetSettings();//контроль измененмя сетевых настроек
 
                 //сигнал на изменение настройки UART
                 Intent intent = new Intent(UART_CHANGE_SETTINGS);
-                MainActivity.mContext.sendBroadcast(intent);
+                MainActivity.context.sendBroadcast(intent);
                 intent = new Intent(MainActivity.CHANGE_SETTINGS);
-                MainActivity.mContext.sendBroadcast(intent);
+                MainActivity.context.sendBroadcast(intent);
                 iCurStatusMsg = "Збереження виконано ";
-
-
             } catch (JSONException e) {
                 Log.e(TAG, "JSONException: " + e.getMessage());
             }
@@ -310,16 +297,16 @@ public class http_Server {
                 JSONObject requestBody = new JSONObject();
 
                 requestBody.put("status", iCurStatus);
-                requestBody.put("CurStatusMsg", iCurStatusMsg );
+                requestBody.put("CurStatusMsg", iCurStatusMsg);
                 requestBody.put("lab_current_ver", BuildConfig.VERSION_CODE);
-                requestBody.put("sdcard_state", "<font color=\"blue\"><B>пам`ятi вiльно "+ ExtSDSource.getAvailableMemory_SD()+"</B></font> ");
+                requestBody.put("sdcard_state", "<font color=\"blue\"><B>пам`ятi вiльно " + ExtSDSource.getAvailableMemory_SD() + "</B></font> ");
 
                 Log.d(TAG, "send status : " + requestBody.toString());
 
                 response.send(requestBody.toString());
                 System.gc();
 
-                if (iCurStatus==STAT_SAVE){
+                if (iCurStatus == STAT_SAVE) {
                     iCurStatusMsg = "";
                     iCurStatus = STAT_IDLE;
                 }
@@ -327,8 +314,6 @@ public class http_Server {
                 Log.e(TAG, "JSONException:" + e.getMessage());
             }
         }
-
-        ;
     };
 
     private final HttpServerRequestCallback download_filesCallback = new HttpServerRequestCallback() {
@@ -341,9 +326,9 @@ public class http_Server {
             Log.d(TAG, "download_files...");
             iCurStatus = STAT_LOAD_FILES;
             MainActivity.downloadMedia.download();
-
         }
     };
+
     private final HttpServerRequestCallback start_remote_updateCallback = new HttpServerRequestCallback() {
 
         @Override
@@ -356,6 +341,7 @@ public class http_Server {
             MainActivity.updateFirmware.update();
         }
     };
+
     private final HttpServerRequestCallback start_rebootCallback = new HttpServerRequestCallback() {
 
         @Override
@@ -368,18 +354,14 @@ public class http_Server {
             Log.d(TAG, "set_start_reboot...");
             try {
                 Thread.sleep(3000);
-            }catch (InterruptedException e){};
-
-
-            Modify_SU_Preferences.executeCmd("reboot",2000);
+            } catch (InterruptedException e) {
+            }
+            Modify_SU_Preferences.executeCmd("reboot", 2000);
         }
     };
 
 
-
-
-    public void stop_http_server()
-    {
+    public void stop_http_server() {
 
         mServer.stop();
         mAsyncServer.stop();
@@ -405,21 +387,17 @@ public class http_Server {
         return true;
     }
 
-    private boolean isAuthenticated(final AsyncHttpServerRequest req)
-    {
+    private boolean isAuthenticated(final AsyncHttpServerRequest req) {
         final boolean isAuth = !http_config.useAuth;
         final String authHeader = req.getHeaders().get("Authorization");
 
-
-
-        if (!isAuth && !TextUtils.isEmpty(authHeader))
-        {
+        if (!isAuth && !TextUtils.isEmpty(authHeader)) {
 
             final String[] parts = new String(Base64.decode(authHeader.replace("Basic", "").trim(), Base64.DEFAULT)).split(":");
 
-           // Log.w(TAG, "isAuth:"+isAuth+" authHeader:"+authHeader+" parts[0]:"+parts[0]+" parts[1]:"+parts[1]);
+            // Log.w(TAG, "isAuth:"+isAuth+" authHeader:"+authHeader+" parts[0]:"+parts[0]+" parts[1]:"+parts[1]);
 
-            return  parts[0] != null
+            return parts[0] != null
                     && parts[1] != null
                     && parts[0].equals(http_config.username)
                     && parts[1].equals(http_config.password);
@@ -434,19 +412,18 @@ public class http_Server {
         return path;
     }
 
-    public synchronized void SendQueWebStatus(String str_msg, boolean clearQueue){
+    public synchronized void SendQueWebStatus(String str_msg, boolean clearQueue) {
         Message msg = new Message();
         msg.what = WebStatus.SEND_TO_QUEUE_WEB_MESSAGE;
         msg.obj = str_msg;
-        msg.arg1 = (clearQueue?CLEAR_QUEUE_WEB_MESSAGE:0);
+        msg.arg1 = (clearQueue ? CLEAR_QUEUE_WEB_MESSAGE : 0);
         msg.arg2 = 0;
         Handler h = webStatus.getWeb_message_handler();
-        if (h!=null)
+        if (h != null)
             webStatus.getWeb_message_handler().sendMessage(msg);
     }
 
-    private class createProducerConsumer extends Thread
-    {
+    private class createProducerConsumer extends Thread {
         @Override
         public void run() {
             super.run();
@@ -455,15 +432,14 @@ public class http_Server {
             while (!isInterrupted()) {
                 try {
                     String msg = "";
-                    if ((msg = webStatus.getStrStatus()).length()>0) {
+                    if ((msg = webStatus.getStrStatus()).length() > 0) {
 
                         iCurStatus = STAT_LOAD_FILES;
-                        iCurStatusMsg =  msg;
-                        Log.w(TAG, "Smb_messageQueue.take:"+iCurStatusMsg);
+                        iCurStatusMsg = msg;
+                        Log.w(TAG, "Smb_messageQueue.take:" + iCurStatusMsg);
 
 
-                    }else
-                    {
+                    } else {
                         Thread.sleep(300);
                     }
                 } catch (Exception e) {
@@ -472,6 +448,5 @@ public class http_Server {
             }
             Log.w(TAG, "***createProducerConsumer  stoped****");
         }
-    };
-
+    }
 }

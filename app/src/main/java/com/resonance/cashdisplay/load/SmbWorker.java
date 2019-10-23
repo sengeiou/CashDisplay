@@ -2,10 +2,6 @@ package com.resonance.cashdisplay.load;
 
 import android.content.Context;
 import android.os.AsyncTask;
-//import android.util.Log;
-
-
-//import com.resonance.FileOperation;
 
 import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.FileOperation;
@@ -38,6 +34,9 @@ import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_NOT_F
 import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_NOT_SUPPORT_PROTOCOL;
 import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR;
 import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_SUCCESSFULL;
+
+//import android.util.Log;
+//import com.resonance.FileOperation;
 
 
 
@@ -95,10 +94,10 @@ public class SmbWorker {
 
     private class SmbTask extends AsyncTask<HashMap<String , Object>, Void, Integer> {
 
-        downloadResult resultImg = new downloadResult();
-        downloadResult resultVideo = new downloadResult();
-        downloadResult resultSlide = new downloadResult();
-        downloadResult resultScreenImg = new downloadResult();
+        DownloadResult resultImg = new DownloadResult();
+        DownloadResult resultVideo = new DownloadResult();
+        DownloadResult resultSlide = new DownloadResult();
+        DownloadResult resultScreenImg = new DownloadResult();
 
         protected void onPreExecute() {
             super.onPreExecute();
@@ -279,9 +278,9 @@ public class SmbWorker {
         }
     }
 
-    private downloadResult HandlerFiles(String User, String Passw, String Host, String share, String source_folder, String destination_folder, String[] extension_files )
+    private DownloadResult HandlerFiles(String User, String Passw, String Host, String share, String source_folder, String destination_folder, String[] extension_files )
     {
-        downloadResult result = new downloadResult();
+        DownloadResult result = new DownloadResult();
         result.HasError = DOWNLOAD_RESULT_SUCCESSFULL;
 
         String  ConnectionStr = Host + (share.startsWith("/") ? "" : "/") + share + (source_folder.startsWith("/") ? "" : "/") + source_folder;
@@ -360,10 +359,10 @@ public class SmbWorker {
         return f;
     }
 
-    private downloadResult DownloadFromShareFolder(SmbFile smb,  String DestinationFolder,String[] extensionFile)
+    private DownloadResult DownloadFromShareFolder(SmbFile smb,  String DestinationFolder,String[] extensionFile)
     {
         String[] FilesAlreadyExists = null;//список файлов уже существующих
-        downloadResult dr = new downloadResult();
+        DownloadResult dr = new DownloadResult();
         dr.HasError = DOWNLOAD_RESULT_SUCCESSFULL;
         dr.CountFiles = 0;
         dr.CountSkiped= 0;
@@ -394,10 +393,10 @@ public class SmbWorker {
                     continue;
                 }
 
-                if (ExtSDSource.getAvailableMemory(MainActivity.mContext, ExtSDSource.DEFAULT_SD)<arr_smb_files[i].length())
+                if (ExtSDSource.getAvailableMemory(MainActivity.context, ExtSDSource.DEFAULT_SD)<arr_smb_files[i].length())
                 {
                     Log.e(TAG, "Not anougth memory");
-                    DownloadMedia.append_to_DownloadLog("Недостаточно памяти на SD карте: "+ExtSDSource.getAvailableMemory(MainActivity.mContext, ExtSDSource.DEFAULT_SD));
+                    DownloadMedia.append_to_DownloadLog("Недостаточно памяти на SD карте: "+ExtSDSource.getAvailableMemory(MainActivity.context, ExtSDSource.DEFAULT_SD));
                     dr.HasError = DOWNLOAD_RESULT_NOT_FREE_MEMORY;
                     break;
                 }

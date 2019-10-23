@@ -1,28 +1,25 @@
 package com.resonance.cashdisplay.slide_show;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
-import android.media.MediaFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.Size;
-//import android.util.Log;
 
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.PreferenceParams;
 
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-public class VideoSlideService{
+//import android.util.Log;
 
-    private Thread ThreadWatch = null;
+public class VideoSlideService {
+
+    private Thread threadWatch = null;
     private static boolean bResetTimeToPlay = false;
     private static boolean bNowPlay = false;
     private static boolean bEnableMediaPlay = false;
@@ -38,8 +35,7 @@ public class VideoSlideService{
     private static int seekVideoPosition = 0;
     private static String VideoFileToContinuePlay = "";
 
-
-    public VideoSlideService(Context context){
+    public VideoSlideService(Context context) {
 
         mContext = context;
         bResetTimeToPlay = false;
@@ -52,64 +48,55 @@ public class VideoSlideService{
         intentFilter.addAction(VIDEO_STOP_PLAY);
         intentFilter.addAction(VIDEO_SLIDE_ENABLE);
         mContext.registerReceiver(VideoSlideEvents, intentFilter);
-       // WatchVideoSlide();
-         Log.d(TAG, "VideoSlideService START");
+        // WatchVideoSlide();
+        Log.d(TAG, "VideoSlideService START");
 
-      //  MediaCodecInfo codecInfo = selectCodec("MIME");
-       // codecInfo.getName()
+        //  MediaCodecInfo codecInfo = selectCodec("MIME");
+        // codecInfo.getName()
     }
 
     BroadcastReceiver VideoSlideEvents = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-
-             if (intent.getAction().equals(VIDEO_SLIDE_CHANGE_SETTINGS)) {
-                 if (PreferenceParams.getParameters().sCheckEnableVideo)
-                 {
-
-                 }
-             }else if (intent.getAction().equals(VIDEO_SLIDE_RESET_TIME)) {
-                 bResetTimeToPlay = true;
+            if (intent.getAction().equals(VIDEO_SLIDE_CHANGE_SETTINGS)) {
+                if (PreferenceParams.getParameters().sCheckEnableVideo) {
+                }
+            } else if (intent.getAction().equals(VIDEO_SLIDE_RESET_TIME)) {
+                bResetTimeToPlay = true;
                 // bNowPlay = false;
-             }else if (intent.getAction().equals(VIDEO_STOP_PLAY)) {
-                 //сохраним данные для восстановления воспроизведения видео
-                 Bundle mBundle = intent.getExtras();
-                 seekVideoPosition = mBundle.getInt("seekVideoPosition", 0);
-                 VideoFileToContinuePlay = mBundle.getString("VideoFileToContinuePlay", "");
-                 bNowPlay = false;
-             }else if (intent.getAction().equals(SLIDE_STOP_PLAY)) {
-                 bNowPlay = false;
-             }else if (intent.getAction().equals(VIDEO_SLIDE_ENABLE)) {
-                 Bundle mBundle = intent.getExtras();
-                 bEnableMediaPlay = mBundle.getBoolean("enable_video_slide", true);
-                 Log.d(TAG, "enable_video_slide: "+bEnableMediaPlay);
-                 if (bEnableMediaPlay)
-                     WatchVideoSlide();
-             }
-
-        };
+            } else if (intent.getAction().equals(VIDEO_STOP_PLAY)) {
+                //сохраним данные для восстановления воспроизведения видео
+                Bundle mBundle = intent.getExtras();
+                seekVideoPosition = mBundle.getInt("seekVideoPosition", 0);
+                VideoFileToContinuePlay = mBundle.getString("VideoFileToContinuePlay", "");
+                bNowPlay = false;
+            } else if (intent.getAction().equals(SLIDE_STOP_PLAY)) {
+                bNowPlay = false;
+            } else if (intent.getAction().equals(VIDEO_SLIDE_ENABLE)) {
+                Bundle mBundle = intent.getExtras();
+                bEnableMediaPlay = mBundle.getBoolean("enable_video_slide", true);
+                Log.d(TAG, "enable_video_slide: " + bEnableMediaPlay);
+                if (bEnableMediaPlay)
+                    watchVideoSlide();
+            }
+        }
     };
 
 
+    private void watchVideoSlide() {
 
-
-    private void WatchVideoSlide() {
-
-       ThreadWatch = new Thread(new Runnable(){
+        threadWatch = new Thread(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 // Log.d(TAG, "WatchVideoSlide start");
                 int CurrentSourceForPlay = PreferenceParams.getParameters().sVideoOrSlide;
                 long StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
 
-                while(bEnableMediaPlay)
-                {
-
+                while (bEnableMediaPlay) {
 
                     if (!bEnableMediaPlay && bNowPlay) {
-                        FinishSlideAndVideoPlay();
+                        finishSlideAndVideoPlay();
                         Log.d(TAG, "#######2 ");
                         bNowPlay = false;
                         bResetTimeToPlay = false;
@@ -117,14 +104,13 @@ public class VideoSlideService{
                         continue;
                     }
 
-                    if (!PreferenceParams.getParameters().sCheckEnableVideo)
-                    {
-                        if (bNowPlay){
-                            FinishSlideAndVideoPlay();
+                    if (!PreferenceParams.getParameters().sCheckEnableVideo) {
+                        if (bNowPlay) {
+                            finishSlideAndVideoPlay();
                             bNowPlay = false;
                             bResetTimeToPlay = false;
                         }
-                       // Log.d(TAG, "#######2,1 ");
+                        // Log.d(TAG, "#######2,1 ");
                         try {
                             Thread.sleep(2000);
                         } catch (InterruptedException e) {
@@ -134,50 +120,47 @@ public class VideoSlideService{
                         continue;
                     }
 
-                    while (StopTime > System.nanoTime())
-                    {
+                    while (StopTime > System.nanoTime()) {
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                       // Log.d(TAG, "----#3,1");
+                        // Log.d(TAG, "----#3,1");
                         //сброс таймера воспроизведения
                         if (bResetTimeToPlay) {
                             bResetTimeToPlay = false;
                             Log.d(TAG, "bResetTimeToPlay ");
-                            FinishSlideAndVideoPlay();
+                            finishSlideAndVideoPlay();
                             StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
                         }
-                        if (!bEnableMediaPlay){
+                        if (!bEnableMediaPlay) {
                             bResetTimeToPlay = false;
                             Log.d(TAG, "bEnableMediaPlay is false");
-                            FinishSlideAndVideoPlay();
+                            finishSlideAndVideoPlay();
                             break;
                         }
                         if (PreferenceParams.getParameters().sVideoOrSlide != CurrentSourceForPlay) {
-                          //  Log.d(TAG, "----#3,2");
+                            //  Log.d(TAG, "----#3,2");
                             StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
-                           // Log.d(TAG, "#######1 ");
-                            FinishSlideAndVideoPlay();
-                            bResetTimeToPlay=false;
+                            // Log.d(TAG, "#######1 ");
+                            finishSlideAndVideoPlay();
+                            bResetTimeToPlay = false;
                             bNowPlay = false;
                             break;
                         }
-                       // Log.d(TAG, "----#4");
+                        // Log.d(TAG, "----#4");
                     }
                     //Log.d(TAG, "----#4,1");
-                    if (!PreferenceParams.getParameters().sCheckEnableVideo||!bEnableMediaPlay) {
+                    if (!PreferenceParams.getParameters().sCheckEnableVideo || !bEnableMediaPlay) {
                         StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
                         continue;
                     }
                     //Log.d(TAG, "----#5");
-                    if (!bNowPlay)
-                    {
-                      //  Log.d(TAG, "----#6");
-                      //  Log.d(TAG, "воспроизведение видео");
-                        if (PreferenceParams.getParameters().sVideoOrSlide == PreferenceParams._VIDEO)
-                        {
+                    if (!bNowPlay) {
+                        //  Log.d(TAG, "----#6");
+                        //  Log.d(TAG, "воспроизведение видео");
+                        if (PreferenceParams.getParameters().sVideoOrSlide == PreferenceParams._VIDEO) {
                             CurrentSourceForPlay = PreferenceParams._VIDEO;
                             //старт Видео
                             Handler handler = new Handler(Looper.getMainLooper());
@@ -208,14 +191,13 @@ public class VideoSlideService{
                             bNowPlay = true;
                         }
                     } else {
-                       // Log.d(TAG, "----#8");
-                        if (PreferenceParams.getParameters().sVideoOrSlide != CurrentSourceForPlay)
-                        {
-                         //   Log.d(TAG, "----#9");
+                        // Log.d(TAG, "----#8");
+                        if (PreferenceParams.getParameters().sVideoOrSlide != CurrentSourceForPlay) {
+                            //   Log.d(TAG, "----#9");
                             CurrentSourceForPlay = -1;
                             bNowPlay = false;
                             Log.d(TAG, "*** остановлено текущее проигрывание");
-                            FinishSlideAndVideoPlay();
+                            finishSlideAndVideoPlay();
                             //bResetTimeToPlay=false;
                             StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
                             continue;
@@ -225,19 +207,19 @@ public class VideoSlideService{
                 }
             }
         });
-        ThreadWatch.start();
+        threadWatch.start();
     }
 
-    private void FinishSlideAndVideoPlay(){
+    private void finishSlideAndVideoPlay() {
         Log.w(TAG, "FinishSlideAndVideoPlay...");
         Intent intent = new Intent(SlideViewActivity.FINISH_ALERT);
         mContext.sendBroadcast(intent);
         bNowPlay = false;
     }
 
-    private  MediaCodecInfo selectCodec(String mimeType) {
+    private MediaCodecInfo selectCodec(String mimeType) {
         int numCodecs = MediaCodecList.getCodecCount();
-       // Log.d(TAG, "MediaCodec count :"+numCodecs);
+        // Log.d(TAG, "MediaCodec count :"+numCodecs);
 
         for (int i = 0; i < numCodecs; i++) {
             MediaCodecInfo codecInfo = MediaCodecList.getCodecInfoAt(i);
@@ -246,21 +228,20 @@ public class VideoSlideService{
                 continue;
             }
 
-           // MediaCodecInfo.CodecCapabilities cap = codecInfo.getCapabilitiesForType(MediaFormat.MIMETYPE_VIDEO_AVC);
+            // MediaCodecInfo.CodecCapabilities cap = codecInfo.getCapabilitiesForType(MediaFormat.MIMETYPE_VIDEO_AVC);
 
             String[] types = codecInfo.getSupportedTypes();
             for (int j = 0; j < types.length; j++) {
                 if (types[j].contains("video/"))
-                 Log.d(TAG, "codec: "+codecInfo.getName()+", type:"+types[j]);
+                    Log.d(TAG, "codec: " + codecInfo.getName() + ", type:" + types[j]);
 
 
-               // if (types[j].equalsIgnoreCase() {
-                  //  Log.d(TAG, "codecInfo:"+codecInfo.getName()+" is encoder:"+codecInfo.isEncoder());
-                  //  return codecInfo;
-               // }
+                // if (types[j].equalsIgnoreCase() {
+                //  Log.d(TAG, "codecInfo:"+codecInfo.getName()+" is encoder:"+codecInfo.isEncoder());
+                //  return codecInfo;
+                // }
             }
         }
         return null;
     }
-
- }
+}

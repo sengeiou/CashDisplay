@@ -43,8 +43,8 @@ android {
         applicationId "com.resonance.cashdisplay"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 43
-        versionName "6.3.0"
+        versionCode 44
+        versionName "6.4.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         externalNativeBuild {
@@ -82,6 +82,7 @@ android {
             versionNameSuffix "-debug"
 
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
 
         }
     }

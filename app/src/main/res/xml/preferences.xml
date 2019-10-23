@@ -121,7 +121,6 @@
                     android:targetPackage="com.resonance.cashdisplay"/-->
                     <!--android:targetClass="com.resonance.cashdisplay.LoadDataActivity"-->
 
-
             </Preference>
             <CheckBoxPreference
                 android:title="Загружать(обновлять) данные при старте приложения"
@@ -202,7 +201,5 @@
             android:defaultValue=""
             android:key="folderForImages" />
 </PreferenceCategory>
-
-
 
 </PreferenceScreen>

@@ -26,9 +26,9 @@ public class PreferencesValues {
     public boolean sShowNavigationBar;//показывать строку навигации
     public int sTimeSlideImage;
     public int sVideoOrSlide;
-    public String Background_shoppingList;
-    public String Background_CashNotWork;
-    public String Background_Thanks;
-    public String ImageLogo;
+    public String backgroundShoppingList;
+    public String backgroundCashNotWork;
+    public String backgroundThanks;
+    public String imageLogo;
 
 }

@@ -1,19 +1,15 @@
 package com.resonance.cashdisplay;
 
 import android.content.SharedPreferences;
+
 //import android.util.Log;
-
-import java.util.concurrent.BlockingQueue;
-
-import static com.resonance.cashdisplay.uart.UartWorker.SERIAL_PORT_ARR;
 
 /**
  * Created by Святослав on 11.05.2016.
  */
 public class PreferenceParams {
 
-
-    private static final String SERIALIZER_KEY = "ce.serilizer";
+    private static final String SERIALIZER_KEY = "ce.serializer";
     public static int _SMB1 = 0;
     public static int _SMB2 = 1;
     public static int _FTP = 2;
@@ -21,21 +17,18 @@ public class PreferenceParams {
     public static int _VIDEO = 0;
     public static int _SLIDE = 1;
 
-
     public static final int MIN_VIDEO_TIMEOUT = 10;
     public static final int MIN_SLIDE_TIME_SHOW = 1;
     public static final String[] DEF_PROTOCOL = new String[]{"SMB1","SMB2","FTP"};
     public static final String[] DEF_UARTS = new String[]{"EKKR","PC"};
-
 
     public PreferenceParams() {
        // sharedPreferences = MainActivity.mContext.getSharedPreferences(SERIALIZER_KEY, MainActivity.mContext.MODE_PRIVATE);
     }
 
     public  synchronized static PreferencesValues getParameters() {
-        SharedPreferences sharedPreferences = MainActivity.mContext.getSharedPreferences(SERIALIZER_KEY, MainActivity.mContext.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences(SERIALIZER_KEY, MainActivity.context.MODE_PRIVATE);
         PreferencesValues params = new PreferencesValues();
-
 
         params.sUartName = sharedPreferences.getString("sUartName", DEF_UARTS[0]);
         params.sSmbHost = sharedPreferences.getString("sSmbHost", "server");
@@ -62,9 +55,9 @@ public class PreferenceParams {
         params.sTimeSlideImage = sharedPreferences.getInt("sTimeSlideImage", 10);
         params.sVideoOrSlide = sharedPreferences.getInt("sVideoOrSlide", _VIDEO);
 
-        params.Background_shoppingList = sharedPreferences.getString("Background_shoppingList", "default background picture.png");
-        params.Background_CashNotWork = sharedPreferences.getString("Background_CashNotWork", "default background picture.png");
-        params.Background_Thanks = sharedPreferences.getString("Background_Thanks", "default background picture.png");
+        params.backgroundShoppingList = sharedPreferences.getString("background_shopping_list", "default background picture.png");
+        params.backgroundCashNotWork = sharedPreferences.getString("background_cash_not_work", "default background picture.png");
+        params.backgroundThanks = sharedPreferences.getString("background_thanks", "default background picture.png");
 
         params.sPathToScreenImg = sharedPreferences.getString("sPathToScreenImg", "/indi10/ScreenImg/");
 
@@ -72,7 +65,7 @@ public class PreferenceParams {
     }
 
     public synchronized static void setParameters(PreferencesValues parameters) {
-        SharedPreferences sharedPreferences = MainActivity.mContext.getSharedPreferences(SERIALIZER_KEY, MainActivity.mContext.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences(SERIALIZER_KEY, MainActivity.context.MODE_PRIVATE);
 
         sharedPreferences.edit().putString("sUartName", parameters.sUartName).apply();
         sharedPreferences.edit().putString("sSmbHost", parameters.sSmbHost).apply();
@@ -92,7 +85,6 @@ public class PreferenceParams {
         sharedPreferences.edit().putBoolean("sDownloadAtStart", parameters.sDownloadAtStart).apply();
         sharedPreferences.edit().putInt("sPercentVolume", parameters.sPercentVolume).apply();
 
-
         sharedPreferences.edit().putString("sIP", parameters.sIP).apply();;
         sharedPreferences.edit().putString("sMask", parameters.sMask).apply();;
         sharedPreferences.edit().putString("sGW", parameters.sGW).apply();
@@ -110,13 +102,9 @@ public class PreferenceParams {
 
         sharedPreferences.edit().putInt("sVideoOrSlide", parameters.sVideoOrSlide).apply();
 
-        sharedPreferences.edit().putString("Background_shoppingList", parameters.Background_shoppingList).apply();
-        sharedPreferences.edit().putString("Background_CashNotWork", parameters.Background_CashNotWork).apply();
-        sharedPreferences.edit().putString("Background_Thanks", parameters.Background_Thanks).apply();
+        sharedPreferences.edit().putString("background_shopping_list", parameters.backgroundShoppingList).apply();
+        sharedPreferences.edit().putString("background_cash_not_work", parameters.backgroundCashNotWork).apply();
+        sharedPreferences.edit().putString("background_thanks", parameters.backgroundThanks).apply();
         sharedPreferences.edit().putString("sPathToScreenImg", parameters.sPathToScreenImg).apply();
-
-
-
-
     }
 }

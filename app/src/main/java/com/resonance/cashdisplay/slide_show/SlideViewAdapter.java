@@ -4,19 +4,20 @@ package com.resonance.cashdisplay.slide_show;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
-//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 
-import com.resonance.cashdisplay.utils.ImageUtils;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.R;
+import com.resonance.cashdisplay.utils.ImageUtils;
 
 import java.io.File;
 import java.util.List;
+
+//import android.util.Log;
 
 public class SlideViewAdapter extends RecyclerView.Adapter<SlideViewAdapter.SlideViewHolder> {
 
@@ -61,7 +62,7 @@ public class SlideViewAdapter extends RecyclerView.Adapter<SlideViewAdapter.Slid
            // setFadeAnimation(holder.itemView);
         }else
         {
-            Bitmap bm = ImageUtils.resizeBitmap(BitmapFactory.decodeResource(MainActivity.mContext.getResources(), R.drawable.noimagefound), MainActivity.sizeScreen.x, MainActivity.sizeScreen.y, ImageUtils.RequestSizeOptions.RESIZE_FIT);
+            Bitmap bm = ImageUtils.resizeBitmap(BitmapFactory.decodeResource(MainActivity.context.getResources(), R.drawable.noimagefound), MainActivity.sizeScreen.x, MainActivity.sizeScreen.y, ImageUtils.RequestSizeOptions.RESIZE_FIT);
             holder.slideImage.setImageBitmap(bm);
             moviesList.clear();
         }

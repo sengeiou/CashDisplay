@@ -20,7 +20,6 @@ package com.resonance.cashdisplay.uart;
 
 import com.resonance.cashdisplay.Log;
 
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -54,7 +53,6 @@ public class SerialPort {
     private FileDescriptor mFd;
     private FileInputStream mFileInputStream;
     private FileOutputStream mFileOutputStream;
-
 
    /*
     * Конструкторы класса

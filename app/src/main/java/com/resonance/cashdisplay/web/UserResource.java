@@ -1,14 +1,10 @@
 package com.resonance.cashdisplay.web;
 
 import android.content.res.Resources;
-//import android.util.Log;
 
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
 
-import org.restlet.Request;
-import org.restlet.Response;
-import org.restlet.data.Status;
 import org.restlet.representation.EmptyRepresentation;
 import org.restlet.representation.InputRepresentation;
 import org.restlet.representation.Representation;
@@ -16,6 +12,8 @@ import org.restlet.resource.ServerResource;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+//import android.util.Log;
 
 public class UserResource extends ServerResource {
 
@@ -61,7 +59,7 @@ public class UserResource extends ServerResource {
 
     public Representation readStaticFile(String fileName) throws Resources.NotFoundException, IOException
     {
-        InputStream is = MainActivity.mContext.getAssets().open(fileName);
+        InputStream is = MainActivity.context.getAssets().open(fileName);
         Representation representation = new InputRepresentation(is);
         return representation;
     }

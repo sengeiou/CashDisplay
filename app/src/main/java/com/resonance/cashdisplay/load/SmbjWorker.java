@@ -2,7 +2,6 @@ package com.resonance.cashdisplay.load;
 
 import android.content.Context;
 import android.os.AsyncTask;
-//import android.util.Log;
 
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
@@ -21,7 +20,6 @@ import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.R;
-
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -47,6 +45,8 @@ import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_NOT_F
 import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_NOT_SUPPORT_PROTOCOL;
 import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR;
 import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_SUCCESSFULL;
+
+//import android.util.Log;
 
 
 
@@ -108,10 +108,10 @@ public class SmbjWorker {
 
     private class SmbjTask extends AsyncTask<HashMap<String , Object>, Void, Integer> {
 
-        downloadResult resultImg = new downloadResult();
-        downloadResult resultVideo = new downloadResult();
-        downloadResult resultSlide = new downloadResult();
-        downloadResult resultScreenImg = new downloadResult();
+        DownloadResult resultImg = new DownloadResult();
+        DownloadResult resultVideo = new DownloadResult();
+        DownloadResult resultSlide = new DownloadResult();
+        DownloadResult resultScreenImg = new DownloadResult();
 
 
         protected void onPreExecute() {
@@ -338,10 +338,10 @@ public class SmbjWorker {
     // Загрузка файлов
     // Удаление ненужных файлов
     //
-    private downloadResult HandlerFiles(Session session, String share_folder, String source_folder, String destination_folder, String[] extension_files)
+    private DownloadResult HandlerFiles(Session session, String share_folder, String source_folder, String destination_folder, String[] extension_files)
     {
 
-        downloadResult downloadResult = new downloadResult();
+        DownloadResult downloadResult = new DownloadResult();
         downloadResult.HasError = DOWNLOAD_RESULT_SUCCESSFULL;
         downloadResult.CountFiles = 0;
         downloadResult.CountSkiped = 0;
@@ -363,7 +363,7 @@ public class SmbjWorker {
             {
 
                 for (int i = 0; i < extension_files.length; i++) {
-                    downloadResult tmpresultImg = DownloadFromShareFolder(share, source_folder, extension_files[i], destination_folder);
+                    DownloadResult tmpresultImg = DownloadFromShareFolder(share, source_folder, extension_files[i], destination_folder);
                     downloadResult.CountFiles+= tmpresultImg.CountFiles;
                     downloadResult.HasError = tmpresultImg.HasError;
                     Log.d(TAG, "IMG Загружено:  " + downloadResult.CountFiles + " ext:" + extension_files[i]);
@@ -392,9 +392,9 @@ public class SmbjWorker {
         return downloadResult;
     }
 
-    private downloadResult DownloadFromShareFolder(DiskShare share, String shareSourceFolder, String file_search_pattern, String DestinationFolder )
+    private DownloadResult DownloadFromShareFolder(DiskShare share, String shareSourceFolder, String file_search_pattern, String DestinationFolder )
     {
-        downloadResult dr = new downloadResult();
+        DownloadResult dr = new DownloadResult();
         dr.HasError = 0;
         dr.CountFiles = 0;
         dr.CountSkiped = 0;
@@ -417,10 +417,10 @@ public class SmbjWorker {
             if (ListFilesAlreadyExists.contains(f.getFileName()))
                 ListFilesAlreadyExists.remove(f.getFileName());
 
-            if (ExtSDSource.getAvailableMemory(MainActivity.mContext, ExtSDSource.DEFAULT_SD)<size)
+            if (ExtSDSource.getAvailableMemory(MainActivity.context, ExtSDSource.DEFAULT_SD)<size)
             {
                 Log.e(TAG, "Not enough memory");
-                DownloadMedia.append_to_DownloadLog("ОШИБКА, недостаточно места на SD карте: "+ExtSDSource.getAvailableMemory(MainActivity.mContext, ExtSDSource.DEFAULT_SD));
+                DownloadMedia.append_to_DownloadLog("ОШИБКА, недостаточно места на SD карте: "+ExtSDSource.getAvailableMemory(MainActivity.context, ExtSDSource.DEFAULT_SD));
                 dr.HasError = DOWNLOAD_RESULT_NOT_FREE_MEMORY;
                 break;
             }

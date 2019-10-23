@@ -5,34 +5,22 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-//import android.util.Log;
-import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-//import com.resonance.FileOperation;
 import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.FileOperation;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.PreferenceParams;
-import com.resonance.cashdisplay.PreferencesValues;
 import com.resonance.cashdisplay.R;
 
 import java.io.File;
@@ -40,8 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-
 import static com.resonance.cashdisplay.load.DownloadMedia.SLIDE_URI;
+
+//import android.util.Log;
+//import com.resonance.FileOperation;
 
 
 /**
@@ -189,7 +179,7 @@ public class SlideViewActivity extends AppCompatActivity {
     }
     public void StopSlideShow(){
         Intent intent = new Intent(VideoSlideService.SLIDE_STOP_PLAY);
-        MainActivity.mContext.sendBroadcast(intent);
+        MainActivity.context.sendBroadcast(intent);
 
         Log.i(TAG, "StopSlideShow ");
         bShowSlide = false;

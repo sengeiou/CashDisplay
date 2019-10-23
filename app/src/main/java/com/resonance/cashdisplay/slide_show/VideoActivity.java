@@ -7,17 +7,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
-//import android.util.Log;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-//import com.resonance.FileOperation;
 import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.FileOperation;
 import com.resonance.cashdisplay.Log;
@@ -28,6 +26,9 @@ import com.resonance.cashdisplay.load.DownloadMedia;
 import java.io.File;
 
 import static com.resonance.cashdisplay.slide_show.SlideViewActivity.FINISH_ALERT;
+
+//import android.util.Log;
+//import com.resonance.FileOperation;
 
 
 public class VideoActivity extends AppCompatActivity {
@@ -264,7 +265,7 @@ public class VideoActivity extends AppCompatActivity {
                 mBundle.putInt("seekVideoPosition", seekVideoPosition);
                 mBundle.putString("VideoFileToContinuePlay", ((videoFilesArray!=null)?(videoFilesArray.length>0?videoFilesArray[indexPlaingFile]:""):""));
                 intent.putExtras(mBundle);
-                MainActivity.mContext.sendBroadcast(intent);
+                MainActivity.context.sendBroadcast(intent);
 
         }
         this.finish();

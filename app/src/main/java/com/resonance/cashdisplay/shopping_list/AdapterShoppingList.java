@@ -11,13 +11,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.resonance.cashdisplay.ExtSDSource;
-import com.resonance.cashdisplay.utils.ImageUtils;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.PreferenceParams;
 import com.resonance.cashdisplay.PreferencesValues;
 import com.resonance.cashdisplay.R;
 import com.resonance.cashdisplay.load.DownloadMedia;
+import com.resonance.cashdisplay.utils.ImageUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,7 +29,6 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
     private ArrayList<ItemShoppingList> dataSet;
     Context mContext;
     boolean inverse = false;
-
 
 
     private class ViewHolder {
@@ -50,9 +49,8 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
 
     @Override
     public void onClick(View v) {
-         Log.d(TAG,"onClick :+position");
+        Log.d(TAG, "onClick :+position");
     }
-
 
 
     @Override
@@ -83,13 +81,12 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
         }
 
 
-        viewHolder.textview_npp.setText(""+(position+1));
+        viewHolder.textview_npp.setText("" + (position + 1));
         viewHolder.textview_tovar.setText(dataModel.getNameTovara());
-        viewHolder.textview_Count.setText(((dataModel.getDivisible()==1)?( String.format("%.03f",(float)dataModel.getCount()/1000)):""+dataModel.getCount()).replace(",","."));
-        viewHolder.textview_Price.setText( String.format("%.02f", (float)((float)dataModel.getPrice()/100)).replace(",","."));
-        viewHolder.textview_Summ.setText(String.format("%.02f", (float)((float)dataModel.getSumm()/100)).replace(",","."));
+        viewHolder.textview_Count.setText(((dataModel.getDivisible() == 1) ? (String.format("%.03f", (float) dataModel.getCount() / 1000)) : "" + dataModel.getCount()).replace(",", "."));
+        viewHolder.textview_Price.setText(String.format("%.02f", (float) ((float) dataModel.getPrice() / 100)).replace(",", "."));
+        viewHolder.textview_Summ.setText(String.format("%.02f", (float) ((float) dataModel.getSumm() / 100)).replace(",", "."));
         viewHolder.textview_tovar.setTag(position);
-
 
 
         return convertView;
@@ -97,39 +94,35 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
 
     /**
      * Получение изображения товара по коду товара из файлолвого хранилища
-     * @param CodProduct
+     *
+     * @param codeProduct
      * @return
      */
-    public static Bitmap getImage(String CodProduct) {
+    public static Bitmap getImage(String codeProduct) {
 
-
-
-        String filepath = ExtSDSource.getExternalSdCardPath()+DownloadMedia.IMG_URI + CodProduct + ".png";//Изображение товара
+        String filepath = ExtSDSource.getExternalSdCardPath() + DownloadMedia.IMG_URI + codeProduct + ".png";//Изображение товара
         File fileImg = new File(filepath);
 
         if (fileImg.exists()) {// PNG
             return ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
-
         } else {         //JPG
-
-            filepath = ExtSDSource.getExternalSdCardPath()+DownloadMedia.IMG_URI + CodProduct + ".jpg";//Изображение товара
+            filepath = ExtSDSource.getExternalSdCardPath() + DownloadMedia.IMG_URI + codeProduct + ".jpg";//Изображение товара
             fileImg = new File(filepath);
             if (fileImg.exists()) {
                 return ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
             } else {
                 //покажем изображение по-умолчанию
                 PreferencesValues prefValues = PreferenceParams.getParameters();
-                filepath = ExtSDSource.getExternalSdCardPath()+DownloadMedia.IMG_SCREEN  + ((prefValues.sDefaultBackGroundImage.length()>0)?prefValues.sDefaultBackGroundImage:"noimg");
+                filepath = ExtSDSource.getExternalSdCardPath() + DownloadMedia.IMG_SCREEN + ((prefValues.sDefaultBackGroundImage.length() > 0) ? prefValues.sDefaultBackGroundImage : "noimg");
                 fileImg = new File(filepath);
 
                 if (fileImg.exists()) {
                     return ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
                 } else {
-                    return BitmapFactory.decodeResource(MainActivity.mContext.getResources(), R.drawable.noimagefound);
+                    return BitmapFactory.decodeResource(MainActivity.context.getResources(), R.drawable.noimagefound);
                 }
             }
         }
-
     }
 }
 

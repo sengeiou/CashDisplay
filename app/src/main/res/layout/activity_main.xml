@@ -214,7 +214,6 @@
             android:scrollbars="vertical"
             android:visibility="invisible">
 
-
             <TextView
                 android:id="@+id/textViewDEBUG"
                 android:layout_width="match_parent"

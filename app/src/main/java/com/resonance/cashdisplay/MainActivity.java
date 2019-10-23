@@ -11,56 +11,39 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
-
 import android.graphics.Point;
-
-
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-
-//import android.util.Log;
-
 import android.text.method.ScrollingMovementMethod;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-
-import java.io.File;
-
 
 import com.resonance.cashdisplay.databinding.ActivityMainBinding;
-
-
-import com.resonance.cashdisplay.eth.Eth_Settings;
+import com.resonance.cashdisplay.eth.EthernetSettings;
 import com.resonance.cashdisplay.eth.Modify_SU_Preferences;
-import com.resonance.cashdisplay.http.http_Server;
+import com.resonance.cashdisplay.http.HttpServer;
 import com.resonance.cashdisplay.load.DownloadMedia;
-
 import com.resonance.cashdisplay.shopping_list.ShoppingListWorker;
 import com.resonance.cashdisplay.slide_show.VideoSlideService;
 import com.resonance.cashdisplay.sound.Sound;
-import com.resonance.cashdisplay.su.RunTimeFunc;
 import com.resonance.cashdisplay.uart.UartWorker;
 import com.resonance.cashdisplay.utils.ImageUtils;
 import com.resonance.cashdisplay.web.WebStatus;
 
+import java.io.File;
 
-import static com.resonance.cashdisplay.uart.UartWorker.ACTION_UART_OPEN;
+//import android.util.Log;
 
 public class MainActivity extends Activity {
 
@@ -69,9 +52,7 @@ public class MainActivity extends Activity {
     public static final int CONTEXT_THANKS = 1;         //слой спасибо
     public static final int CONTEXT_SHOPPING_LIST = 2;  //Слой список товаров
 
-
     public static String CHANGE_SETTINGS = "change_settings";
-
 
     public static final int MSG_ADD_TOVAR_SHOPPING_LIST = 34;
     public static final int MSG_SET_TOVAR_SHOPPING_LIST = 35;
@@ -82,31 +63,28 @@ public class MainActivity extends Activity {
     public static final int MSG_SET_SCREEN_THANKS = 40;
     public static final int MSG_FROM_EKKR = 41;
 
-
     public static PreferencesValues preferenceParams;       //настройки
     private static UartWorker uartWorker;                   //обработчик UART
     public static WebStatus webStatus = null;               //канал передачи сообщений для браузера
-    public static http_Server httpServer = null;            //http сервер
+    public static HttpServer httpServer = null;            //http сервер
     private CommandParser cmdParser;                        //класс обработки команд и данных
     private VideoSlideService videoSlideService;            //класс управления медиа
     private Sound sound;                                    //звук
-    private static  ShoppingListWorker shoppingListWorker;  //обслуживание списка товаров
+    private static ShoppingListWorker shoppingListWorker;  //обслуживание списка товаров
     ProductInfo productInfo;
-    public static Eth_Settings ethernetSettings = null;     //Настройка сети
+    public static EthernetSettings ethernetSettings = null;     //Настройка сети
     public static DownloadMedia downloadMedia;
     //обновление прошивки
     public static UpdateFirmware updateFirmware = null;     //обновление ПО
 
     private static Modify_SU_Preferences su_preferences;
 
-    public static Context mContext;
-    private static RelativeLayout[] rlay;
+    public static Context context;
+    private static RelativeLayout[] relativeLayout;
     public static Point sizeScreen;
 
-
     private static ImageView imageSdCardError;
-    private static boolean LanSetupAlready = false;
-
+    private static boolean lanSetupAlready = false;
 
     public static TextView tv_TotalSumm;
     public static TextView tv_TotalCount;
@@ -122,28 +100,26 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        LanSetupAlready = false;
-        Log.d(TAG, "                        " );
-        Log.d(TAG, "***  START SYSTEM  *** " + BuildConfig.BUILD_TYPE+", build: "+BuildConfig.VERSION_CODE);
+        lanSetupAlready = false;
+        Log.d(TAG, "                        ");
+        Log.d(TAG, "***  START SYSTEM  *** " + BuildConfig.BUILD_TYPE + ", build: " + BuildConfig.VERSION_CODE);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//постоянно включен экран
 
-
         WindowManager.LayoutParams attributes = getWindow().getAttributes();
         attributes.flags |= WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS | WindowManager.LayoutParams.FLAG_FULLSCREEN;
         getWindow().setAttributes(attributes);
 
-
-        mContext = this;
+        context = this;
 
         //Получим настройки экрана
         Display display = this.getWindowManager().getDefaultDisplay();
         sizeScreen = new Point();
         display.getSize(sizeScreen);
         sizeScreen.y += 48;
-        Log.d(TAG, "Size screen x:" + sizeScreen.x +", y:"+sizeScreen.y);
+        Log.d(TAG, "Size screen x:" + sizeScreen.x + ", y:" + sizeScreen.y);
 
         //Получим настройки системы
         preferenceParams = PreferenceParams.getParameters();
@@ -156,30 +132,26 @@ public class MainActivity extends Activity {
         sound = new Sound(this);
         sound.setVolume(preferenceParams.sPercentVolume);
 
-        su_preferences = new Modify_SU_Preferences(mContext);
-        su_preferences.callback_onSetupRoot(mCallbackRootIsSet);
-        su_preferences.VerifyRootRights();
-
+        su_preferences = new Modify_SU_Preferences(this);
+        su_preferences.setSetupRootCallback(mCallbackRootIsSet);
+        su_preferences.verifyRootRights();
 
         webStatus = new WebStatus();
 
-        ethernetSettings = new Eth_Settings(this);
-        ethernetSettings.callback_onSetupLAN(mCallbackLanIsSet);
-
+        ethernetSettings = new EthernetSettings(this);
+        ethernetSettings.setSetupLanCallback(mCallbackLanIsSet);
 
         downloadMedia = new DownloadMedia(this);
 
         //обработчик команд и данных
-        String Uri_ImgSource = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_URI;
-        cmdParser = new CommandParser(productInfo, messageHandler, MainActivity.this, Uri_ImgSource);
+        String uriImgSource = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_URI;
+        cmdParser = new CommandParser(productInfo, messageHandler, MainActivity.this, uriImgSource);
 
         //слой для вывода информации по товару
-        rlay = new RelativeLayout[]{(RelativeLayout) findViewById(R.id.idLayoutConnect),
+        relativeLayout = new RelativeLayout[]{(RelativeLayout) findViewById(R.id.idLayoutConnect),
                 (RelativeLayout) findViewById(R.id.idLayoutThanks),
                 (RelativeLayout) findViewById(R.id.lay_shoppingList)
-
         };
-
 
         imageSdCardError = (ImageView) findViewById(R.id.imageSdCardError);
         imageSdCardError.setVisibility(View.INVISIBLE);
@@ -192,229 +164,169 @@ public class MainActivity extends Activity {
         //UART
         uartWorker = new UartWorker(uartHandler);
 
-        if (uartWorker.OpenSerialPort(UartWorker.getCoreNameUart(preferenceParams.sUartName), 0, 0) == 0) {
+        if (uartWorker.openSerialPort(UartWorker.getCoreNameUart(preferenceParams.sUartName), 0, 0) == 0) {
             setVisibleContext(CONTEXT_CONNECT, 0);
             productInfo.setStatusConnection("інтерфейс RS232 ініціалізованo");
-
-
         } else {
             Log.e(TAG, "ERROR Open Port");
             setVisibleContext(CONTEXT_CONNECT, 0);
             productInfo.setStatusConnection("ПОМИЛКА інтерфейсу RS232");
-
         }
-
 
         updateFirmware = new UpdateFirmware(this);
 
         //экран "Список покупок"
         shoppingListWorker = new ShoppingListWorker(this);
         listView = (ListView) findViewById(R.id.listview);
-        tv_TotalSumm = (TextView)findViewById(R.id.tv_TotalSumm);
-        tv_TotalCount = (TextView)findViewById(R.id.tv_TotalCount);
-        imageViewTovar = (ImageView)findViewById(R.id.imageViewTovar);
-        textViewDEBUG = (TextView)findViewById(R.id.textViewDEBUG);
+        tv_TotalSumm = (TextView) findViewById(R.id.tv_TotalSumm);
+        tv_TotalCount = (TextView) findViewById(R.id.tv_TotalCount);
+        imageViewTovar = (ImageView) findViewById(R.id.imageViewTovar);
+        textViewDEBUG = (TextView) findViewById(R.id.textViewDEBUG);
         textViewDEBUG.setMovementMethod(new ScrollingMovementMethod());
-        mScrollView = (ScrollView)findViewById(R.id.mScrollView);
+        mScrollView = (ScrollView) findViewById(R.id.mScrollView);
         lay_shoppingList = (RelativeLayout) findViewById(R.id.lay_shoppingList);
         listView.setAdapter(shoppingListWorker.adapterShoppingList);
 
         tv_TotalCount.setText("0");
         tv_TotalSumm.setText("0.00");
 
-        Change_settings_register_receiver();
-        SetBackgroundScreen();
+        changeSettingsRegisterReceiver();
+        setBackgroundScreen();
         setVisibleContext(CONTEXT_CONNECT, 0);
 
         new CheckSystemStart().run();
 
-        AcceptFullScreen();
+        acceptFullScreen();
     }
 
     /**
      * Программное нажатие кнопки при переходе в полноэкранный режим
      */
-    private void AcceptFullScreen(){
-    //
-    SharedPreferences sp = getSharedPreferences("LOADDATA", MODE_PRIVATE);
-    if (!sp.getBoolean("InputTap", false)) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
+    private void acceptFullScreen() {
+        //
+        SharedPreferences sp = getSharedPreferences("LOADDATA", MODE_PRIVATE);
+        if (!sp.getBoolean("InputTap", false)) {
+            new Handler().postDelayed(() -> {
                 //эмулируем нажатие кнопки для подтверждения при переходе в полноэкранный режим
-                if (sizeScreen.x==1920) //14"
+                if (sizeScreen.x == 1920) //14"
                     Modify_SU_Preferences.executeCmd("input tap  1060 170", 1000);//3000//
                 else //10"
                     Modify_SU_Preferences.executeCmd("input tap 746 157", 1000);//3000//
-
-            }
-        }, 30000);
+            }, 30000);
+        }
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putBoolean("InputTap", true);
+        ed.commit();
     }
-    SharedPreferences.Editor ed = sp.edit();
-    ed.putBoolean("InputTap", true);
-    ed.commit();
-
-}
 
     /**
      * Приемник события изменения настроек
      */
-    private void Change_settings_register_receiver()
-    {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(CHANGE_SETTINGS);
-        registerReceiver(ChangeSettings,intentFilter);
-
+    private void changeSettingsRegisterReceiver() {
+        IntentFilter intentFilter = new IntentFilter(CHANGE_SETTINGS);
+        registerReceiver(changeSettings, intentFilter);
     }
-    BroadcastReceiver ChangeSettings = new BroadcastReceiver() {
+
+    BroadcastReceiver changeSettings = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
-
-            if (intent.getAction().equals(CHANGE_SETTINGS))
-            {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        SetBackgroundScreen();
-
-                    }
-                });
-
-            }
-        };
+            runOnUiThread(() -> setBackgroundScreen());
+        }
     };
 
     /*********************************************************************************************/
 
-
     /**
      * Установка фона экранов
      */
-    private void SetBackgroundScreen(){
+    private void setBackgroundScreen() {
         //установка фона экрана "Список покупок"
         Bitmap bitmap;
         Drawable drawable;
-        String Uri_Background_shoppingList = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN+((PreferenceParams.getParameters().Background_shoppingList.length()>0)?PreferenceParams.getParameters().Background_shoppingList:"noimg");
-        File fileImg =new File(Uri_Background_shoppingList);
+        String uriBackgroundShoppingList = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN + ((PreferenceParams.getParameters().backgroundShoppingList.length() > 0) ? PreferenceParams.getParameters().backgroundShoppingList : "noimg");
+        File fileImg = new File(uriBackgroundShoppingList);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
             drawable = new BitmapDrawable(bitmap);
-            rlay[CONTEXT_SHOPPING_LIST].setBackground(drawable);
-        }else
-        {
-            rlay[CONTEXT_SHOPPING_LIST].setBackgroundResource(R.drawable.bg);
+            relativeLayout[CONTEXT_SHOPPING_LIST].setBackground(drawable);
+        } else {
+            relativeLayout[CONTEXT_SHOPPING_LIST].setBackgroundResource(R.drawable.bg);
         }
-        rlay[CONTEXT_SHOPPING_LIST].invalidate();
-
+        relativeLayout[CONTEXT_SHOPPING_LIST].invalidate();
 
         //Фонове зображення экрану "Каса не працює"
-        String Uri_Background_CashNotWork = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN+((PreferenceParams.getParameters().Background_CashNotWork.length()>0)?PreferenceParams.getParameters().Background_CashNotWork:"noimg");
-        fileImg =new File(Uri_Background_CashNotWork);
+        String uriBackgroundCashNotWork = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN + ((PreferenceParams.getParameters().backgroundCashNotWork.length() > 0) ? PreferenceParams.getParameters().backgroundCashNotWork : "noimg");
+        fileImg = new File(uriBackgroundCashNotWork);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
             drawable = new BitmapDrawable(bitmap);
-            rlay[CONTEXT_CONNECT].setBackground(drawable);
-        }else
-        {
-            rlay[CONTEXT_CONNECT].setBackgroundResource(R.drawable.screen_cache_not_work);
+            relativeLayout[CONTEXT_CONNECT].setBackground(drawable);
+        } else {
+            relativeLayout[CONTEXT_CONNECT].setBackgroundResource(R.drawable.screen_cache_not_work);
         }
-        rlay[CONTEXT_CONNECT].invalidate();
-
+        relativeLayout[CONTEXT_CONNECT].invalidate();
 
         //Фонове зображення экрану "Дякуємо за покупку"
-        String Uri_Background_Thanks = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN+((PreferenceParams.getParameters().Background_Thanks.length()>0)?PreferenceParams.getParameters().Background_Thanks:"noimg");
-        fileImg =new File(Uri_Background_Thanks);
+        String uriBackgroundThanks = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN + ((PreferenceParams.getParameters().backgroundThanks.length() > 0) ? PreferenceParams.getParameters().backgroundThanks : "noimg");
+        fileImg = new File(uriBackgroundThanks);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
             drawable = new BitmapDrawable(bitmap);
-            rlay[CONTEXT_THANKS].setBackground(drawable);
-        }else
-        {
-            rlay[CONTEXT_THANKS].setBackgroundResource(R.drawable.screen_thanks);
+            relativeLayout[CONTEXT_THANKS].setBackground(drawable);
+        } else {
+            relativeLayout[CONTEXT_THANKS].setBackgroundResource(R.drawable.screen_thanks);
         }
     }
 
     /************************************************************************************/
 
-    public void setVisibleContext(int TypeContext, Object param) {
+    public void setVisibleContext(int contextType, Object param) {
 
-        switch (TypeContext) {
+        switch (contextType) {
             case CONTEXT_SHOPPING_LIST:
-                SetVisibleLayer(CONTEXT_SHOPPING_LIST, View.VISIBLE);
-                SetVisibleLayer(CONTEXT_CONNECT, View.INVISIBLE);
-                SetVisibleLayer(CONTEXT_THANKS, View.INVISIBLE);
+                setVisibleLayer(CONTEXT_SHOPPING_LIST, View.VISIBLE);
+                setVisibleLayer(CONTEXT_CONNECT, View.INVISIBLE);
+                setVisibleLayer(CONTEXT_THANKS, View.INVISIBLE);
                 break;
             case CONTEXT_CONNECT:
-                SetVisibleLayer(CONTEXT_SHOPPING_LIST, View.INVISIBLE);
-                SetVisibleLayer(CONTEXT_CONNECT, View.VISIBLE);
-                SetVisibleLayer(CONTEXT_THANKS, View.INVISIBLE);
+                setVisibleLayer(CONTEXT_SHOPPING_LIST, View.INVISIBLE);
+                setVisibleLayer(CONTEXT_CONNECT, View.VISIBLE);
+                setVisibleLayer(CONTEXT_THANKS, View.INVISIBLE);
                 break;
             case CONTEXT_THANKS:
-                SetVisibleLayer(CONTEXT_SHOPPING_LIST, View.INVISIBLE);
-                SetVisibleLayer(CONTEXT_CONNECT, View.INVISIBLE);
-                SetVisibleLayer(CONTEXT_THANKS, View.VISIBLE);
+                setVisibleLayer(CONTEXT_SHOPPING_LIST, View.INVISIBLE);
+                setVisibleLayer(CONTEXT_CONNECT, View.INVISIBLE);
+                setVisibleLayer(CONTEXT_THANKS, View.VISIBLE);
                 break;
-
             default:
                 break;
         }
-
-
-
     }
 
-    private void SetVisibleLayer(int LayContext, int visible) {
-        rlay[LayContext].setVisibility(visible);
-        rlay[LayContext].invalidate();
+    private void setVisibleLayer(int contextLayer, int visible) {
+        relativeLayout[contextLayer].setVisibility(visible);
+        relativeLayout[contextLayer].invalidate();
     }
 
     /************************************************************************************/
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-   }
-
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(ChangeSettings);
-     }
-
-    @Override
-    public void onStop() {
-        super.onStop();
+        unregisterReceiver(changeSettings);
     }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-
-       super.onResume();
-    }
-
 
     /***************************************
      * UART
      ***************************************/
     private final Handler uartHandler = new Handler() {
-
-
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case UartWorker.ACTION_UART_READ:
-                    cmdParser.ParseInputStr((byte[]) msg.obj, msg.arg2);
+                    cmdParser.parseInputStr((byte[]) msg.obj, msg.arg2);
                     break;
-                case ACTION_UART_OPEN:
+                case UartWorker.ACTION_UART_OPEN:
                     break;
                 case UartWorker.ACTION_UART_CLOSED: //  closed
                     setVisibleContext(CONTEXT_CONNECT, 0);
@@ -427,64 +339,55 @@ public class MainActivity extends Activity {
         }
     };
 
-
     /**********************
      * SERVICE handler
      ***************************/
     private final Handler messageHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-
             switch (msg.what) {
-
                 case MSG_ADD_TOVAR_SHOPPING_LIST:
-                    Log.d(TAG, "MSG_ADD_TOVAR_SHOPPING_LIST" );
-                    SetEnableMedia(false);
-                    shoppingListWorker.Add_TovarList((String) msg.obj);
+                    Log.d(TAG, "MSG_ADD_TOVAR_SHOPPING_LIST");
+                    setEnableMedia(false);
+                    shoppingListWorker.addTovarList((String) msg.obj);
                     setVisibleContext(msg.arg1, msg.arg2);
                     break;
-                case  MSG_SET_TOVAR_SHOPPING_LIST:
-                    Log.d(TAG, "MSG_SET_TOVAR_SHOPPING_LIST" );
-                    SetEnableMedia(false);
-                    shoppingListWorker.SetPosition_TovarList((String) msg.obj);
-                    setVisibleContext(msg.arg1, msg.arg2);
-
-                    break;
-                case  MSG_DEL_TOVAR_SHOPPING_LIST:
-                    Log.d(TAG, "MSG_DEL_TOVAR_SHOPPING_LIST" );
-                    shoppingListWorker.DeletePosition_TovarList((String) msg.obj);
-
-                    SetEnableMedia(false);
+                case MSG_SET_TOVAR_SHOPPING_LIST:
+                    Log.d(TAG, "MSG_SET_TOVAR_SHOPPING_LIST");
+                    setEnableMedia(false);
+                    shoppingListWorker.setPositionTovarList((String) msg.obj);
                     setVisibleContext(msg.arg1, msg.arg2);
                     break;
-                case  MSG_CLEAR_SHOPPING_LIST:
-                    Log.d(TAG, "MSG_CLEAR_SHOPPING_LIST" );
-                    SetEnableMedia(false);
-                    shoppingListWorker.Clear_TovarList((String) msg.obj);
-
-                    break;
-                case  MSG_SET_SCREEN_NOT_WORK:
-                    SetEnableMedia(false);
-                    Log.d(TAG, "MSG_SET_SCREEN_NOT_WORK" );
-                    shoppingListWorker.CloseDisplayShoppingList();
+                case MSG_DEL_TOVAR_SHOPPING_LIST:
+                    Log.d(TAG, "MSG_DEL_TOVAR_SHOPPING_LIST");
+                    shoppingListWorker.deletePositionTovarList((String) msg.obj);
+                    setEnableMedia(false);
                     setVisibleContext(msg.arg1, msg.arg2);
-
                     break;
-                case  MSG_SET_SCREEN_THANKS:
-                    Log.d(TAG, "MSG_SET_SCREEN_THANKS" );
+                case MSG_CLEAR_SHOPPING_LIST:
+                    Log.d(TAG, "MSG_CLEAR_SHOPPING_LIST");
+                    setEnableMedia(false);
+                    shoppingListWorker.clearTovarList((String) msg.obj);
+                    break;
+                case MSG_SET_SCREEN_NOT_WORK:
+                    setEnableMedia(false);
+                    Log.d(TAG, "MSG_SET_SCREEN_NOT_WORK");
+                    shoppingListWorker.closeDisplayShoppingList();
                     setVisibleContext(msg.arg1, msg.arg2);
-                    shoppingListWorker.CloseDisplayShoppingList();
-                    SetEnableMedia(true);
-                    ResetMediaTime();
                     break;
-                case  MSG_FROM_EKKR:
-                    Log.d(TAG, "MSG_FROM_EKKR" );
+                case MSG_SET_SCREEN_THANKS:
+                    Log.d(TAG, "MSG_SET_SCREEN_THANKS");
+                    setVisibleContext(msg.arg1, msg.arg2);
+                    shoppingListWorker.closeDisplayShoppingList();
+                    setEnableMedia(true);
+                    resetMediaTime();
                     break;
-                case  1234:
+                case MSG_FROM_EKKR:
+                    Log.d(TAG, "MSG_FROM_EKKR");
+                    break;
+                case 1234:
                     shoppingListWorker.ADD_DEBUG((String) msg.obj);
                     break;
-
-
                 default:
                     Log.e(TAG, "Handler default message:" + String.valueOf(msg.what));
                     break;
@@ -492,12 +395,12 @@ public class MainActivity extends Activity {
         }
     };
 
-
     /**
      * Разрешить/запретить демонстрацию медиа
+     *
      * @param state
      */
-    private void SetEnableMedia(boolean state){
+    private void setEnableMedia(boolean state) {
         Intent intent = new Intent(VideoSlideService.VIDEO_SLIDE_ENABLE);
         Bundle mBundle = new Bundle();
         mBundle.putBoolean("enable_video_slide", state);
@@ -508,13 +411,10 @@ public class MainActivity extends Activity {
     /**
      * Сброс времени, остановка демонстации медиа
      */
-    private void ResetMediaTime(){
+    private void resetMediaTime() {
         Intent intent = new Intent(VideoSlideService.VIDEO_SLIDE_RESET_TIME);
         sendBroadcast(intent);
     }
-
-
-
 
     /*********************************************************************************************/
 
@@ -522,40 +422,30 @@ public class MainActivity extends Activity {
      * Поток отслеживает окончание загрузки системы,
      * чтобы демонстрация медиа не стартовала до показа основного экрана
      */
-        private class CheckSystemStart extends Thread {
-            @Override
-            public void run() {
-                super.run();
-                while (!isInterrupted())
-                {
-                    if (Modify_SU_Preferences.CheckSystemBootCompleted())
-                    {
-                        Log.d(TAG, "property set: SYSTEM BOOT COMPLETED");
-
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        handler.post(new Runnable() {
-                            public void run() {
-                                videoSlideService = new VideoSlideService(MainActivity.this);
-                            }
-                        });
-
-                        break;
-                    }
-                    try
-                    {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+    private class CheckSystemStart extends Thread {
+        @Override
+        public void run() {
+            super.run();
+            while (!isInterrupted()) {
+                if (Modify_SU_Preferences.CheckSystemBootCompleted()) {
+                    Log.d(TAG, "property set: SYSTEM BOOT COMPLETED");
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(() -> videoSlideService = new VideoSlideService(MainActivity.this));
+                    break;
+                }
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-        };
-
+        }
+    }
 
     /**
      * Поток мониторит наличие подключение LAN
      */
-     private class CheckConnectionEth extends Thread {
+    private class CheckConnectionEth extends Thread {
         @Override
         public void run() {
             super.run();
@@ -563,7 +453,7 @@ public class MainActivity extends Activity {
             //немного музыки в момент запуска
             if (sound != null) {
                 sound.setVolume(80);
-                sound.PlaySound(Sound.START_VOICE);
+                sound.playSound(Sound.START_VOICE);
                 sound.setVolume(preferenceParams.sPercentVolume);
             }
 
@@ -573,38 +463,34 @@ public class MainActivity extends Activity {
                 e.printStackTrace();
             }
             String ip = "";
-            boolean LoadMediaAtStartSystem = false;
+            boolean loadMediaAtStartSystem = false;
 
             productInfo.setStatusConnection(ethernetSettings.getCurrentStatus());
 
             while (!isInterrupted()) {
                 try {
-                    if (Eth_Settings.isConnected()) {
-                        if (!LoadMediaAtStartSystem && preferenceParams.sDownloadAtStart) {
-                            LoadMediaAtStartSystem = true;
+                    if (EthernetSettings.isConnected()) {
+                        if (!loadMediaAtStartSystem && preferenceParams.sDownloadAtStart) {
+                            loadMediaAtStartSystem = true;
                             downloadMedia.download();
                         }
 
                         String stat = ethernetSettings.getCurrentStatus();
-                        String NetworkInterfaceIpAddress = Eth_Settings.getNetworkInterfaceIpAddress();
-                         productInfo.setStatusConnection(((stat.length() == 0) ? "IP : " + NetworkInterfaceIpAddress : stat));
-                        productInfo.setStatusConnection2(((stat.length() == 0) ? "IP : " + NetworkInterfaceIpAddress : stat));
+                        String networkInterfaceIpAddress = EthernetSettings.getNetworkInterfaceIpAddress();
+                        productInfo.setStatusConnection(((stat.length() == 0) ? "IP : " + networkInterfaceIpAddress : stat));
+                        productInfo.setStatusConnection2(((stat.length() == 0) ? "IP : " + networkInterfaceIpAddress : stat));
 
-                        if (!ip.equals(NetworkInterfaceIpAddress)) {
-                            ip = NetworkInterfaceIpAddress;
+                        if (!ip.equals(networkInterfaceIpAddress)) {
+                            ip = networkInterfaceIpAddress;
                             Log.d(TAG, "Подключение LAN : " + ip);
-
                         }
-
                     } else {
-
                         String stat = ethernetSettings.getCurrentStatus();
                         productInfo.setStatusConnection(((stat.length() == 0) ? "підключення LAN відсутнє" : stat));
                         productInfo.setStatusConnection2(((stat.length() == 0) ? "підключення LAN відсутнє" : stat));
                         Log.d(TAG, "Подключение LAN отсутствует");
                         ip = "";
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -615,7 +501,7 @@ public class MainActivity extends Activity {
                 }
             }
         }
-    };
+    }
 
     //событие об установке прав SU
     private Modify_SU_Preferences.SetupRootCallback mCallbackRootIsSet = new Modify_SU_Preferences.SetupRootCallback() {
@@ -627,33 +513,30 @@ public class MainActivity extends Activity {
                     Log.d(TAG, "mCallbackRootIsSet :" + result);
 
                     imageSdCardError.setVisibility(View.INVISIBLE);
-                    if (!ExtSDSource.isMounted(mContext))
-                    {
+                    if (!ExtSDSource.isMounted(context)) {
                         imageSdCardError.setVisibility(View.VISIBLE);
                         sound.setVolume(80);
-                        sound.PlaySound(Sound.WARNING_VOICE);
+                        sound.playSound(Sound.WARNING_VOICE);
 
                         productInfo.setStatusConnection("*** Вiдсутнiй SD носiй ***");
                         productInfo.setStatusConnection2("*** Вiдсутнiй SD носiй ***");
-                        uartWorker.CloseSerialPort();
+                        uartWorker.closeSerialPort();
                     }
 
-                    if (result == 1)
-                    {
+                    if (result == 1) {
                         if (BuildConfig.BUILD_TYPE.equals("release")) {
-                            if (sizeScreen.x!=1920) //только для 10"
-                            Modify_SU_Preferences.setSystemUIEnabled(preferenceParams.sShowNavigationBar);//спрячем строку навигации
-                        }
-                        else
+                            if (sizeScreen.x != 1920) //только для 10"
+                                Modify_SU_Preferences.setSystemUIEnabled(preferenceParams.sShowNavigationBar);//спрячем строку навигации
+                        } else
                             Modify_SU_Preferences.setSystemUIEnabled(true);//покажем строку навигации
 
                         Log.w(TAG, "административные права получены");
                         productInfo.setStatusConnection("ініціалізація системи ");
-                        ethernetSettings.ApplyEthernetSettings();//применение параметров
+                        ethernetSettings.applyEthernetSettings();//применение параметров
                     } else {
                         Log.w(TAG, "ОШИБКА, нет административных прав:" + result);
                         setVisibleContext(CONTEXT_CONNECT, 0);
-                        productInfo.setStatusConnection("ПОМИЛКА, не були надані адміністративні права, " + "IP : " + Eth_Settings.getNetworkInterfaceIpAddress());
+                        productInfo.setStatusConnection("ПОМИЛКА, не були надані адміністративні права, " + "IP : " + EthernetSettings.getNetworkInterfaceIpAddress());
                         imageSdCardError.setImageResource(R.drawable.warning);
                         imageSdCardError.setVisibility(View.VISIBLE);
                     }
@@ -663,21 +546,17 @@ public class MainActivity extends Activity {
     };
 
     //событие об окончании настройки сети
-    private Eth_Settings.SetupLanCallback mCallbackLanIsSet = new Eth_Settings.SetupLanCallback() {
+    private EthernetSettings.SetupLanCallback mCallbackLanIsSet = new EthernetSettings.SetupLanCallback() {
         @Override
         public void onSetupLAN(final int result) {
-            if (!LanSetupAlready) {//запуск только 1 раз
-                LanSetupAlready = true;
+            if (!lanSetupAlready) {//запуск только 1 раз
+                lanSetupAlready = true;
                 Log.d(TAG, "mCallbackSetupLAN :" + result);
                 new CheckConnectionEth().start();//проверка и установка сети
-
-                httpServer = new http_Server(mContext, webStatus);
+                httpServer = new HttpServer(context, webStatus);
             }
         }
     };
-
-
-
 }
 
-
+// TODO: 23.10.2019 По ftp протоколу видео файлы могут "ломаться" (видео проигрывается, но картинка искажена)
