@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.resonance.cashdisplay.PreferenceParams;
 import com.resonance.cashdisplay.PreferencesValues;
+import com.resonance.cashdisplay.su.Modify_SU_Preferences;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -109,7 +110,7 @@ public class EthernetSettings {
             }
         }
         currentStatus = "";
-        eventLanIsUp(1);
+        setupLanCallback.onSetupLAN(1);
     }
 
 
@@ -296,12 +297,6 @@ public class EthernetSettings {
     public void setSetupLanCallback(EthernetSettings.SetupLanCallback cback) {
         setupLanCallback = cback;
     }
-
-    //вызываем
-    public void eventLanIsUp(final int result) {
-        setupLanCallback.onSetupLAN(result);
-    }
-
 
     /*********************************************/
     /**

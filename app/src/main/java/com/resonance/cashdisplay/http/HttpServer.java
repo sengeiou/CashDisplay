@@ -22,9 +22,9 @@ import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.PreferenceParams;
 import com.resonance.cashdisplay.PreferencesValues;
-import com.resonance.cashdisplay.eth.Modify_SU_Preferences;
 import com.resonance.cashdisplay.load.DownloadMedia;
 import com.resonance.cashdisplay.sound.Sound;
+import com.resonance.cashdisplay.su.Modify_SU_Preferences;
 import com.resonance.cashdisplay.web.WebStatus;
 
 import org.json.JSONException;
@@ -75,10 +75,10 @@ public class HttpServer {
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(HTTP_HALT_EVENT);
-        mContext.registerReceiver(httphaltEvent, intentFilter);
+        mContext.registerReceiver(httpHaltEvent, intentFilter);
     }
 
-    BroadcastReceiver httphaltEvent = new BroadcastReceiver() {
+    public BroadcastReceiver httpHaltEvent = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -412,7 +412,7 @@ public class HttpServer {
         return path;
     }
 
-    public synchronized void SendQueWebStatus(String str_msg, boolean clearQueue) {
+    public synchronized void sendQueWebStatus(String str_msg, boolean clearQueue) {
         Message msg = new Message();
         msg.what = WebStatus.SEND_TO_QUEUE_WEB_MESSAGE;
         msg.obj = str_msg;

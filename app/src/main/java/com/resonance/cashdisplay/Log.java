@@ -1,5 +1,7 @@
 package com.resonance.cashdisplay;
 
+import android.os.Environment;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -8,20 +10,15 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import android.os.Environment;
-
-import org.apache.http.client.utils.DateUtils;
-
 public class Log {
     private static final String NEW_LINE = System.getProperty("line.separator");
-    public static boolean mLogcatAppender = true;
-    final static File mLogFile;
+    private static boolean mLogcatAppender = true;
+    private static final File mLogFile;
 
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 
     static {
-
         Date currentDate = new Date();
         Calendar c = Calendar.getInstance();
         c.setTime(currentDate);
@@ -35,7 +32,6 @@ public class Log {
         if (oldLogFile.exists()) {
             oldLogFile.delete();
         }
-
 
         c = Calendar.getInstance();
         c.setTime(currentDate);
@@ -107,5 +103,4 @@ public class Log {
         appendLog("Codename : " + android.os.Build.VERSION.CODENAME);
         appendLog("Release : " + android.os.Build.VERSION.RELEASE);
     }
-
 }

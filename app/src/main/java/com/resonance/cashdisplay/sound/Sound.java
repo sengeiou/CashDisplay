@@ -55,8 +55,8 @@ public class Sound implements MediaPlayer.OnCompletionListener {
     @Override
     public void onCompletion(MediaPlayer mp) {
         if (player != null) {
-            player.stop();
             player.release();
+            player = null;
             Log.d(TAG, "PlaySound stop");
         }
     }

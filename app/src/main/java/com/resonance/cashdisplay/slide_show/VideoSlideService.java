@@ -33,7 +33,7 @@ public class VideoSlideService {
     public static String VIDEO_SLIDE_ENABLE = "video_slide_enable";
 
     private static int seekVideoPosition = 0;
-    private static String VideoFileToContinuePlay = "";
+    private static String videoFileToContinuePlay = "";
 
     public VideoSlideService(Context context) {
 
@@ -47,15 +47,15 @@ public class VideoSlideService {
         intentFilter.addAction(VIDEO_SLIDE_RESET_TIME);
         intentFilter.addAction(VIDEO_STOP_PLAY);
         intentFilter.addAction(VIDEO_SLIDE_ENABLE);
-        mContext.registerReceiver(VideoSlideEvents, intentFilter);
-        // WatchVideoSlide();
+        mContext.registerReceiver(videoSlideEvents, intentFilter);
+        // watchVideoSlide();
         Log.d(TAG, "VideoSlideService START");
 
         //  MediaCodecInfo codecInfo = selectCodec("MIME");
         // codecInfo.getName()
     }
 
-    BroadcastReceiver VideoSlideEvents = new BroadcastReceiver() {
+    public BroadcastReceiver videoSlideEvents = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -69,7 +69,7 @@ public class VideoSlideService {
                 //сохраним данные для восстановления воспроизведения видео
                 Bundle mBundle = intent.getExtras();
                 seekVideoPosition = mBundle.getInt("seekVideoPosition", 0);
-                VideoFileToContinuePlay = mBundle.getString("VideoFileToContinuePlay", "");
+                videoFileToContinuePlay = mBundle.getString("VideoFileToContinuePlay", "");
                 bNowPlay = false;
             } else if (intent.getAction().equals(SLIDE_STOP_PLAY)) {
                 bNowPlay = false;
@@ -90,8 +90,8 @@ public class VideoSlideService {
             @Override
             public void run() {
                 // Log.d(TAG, "WatchVideoSlide start");
-                int CurrentSourceForPlay = PreferenceParams.getParameters().sVideoOrSlide;
-                long StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
+                int currentSourceForPlay = PreferenceParams.getParameters().sVideoOrSlide;
+                long stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
 
                 while (bEnableMediaPlay) {
 
@@ -100,7 +100,7 @@ public class VideoSlideService {
                         Log.d(TAG, "#######2 ");
                         bNowPlay = false;
                         bResetTimeToPlay = false;
-                        StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
+                        stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
                         continue;
                     }
 
@@ -116,11 +116,11 @@ public class VideoSlideService {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
+                        stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
                         continue;
                     }
 
-                    while (StopTime > System.nanoTime()) {
+                    while (stopTime > System.nanoTime()) {
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
@@ -132,7 +132,7 @@ public class VideoSlideService {
                             bResetTimeToPlay = false;
                             Log.d(TAG, "bResetTimeToPlay ");
                             finishSlideAndVideoPlay();
-                            StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
+                            stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
                         }
                         if (!bEnableMediaPlay) {
                             bResetTimeToPlay = false;
@@ -140,9 +140,9 @@ public class VideoSlideService {
                             finishSlideAndVideoPlay();
                             break;
                         }
-                        if (PreferenceParams.getParameters().sVideoOrSlide != CurrentSourceForPlay) {
+                        if (PreferenceParams.getParameters().sVideoOrSlide != currentSourceForPlay) {
                             //  Log.d(TAG, "----#3,2");
-                            StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
+                            stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
                             // Log.d(TAG, "#######1 ");
                             finishSlideAndVideoPlay();
                             bResetTimeToPlay = false;
@@ -153,7 +153,7 @@ public class VideoSlideService {
                     }
                     //Log.d(TAG, "----#4,1");
                     if (!PreferenceParams.getParameters().sCheckEnableVideo || !bEnableMediaPlay) {
-                        StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
+                        stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
                         continue;
                     }
                     //Log.d(TAG, "----#5");
@@ -161,7 +161,7 @@ public class VideoSlideService {
                         //  Log.d(TAG, "----#6");
                         //  Log.d(TAG, "воспроизведение видео");
                         if (PreferenceParams.getParameters().sVideoOrSlide == PreferenceParams._VIDEO) {
-                            CurrentSourceForPlay = PreferenceParams._VIDEO;
+                            currentSourceForPlay = PreferenceParams._VIDEO;
                             //старт Видео
                             Handler handler = new Handler(Looper.getMainLooper());
                             handler.post(new Runnable() {
@@ -170,7 +170,7 @@ public class VideoSlideService {
                                     Intent intent = new Intent(mContext, VideoActivity.class);
                                     Bundle mBundle = new Bundle();
                                     mBundle.putInt("seekVideoPosition", seekVideoPosition);
-                                    mBundle.putString("VideoFileToContinuePlay", VideoFileToContinuePlay);
+                                    mBundle.putString("VideoFileToContinuePlay", videoFileToContinuePlay);
                                     intent.putExtras(mBundle);
                                     mContext.startActivity(intent);
                                 }
@@ -178,7 +178,7 @@ public class VideoSlideService {
                             bNowPlay = true;
                         } else {
                             Log.d(TAG, "----#7");
-                            CurrentSourceForPlay = PreferenceParams._SLIDE;
+                            currentSourceForPlay = PreferenceParams._SLIDE;
                             //старт Слайд шоу
 
                             Handler handler = new Handler(Looper.getMainLooper());
@@ -192,18 +192,18 @@ public class VideoSlideService {
                         }
                     } else {
                         // Log.d(TAG, "----#8");
-                        if (PreferenceParams.getParameters().sVideoOrSlide != CurrentSourceForPlay) {
+                        if (PreferenceParams.getParameters().sVideoOrSlide != currentSourceForPlay) {
                             //   Log.d(TAG, "----#9");
-                            CurrentSourceForPlay = -1;
+                            currentSourceForPlay = -1;
                             bNowPlay = false;
                             Log.d(TAG, "*** остановлено текущее проигрывание");
                             finishSlideAndVideoPlay();
                             //bResetTimeToPlay=false;
-                            StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
+                            stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
                             continue;
                         }
                     }
-                    StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
+                    stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
                 }
             }
         });

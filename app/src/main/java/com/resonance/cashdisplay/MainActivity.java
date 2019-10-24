@@ -31,12 +31,12 @@ import android.widget.TextView;
 
 import com.resonance.cashdisplay.databinding.ActivityMainBinding;
 import com.resonance.cashdisplay.eth.EthernetSettings;
-import com.resonance.cashdisplay.eth.Modify_SU_Preferences;
 import com.resonance.cashdisplay.http.HttpServer;
 import com.resonance.cashdisplay.load.DownloadMedia;
 import com.resonance.cashdisplay.shopping_list.ShoppingListWorker;
 import com.resonance.cashdisplay.slide_show.VideoSlideService;
 import com.resonance.cashdisplay.sound.Sound;
+import com.resonance.cashdisplay.su.Modify_SU_Preferences;
 import com.resonance.cashdisplay.uart.UartWorker;
 import com.resonance.cashdisplay.utils.ImageUtils;
 import com.resonance.cashdisplay.web.WebStatus;
@@ -66,15 +66,14 @@ public class MainActivity extends Activity {
     public static PreferencesValues preferenceParams;       //настройки
     private static UartWorker uartWorker;                   //обработчик UART
     public static WebStatus webStatus = null;               //канал передачи сообщений для браузера
-    public static HttpServer httpServer = null;            //http сервер
+    public static HttpServer httpServer = null;             //http сервер
     private CommandParser cmdParser;                        //класс обработки команд и данных
     private VideoSlideService videoSlideService;            //класс управления медиа
     private Sound sound;                                    //звук
-    private static ShoppingListWorker shoppingListWorker;  //обслуживание списка товаров
-    ProductInfo productInfo;
-    public static EthernetSettings ethernetSettings = null;     //Настройка сети
+    private static ShoppingListWorker shoppingListWorker;   //обслуживание списка товаров
+    private ProductInfo productInfo;
+    public static EthernetSettings ethernetSettings = null; //Настройка сети
     public static DownloadMedia downloadMedia;
-    //обновление прошивки
     public static UpdateFirmware updateFirmware = null;     //обновление ПО
 
     private static Modify_SU_Preferences su_preferences;
@@ -203,7 +202,7 @@ public class MainActivity extends Activity {
      * Программное нажатие кнопки при переходе в полноэкранный режим
      */
     private void acceptFullScreen() {
-        //
+
         SharedPreferences sp = getSharedPreferences("LOADDATA", MODE_PRIVATE);
         if (!sp.getBoolean("InputTap", false)) {
             new Handler().postDelayed(() -> {
@@ -314,6 +313,9 @@ public class MainActivity extends Activity {
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(changeSettings);
+        unregisterReceiver(uartWorker.uartChangeSettings);
+        unregisterReceiver(httpServer.httpHaltEvent);
+        unregisterReceiver(videoSlideService.videoSlideEvents);
     }
 
     /***************************************
@@ -427,7 +429,7 @@ public class MainActivity extends Activity {
         public void run() {
             super.run();
             while (!isInterrupted()) {
-                if (Modify_SU_Preferences.CheckSystemBootCompleted()) {
+                if (Modify_SU_Preferences.checkSystemBootCompleted()) {
                     Log.d(TAG, "property set: SYSTEM BOOT COMPLETED");
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(() -> videoSlideService = new VideoSlideService(MainActivity.this));
@@ -443,7 +445,7 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * Поток мониторит наличие подключение LAN
+     * Поток мониторит наличие подключения LAN
      */
     private class CheckConnectionEth extends Thread {
         @Override

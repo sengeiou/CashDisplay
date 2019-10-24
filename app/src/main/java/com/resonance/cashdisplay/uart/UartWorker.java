@@ -39,18 +39,15 @@ public class UartWorker {
     public static String SERIAL_PORT = SERIAL_PORT_ARR[0];
     private static int DATA_BAUDRATE = 9600;
 
-
-    Handler mHandler;
+    private Handler mHandler;
     private SerialPort serialPort;
     private OutputStream mOutputStream;
     private InputStream mInputStream;
     private ReadThread mReadThread;
 
-
     public UartWorker(Handler handler) {
         mHandler = handler;
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(UART_CHANGE_SETTINGS);
+        IntentFilter intentFilter = new IntentFilter(UART_CHANGE_SETTINGS);
         MainActivity.context.registerReceiver(uartChangeSettings, intentFilter);
     }
 
@@ -184,7 +181,7 @@ public class UartWorker {
     /**
      * Приемник сообщений об изменении параметров настройки порта
      */
-    BroadcastReceiver uartChangeSettings = new BroadcastReceiver() {
+    public BroadcastReceiver uartChangeSettings = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "BroadcastReceiver [uartChangeSettings]");
@@ -198,8 +195,6 @@ public class UartWorker {
                 }
             }
         }
-
-        ;
     };
 
     /**

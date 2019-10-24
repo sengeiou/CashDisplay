@@ -35,7 +35,6 @@ public class VideoActivity extends AppCompatActivity {
 
     public final String TAG = "Video";
 
-
     private MediaController mediaController;
     VideoView videoView;
     private static int seekVideoPosition = 0;
@@ -93,8 +92,8 @@ public class VideoActivity extends AppCompatActivity {
             seekVideoPosition = b.getInt("seekVideoPosition");//начальная позиция проигрывания видео
             tmpFileContinuePlay = b.getString("VideoFileToContinuePlay");
         }
-        UpdateListMediaFiles(tmpFileContinuePlay);
-        StartPlay();
+        updateListMediaFiles(tmpFileContinuePlay);
+        startPlay();
     }
 
 
@@ -114,7 +113,7 @@ public class VideoActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent)
         {
-            StopPlay();
+            stopPlay();
         }
     };
 
@@ -131,7 +130,7 @@ public class VideoActivity extends AppCompatActivity {
             Log.i(TAG, "Проигрывание видео завершено " );
             if (videoView != null)
                 videoView.stopPlayback();
-            StartPlay();
+            startPlay();
         }
     };
 
@@ -167,11 +166,11 @@ public class VideoActivity extends AppCompatActivity {
 
 
             if ((indexPlaingFile==0)&&(videoFilesArray.length==1)) {
-                UpdateListMediaFiles("");
-                StopPlay();
+                updateListMediaFiles("");
+                stopPlay();
             }
             else
-                StartPlay();
+                startPlay();
 
             return true;
         }
@@ -180,7 +179,7 @@ public class VideoActivity extends AppCompatActivity {
 
 
 
-    private void UpdateListMediaFiles(String FileToContinue)
+    private void updateListMediaFiles(String FileToContinue)
     {
         File dir = new File(this.mediaDir);
         if(dir.exists())
@@ -208,10 +207,10 @@ public class VideoActivity extends AppCompatActivity {
     }
 
 
-    private void StartPlay() {
+    private void startPlay() {
        // Log.d(TAG, "StartPlay");
         if (videoFilesArray==null) {
-            StopPlay();
+            stopPlay();
             return;
         }
 
@@ -231,7 +230,7 @@ public class VideoActivity extends AppCompatActivity {
                                         videoView.seekTo(seekVideoPosition);
                                     }
                                 } else {
-                                    StopPlay();
+                                    stopPlay();
                                 }
                             }
                         }
@@ -240,17 +239,17 @@ public class VideoActivity extends AppCompatActivity {
                     }
                 } else {
                     Log.i(TAG, "Видео файлов:" + videoFilesArray.length + ", тек. файл: " + indexPlaingFile+" - воспроизведение отложено");
-                    StopPlay();
+                    stopPlay();
                 }
             }catch (Exception e){
-                StopPlay();
+                stopPlay();
             }
 
 
 
     }
 
-    public void StopPlay() {
+    public void stopPlay() {
        // Log.d(TAG, "StopPlay");
         if(videoView!=null) {
             if (videoView.isPlaying()) {

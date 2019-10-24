@@ -37,12 +37,12 @@ import static com.resonance.cashdisplay.PreferenceParams._SMB2;
 /**
  * Класс управления загрузкой изображений товаров, видеоб слайдов
  */
-public class DownloadMedia  {
-    private static final FileOperation FileOperation  = new FileOperation() ;
+public class DownloadMedia {
+    private static final FileOperation FileOperation = new FileOperation();
     public final String TAG = "DownloadMedia";
 
     public final int ATTEMPTS_TO_DOWNLOAD = 1;
-    private static final String NEW_LINE =  System.getProperty("line.separator") ;
+    private static final String NEW_LINE = System.getProperty("line.separator");
     private static final String DATE_FORMAT = "yyyy-MM-dd HH-mm-ss";
     private static final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 
@@ -60,8 +60,8 @@ public class DownloadMedia  {
 
 
     public static final String IMG_URI = "/Documents/IMG/";
-    public  static final String VIDEO_URI = "/Documents/VIDEO/";
-    public  static final String SLIDE_URI = "/Documents/SLIDE/";
+    public static final String VIDEO_URI = "/Documents/VIDEO/";
+    public static final String SLIDE_URI = "/Documents/SLIDE/";
     public static final String IMG_SCREEN = "/Documents/SCREEN/";//изображения экранов
 
     private static boolean downloadThreadStarted = false;//флаг активации загрузки файлов
@@ -78,19 +78,19 @@ public class DownloadMedia  {
     private static SmbWorker smbWorker = null;
     private static FtpWorker ftpWorker = null;
 
-    private static HashMap<String , Object> au_param;
-    private static HashMap<String , Object> img_param;
-    private static HashMap<String , Object> video_param;
-    private static HashMap<String , Object> slide_param;
-    private static HashMap<String , Object> screen_img_param;
+    private static HashMap<String, Object> au_param;
+    private static HashMap<String, Object> img_param;
+    private static HashMap<String, Object> video_param;
+    private static HashMap<String, Object> slide_param;
+    private static HashMap<String, Object> screen_img_param;
 
-    enum eResult{
-        Ok,
-        DirError,
-        SDCardError
+    enum eResult {
+        OK,
+        DIR_ERROR,
+        SD_CARD_ERROR
     }
 
-    public DownloadMedia(Context context)  {
+    public DownloadMedia(Context context) {
         mContext = context;
 
         au_param = new HashMap<>();
@@ -118,49 +118,41 @@ public class DownloadMedia  {
     /**
      * Коллбэк обновления статуса загрузки SMB2  на WEB консоли
      */
-    private SmbjWorker.SMBJ_StatusCallback smbj_statusCallback = new SmbjWorker.SMBJ_StatusCallback()
-    {
+    private SmbjWorker.SMBJ_StatusCallback smbj_statusCallback = new SmbjWorker.SMBJ_StatusCallback() {
         @Override
-        public void onSmbjStatus (final String msg, final boolean delRemaininng )
-        {
-            MainActivity.httpServer.SendQueWebStatus(msg,delRemaininng);
+        public void onSmbjStatus(final String msg, final boolean delRemaininng) {
+            MainActivity.httpServer.sendQueWebStatus(msg, delRemaininng);
 
         }
     };
     /**
      * Коллбэк окончания загрузки SMB2
      */
-    private SmbjWorker.SMBJ_EndDownloadCallback smbj_endDownloadCallback = new SmbjWorker.SMBJ_EndDownloadCallback()
-    {
+    private SmbjWorker.SMBJ_EndDownloadCallback smbj_endDownloadCallback = new SmbjWorker.SMBJ_EndDownloadCallback() {
         @Override
-        public void onSmbjEndDownload (final int msg)
-        {
+        public void onSmbjEndDownload(final int msg) {
 
-                downloadThreadStarted = false;//флаг активации загрузки файлов
+            downloadThreadStarted = false;//флаг активации загрузки файлов
         }
 
     };
     /**
      * Коллбэк обновления статуса загрузки SMB1  на WEB консоли
      */
-    private SmbWorker.SMB_StatusCallback smb_statusCallback = new SmbWorker.SMB_StatusCallback()
-    {
+    private SmbWorker.SMB_StatusCallback smb_statusCallback = new SmbWorker.SMB_StatusCallback() {
         @Override
-        public void onSmbStatus (final String msg, final boolean delRemaininng )
-        {
-            MainActivity.httpServer.SendQueWebStatus(msg,delRemaininng);
+        public void onSmbStatus(final String msg, final boolean delRemaininng) {
+            MainActivity.httpServer.sendQueWebStatus(msg, delRemaininng);
 
         }
     };
     /**
      * Коллбэк окончания загрузки SMB1
      */
-    private SmbWorker.SMB_EndDownloadCallback smb_endDownloadCallback = new SmbWorker.SMB_EndDownloadCallback()
-    {
+    private SmbWorker.SMB_EndDownloadCallback smb_endDownloadCallback = new SmbWorker.SMB_EndDownloadCallback() {
         @Override
-        public void onSmbEndDownload (final int msg)
-        {
-          downloadThreadStarted = false;//флаг активации загрузки файлов
+        public void onSmbEndDownload(final int msg) {
+            downloadThreadStarted = false;//флаг активации загрузки файлов
         }
 
     };
@@ -169,24 +161,20 @@ public class DownloadMedia  {
      * Коллбэк обновления статуса загрузки FTP на WEB консоли
      */
 
-    private FtpWorker.FTP_StatusCallback ftp_statusCallback = new FtpWorker.FTP_StatusCallback()
-    {
+    private FtpWorker.FTP_StatusCallback ftp_statusCallback = new FtpWorker.FTP_StatusCallback() {
         @Override
-        public void onFtpStatus (final String msg, final boolean delRemaininng )
-        {
-            MainActivity.httpServer.SendQueWebStatus(msg,delRemaininng);
+        public void onFtpStatus(final String msg, final boolean delRemaininng) {
+            MainActivity.httpServer.sendQueWebStatus(msg, delRemaininng);
         }
     };
 
     /**
      * Коллбэк окончания загрузки FTP
      */
-    private FtpWorker.FTP_EndDownloadCallback ftp_endDownloadCallback = new FtpWorker.FTP_EndDownloadCallback()
-    {
+    private FtpWorker.FTP_EndDownloadCallback ftp_endDownloadCallback = new FtpWorker.FTP_EndDownloadCallback() {
         @Override
-        public void onFtpEndDownload (final int msg)
-        {
-           downloadThreadStarted = false;//флаг активации загрузки файлов
+        public void onFtpEndDownload(final int msg) {
+            downloadThreadStarted = false;//флаг активации загрузки файлов
         }
 
     };
@@ -195,125 +183,122 @@ public class DownloadMedia  {
     /**
      * Инициация загрузки
      */
-    public void download()
-    {
-        if (downloadThreadStarted )
+    public void download() {
+        if (downloadThreadStarted)
             return;
-        MainActivity.httpServer.SendQueWebStatus("Завантаження...", true);
+        MainActivity.httpServer.sendQueWebStatus("Завантаження...", true);
 
-        eResult res = VerifyDestinationDirs();
-        if (res==eResult.DirError){
-            MainActivity.httpServer.SendQueWebStatus("Помилка носiя SDCARD", true);
+        eResult res = verifyDestinationDirs();
+        if (res == eResult.DIR_ERROR) {
+            MainActivity.httpServer.sendQueWebStatus("Помилка носiя SDCARD", true);
             return;
-        }else if(res==eResult.SDCardError) {
-            MainActivity.httpServer.SendQueWebStatus("Помилка носiя SDCARD", true);
+        } else if (res == eResult.SD_CARD_ERROR) {
+            MainActivity.httpServer.sendQueWebStatus("Помилка носiя SDCARD", true);
             return;
         }
 
         //очистка хлама
-        File LostDir = new File(ExtSDSource.getExternalSdCardPath()+"/LOST.DIR");
+        File LostDir = new File(ExtSDSource.getExternalSdCardPath() + "/LOST.DIR");
         if (LostDir.exists()) {
             if (LostDir.isDirectory()) {
                 FileOperation.deleteRecursive(LostDir);
             }
-        }else
-            Log.w(TAG, "Dir:"+ExtSDSource.getExternalSdCardPath()+"/LOST.DIR"+" - not exist");
+        } else
+            Log.w(TAG, "Dir:" + ExtSDSource.getExternalSdCardPath() + "/LOST.DIR" + " - not exist");
 
 
         PreferencesValues prefValues = PreferenceParams.getParameters();
 
 
-            InitLogFile();//инициализация лог файла для отправки на удаленный сервер
+        initLogFile();//инициализация лог файла для отправки на удаленный сервер
 
-            ShareParam ParseImg = ParseSmbjFolders(prefValues.sSmbImg);
-            ShareParam ParseVideo = ParseSmbjFolders(prefValues.sSmbVideo);
-            ShareParam ParseSlide = ParseSmbjFolders(prefValues.sSmbSlide);
-            ShareParam ParseScreen = ParseSmbjFolders(prefValues.sPathToScreenImg);
+        ShareParam ParseImg = ParseSmbjFolders(prefValues.sSmbImg);
+        ShareParam ParseVideo = ParseSmbjFolders(prefValues.sSmbVideo);
+        ShareParam ParseSlide = ParseSmbjFolders(prefValues.sSmbSlide);
+        ShareParam ParseScreen = ParseSmbjFolders(prefValues.sPathToScreenImg);
 
-            if (!ParseImg.result ){
-                Log.d(TAG, "Ошибка разбора параметров пути:"+prefValues.sSmbImg);
-                MainActivity.httpServer.SendQueWebStatus("Неправильно вказанi параметри до ресурсу зображень : ["+prefValues.sSmbImg+"]", true);
-                return;
-            }
-            if (!ParseVideo.result){
-                Log.d(TAG, "Ошибка разбора параметров пути :"+prefValues.sSmbVideo);
-                MainActivity.httpServer.SendQueWebStatus("Неправильно вказанi параметри до ресурсу вiдео : ["+prefValues.sSmbVideo+"]", true);
-                return;
-            }
-            if (!ParseSlide.result){
-                Log.d(TAG, "Ошибка разбора параметров пути :"+prefValues.sSmbSlide);
-                MainActivity.httpServer.SendQueWebStatus("Неправильно вказанi параметри до ресурсу слайдiв : ["+prefValues.sSmbSlide+"]", true);
-                return;
-            }
-            if (!ParseScreen.result){
-                Log.d(TAG, "Ошибка разбора параметров пути :"+prefValues.sPathToScreenImg);
-                MainActivity.httpServer.SendQueWebStatus("Неправильно вказанi параметри до ресурсу фонових зображень : ["+prefValues.sPathToScreenImg+"]", true);
-                return;
-            }
+        if (!ParseImg.result) {
+            Log.d(TAG, "Ошибка разбора параметров пути:" + prefValues.sSmbImg);
+            MainActivity.httpServer.sendQueWebStatus("Неправильно вказанi параметри до ресурсу зображень : [" + prefValues.sSmbImg + "]", true);
+            return;
+        }
+        if (!ParseVideo.result) {
+            Log.d(TAG, "Ошибка разбора параметров пути :" + prefValues.sSmbVideo);
+            MainActivity.httpServer.sendQueWebStatus("Неправильно вказанi параметри до ресурсу вiдео : [" + prefValues.sSmbVideo + "]", true);
+            return;
+        }
+        if (!ParseSlide.result) {
+            Log.d(TAG, "Ошибка разбора параметров пути :" + prefValues.sSmbSlide);
+            MainActivity.httpServer.sendQueWebStatus("Неправильно вказанi параметри до ресурсу слайдiв : [" + prefValues.sSmbSlide + "]", true);
+            return;
+        }
+        if (!ParseScreen.result) {
+            Log.d(TAG, "Ошибка разбора параметров пути :" + prefValues.sPathToScreenImg);
+            MainActivity.httpServer.sendQueWebStatus("Неправильно вказанi параметри до ресурсу фонових зображень : [" + prefValues.sPathToScreenImg + "]", true);
+            return;
+        }
 
 
         //подготовка параметров загрузки соответствующему загрузчику
 
         //параметры аутентификации
         au_param.clear();
-        au_param.put("User",prefValues.sUser);
-        au_param.put("Passw",prefValues.sPassw);
-        au_param.put("Host",prefValues.sSmbHost);
+        au_param.put("User", prefValues.sUser);
+        au_param.put("Passw", prefValues.sPassw);
+        au_param.put("Host", prefValues.sSmbHost);
 
         //изображения для товаров
         img_param.clear();
-        img_param.put("shareImg",ParseImg.share);
-        img_param.put("folderImg",ParseImg.folder);
-        img_param.put("DestinationImg",Destination_Dirs[_IMAGE]);
-        img_param.put("extensionArrayImg",new String[]{"*.png","*.jpg"});
+        img_param.put("shareImg", ParseImg.share);
+        img_param.put("folderImg", ParseImg.folder);
+        img_param.put("DestinationImg", Destination_Dirs[_IMAGE]);
+        img_param.put("extensionArrayImg", new String[]{"*.png", "*.jpg"});
 
         //видео
         video_param.clear();
-        video_param.put("shareVideo",ParseVideo.share);
-        video_param.put("folderVideo",ParseVideo.folder);
-        video_param.put("DestinationVideo",Destination_Dirs[_VIDEO]);
-        video_param.put("extensionArrayVideo",new String[]{"*.avi","*.mp4"});
+        video_param.put("shareVideo", ParseVideo.share);
+        video_param.put("folderVideo", ParseVideo.folder);
+        video_param.put("DestinationVideo", Destination_Dirs[_VIDEO]);
+        video_param.put("extensionArrayVideo", new String[]{"*.avi", "*.mp4"});
 
         //изображения для слайдов
         slide_param.clear();
-        slide_param.put("shareSlide",ParseSlide.share);
-        slide_param.put("folderSlide",ParseSlide.folder);
-        slide_param.put("DestinationSlide",Destination_Dirs[_SLIDE]);
-        slide_param.put("extensionArraySlide",new String[]{"*.png","*.jpg"});
+        slide_param.put("shareSlide", ParseSlide.share);
+        slide_param.put("folderSlide", ParseSlide.folder);
+        slide_param.put("DestinationSlide", Destination_Dirs[_SLIDE]);
+        slide_param.put("extensionArraySlide", new String[]{"*.png", "*.jpg"});
 
         //фоновые изображения экранов
         screen_img_param.clear();
-        screen_img_param.put("shareScreenImg",ParseScreen.share);
-        screen_img_param.put("folderScreenImg",ParseScreen.folder);
-        screen_img_param.put("DestinationScreenImg",Destination_Dirs[_SCREEN]);
-        screen_img_param.put("extensionArrayScreenImg",new String[]{"*.png","*.jpg"});
-
+        screen_img_param.put("shareScreenImg", ParseScreen.share);
+        screen_img_param.put("folderScreenImg", ParseScreen.folder);
+        screen_img_param.put("DestinationScreenImg", Destination_Dirs[_SCREEN]);
+        screen_img_param.put("extensionArrayScreenImg", new String[]{"*.png", "*.jpg"});
 
         if (prefValues.sProtocol.equals(DEF_PROTOCOL[_SMB2])) {
             downloadThreadStarted = true;
-            smbjWorker.doDownload(au_param,img_param,video_param,slide_param, screen_img_param);
-        }
-        else if (prefValues.sProtocol.equals(DEF_PROTOCOL[_SMB1])){
+            smbjWorker.doDownload(au_param, img_param, video_param, slide_param, screen_img_param);
+        } else if (prefValues.sProtocol.equals(DEF_PROTOCOL[_SMB1])) {
             downloadThreadStarted = true;
-            smbWorker.doDownload(au_param,img_param,video_param,slide_param, screen_img_param);
+            smbWorker.doDownload(au_param, img_param, video_param, slide_param, screen_img_param);
 
-        }else if(prefValues.sProtocol.equals(DEF_PROTOCOL[_FTP])){
+        } else if (prefValues.sProtocol.equals(DEF_PROTOCOL[_FTP])) {
             downloadThreadStarted = true;
-            ftpWorker.doDownload(au_param,img_param,video_param,slide_param);
+            ftpWorker.doDownload(au_param, img_param, video_param, slide_param);
         }
     }
 
     /**
      * Парсер пути положения файлов на удаленном сервере
+     *
      * @param params
-     * @return          ShareParam
+     * @return ShareParam
      */
-    public ShareParam ParseSmbjFolders(String params){
+    public ShareParam ParseSmbjFolders(String params) {
 
         ShareParam shareParam = new ShareParam();
         shareParam.result = false;
-        if (params.startsWith("/"))
-        {
+        if (params.startsWith("/")) {
             int SlashEndShare = params.indexOf("/", 1);
             if (SlashEndShare >= 0) {
                 shareParam.share = params.substring(1, SlashEndShare);
@@ -327,42 +312,41 @@ public class DownloadMedia  {
     }
 
     /**
-     * проверка наличия директорий для хранения данных, создание принеобходимости
+     * проверка наличия директорий для хранения данных, создание при необходимости
+     *
      * @return
      */
-    private eResult VerifyDestinationDirs(){
+    private eResult verifyDestinationDirs() {
 
-        Log.d("SSS","SD CARD isMounted:"+ExtSDSource.isMounted(mContext)+", isReadOnly :"+ExtSDSource.isReadOnly());
+        Log.d("SSS", "SD CARD isMounted:" + ExtSDSource.isMounted(mContext) + ", isReadOnly :" + ExtSDSource.isReadOnly());
 
-        Destination_Dirs = new String[]{ExtSDSource.getExternalSdCardPath()+IMG_URI,ExtSDSource.getExternalSdCardPath()+VIDEO_URI, ExtSDSource.getExternalSdCardPath()+SLIDE_URI, ExtSDSource.getExternalSdCardPath()+IMG_SCREEN};
+        Destination_Dirs = new String[]{ExtSDSource.getExternalSdCardPath() + IMG_URI, ExtSDSource.getExternalSdCardPath() + VIDEO_URI, ExtSDSource.getExternalSdCardPath() + SLIDE_URI, ExtSDSource.getExternalSdCardPath() + IMG_SCREEN};
 
         if (!ExtSDSource.isMounted(mContext)) {
             showToast("ОТСУТСТВУЕТ SD карта");
-            MainActivity.httpServer.SendQueWebStatus("Вiдсутнiй SD носiй", true);
-            return eResult.SDCardError;
+            MainActivity.httpServer.sendQueWebStatus("Вiдсутнiй SD носiй", true);
+            return eResult.SD_CARD_ERROR;
         }
 
-        for (int i=0;i<Destination_Dirs.length;i++)
-        {
+        for (int i = 0; i < Destination_Dirs.length; i++) {
 
             //Проверка директории
             File dir = new File(Destination_Dirs[i]);
-            if(!dir.exists()) {
+            if (!dir.exists()) {
                 Log.d("SSS", "CREATE IMAGE DIR:" + Destination_Dirs);
                 dir.mkdirs();
             }
-            if(!dir.exists() || !dir.isDirectory()) {
+            if (!dir.exists() || !dir.isDirectory()) {
                 showToast("Ошибка создания хранилиша для данных");
-                MainActivity.httpServer.SendQueWebStatus("Помилка створення директорії для зберігання даних", true);
-                return eResult.DirError;
+                MainActivity.httpServer.sendQueWebStatus("Помилка створення директорії для зберігання даних", true);
+                return eResult.DIR_ERROR;
             }
         }
-        return eResult.Ok;
+        return eResult.OK;
     }
 
 
-
-    private void showToast(final String message)  {
+    private void showToast(final String message) {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
             public void run() {
@@ -374,18 +358,18 @@ public class DownloadMedia  {
 
     /**
      * Проверка наличия файла
-     * @param UrlDest       путь к папке с файлами
-     * @param fileName      имя файла
-     * @param sizeFile      размер файла
+     *
+     * @param UrlDest  путь к папке с файлами
+     * @param fileName имя файла
+     * @param sizeFile размер файла
      * @return
      */
-    public static boolean ifAlreadyExistFile(String UrlDest, String fileName, long sizeFile){
+    public static boolean ifAlreadyExistFile(String UrlDest, String fileName, long sizeFile) {
         boolean result = false;
         File f = new File(UrlDest + fileName);
 
-        if (f.exists())
-        {
-            if (f.length() == sizeFile){
+        if (f.exists()) {
+            if (f.length() == sizeFile) {
                 result = true;
             }
         }
@@ -395,7 +379,7 @@ public class DownloadMedia  {
     /**
      * Сигнал для остановки демонстрации медиа
      */
-    public static void resetMediaPlay(){
+    public static void resetMediaPlay() {
         Intent i = new Intent(VideoSlideService.VIDEO_SLIDE_RESET_TIME);
         MainActivity.context.sendBroadcast(i);
 
@@ -404,8 +388,7 @@ public class DownloadMedia  {
     /**
      * Лог файл загрузки, предназначен для отправки на удаленный ресурс
      */
-    private static void InitLogFile()
-    {
+    private static void initLogFile() {
         Date currentDate = new Date();
         // convert date to calendar
         Calendar c = Calendar.getInstance();
@@ -413,20 +396,18 @@ public class DownloadMedia  {
         c = Calendar.getInstance();
         c.setTime(currentDate);
 
-        mLogFile = new File( Environment.getExternalStorageDirectory(),  "Download "+ EthernetSettings.getNetworkInterfaceIpAddress()+" "+dateFormat.format(c.getTime())+".log" );
+        mLogFile = new File(Environment.getExternalStorageDirectory(), "Download " + EthernetSettings.getNetworkInterfaceIpAddress() + " " + dateFormat.format(c.getTime()) + ".log");
 
         //удалим существующий файл
-        if ( mLogFile.exists() )
-        {
+        if (mLogFile.exists()) {
             mLogFile.delete();
 
         }
         //создадим новый файл
-        if ( !mLogFile.exists() ) {
+        if (!mLogFile.exists()) {
             try {
                 mLogFile.createNewFile();
-            }
-            catch (final IOException e) {
+            } catch (final IOException e) {
                 e.printStackTrace();
             }
         }
@@ -434,21 +415,20 @@ public class DownloadMedia  {
 
     /**
      * добавляет строку в лог-файл
+     *
      * @param text
      */
-    public static synchronized void append_to_DownloadLog( String text )
-    {
-        if ( !mLogFile.exists())
-            InitLogFile();
+    public static synchronized void append_to_DownloadLog(String text) {
+        if (!mLogFile.exists())
+            initLogFile();
 
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
         try {
-            final FileWriter fileOut = new FileWriter( mLogFile, true );
-            fileOut.append( sdf.format(new Date()) + " : " + text + NEW_LINE );
+            final FileWriter fileOut = new FileWriter(mLogFile, true);
+            fileOut.append(sdf.format(new Date()) + " : " + text + NEW_LINE);
             fileOut.close();
-        }
-        catch ( final IOException e ) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
     }
@@ -456,21 +436,16 @@ public class DownloadMedia  {
     /**
      * Удаляет лог-файл
      */
-    public static synchronized void delete_DownloadLog(){
+    public static synchronized void delete_DownloadLog() {
         //удалим существующий файл
-        if ( mLogFile.exists() )
-        {
+        if (mLogFile.exists()) {
             mLogFile.delete();
-
         }
     }
 
-class ShareParam
-{
-   public String  share = "";
-   public String  folder = "";
-   public boolean result = false;
-}
-
-
+    class ShareParam {
+        public String share = "";
+        public String folder = "";
+        public boolean result = false;
+    }
 }

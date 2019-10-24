@@ -1,4 +1,4 @@
-package com.resonance.cashdisplay.eth;
+package com.resonance.cashdisplay.su;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -52,7 +52,7 @@ public class Modify_SU_Preferences {
         this.mContext = context;
     }
 
-    public static boolean CheckSystemBootCompleted() {
+    public static boolean checkSystemBootCompleted() {
 
         final String FOUND_PARAM = "[sys.boot_completed]: [";
 

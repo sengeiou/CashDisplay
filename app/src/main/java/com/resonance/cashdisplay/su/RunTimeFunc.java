@@ -2,24 +2,23 @@ package com.resonance.cashdisplay.su;
 
 import android.os.Build;
 import android.util.Log;
-//import android.util.Log;
-
-import com.resonance.cashdisplay.eth.Modify_SU_Preferences;
 
 import java.io.IOException;
+
+//import android.util.Log;
 
 
 public class RunTimeFunc {
     public static final String TAG = RunTimeFunc.class.getSimpleName();
 
-
-
     // Подсобная функция, которая просто выполняет shell-команду
-    static public boolean runCommandWait(String cmd, boolean needsu) {
+    public static boolean runCommandWait(String cmd, boolean needsu) {
         try {
             String su = "sh";
-            if (needsu) { su = "su"; }
-            Log.d(TAG, "runCommandWait: "+cmd);
+            if (needsu) {
+                su = "su";
+            }
+            Log.d(TAG, "runCommandWait: " + cmd);
 
             Process process = Runtime.getRuntime().exec(new String[]{su, "-c", cmd});
             int result = process.waitFor();
@@ -34,7 +33,7 @@ public class RunTimeFunc {
     }
 
     // Функция делает указанное приложение системным и отправляет смартфон в мягкую перезагрузку
-    static public void makeAppSystem(String appName) {
+    public static void makeAppSystem(String appName) {
         String systemPrivAppDir = "/system/priv-app/";
         String systemAppDir = "/system/app/";
 
@@ -55,32 +54,21 @@ public class RunTimeFunc {
             runCommandWait("chown -R 0:0 " + appDir + appName + "*", true);
             runCommandWait("rm -Rf " + appPath + "*", true);
         } else {
-            if (api < 20) { appDir = systemAppDir; }
+            if (api < 20) {
+                appDir = systemAppDir;
+            }
             runCommandWait("cp " + appPath + "* " + appDir, true);
             runCommandWait("chown 0:0 " + appDir + appName + "*", true);
             runCommandWait("rm -f " + appPath + "*", true);
         }
-
         // Отправляем смартфон в мягкую перезагрузку
         runCommandWait("am restart", true);
     }
 
-
     // Функция перенастраивает ADB на работу с TCP IP
     static public void set_ADB_to_TCPIP(long port) {
-
-        Modify_SU_Preferences.executeCmd("setprop service.adb.tcp.port "+ port, 3000);
-
+        Modify_SU_Preferences.executeCmd("setprop service.adb.tcp.port " + port, 3000);
         Modify_SU_Preferences.executeCmd("stop adbd", 3000);
-
         Modify_SU_Preferences.executeCmd("start adbd", 3000);//3000
-
     }
-
-
-
-
-
-
-
 }

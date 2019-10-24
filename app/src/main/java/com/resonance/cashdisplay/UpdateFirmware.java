@@ -10,7 +10,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.NetworkOnMainThreadException;
 
-import com.resonance.cashdisplay.eth.Modify_SU_Preferences;
+import com.resonance.cashdisplay.su.Modify_SU_Preferences;
 
 import org.ini4j.Ini;
 
@@ -99,7 +99,7 @@ public class UpdateFirmware {
 
         if (!dir.exists() || !dir.isDirectory()) {
             Log.e(TAG, "Ошибка создания :" + LOCAL_DIR);
-            MainActivity.httpServer.SendQueWebStatus("операція не виконана, сталася помилка системи # 101", true);
+            MainActivity.httpServer.sendQueWebStatus("операція не виконана, сталася помилка системи # 101", true);
             return;
         }
         registerReceiver();
@@ -127,14 +127,14 @@ public class UpdateFirmware {
 
 
             if (EnableUpdate) {
-                MainActivity.httpServer.SendQueWebStatus("доступна версія ПЗ: " + build, true);
+                MainActivity.httpServer.sendQueWebStatus("доступна версія ПЗ: " + build, true);
                 TypeFileLoad = 2;
                 Path_To_Apk_File = LOCAL_DIR + file_name + ".apk";
 
 
                 new DownloadSettingsTask().execute(file_name + ".apk");
             } else {
-                MainActivity.httpServer.SendQueWebStatus("Вже встановлена остання версія ПЗ", true);
+                MainActivity.httpServer.sendQueWebStatus("Вже встановлена остання версія ПЗ", true);
                 TypeFileLoad = 0;
                 return;
             }
@@ -143,7 +143,7 @@ public class UpdateFirmware {
             Log.e(TAG, "FileNotFoundException: " + LOCAL_DIR + FILE_SETTING + " " + e);
         } catch (IOException e) {
             Log.e(TAG, "IOException: " + LOCAL_DIR + FILE_SETTING + " " + e);
-            MainActivity.httpServer.SendQueWebStatus("ПОМИЛКА " + e.getMessage(), true);
+            MainActivity.httpServer.sendQueWebStatus("ПОМИЛКА " + e.getMessage(), true);
 
         }
         ;
@@ -167,14 +167,14 @@ public class UpdateFirmware {
         File apkFile = new File(fileName);
         if (!apkFile.exists()) {
             Log.d(TAG, "APK file " + fileName + " not exist");
-            MainActivity.httpServer.SendQueWebStatus("ПОМИЛКА. Файл оновлення відсутнiй", true);
+            MainActivity.httpServer.sendQueWebStatus("ПОМИЛКА. Файл оновлення відсутнiй", true);
             return;
         }
 
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                MainActivity.httpServer.SendQueWebStatus("систему буде перезавантажено...", true);
+                MainActivity.httpServer.sendQueWebStatus("систему буде перезавантажено...", true);
                 doRestart();//старт с отложенным запуском, даем время на завершение установки приложения
                 String command = "pm install -r -f " + fileName;
                 Log.d(TAG, "updateAPK " + command);
@@ -213,17 +213,15 @@ public class UpdateFirmware {
 
     final class DownloadSettingsTask extends AsyncTask<Object, Void, Integer> {
 
-
         protected void onPreExecute() {
             super.onPreExecute();
-            MainActivity.httpServer.SendQueWebStatus("підключення до сервера оновлень...", true);
+            MainActivity.httpServer.sendQueWebStatus("підключення до сервера оновлень...", true);
         }
 
         @Override
         protected Integer doInBackground(Object... params) {
 
             Log.d(TAG, "DownloadSettingsTask... ");
-
 
             File fileSetting = new File(LOCAL_DIR + params[0]);
 
@@ -258,7 +256,7 @@ public class UpdateFirmware {
                     int len;
                     long totalbytes = 0;
                     int prevValuePercent = 0;
-                    MainActivity.httpServer.SendQueWebStatus("завантаження даних...", false);
+                    MainActivity.httpServer.sendQueWebStatus("завантаження даних...", false);
                     while ((len = in.read(buffer)) != -1) {
                         //Log.d(TAG, ">>" + new String(buffer, 0, len));
                         fos.write(buffer, 0, len);
@@ -270,7 +268,7 @@ public class UpdateFirmware {
 
 
                         if (prevValuePercent != percent) {
-                            MainActivity.httpServer.SendQueWebStatus("завантаження даних..." + percent + " %", true);
+                            MainActivity.httpServer.sendQueWebStatus("завантаження даних..." + percent + " %", true);
                             // Log.d(TAG, ">>" + percent);
                             prevValuePercent = percent;
                         }
@@ -279,21 +277,21 @@ public class UpdateFirmware {
 
                 } else if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
                     Log.e(TAG, "Путь:  " + url.getFile() + " не найден");
-                    MainActivity.httpServer.SendQueWebStatus("не знайдено сервер оновлень  " + HttpURLConnection.HTTP_NOT_FOUND, true);
+                    MainActivity.httpServer.sendQueWebStatus("не знайдено сервер оновлень  " + HttpURLConnection.HTTP_NOT_FOUND, true);
                     return 2;
                 } else {
                     Log.e(TAG, "*** ERROR:  " + connection.getResponseCode());
-                    MainActivity.httpServer.SendQueWebStatus("Помилки при завантаженнi. Перевiрте налаштунки мережi. ", true);
+                    MainActivity.httpServer.sendQueWebStatus("Помилки при завантаженнi. Перевiрте налаштунки мережi. ", true);
                     return 3;
                 }
             } catch (NetworkOnMainThreadException e) {
                 Log.e(TAG, "UpdateFirmware NetworkOnMainThreadException:  " + e.getLocalizedMessage());
-                MainActivity.httpServer.SendQueWebStatus("Помилки при завантаженнi оновлень. Перевiрте налаштунки мережi. ", true);
+                MainActivity.httpServer.sendQueWebStatus("Помилки при завантаженнi оновлень. Перевiрте налаштунки мережi. ", true);
                 return 4;
             } catch (IOException e) {
                 Log.e(TAG, "UpdateFirmware IOException:  " + e);
                 //if (e.getMessage().contains("Unable to resolve host"))
-                MainActivity.httpServer.SendQueWebStatus("не знайдено сервер оновлень. Перевiрте налаштунки мережi. " + e.getLocalizedMessage(), true);
+                MainActivity.httpServer.sendQueWebStatus("не знайдено сервер оновлень. Перевiрте налаштунки мережi. " + e.getLocalizedMessage(), true);
                 return 5;
             } finally {
 
@@ -359,6 +357,5 @@ public class UpdateFirmware {
         }
         return (new int[]{0, 0, 0});
     }
-
 }
 

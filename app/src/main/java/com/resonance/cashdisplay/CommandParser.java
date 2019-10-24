@@ -173,7 +173,6 @@ public class CommandParser {
     public void setPositionTovarList(String param) {
         sendToMain(MainActivity.MSG_SET_TOVAR_SHOPPING_LIST, param, MainActivity.CONTEXT_SHOPPING_LIST, 0);
         Log.d(TAG, "setPositionTovarList :" + param);
-
     }
 
     /**

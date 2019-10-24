@@ -1,12 +1,12 @@
 package com.resonance.cashdisplay; /**
  * Created by Святослав on 18.05.2016.
  */
-import android.content.Context;
-import android.content.BroadcastReceiver;
-import android.content.Intent;
-//import android.util.Log;
 
-import com.resonance.cashdisplay.MainActivity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+
+//import android.util.Log;
 
 public class BootComplete extends BroadcastReceiver {
     public static final String TAG = "BootComplete";
@@ -18,8 +18,5 @@ public class BootComplete extends BroadcastReceiver {
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(i);
         }
-
-
     }
-
 }
