@@ -471,6 +471,20 @@ public class MainActivity extends Activity {
 
             while (!isInterrupted()) {
                 try {
+                    // not the best place, but good for SD card absence detection
+                    runOnUiThread(() -> {
+                        if (!ExtSDSource.isMounted(context)) {
+                            imageSdCardError.setVisibility(View.VISIBLE);
+                            sound.setVolume(80);
+                            sound.playSound(Sound.WARNING_VOICE);
+                            productInfo.setStatusConnection("*** Вiдсутнiй SD носiй ***");
+                            productInfo.setStatusConnection2("*** Вiдсутнiй SD носiй ***");
+                            uartWorker.closeSerialPort();
+                            Log.e(TAG, "Вiдсутнiй SD носiй");
+                        } else
+                            imageSdCardError.setVisibility(View.INVISIBLE);
+                    });
+
                     if (EthernetSettings.isConnected()) {
                         if (!loadMediaAtStartSystem && preferenceParams.sDownloadAtStart) {
                             loadMediaAtStartSystem = true;

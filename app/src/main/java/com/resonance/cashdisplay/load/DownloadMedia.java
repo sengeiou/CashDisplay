@@ -206,9 +206,7 @@ public class DownloadMedia {
         } else
             Log.w(TAG, "Dir:" + ExtSDSource.getExternalSdCardPath() + "/LOST.DIR" + " - not exist");
 
-
         PreferencesValues prefValues = PreferenceParams.getParameters();
-
 
         initLogFile();//инициализация лог файла для отправки на удаленный сервер
 

@@ -24,6 +24,5 @@ public class HttpConfig {
     public HttpConfig save() {
         return this;
     }
-
 }
 

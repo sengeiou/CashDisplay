@@ -2,14 +2,13 @@ package com.resonance.cashdisplay.web;
 
 import android.os.Handler;
 import android.os.Message;
-//import android.util.Log;
 
 import com.resonance.cashdisplay.Log;
-import com.resonance.cashdisplay.uart.UartWorker;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+//import android.util.Log;
 
 
 public class WebStatus {
@@ -20,53 +19,46 @@ public class WebStatus {
     public static final String TAG = "WebStatus";
 
     private final int SIZE_MESSAGE_QUEUE = 50;
-    private static BlockingQueue<String> Smb_messageQueue ;
+    private static BlockingQueue<String> smbMessageQueue;
 
-    public WebStatus(){
-        Smb_messageQueue = new ArrayBlockingQueue<String>(SIZE_MESSAGE_QUEUE);
-        Smb_messageQueue.clear();
+    public WebStatus() {
+        smbMessageQueue = new ArrayBlockingQueue<String>(SIZE_MESSAGE_QUEUE);
+        smbMessageQueue.clear();
     }
 
-    public Handler getWeb_message_handler() {
-        return web_message_handler;
+    public Handler getWebMessageHandler() {
+        return webMessageHandler;
     }
 
-    private final Handler web_message_handler = new Handler() {
-
-
+    private final Handler webMessageHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case SEND_TO_QUEUE_WEB_MESSAGE:
-                    if (msg.arg1==CLEAR_QUEUE_WEB_MESSAGE)
-                        SetEmptyWebStatus();
-                    SendWebStatus((String)msg.obj);
+                    if (msg.arg1 == CLEAR_QUEUE_WEB_MESSAGE)
+                        setEmptyWebStatus();
+                    sendWebStatus((String) msg.obj);
                     break;
-
             }
         }
     };
 
-    private synchronized void SendWebStatus(String msg){
-
-        if (Smb_messageQueue.remainingCapacity()>0) {
-            Log.w(TAG, "SendWebStatus:"+msg);
-            Smb_messageQueue.add(msg);
+    private synchronized void sendWebStatus(String msg) {
+        if (smbMessageQueue.remainingCapacity() > 0) {
+            Log.w(TAG, "SendWebStatus: " + msg);
+            smbMessageQueue.add(msg);
         }
     }
 
-    private synchronized void SetEmptyWebStatus(){
-        Smb_messageQueue.clear();
+    private synchronized void setEmptyWebStatus() {
+        smbMessageQueue.clear();
     }
 
-
-    public synchronized String getStrStatus(){
-
+    public synchronized String getStrStatus() {
         String msg = "";
-        if (!Smb_messageQueue.isEmpty())
-        {
-           try{
-            msg = Smb_messageQueue.take();
+        if (!smbMessageQueue.isEmpty()) {
+            try {
+                msg = smbMessageQueue.take();
             } catch (Exception e) {
                 e.printStackTrace();
             }

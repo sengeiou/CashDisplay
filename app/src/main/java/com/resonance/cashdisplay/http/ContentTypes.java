@@ -8,7 +8,9 @@ import android.util.Log;
 import java.io.File;
 import java.util.Hashtable;
 
-public class ContentTypes {    private static ContentTypes contentTypes;
+public class ContentTypes {
+
+    private static ContentTypes contentTypes;
     private final String TAG = "ContentTypes";
     private final Hashtable<String, String> contentTypeTable;
 

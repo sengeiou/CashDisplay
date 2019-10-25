@@ -39,7 +39,7 @@ public class HttpServer {
     private AsyncHttpServer mServer = null;
     private AsyncServer mAsyncServer = null;//new AsyncServer();
     private HttpConfig http_config = null;
-    public WebStatus webStatus;
+    private WebStatus webStatus;
     private static final String TAG = "http_Server";
     private final int STAT_IDLE = 0;
     private final int STAT_LOAD_FILES = 1;
@@ -89,7 +89,7 @@ public class HttpServer {
             if (intent.getAction().equals(HTTP_HALT_EVENT)) {
                 Log.d(TAG, "** RESTART HTTP SERVER **");
 
-                stop_http_server();
+                stopHttpServer();
 
                 final Thread t = new Thread() {
                     @Override
@@ -361,7 +361,7 @@ public class HttpServer {
     };
 
 
-    public void stop_http_server() {
+    public void stopHttpServer() {
 
         mServer.stop();
         mAsyncServer.stop();
@@ -418,9 +418,9 @@ public class HttpServer {
         msg.obj = str_msg;
         msg.arg1 = (clearQueue ? CLEAR_QUEUE_WEB_MESSAGE : 0);
         msg.arg2 = 0;
-        Handler h = webStatus.getWeb_message_handler();
+        Handler h = webStatus.getWebMessageHandler();
         if (h != null)
-            webStatus.getWeb_message_handler().sendMessage(msg);
+            webStatus.getWebMessageHandler().sendMessage(msg);
     }
 
     private class createProducerConsumer extends Thread {
