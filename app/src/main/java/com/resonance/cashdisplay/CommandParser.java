@@ -9,6 +9,8 @@ import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
+import static com.resonance.cashdisplay.MainActivity.MSG_ADD_PRODUCT_DEBUG;
+
 /**
  * Created by Святослав on 19.04.2016.
  */
@@ -106,7 +108,7 @@ public class CommandParser {
 
         }
         //перешлем на отображение на экран для отладки
-        sendToMain(1234, "[" + new String(buf, 0, lenBuf, ENCODING_CHARSET) + "]", 0, 0);
+        sendToMain(MSG_ADD_PRODUCT_DEBUG, "[" + new String(buf, 0, lenBuf, ENCODING_CHARSET) + "]", 0, 0);
 
         //Идентификация  протокола Ver 2
         for (int i = 0; i < ArrComands2.length; i++) {
@@ -121,7 +123,7 @@ public class CommandParser {
                     int crc = Integer.parseInt(crc_str, 16);
                     if (crc != CRC16_calculated) {
                         Log.e(TAG, "Ошибка CRC, расчетный:  " + CRC16_calculated + ", а указанный: " + crc + " >>" + new String(buf, 0, lenBuf));
-                        sendToMain(1234, "*** Ошибка CRC, расчетная: " + CRC16_calculated + ", а указанный: " + crc, 0, 0);
+                        sendToMain(MSG_ADD_PRODUCT_DEBUG, "*** Ошибка CRC, расчетная: " + CRC16_calculated + ", а указанный: " + crc, 0, 0);
                         Toast myToast = Toast.makeText(mContext.getApplicationContext(), "Ошибка CRC, расчетный:  " + CRC16_calculated + ", а указанный: " + crc, Toast.LENGTH_LONG);
                         myToast.show();
                         return;

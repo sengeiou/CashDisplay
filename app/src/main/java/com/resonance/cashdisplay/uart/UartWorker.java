@@ -200,15 +200,15 @@ public class UartWorker {
     /**
      * Проверка соответствия возможно доступных портов
      *
-     * @param AppNameUart
+     * @param appNameUart
      * @return
      */
-    public static String getCoreNameUart(String AppNameUart) {
+    public static String getCoreNameUart(String appNameUart) {
 
         String result = SERIAL_PORT_ARR[0];
         int iPort = -1;
         for (int i = 0; i < SERIAL_PORT_ARR.length; i++) {
-            if (AppNameUart.equals(DEF_UARTS[i])) {
+            if (appNameUart.equals(DEF_UARTS[i])) {
                 iPort = i;
                 break;
             }

@@ -1,4 +1,4 @@
-package com.resonance.cashdisplay.web;
+package com.resonance.cashdisplay.http;
 
 import android.os.Handler;
 import android.os.Message;

@@ -60,7 +60,7 @@ public class ShoppingListWorker {
      *
      * @param msg
      */
-    public void ADD_DEBUG(final String msg) {
+    public void addProductDebug(final String msg) {
 
         final int start = MainActivity.textViewDEBUG.getText().length();
 
@@ -108,7 +108,7 @@ public class ShoppingListWorker {
         if (item.getIndexPosition() < 0) return;
 
         if (item.getIndexPosition() <= arrayShoppingList.size()) {
-            ADD_DEBUG(param);
+            addProductDebug(param);
 
             arrayShoppingList.add(item.getIndexPosition(), item);
 
@@ -130,7 +130,7 @@ public class ShoppingListWorker {
         MainActivity.imageViewTovar.setImageBitmap(null);
         updateScreen((arrayShoppingList.size() > 0) ? arrayShoppingList.size() - 1 : -1);
         Log.d(TAG, "clearTovarList :" + param);
-        ADD_DEBUG(param);
+        addProductDebug(param);
     }
 
     /**
@@ -141,7 +141,7 @@ public class ShoppingListWorker {
     public void setPositionTovarList(String param) {
 
         Log.d(TAG, "setPositionTovarList :" + param);
-        ADD_DEBUG(param);
+        addProductDebug(param);
         if (arrayShoppingList.size() > 0) {
             final ItemShoppingList item = ParseData(param);
 
@@ -169,7 +169,7 @@ public class ShoppingListWorker {
      * @param param строка "сырых" данных
      */
     public void deletePositionTovarList(String param) {
-        ADD_DEBUG(param);
+        addProductDebug(param);
 
         int indexPosition = Integer.valueOf(param.substring(0, 2));//2
 

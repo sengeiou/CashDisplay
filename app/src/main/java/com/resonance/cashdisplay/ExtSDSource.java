@@ -91,7 +91,6 @@ public class ExtSDSource {
     }
 
     public static boolean isMounted(Context context) {
-
         return (isSdcardMounted(context) == 1);
     }
 

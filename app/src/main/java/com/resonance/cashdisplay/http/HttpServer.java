@@ -25,13 +25,12 @@ import com.resonance.cashdisplay.PreferencesValues;
 import com.resonance.cashdisplay.load.DownloadMedia;
 import com.resonance.cashdisplay.sound.Sound;
 import com.resonance.cashdisplay.su.Modify_SU_Preferences;
-import com.resonance.cashdisplay.web.WebStatus;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.resonance.cashdisplay.http.WebStatus.CLEAR_QUEUE_WEB_MESSAGE;
 import static com.resonance.cashdisplay.uart.UartWorker.UART_CHANGE_SETTINGS;
-import static com.resonance.cashdisplay.web.WebStatus.CLEAR_QUEUE_WEB_MESSAGE;
 
 public class HttpServer {
 

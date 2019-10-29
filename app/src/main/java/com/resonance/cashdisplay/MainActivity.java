@@ -32,6 +32,7 @@ import android.widget.TextView;
 import com.resonance.cashdisplay.databinding.ActivityMainBinding;
 import com.resonance.cashdisplay.eth.EthernetSettings;
 import com.resonance.cashdisplay.http.HttpServer;
+import com.resonance.cashdisplay.http.WebStatus;
 import com.resonance.cashdisplay.load.DownloadMedia;
 import com.resonance.cashdisplay.shopping_list.ShoppingListWorker;
 import com.resonance.cashdisplay.slide_show.VideoSlideService;
@@ -39,7 +40,6 @@ import com.resonance.cashdisplay.sound.Sound;
 import com.resonance.cashdisplay.su.Modify_SU_Preferences;
 import com.resonance.cashdisplay.uart.UartWorker;
 import com.resonance.cashdisplay.utils.ImageUtils;
-import com.resonance.cashdisplay.web.WebStatus;
 
 import java.io.File;
 
@@ -62,6 +62,7 @@ public class MainActivity extends Activity {
     public static final int MSG_SET_SCREEN_NOT_WORK = 39;
     public static final int MSG_SET_SCREEN_THANKS = 40;
     public static final int MSG_FROM_EKKR = 41;
+    public static final int MSG_ADD_PRODUCT_DEBUG = 1234;
 
     public static PreferencesValues preferenceParams;       //настройки
     private static UartWorker uartWorker;                   //обработчик UART
@@ -162,13 +163,11 @@ public class MainActivity extends Activity {
 
         //UART
         uartWorker = new UartWorker(uartHandler);
-
+        setVisibleContext(CONTEXT_CONNECT, 0);
         if (uartWorker.openSerialPort(UartWorker.getCoreNameUart(preferenceParams.sUartName), 0, 0) == 0) {
-            setVisibleContext(CONTEXT_CONNECT, 0);
             productInfo.setStatusConnection("інтерфейс RS232 ініціалізованo");
         } else {
             Log.e(TAG, "ERROR Open Port");
-            setVisibleContext(CONTEXT_CONNECT, 0);
             productInfo.setStatusConnection("ПОМИЛКА інтерфейсу RS232");
         }
 
@@ -189,7 +188,7 @@ public class MainActivity extends Activity {
         tv_TotalCount.setText("0");
         tv_TotalSumm.setText("0.00");
 
-        changeSettingsRegisterReceiver();
+        registerReceiver(changeSettings, new IntentFilter(CHANGE_SETTINGS));
         setBackgroundScreen();
         setVisibleContext(CONTEXT_CONNECT, 0);
 
@@ -221,11 +220,6 @@ public class MainActivity extends Activity {
     /**
      * Приемник события изменения настроек
      */
-    private void changeSettingsRegisterReceiver() {
-        IntentFilter intentFilter = new IntentFilter(CHANGE_SETTINGS);
-        registerReceiver(changeSettings, intentFilter);
-    }
-
     BroadcastReceiver changeSettings = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -280,21 +274,17 @@ public class MainActivity extends Activity {
     /************************************************************************************/
 
     public void setVisibleContext(int contextType, Object param) {
-
+        setVisibleLayer(CONTEXT_SHOPPING_LIST, View.INVISIBLE);
+        setVisibleLayer(CONTEXT_CONNECT, View.INVISIBLE);
+        setVisibleLayer(CONTEXT_THANKS, View.INVISIBLE);
         switch (contextType) {
             case CONTEXT_SHOPPING_LIST:
                 setVisibleLayer(CONTEXT_SHOPPING_LIST, View.VISIBLE);
-                setVisibleLayer(CONTEXT_CONNECT, View.INVISIBLE);
-                setVisibleLayer(CONTEXT_THANKS, View.INVISIBLE);
                 break;
             case CONTEXT_CONNECT:
-                setVisibleLayer(CONTEXT_SHOPPING_LIST, View.INVISIBLE);
                 setVisibleLayer(CONTEXT_CONNECT, View.VISIBLE);
-                setVisibleLayer(CONTEXT_THANKS, View.INVISIBLE);
                 break;
             case CONTEXT_THANKS:
-                setVisibleLayer(CONTEXT_SHOPPING_LIST, View.INVISIBLE);
-                setVisibleLayer(CONTEXT_CONNECT, View.INVISIBLE);
                 setVisibleLayer(CONTEXT_THANKS, View.VISIBLE);
                 break;
             default:
@@ -347,32 +337,28 @@ public class MainActivity extends Activity {
     private final Handler messageHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            setEnableMedia(false);
             switch (msg.what) {
                 case MSG_ADD_TOVAR_SHOPPING_LIST:
                     Log.d(TAG, "MSG_ADD_TOVAR_SHOPPING_LIST");
-                    setEnableMedia(false);
                     shoppingListWorker.addTovarList((String) msg.obj);
                     setVisibleContext(msg.arg1, msg.arg2);
                     break;
                 case MSG_SET_TOVAR_SHOPPING_LIST:
                     Log.d(TAG, "MSG_SET_TOVAR_SHOPPING_LIST");
-                    setEnableMedia(false);
                     shoppingListWorker.setPositionTovarList((String) msg.obj);
                     setVisibleContext(msg.arg1, msg.arg2);
                     break;
                 case MSG_DEL_TOVAR_SHOPPING_LIST:
                     Log.d(TAG, "MSG_DEL_TOVAR_SHOPPING_LIST");
                     shoppingListWorker.deletePositionTovarList((String) msg.obj);
-                    setEnableMedia(false);
                     setVisibleContext(msg.arg1, msg.arg2);
                     break;
                 case MSG_CLEAR_SHOPPING_LIST:
                     Log.d(TAG, "MSG_CLEAR_SHOPPING_LIST");
-                    setEnableMedia(false);
                     shoppingListWorker.clearTovarList((String) msg.obj);
                     break;
                 case MSG_SET_SCREEN_NOT_WORK:
-                    setEnableMedia(false);
                     Log.d(TAG, "MSG_SET_SCREEN_NOT_WORK");
                     shoppingListWorker.closeDisplayShoppingList();
                     setVisibleContext(msg.arg1, msg.arg2);
@@ -387,8 +373,8 @@ public class MainActivity extends Activity {
                 case MSG_FROM_EKKR:
                     Log.d(TAG, "MSG_FROM_EKKR");
                     break;
-                case 1234:
-                    shoppingListWorker.ADD_DEBUG((String) msg.obj);
+                case MSG_ADD_PRODUCT_DEBUG:
+                    shoppingListWorker.addProductDebug((String) msg.obj);
                     break;
                 default:
                     Log.e(TAG, "Handler default message:" + String.valueOf(msg.what));
@@ -576,3 +562,4 @@ public class MainActivity extends Activity {
 }
 
 // TODO: 23.10.2019 По ftp протоколу видео файлы могут "ломаться" (видео проигрывается, но картинка искажена)
+// TODO: 28.10.2019 Внедрить Crashlytics 

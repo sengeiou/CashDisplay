@@ -61,15 +61,12 @@ public class SerialPort {
 
         mFd = open(device.getAbsolutePath(), baudrate, flags);
         if (mFd == null) {
-            Log.e(TAG, "ERROR,[SerialPort][open] returns null");
+            Log.e(TAG, "ERROR, [SerialPort][open] returns null");
             throw new IOException();
-
         }
         mFileInputStream = new FileInputStream(mFd);
         mFileOutputStream = new FileOutputStream(mFd);
     }
-
-
 
     public SerialPort(String devicePath, int baudrate, int flags)
         throws SecurityException, IOException {
