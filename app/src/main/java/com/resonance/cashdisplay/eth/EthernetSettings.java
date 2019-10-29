@@ -25,7 +25,6 @@ import java.util.Enumeration;
 public class EthernetSettings {
 
     public static final String TAG = EthernetSettings.class.getSimpleName();
-    ;
 
     public static final String ETH_ON = "eth_on";
     public static final String ETH_MODE = "eth_mode";
@@ -113,7 +112,6 @@ public class EthernetSettings {
         setupLanCallback.onSetupLAN(1);
     }
 
-
     /**
      * Получение настроек Ethernet
      *
@@ -168,16 +166,13 @@ public class EthernetSettings {
         return ethDevInfo;
     }
 
-
     private boolean isEthConfigured() {
         final ContentResolver cr = mContext.getContentResolver();
         int x = Settings.System.getInt(cr, ETH_CONF, 0);
-
         if (x == 1)
             return true;
         return false;
     }
-
 
     /*
      * Получение настроек Ethernet
@@ -282,7 +277,6 @@ public class EthernetSettings {
     }
 
 /***************************************************************************/
-
 
     /**
      * Коллбэк окончания настройки сети

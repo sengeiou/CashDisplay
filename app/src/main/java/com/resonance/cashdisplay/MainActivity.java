@@ -342,17 +342,17 @@ public class MainActivity extends Activity {
                 case MSG_ADD_TOVAR_SHOPPING_LIST:
                     Log.d(TAG, "MSG_ADD_TOVAR_SHOPPING_LIST");
                     shoppingListWorker.addTovarList((String) msg.obj);
-                    setVisibleContext(msg.arg1, msg.arg2);
+                    setVisibleContext(CONTEXT_SHOPPING_LIST, msg.arg2);
                     break;
                 case MSG_SET_TOVAR_SHOPPING_LIST:
                     Log.d(TAG, "MSG_SET_TOVAR_SHOPPING_LIST");
                     shoppingListWorker.setPositionTovarList((String) msg.obj);
-                    setVisibleContext(msg.arg1, msg.arg2);
+                    setVisibleContext(CONTEXT_SHOPPING_LIST, msg.arg2);
                     break;
                 case MSG_DEL_TOVAR_SHOPPING_LIST:
                     Log.d(TAG, "MSG_DEL_TOVAR_SHOPPING_LIST");
                     shoppingListWorker.deletePositionTovarList((String) msg.obj);
-                    setVisibleContext(msg.arg1, msg.arg2);
+                    setVisibleContext(CONTEXT_SHOPPING_LIST, msg.arg2);
                     break;
                 case MSG_CLEAR_SHOPPING_LIST:
                     Log.d(TAG, "MSG_CLEAR_SHOPPING_LIST");
@@ -361,11 +361,11 @@ public class MainActivity extends Activity {
                 case MSG_SET_SCREEN_NOT_WORK:
                     Log.d(TAG, "MSG_SET_SCREEN_NOT_WORK");
                     shoppingListWorker.closeDisplayShoppingList();
-                    setVisibleContext(msg.arg1, msg.arg2);
+                    setVisibleContext(CONTEXT_CONNECT, msg.arg2);
                     break;
                 case MSG_SET_SCREEN_THANKS:
                     Log.d(TAG, "MSG_SET_SCREEN_THANKS");
-                    setVisibleContext(msg.arg1, msg.arg2);
+                    setVisibleContext(CONTEXT_THANKS, msg.arg2);
                     shoppingListWorker.closeDisplayShoppingList();
                     setEnableMedia(true);
                     resetMediaTime();

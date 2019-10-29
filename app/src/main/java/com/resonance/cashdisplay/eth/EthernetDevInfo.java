@@ -13,10 +13,10 @@ public class EthernetDevInfo implements Parcelable {
     private String dns;
     private String mode;
     private int always_on;
-    public static final String ETH_CONN_MODE_DHCP= "dhcp";
+    public static final String ETH_CONN_MODE_DHCP = "dhcp";
     public static final String ETH_CONN_MODE_MANUAL = "manual";
 
-    public EthernetDevInfo () {
+    public EthernetDevInfo() {
         dev_name = null;
         ipaddr = null;
         dns = null;
@@ -101,23 +101,25 @@ public class EthernetDevInfo implements Parcelable {
         dest.writeInt(this.always_on);
     }
 
-    /** Implement the Parcelable interface {@hide} */
+    /**
+     * Implement the Parcelable interface {@hide}
+     */
     public static final Creator<EthernetDevInfo> CREATOR =
-        new Creator<EthernetDevInfo>() {
-            public EthernetDevInfo createFromParcel(Parcel in) {
-                EthernetDevInfo info = new EthernetDevInfo();
-                info.setIfName(in.readString());
-                info.setIpAddress(in.readString());
-                info.setNetMask(in.readString());
-                info.setRouteAddr(in.readString());
-                info.setDnsAddr(in.readString());
-                info.setConnectMode(in.readString());
-                info.setAlwaysOn(in.readInt());
-                return info;
-            }
+            new Creator<EthernetDevInfo>() {
+                public EthernetDevInfo createFromParcel(Parcel in) {
+                    EthernetDevInfo info = new EthernetDevInfo();
+                    info.setIfName(in.readString());
+                    info.setIpAddress(in.readString());
+                    info.setNetMask(in.readString());
+                    info.setRouteAddr(in.readString());
+                    info.setDnsAddr(in.readString());
+                    info.setConnectMode(in.readString());
+                    info.setAlwaysOn(in.readInt());
+                    return info;
+                }
 
-            public EthernetDevInfo[] newArray(int size) {
-                return new EthernetDevInfo[size];
-            }
-        };
+                public EthernetDevInfo[] newArray(int size) {
+                    return new EthernetDevInfo[size];
+                }
+            };
 }

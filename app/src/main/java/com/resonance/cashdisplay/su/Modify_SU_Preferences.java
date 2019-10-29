@@ -56,15 +56,15 @@ public class Modify_SU_Preferences {
 
         final String FOUND_PARAM = "[sys.boot_completed]: [";
 
-        String Str = executeCmd(CMD_GET_PROPERTIES, 1000);
+        String resultStr = executeCmd(CMD_GET_PROPERTIES, 1000);
 
-        int index = Str.indexOf(FOUND_PARAM);
+        int index = resultStr.indexOf(FOUND_PARAM);
         if (index < 0) return false;
 
         Log.d(TAG, "CheckSystemBootCompleted:" + index);
 
         index += FOUND_PARAM.length();
-        int res = Integer.valueOf(Str.substring(index, index + 1));
+        int res = Integer.valueOf(resultStr.substring(index, index + 1));
 
         return (res == 1);
     }
