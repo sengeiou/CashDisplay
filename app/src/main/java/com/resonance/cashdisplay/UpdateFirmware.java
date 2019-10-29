@@ -48,16 +48,13 @@ public class UpdateFirmware {
 
     public UpdateFirmware(Context context) {
         this.mContext = context;
-
     }
 
     private void unregisterReceiver() {
-
         mContext.unregisterReceiver(br);
     }
 
     private void registerReceiver() {
-
         mContext.registerReceiver(br, new IntentFilter(BROADCAST_ACTION));
     }
 
@@ -73,7 +70,6 @@ public class UpdateFirmware {
                 } else if (TypeFileLoad == 2) {
                     unregisterReceiver();
                     ResultForFirmWareFile();
-
                 }
             } else {
                 unregisterReceiver();
@@ -86,7 +82,6 @@ public class UpdateFirmware {
      * Инициация обновления ПО
      */
     public void update() {
-
         if (TypeFileLoad > 0)
             return;
 
@@ -124,35 +119,26 @@ public class UpdateFirmware {
 
             if (Integer.parseInt(build) > BuildConfig.VERSION_CODE)
                 EnableUpdate = true;
-
-
             if (EnableUpdate) {
                 MainActivity.httpServer.sendQueWebStatus("доступна версія ПЗ: " + build, true);
                 TypeFileLoad = 2;
                 Path_To_Apk_File = LOCAL_DIR + file_name + ".apk";
-
-
                 new DownloadSettingsTask().execute(file_name + ".apk");
             } else {
                 MainActivity.httpServer.sendQueWebStatus("Вже встановлена остання версія ПЗ", true);
                 TypeFileLoad = 0;
                 return;
             }
-
         } catch (FileNotFoundException e) {
             Log.e(TAG, "FileNotFoundException: " + LOCAL_DIR + FILE_SETTING + " " + e);
         } catch (IOException e) {
             Log.e(TAG, "IOException: " + LOCAL_DIR + FILE_SETTING + " " + e);
             MainActivity.httpServer.sendQueWebStatus("ПОМИЛКА " + e.getMessage(), true);
-
         }
-        ;
-
     }
 
 
     public void ResultForFirmWareFile() {
-
         updateAPK(Path_To_Apk_File);
         TypeFileLoad = 0;
     }
@@ -182,31 +168,25 @@ public class UpdateFirmware {
                 System.exit(0);
             }
         });
-
         thread.start();
     }
-
 
     /**
      * Рестарт системы
      */
     private void doRestart() {
-
-
         Intent mStartActivity = new Intent(mContext, MainActivity.class);
         mStartActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         int mPendingIntentId = 123456;
         PendingIntent mPendingIntent = PendingIntent.getActivity(mContext, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager mgr = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 8000, mPendingIntent);
-
     }
 
 
     private static int crc32(String str) {
         byte bytes[] = str.getBytes();
         Checksum checksum = new CRC32();
-
         checksum.update(bytes, 0, bytes.length);
         return (int) checksum.getValue();
     }
@@ -244,7 +224,6 @@ public class UpdateFirmware {
                     InputStream in = new BufferedInputStream(connection.getInputStream());
                     // outputStreamWriter = new OutputStreamWriter(new FileOutputStream(fileSetting));
 
-
                     Log.d(TAG, " UpdateFirmware... connection.getContentLength: " + connection.getContentLength());
 
                     fos = new FileOutputStream(fileSetting);
@@ -265,14 +244,11 @@ public class UpdateFirmware {
                         int percent = (int) (totalbytes * 100 / connection.getContentLength());
 
                         //if (percent%10)
-
-
                         if (prevValuePercent != percent) {
                             MainActivity.httpServer.sendQueWebStatus("завантаження даних..." + percent + " %", true);
                             // Log.d(TAG, ">>" + percent);
                             prevValuePercent = percent;
                         }
-
                     }
 
                 } else if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
@@ -294,33 +270,25 @@ public class UpdateFirmware {
                 MainActivity.httpServer.sendQueWebStatus("не знайдено сервер оновлень. Перевiрте налаштунки мережi. " + e.getLocalizedMessage(), true);
                 return 5;
             } finally {
-
                 try {
                     if (fos != null)
                         fos.close();
                 } catch (IOException e) {
 
                 }
-                ;
-
                 if (connection != null)
                     connection.disconnect();
-
             }
             return 0;
-
         }
 
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
             Log.d(TAG, "DownloadTask result : " + result);
-
-
             Intent intent = new Intent(BROADCAST_ACTION);
             intent.putExtra(PARAM_RESULT, result);
             mContext.sendBroadcast(intent);
-
          /*  if (TypeFileLoad==1)
               ResultForSettingFile(result);
            else
@@ -329,29 +297,21 @@ public class UpdateFirmware {
         }
     }
 
-
     public int[] convertVersionToInt(String versionName) {
-
         int[] arr = new int[]{0, 0, 0};
-
-
         if (versionName.matches("^(\\d{1,4})\\.(\\d{1,4})\\.(\\d{1,4})$")) {
             String[] groups = versionName.split("\\.");
-
             for (int i = 0; i < 3; i++) {
                 String segment = groups[i];
                 if (segment == null || segment.length() <= 0) {
                     return (new int[]{0, 0, 0});
                 }
-
                 int value = 0;
                 try {
                     arr[i] = Integer.parseInt(segment);
-
                 } catch (NumberFormatException e) {
                     return (new int[]{0, 0, 0});
                 }
-
             }
             return arr;
         }

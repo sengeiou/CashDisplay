@@ -470,7 +470,7 @@ public class SmbWorker {
                         if (forDelete) {
                             Log.w(TAG, "To delete: " + FilesAlreadyExists[i]);
 
-                            FileOperation.DeleteFile(DirSou.getCanonicalPath()+"/"+FilesAlreadyExists[i]);
+                            FileOperation.deleteFile(DirSou.getCanonicalPath()+"/"+FilesAlreadyExists[i]);
                             DownloadMedia.append_to_DownloadLog("Удален : "+FilesAlreadyExists[i]);
                             dr.CountDeleted++;
                             if (dr.CountDeleted%10==0)
