@@ -53,11 +53,9 @@ public class HttpServer {
     private int counttemp = 0;
 
     public HttpServer(Context context, WebStatus webstat) {
-
         mContext = context;
         webStatus = webstat;
         // createServerAsync();
-
         final Thread t = new Thread() {
             @Override
             public void run() {
@@ -70,7 +68,7 @@ public class HttpServer {
             }
         };
         t.run();
-        new createProducerConsumer().start();
+        new СreateProducerConsumer().start();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(HTTP_HALT_EVENT);
@@ -80,16 +78,11 @@ public class HttpServer {
     public BroadcastReceiver httpHaltEvent = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
             if (counttemp > 0) return;
-
             counttemp++;
-
             if (intent.getAction().equals(HTTP_HALT_EVENT)) {
                 Log.d(TAG, "** RESTART HTTP SERVER **");
-
                 stopHttpServer();
-
                 final Thread t = new Thread() {
                     @Override
                     public void run() {
@@ -133,7 +126,6 @@ public class HttpServer {
                 Log.w(TAG, "**CompletedCallback");
             }
         });
-
         mServer.listen(mAsyncServer, http_config.port);
     }
 
@@ -151,7 +143,6 @@ public class HttpServer {
 
             response.getHeaders().set("Content-Type", ContentTypes.getInstance().getContentType(path));
             response.send(HtmlHelper.loadPathAsString(path));
-
         }
     };
 
@@ -268,6 +259,9 @@ public class HttpServer {
 
                 prefValues.sPathToScreenImg = (String) jsonObject.get("host_screen_img");
 
+                // TODO: 30.10.2019 Get settings from web page
+                prefValues.productListLookCode = 1;
+
                 prefParams.setParameters(prefValues);
 
                 MainActivity.ethernetSettings.applyEthernetSettings();//контроль измененмя сетевых настроек
@@ -361,7 +355,6 @@ public class HttpServer {
 
 
     public void stopHttpServer() {
-
         mServer.stop();
         mAsyncServer.stop();
         mServer = null;
@@ -411,10 +404,10 @@ public class HttpServer {
         return path;
     }
 
-    public synchronized void sendQueWebStatus(String str_msg, boolean clearQueue) {
+    public synchronized void sendQueWebStatus(String strMsg, boolean clearQueue) {
         Message msg = new Message();
         msg.what = WebStatus.SEND_TO_QUEUE_WEB_MESSAGE;
-        msg.obj = str_msg;
+        msg.obj = strMsg;
         msg.arg1 = (clearQueue ? CLEAR_QUEUE_WEB_MESSAGE : 0);
         msg.arg2 = 0;
         Handler h = webStatus.getWebMessageHandler();
@@ -422,7 +415,7 @@ public class HttpServer {
             webStatus.getWebMessageHandler().sendMessage(msg);
     }
 
-    private class createProducerConsumer extends Thread {
+    private class СreateProducerConsumer extends Thread {
         @Override
         public void run() {
             super.run();
@@ -430,13 +423,13 @@ public class HttpServer {
             //Log.d(TAG, "createProducerConsumer  started");
             while (!isInterrupted()) {
                 try {
+                    // FIXME: 30.10.2019 Not good to create new String every 300ms
                     String msg = "";
                     if ((msg = webStatus.getStrStatus()).length() > 0) {
 
                         iCurStatus = STAT_LOAD_FILES;
                         iCurStatusMsg = msg;
                         Log.w(TAG, "Smb_messageQueue.take:" + iCurStatusMsg);
-
 
                     } else {
                         Thread.sleep(300);

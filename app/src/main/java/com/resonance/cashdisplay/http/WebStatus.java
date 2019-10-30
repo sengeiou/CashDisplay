@@ -19,7 +19,7 @@ public class WebStatus {
     public static final String TAG = "WebStatus";
 
     private final int SIZE_MESSAGE_QUEUE = 50;
-    private static BlockingQueue<String> smbMessageQueue;
+    private BlockingQueue<String> smbMessageQueue;
 
     public WebStatus() {
         smbMessageQueue = new ArrayBlockingQueue<String>(SIZE_MESSAGE_QUEUE);

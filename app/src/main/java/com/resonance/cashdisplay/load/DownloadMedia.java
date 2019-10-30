@@ -122,19 +122,17 @@ public class DownloadMedia {
         @Override
         public void onSmbjStatus(final String msg, final boolean delRemaininng) {
             MainActivity.httpServer.sendQueWebStatus(msg, delRemaininng);
-
         }
     };
+
     /**
      * Коллбэк окончания загрузки SMB2
      */
     private SmbjWorker.SMBJ_EndDownloadCallback smbj_endDownloadCallback = new SmbjWorker.SMBJ_EndDownloadCallback() {
         @Override
         public void onSmbjEndDownload(final int msg) {
-
             downloadThreadStarted = false;//флаг активации загрузки файлов
         }
-
     };
     /**
      * Коллбэк обновления статуса загрузки SMB1  на WEB консоли
@@ -143,7 +141,6 @@ public class DownloadMedia {
         @Override
         public void onSmbStatus(final String msg, final boolean delRemaininng) {
             MainActivity.httpServer.sendQueWebStatus(msg, delRemaininng);
-
         }
     };
     /**
@@ -154,7 +151,6 @@ public class DownloadMedia {
         public void onSmbEndDownload(final int msg) {
             downloadThreadStarted = false;//флаг активации загрузки файлов
         }
-
     };
 /*******************************************************************************/
     /**

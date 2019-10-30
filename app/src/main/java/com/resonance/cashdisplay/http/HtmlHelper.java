@@ -108,6 +108,7 @@ public class HtmlHelper {
 
         return sb.toString();
     }
+
     private static void closeQuietly(final Object closeable) {
         if (closeable instanceof Flushable) {
             try {
@@ -120,5 +121,4 @@ public class HtmlHelper {
             } catch (IOException ignored) { }
         }
     }
-
 }

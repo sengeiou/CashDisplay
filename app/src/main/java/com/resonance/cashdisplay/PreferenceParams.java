@@ -61,6 +61,8 @@ public class PreferenceParams {
 
         params.sPathToScreenImg = sharedPreferences.getString("sPathToScreenImg", "/indi10/ScreenImg/");
 
+        params.productListLookCode = sharedPreferences.getInt("productListLookCode", 1);
+
         return params;
     }
 
@@ -106,5 +108,7 @@ public class PreferenceParams {
         sharedPreferences.edit().putString("background_cash_not_work", parameters.backgroundCashNotWork).apply();
         sharedPreferences.edit().putString("background_thanks", parameters.backgroundThanks).apply();
         sharedPreferences.edit().putString("sPathToScreenImg", parameters.sPathToScreenImg).apply();
+
+        sharedPreferences.edit().putInt("productListLookCode", parameters.productListLookCode).apply();
     }
 }

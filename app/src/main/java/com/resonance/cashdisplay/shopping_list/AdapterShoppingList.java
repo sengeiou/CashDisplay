@@ -31,7 +31,6 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
     boolean inverse = false;
 
     private class ViewHolder {
-
         TextView textview_tovar;
         TextView textview_Count;
         TextView textview_Price;
