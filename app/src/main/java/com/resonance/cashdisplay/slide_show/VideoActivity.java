@@ -223,7 +223,7 @@ public class VideoActivity extends AppCompatActivity {
                             if (!videoView.isPlaying()) {
                                 File fileTmp = new File(mediaDir + videoFilesArray[indexPlaingFile]);
                                 if (fileTmp.exists()) {
-                                    if (!FileOperation.isFilelocked(fileTmp)) {
+                                    if (!FileOperation.isFileLocked(fileTmp)) {
                                         Log.d(TAG, "Start play video: " + mediaDir + videoFilesArray[indexPlaingFile]);
                                         Uri uriVideo = Uri.parse(mediaDir + videoFilesArray[indexPlaingFile]);
                                         videoView.setVideoURI(uriVideo);

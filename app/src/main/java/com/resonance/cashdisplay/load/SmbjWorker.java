@@ -260,7 +260,7 @@ public class SmbjWorker {
                         Log.e(TAG, "Smb Exception(2): " + e);
                     }
                     //удалим лог, предназначеный для передачи на сервер
-                    DownloadMedia.delete_DownloadLog();
+                    DownloadMedia.deleteDownloadLog();
 
                     if (session != null){
                         session = null;

@@ -198,10 +198,10 @@ public class DownloadMedia {
         }
 
         //очистка хлама
-        File LostDir = new File(ExtSDSource.getExternalSdCardPath() + "/LOST.DIR");
-        if (LostDir.exists()) {
-            if (LostDir.isDirectory()) {
-                FileOperation.deleteRecursive(LostDir);
+        File lostDir = new File(ExtSDSource.getExternalSdCardPath() + "/LOST.DIR");
+        if (lostDir.exists()) {
+            if (lostDir.isDirectory()) {
+                FileOperation.deleteRecursive(lostDir);
             }
         } else
             Log.w(TAG, "Dir:" + ExtSDSource.getExternalSdCardPath() + "/LOST.DIR" + " - not exist");
@@ -235,7 +235,6 @@ public class DownloadMedia {
             MainActivity.httpServer.sendQueWebStatus("Неправильно вказанi параметри до ресурсу фонових зображень : [" + prefValues.sPathToScreenImg + "]", true);
             return;
         }
-
 
         //подготовка параметров загрузки соответствующему загрузчику
 
@@ -293,7 +292,6 @@ public class DownloadMedia {
      * @return ShareParam
      */
     public ShareParam ParseSmbjFolders(String params) {
-
         ShareParam shareParam = new ShareParam();
         shareParam.result = false;
         if (params.startsWith("/")) {
@@ -351,7 +349,6 @@ public class DownloadMedia {
                 Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
             }
         });
-
     }
 
     /**
@@ -380,7 +377,6 @@ public class DownloadMedia {
     public static void resetMediaPlay() {
         Intent i = new Intent(VideoSlideService.VIDEO_SLIDE_RESET_TIME);
         MainActivity.context.sendBroadcast(i);
-
     }
 
     /**
@@ -434,7 +430,7 @@ public class DownloadMedia {
     /**
      * Удаляет лог-файл
      */
-    public static synchronized void delete_DownloadLog() {
+    public static synchronized void deleteDownloadLog() {
         //удалим существующий файл
         if (mLogFile.exists()) {
             mLogFile.delete();

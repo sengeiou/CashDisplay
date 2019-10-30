@@ -21,7 +21,7 @@ import java.util.Set;
 public class FileOperation {
 
     public static final String TAG = "FileOperation";
-    final static protected char[] hexArray = "0123456789ABCDEF".toCharArray();
+    protected static final char[] hexArray = "0123456789ABCDEF".toCharArray();
 
     public boolean createFile(String path) {
         boolean result = true;
@@ -31,7 +31,6 @@ public class FileOperation {
             Log.e(TAG, "Ошибка создания файла: " + path);
             result = false;
         }
-        ;
         return result;
     }
 
@@ -67,7 +66,6 @@ public class FileOperation {
             while ((read = is.read(bytes)) != -1) {
                 digest.update(bytes, 0, read);
             }
-
             byte[] messageDigest = digest.digest();
 
             StringBuilder sb = new StringBuilder(32);
@@ -80,13 +78,11 @@ public class FileOperation {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return md5;
     }
 
     public static String getFileExtension(String fileName) {
         String extension = "";
-
         int i = fileName.lastIndexOf('.');
         if (i > 0) {
             extension = fileName.substring(i + 1);
@@ -98,7 +94,6 @@ public class FileOperation {
         return fileName.substring(0, fileName.lastIndexOf('.'));
     }
 
-
     public String calcMD5qwe(String location) {
         MessageDigest md = null;
         FileInputStream fis = null;
@@ -106,18 +101,14 @@ public class FileOperation {
         try {
             md = MessageDigest.getInstance("MD5");
             fis = new FileInputStream(location);
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         try {
             int nread = 0;
             while ((nread = fis.read(dataBytes)) != -1) {
                 md.update(dataBytes, 0, nread);
             }
-            ;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -128,7 +119,6 @@ public class FileOperation {
         for (int i = 0; i < mdbytes.length; i++) {
             sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
         }
-
         Log.d(TAG, "Digest(in hex format):: " + sb.toString());
 
         //convert the byte to hex format method 2
@@ -141,7 +131,6 @@ public class FileOperation {
         Log.d(TAG, "Digest(in hex format):: " + hexString.toString());
         return hexString.toString();
     }
-
 
     public static class FileExtensionFilter implements FilenameFilter {
         private Set<String> exts = new HashSet<String>();
@@ -171,34 +160,26 @@ public class FileOperation {
         if (fileOrDirectory.isDirectory())
             for (File child : fileOrDirectory.listFiles())
                 deleteRecursive(child);
-
         fileOrDirectory.delete();
     }
 
-    public static boolean isFilelocked(File file) {
-
+    public static boolean isFileLocked(File file) {
         return !file.canWrite();
-
     }
 
     public static void lockFile(String filepath, boolean state) {
-
         File videofile = new File(filepath);
         if (videofile.exists()) {
-
             videofile.setWritable(state);
         }
     }
 
     public static void deleteFile(String pathToFile) {
-
         File fdelete = new File(pathToFile);
-
         if (fdelete.exists()) {
-            if (!isFilelocked(fdelete)) {
-                if (fdelete.delete()) {
+            if (!isFileLocked(fdelete)) {
+                if (fdelete.delete())
                     Log.d(TAG, "file deleted: " + pathToFile);
-                }
             } else {
                 Log.d(TAG, "file locked: " + pathToFile);
             }

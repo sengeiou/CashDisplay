@@ -35,16 +35,15 @@ public class UpdateFirmware {
     public final static String BROADCAST_ACTION = "com.resonance.cashdisplay.p0961servicebackbroadcast";
     public final static String PARAM_RESULT = "result";
 
-    public static final String TAG = "UpdateFirmware";
+    private static final String TAG = "UpdateFirmware";
     private static Context mContext;
 
     public static final String FILE_SETTING = "settings.ini";
     public static final String UPDATE_URI = "http://dev.ekka.com.ua/indicator/";
     public static final String LOCAL_DIR = Environment.getExternalStorageDirectory() + "/Documents/";
 
-
-    private static int TypeFileLoad = 0;
-    public static String Path_To_Apk_File = "";
+    private static int typeFileLoad = 0;
+    public static String pathToApkFile = "";
 
     public UpdateFirmware(Context context) {
         this.mContext = context;
@@ -65,15 +64,15 @@ public class UpdateFirmware {
             int status = intent.getIntExtra(PARAM_RESULT, -1);
             Log.d(TAG, "onReceive: " + status);
             if (status == 0) {
-                if (TypeFileLoad == 1) {
-                    treatment_SettingFile();
-                } else if (TypeFileLoad == 2) {
+                if (typeFileLoad == 1) {
+                    treatmentSettingFile();
+                } else if (typeFileLoad == 2) {
                     unregisterReceiver();
-                    ResultForFirmWareFile();
+                    resultForFirmWareFile();
                 }
             } else {
                 unregisterReceiver();
-                TypeFileLoad = 0;
+                typeFileLoad = 0;
             }
         }
     };
@@ -82,7 +81,7 @@ public class UpdateFirmware {
      * Инициация обновления ПО
      */
     public void update() {
-        if (TypeFileLoad > 0)
+        if (typeFileLoad > 0)
             return;
 
         //Проверка директории
@@ -98,14 +97,14 @@ public class UpdateFirmware {
             return;
         }
         registerReceiver();
-        TypeFileLoad = 1;
+        typeFileLoad = 1;
         new DownloadSettingsTask().execute(FILE_SETTING);
     }
 
     /**
      * Загрузчик обновления ПО
      */
-    private void treatment_SettingFile() {
+    private void treatmentSettingFile() {
         try {
             Ini ini = new Ini(new File(LOCAL_DIR + FILE_SETTING));
             String build = ini.get("default", "build");
@@ -115,18 +114,18 @@ public class UpdateFirmware {
 
             Log.w(TAG, "build: " + build + " file_name:" + file_name);
 
-            boolean EnableUpdate = false;
+            boolean enableUpdate = false;
 
             if (Integer.parseInt(build) > BuildConfig.VERSION_CODE)
-                EnableUpdate = true;
-            if (EnableUpdate) {
+                enableUpdate = true;
+            if (enableUpdate) {
                 MainActivity.httpServer.sendQueWebStatus("доступна версія ПЗ: " + build, true);
-                TypeFileLoad = 2;
-                Path_To_Apk_File = LOCAL_DIR + file_name + ".apk";
+                typeFileLoad = 2;
+                pathToApkFile = LOCAL_DIR + file_name + ".apk";
                 new DownloadSettingsTask().execute(file_name + ".apk");
             } else {
                 MainActivity.httpServer.sendQueWebStatus("Вже встановлена остання версія ПЗ", true);
-                TypeFileLoad = 0;
+                typeFileLoad = 0;
                 return;
             }
         } catch (FileNotFoundException e) {
@@ -137,10 +136,9 @@ public class UpdateFirmware {
         }
     }
 
-
-    public void ResultForFirmWareFile() {
-        updateAPK(Path_To_Apk_File);
-        TypeFileLoad = 0;
+    public void resultForFirmWareFile() {
+        updateAPK(pathToApkFile);
+        typeFileLoad = 0;
     }
 
     /**

@@ -30,7 +30,6 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
     Context mContext;
     boolean inverse = false;
 
-
     private class ViewHolder {
 
         TextView textview_tovar;
@@ -79,15 +78,12 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
             viewHolder = (AdapterShoppingList.ViewHolder) convertView.getTag();
             result = convertView;
         }
-
-
         viewHolder.textview_npp.setText("" + (position + 1));
         viewHolder.textview_tovar.setText(dataModel.getNameTovara());
         viewHolder.textview_Count.setText(((dataModel.getDivisible() == 1) ? (String.format("%.03f", (float) dataModel.getCount() / 1000)) : "" + dataModel.getCount()).replace(",", "."));
         viewHolder.textview_Price.setText(String.format("%.02f", (float) ((float) dataModel.getPrice() / 100)).replace(",", "."));
         viewHolder.textview_Summ.setText(String.format("%.02f", (float) ((float) dataModel.getSumm() / 100)).replace(",", "."));
         viewHolder.textview_tovar.setTag(position);
-
 
         return convertView;
     }

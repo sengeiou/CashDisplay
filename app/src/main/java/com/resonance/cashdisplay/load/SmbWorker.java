@@ -213,12 +213,12 @@ public class SmbWorker {
                 try {
                     //выгрузим на сервер лог загрузки
                     String ConnStr = Host + (shareScreenImg.startsWith("/") ? "" : "/") + shareScreenImg + "/LOG/";//(folderScreenImg.startsWith("/") ? "" : "/") + folderScreenImg;
-                    UplopadToSmb(User, Passw, ConnStr, DownloadMedia.mLogFile);
+                    uplopadToSmb(User, Passw, ConnStr, DownloadMedia.mLogFile);
                 } catch (Exception e) {
                     Log.e(TAG, "Smb Exception: " + e);
                 }
                 //удалим лог, предназначеный для передачи на сервер
-                DownloadMedia.delete_DownloadLog();
+                DownloadMedia.deleteDownloadLog();
 
             }
                 return error;
@@ -369,9 +369,9 @@ public class SmbWorker {
         dr.CountDeleted = 0;
 
         //получим список файлов уже существующих
-        File DirSou = new File(DestinationFolder);
-        if (DirSou.isDirectory()) {
-            FilesAlreadyExists = DirSou.list();
+        File dirSou = new File(DestinationFolder);
+        if (dirSou.isDirectory()) {
+            FilesAlreadyExists = dirSou.list();
         }
         ChangeStatus("отримання списку файлів...", true);
 
@@ -470,7 +470,7 @@ public class SmbWorker {
                         if (forDelete) {
                             Log.w(TAG, "To delete: " + FilesAlreadyExists[i]);
 
-                            FileOperation.deleteFile(DirSou.getCanonicalPath()+"/"+FilesAlreadyExists[i]);
+                            FileOperation.deleteFile(dirSou.getCanonicalPath()+"/"+FilesAlreadyExists[i]);
                             DownloadMedia.append_to_DownloadLog("Удален : "+FilesAlreadyExists[i]);
                             dr.CountDeleted++;
                             if (dr.CountDeleted%10==0)
@@ -502,7 +502,7 @@ public class SmbWorker {
     }
 
 
-    private boolean UplopadToSmb(String User, String Passw, String remote_destination_path,  File localFile){
+    private boolean uplopadToSmb(String User, String Passw, String remote_destination_path,  File localFile){
 
         InputStream in = null;
         OutputStream out = null;
