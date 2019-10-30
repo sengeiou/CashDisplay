@@ -13,3 +13,4 @@
 .externalNativeBuild
 *.apk
 examples/
+*/google-services.json

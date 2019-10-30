@@ -1,7 +1,7 @@
 import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
-
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 28
@@ -176,4 +176,9 @@ dependencies {
     implementation project(':AndroidAsync')
     implementation 'at.amartinz:execution:1.0.0'
     implementation 'at.amartinz:hardware:1.0.1'
+
+    implementation 'com.google.firebase:firebase-core:16.0.7'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 }
+
+apply plugin: 'com.google.gms.google-services'
