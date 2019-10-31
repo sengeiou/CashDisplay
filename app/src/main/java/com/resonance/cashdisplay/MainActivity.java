@@ -178,7 +178,7 @@ public class MainActivity extends Activity {
         //экран "Список покупок"
         shoppingListWorker = new ShoppingListWorker(this);
 
-        setLayoutForShoppingList(0);
+        setLayoutForShoppingList(preferenceParams.productListLookCode);
 
         textViewDEBUG = (TextView) findViewById(R.id.textViewDEBUG);
         textViewDEBUG.setMovementMethod(new ScrollingMovementMethod());
@@ -191,42 +191,6 @@ public class MainActivity extends Activity {
         new CheckSystemStart().run();
 
         acceptFullScreen();
-    }
-
-    /**
-     * Method inflates specified layout view in activity_main.xml and get references for actual views.
-     * This changes the look of product list for different client's flavours.
-     *
-     * @param lookCode code of product list appearance
-     *                 0 - for Basket shop
-     *                 1 - for american shop in Dnepr
-     */
-    private void setLayoutForShoppingList(int lookCode) {
-        RelativeLayout layShoppingList = (RelativeLayout) findViewById(R.id.lay_shoppingList);
-        LayoutInflater li = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        if (layoutShoppingListLook != null)
-            layShoppingList.removeView(layoutShoppingListLook);
-
-        switch (lookCode) {
-            case 0:
-                layoutShoppingListLook = li.inflate(R.layout.layout_shopping_list_look_0, null);
-                break;
-            case 1:
-                layoutShoppingListLook = li.inflate(R.layout.layout_shopping_list_look_1, null);
-                break;
-            default:
-                break;
-        }
-        layShoppingList.addView(layoutShoppingListLook, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
-        listView = (ListView) findViewById(R.id.listview);
-        tv_TotalSumm = (TextView) findViewById(R.id.tv_TotalSumm);
-        tv_TotalCount = (TextView) findViewById(R.id.tv_TotalCount);
-        imageViewTovar = (ImageView) findViewById(R.id.imageViewTovar);
-        listView.setAdapter(shoppingListWorker.adapterShoppingList);
-        tv_TotalCount.setText("0");
-        tv_TotalSumm.setText("0.00");
     }
 
     /**
@@ -255,7 +219,10 @@ public class MainActivity extends Activity {
     BroadcastReceiver changeSettings = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            runOnUiThread(() -> setBackgroundScreen());
+            runOnUiThread(() -> {
+                setBackgroundScreen();
+                setLayoutForShoppingList(preferenceParams.productListLookCode);
+            });
         }
     };
 
@@ -301,6 +268,44 @@ public class MainActivity extends Activity {
         } else {
             relativeLayout[CONTEXT_THANKS].setBackgroundResource(R.drawable.screen_thanks);
         }
+    }
+
+    /************************************************************************************/
+
+    /**
+     * Method inflates specified layout view in activity_main.xml and get references for actual views.
+     * This changes the look of product list for different client's flavours.
+     *
+     * @param lookCode code of product list appearance
+     *                 0 - for Basket shop
+     *                 1 - for american shop in Dnepr
+     */
+    private void setLayoutForShoppingList(int lookCode) {
+        RelativeLayout layShoppingList = (RelativeLayout) findViewById(R.id.lay_shoppingList);
+        LayoutInflater li = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        if (layoutShoppingListLook != null)
+            layShoppingList.removeView(layoutShoppingListLook);
+
+        switch (lookCode) {
+            case 0:
+                layoutShoppingListLook = li.inflate(R.layout.layout_shopping_list_look_0, null);
+                break;
+            case 1:
+                layoutShoppingListLook = li.inflate(R.layout.layout_shopping_list_look_1, null);
+                break;
+            default:
+                break;
+        }
+        layShoppingList.addView(layoutShoppingListLook, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        listView = (ListView) findViewById(R.id.listview);
+        tv_TotalSumm = (TextView) findViewById(R.id.tv_TotalSumm);
+        tv_TotalCount = (TextView) findViewById(R.id.tv_TotalCount);
+        imageViewTovar = (ImageView) findViewById(R.id.imageViewTovar);
+        listView.setAdapter(shoppingListWorker.adapterShoppingList);
+        tv_TotalCount.setText("0");
+        tv_TotalSumm.setText("0.00");
     }
 
     /************************************************************************************/

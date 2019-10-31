@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="color_text_table_header_look_1">@android:color/black</color>
+    <color name="text_list_header_look_0">#585858</color>
+    <color name="text_list_header_look_1">@android:color/black</color>
+    <color name="text_list_item_look_0">@android:color/black</color>
+    <color name="text_list_item_look_1">@android:color/black</color>
+
+    <color name="list_item_delimiter_look_0">#C4C4C4</color>
+    <color name="list_item_delimiter_look_1">@android:color/black</color>
+
+
 
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>

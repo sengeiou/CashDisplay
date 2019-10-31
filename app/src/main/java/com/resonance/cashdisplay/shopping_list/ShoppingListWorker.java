@@ -49,7 +49,7 @@ public class ShoppingListWorker {
         needScrollQueue.clear();
 
         arrayShoppingList = new ArrayList<ItemShoppingList>();
-        adapterShoppingList = new AdapterShoppingList(mContext, R.layout.list_item_look_0, arrayShoppingList);
+        adapterShoppingList = new AdapterShoppingList(mContext, R.layout.list_item_look_1, arrayShoppingList);
 
         runUpdateThread();
 

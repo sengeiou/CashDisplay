@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="125px"
+        android:layout_height="@dimen/height_list_item_look_1"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:gravity="center_vertical"
@@ -24,8 +24,8 @@
             android:paddingLeft="1dp"
             android:paddingTop="10dp"
             android:textAlignment="center"
-            android:textColor="@color/red500"
-            android:textSize="30sp"
+            android:textColor="@color/text_list_item_look_1"
+            android:textSize="@dimen/text_list_item_look_0"
             tools:text="№" />
 
         <TextView
@@ -36,8 +36,8 @@
             android:layout_marginLeft="10dp"
             android:gravity="center_horizontal|left"
             android:paddingTop="10dp"
-            android:textColor="@color/colorBlack"
-            android:textSize="30sp"
+            android:textColor="@color/text_list_item_look_1"
+            android:textSize="@dimen/text_list_item_look_0"
             tools:text="This is Tovar" />
 
         <Space
@@ -55,8 +55,8 @@
             android:minWidth="200dp"
             android:paddingTop="10dp"
             android:textAlignment="center"
-            android:textColor="@color/colorBlack"
-            android:textSize="30sp"
+            android:textColor="@color/text_list_item_look_1"
+            android:textSize="@dimen/text_list_item_look_0"
             android:textStyle="bold"
             tools:text="10" />
 
@@ -71,8 +71,8 @@
             android:paddingTop="10dp"
             android:paddingRight="10dp"
             android:textAlignment="textEnd"
-            android:textColor="@color/colorBlack"
-            android:textSize="30sp"
+            android:textColor="@color/text_list_item_look_1"
+            android:textSize="@dimen/text_list_item_look_0"
             android:textStyle="bold"
             tools:text="9999.99" />
 
@@ -87,8 +87,40 @@
             android:minWidth="200dp"
             android:paddingTop="10dp"
             android:textAlignment="viewEnd"
-            android:textColor="@color/colorBlack"
-            android:textSize="30sp"
+            android:textColor="@color/text_list_item_look_1"
+            android:textSize="@dimen/text_list_item_look_0"
+            android:textStyle="bold"
+            tools:text="9999.99" />
+
+        <TextView
+            android:id="@+id/textview_discount"
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/textview_Count"
+            android:layout_gravity="right|center_vertical"
+            android:layout_weight="1"
+            android:minWidth="200dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:textAlignment="textEnd"
+            android:textColor="@color/text_list_item_look_1"
+            android:textSize="@dimen/text_list_item_look_0"
+            android:textStyle="bold"
+            tools:text="9999.99" />
+
+        <TextView
+            android:id="@+id/textview_to_pay"
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/textview_Price"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:minWidth="200dp"
+            android:paddingTop="10dp"
+            android:textAlignment="viewEnd"
+            android:textColor="@color/text_list_item_look_1"
+            android:textSize="@dimen/text_list_item_look_0"
             android:textStyle="bold"
             tools:text="9999.99" />
     </LinearLayout>
@@ -97,7 +129,7 @@
         android:id="@+id/imageview_list_item_delimiter"
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@color/colorBlack" />
+        android:background="@color/list_item_delimiter_look_1" />
 
     <ImageView
         android:id="@+id/imageview_icon"
