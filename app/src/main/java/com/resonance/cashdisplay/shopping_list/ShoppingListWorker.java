@@ -93,7 +93,6 @@ public class ShoppingListWorker {
         updateTotalCount();
     }
 
-
     /*обработчик команд для экран "Список покупок"*/
 
     /**
@@ -104,7 +103,7 @@ public class ShoppingListWorker {
     public void addTovarList(String param) {
 
         //Log.d(TAG, "addTovarList :"+param);
-        final ItemShoppingList item = ParseData(param);
+        final ItemShoppingList item = parseData(param);
         if (item.getIndexPosition() < 0) return;
 
         if (item.getIndexPosition() <= arrayShoppingList.size()) {
@@ -117,7 +116,6 @@ public class ShoppingListWorker {
             showToast("Невiрнi параметри при внесеннi товару, необхідно очистити чек!");
             Log.d(TAG, " ОШИБКА, количество товаров в списке: " + arrayShoppingList.size() + ", добавляется товар на позицию:" + item.getIndexPosition());
         }
-
     }
 
     /**
@@ -143,7 +141,7 @@ public class ShoppingListWorker {
         Log.d(TAG, "setPositionTovarList :" + param);
         addProductDebug(param);
         if (arrayShoppingList.size() > 0) {
-            final ItemShoppingList item = ParseData(param);
+            final ItemShoppingList item = parseData(param);
 
             if (item.getIndexPosition() < 0) return;
 
@@ -220,7 +218,6 @@ public class ShoppingListWorker {
             }
         });
 
-
         if (MainActivity.listView.getCount() == 0) {
             MainActivity.imageViewTovar.setVisibility(View.INVISIBLE);
         } else {
@@ -234,14 +231,13 @@ public class ShoppingListWorker {
         }
     }
 
-
     /**
      * Парсер данных с ResPos
      *
      * @param param строка "сырых" данных
      * @return ItemShoppingList
      */
-    private ItemShoppingList ParseData(String param) {
+    private ItemShoppingList parseData(String param) {
         ItemShoppingList item = new ItemShoppingList();
         try {
             int index = 0;
@@ -342,7 +338,6 @@ public class ShoppingListWorker {
                                     MainActivity.listView.setSelection(indexScroll);
                                     MainActivity.listView.smoothScrollToPositionFromTop(indexScroll, 0);
                                     Log.d(TAG, "5 ScrollToPosition :" + indexScroll);
-
                                 }
                             });
 
@@ -356,13 +351,10 @@ public class ShoppingListWorker {
                                             MainActivity.imageViewTovar.setImageBitmap(AdapterShoppingList.getImage(selectedItem.getCodTovara()));
                                         }
                                     });
-
                                 } catch (Exception e) {
                                     Log.e(TAG, "Exception QueWorker: " + e);
                                 }
-
                             }
-
                         } else {
                             if (MainActivity.listView.getSelectedItemPosition() != indexScroll) {
                                 MainActivity.listView.post(new Runnable() {
@@ -371,18 +363,13 @@ public class ShoppingListWorker {
 
                                         MainActivity.listView.setSelection(indexScroll);
                                         MainActivity.listView.smoothScrollToPositionFromTop(indexScroll, 0);
-
                                     }
                                 });
-
                             }
                             Thread.sleep(100);
                         }
-
                     } catch (Exception e) {
-
                         Log.e(TAG, "Exception:" + e);
-
                     }
                 }
             }

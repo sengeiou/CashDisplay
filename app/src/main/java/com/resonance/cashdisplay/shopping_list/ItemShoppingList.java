@@ -3,6 +3,7 @@ package com.resonance.cashdisplay.shopping_list;
 
 public class ItemShoppingList {
     public String action = "";
+
     private int indexPosition = -1;
     private int npp = 0;
     private String codTovara = "";

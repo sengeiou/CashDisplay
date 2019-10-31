@@ -21,9 +21,11 @@ import android.os.Message;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -184,6 +186,16 @@ public class MainActivity extends Activity {
         mScrollView = (ScrollView) findViewById(R.id.mScrollView);
         lay_shoppingList = (RelativeLayout) findViewById(R.id.lay_shoppingList);
         listView.setAdapter(shoppingListWorker.adapterShoppingList);
+
+
+
+        LinearLayout layTotalSumm = (LinearLayout) findViewById(R.id.idLayTotalSumm);
+        ViewGroup.LayoutParams params = layTotalSumm.getLayoutParams();
+        // Changes the height and width to the specified *pixels*
+        params.height = 50;
+        layTotalSumm.setLayoutParams(params);
+
+
 
         tv_TotalCount.setText("0");
         tv_TotalSumm.setText("0.00");

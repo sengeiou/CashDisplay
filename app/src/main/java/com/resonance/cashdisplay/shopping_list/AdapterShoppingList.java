@@ -26,7 +26,7 @@ import java.util.ArrayList;
 public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implements View.OnClickListener {
 
     private final static String TAG = "ShoppingListActivity";
-    private ArrayList<ItemShoppingList> dataSet;
+    private ArrayList<ItemShoppingList> dataList;
     Context mContext;
     boolean inverse = false;
 
@@ -41,7 +41,7 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
 
     public AdapterShoppingList(ArrayList<ItemShoppingList> data, Context context) {
         super(context, R.layout.list_item, data);
-        this.dataSet = data;
+        this.dataList = data;
         this.mContext = context;
     }
 
@@ -49,7 +49,6 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
     public void onClick(View v) {
         Log.d(TAG, "onClick :+position");
     }
-
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
