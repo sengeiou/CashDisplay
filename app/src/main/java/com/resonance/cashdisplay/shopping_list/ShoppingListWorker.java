@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
+import com.resonance.cashdisplay.R;
 
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -48,7 +49,7 @@ public class ShoppingListWorker {
         needScrollQueue.clear();
 
         arrayShoppingList = new ArrayList<ItemShoppingList>();
-        adapterShoppingList = new AdapterShoppingList(arrayShoppingList, mContext);
+        adapterShoppingList = new AdapterShoppingList(mContext, R.layout.list_item_look_0, arrayShoppingList);
 
         runUpdateThread();
 

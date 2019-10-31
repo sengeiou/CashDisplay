@@ -16,7 +16,6 @@
     <string name="get_data_ScreenFiles">перевірка файлiв фонових зображень</string>
     <string name="try_connect_to_source">перевiрка вмісту файлового ресурсу</string>
 
-
     <string-array name="entriesSpeed">
         <item>9600</item>
         <item>19200</item>
@@ -41,5 +40,15 @@
 
     <string name="title_activity_video">VideoActivity</string>
 
+    <string name="number_sign">№</string>
+    <string name="product_name">Найменування</string>
+    <string name="amount">Кiлькiсть</string>
+    <string name="price">Цiна</string>
+    <string name="sum">Сума</string>
+    <string name="discount">Знижка</string>
+    <string name="to_pay">До сплати</string>
+    <string name="total_products">Всього товарiв:  </string>
+    <string name="to_pay_colon">До сплати:  </string>
+    <string name="total">Разом</string>
 
 </resources>

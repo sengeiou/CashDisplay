@@ -20,12 +20,12 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -93,9 +93,9 @@ public class MainActivity extends Activity {
     public static ListView listView;
     public static TextView textViewDEBUG;
     public static ScrollView mScrollView;
-    public static RelativeLayout lay_shoppingList;
     public static ImageView imageViewTovar;
 
+    private View layoutShoppingListLook;    // represent layout_shopping_list_look_x.xml, where x - number of desired look
     TextView tvVersion;
 
     @Override
@@ -177,28 +177,12 @@ public class MainActivity extends Activity {
 
         //экран "Список покупок"
         shoppingListWorker = new ShoppingListWorker(this);
-        listView = (ListView) findViewById(R.id.listview);
-        tv_TotalSumm = (TextView) findViewById(R.id.tv_TotalSumm);
-        tv_TotalCount = (TextView) findViewById(R.id.tv_TotalCount);
-        imageViewTovar = (ImageView) findViewById(R.id.imageViewTovar);
+
+        setLayoutForShoppingList(0);
+
         textViewDEBUG = (TextView) findViewById(R.id.textViewDEBUG);
         textViewDEBUG.setMovementMethod(new ScrollingMovementMethod());
         mScrollView = (ScrollView) findViewById(R.id.mScrollView);
-        lay_shoppingList = (RelativeLayout) findViewById(R.id.lay_shoppingList);
-        listView.setAdapter(shoppingListWorker.adapterShoppingList);
-
-
-
-        LinearLayout layTotalSumm = (LinearLayout) findViewById(R.id.idLayTotalSumm);
-        ViewGroup.LayoutParams params = layTotalSumm.getLayoutParams();
-        // Changes the height and width to the specified *pixels*
-        params.height = 50;
-        layTotalSumm.setLayoutParams(params);
-
-
-
-        tv_TotalCount.setText("0");
-        tv_TotalSumm.setText("0.00");
 
         registerReceiver(changeSettings, new IntentFilter(CHANGE_SETTINGS));
         setBackgroundScreen();
@@ -207,6 +191,42 @@ public class MainActivity extends Activity {
         new CheckSystemStart().run();
 
         acceptFullScreen();
+    }
+
+    /**
+     * Method inflates specified layout view in activity_main.xml and get references for actual views.
+     * This changes the look of product list for different client's flavours.
+     *
+     * @param lookCode code of product list appearance
+     *                 0 - for Basket shop
+     *                 1 - for american shop in Dnepr
+     */
+    private void setLayoutForShoppingList(int lookCode) {
+        RelativeLayout layShoppingList = (RelativeLayout) findViewById(R.id.lay_shoppingList);
+        LayoutInflater li = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        if (layoutShoppingListLook != null)
+            layShoppingList.removeView(layoutShoppingListLook);
+
+        switch (lookCode) {
+            case 0:
+                layoutShoppingListLook = li.inflate(R.layout.layout_shopping_list_look_0, null);
+                break;
+            case 1:
+                layoutShoppingListLook = li.inflate(R.layout.layout_shopping_list_look_1, null);
+                break;
+            default:
+                break;
+        }
+        layShoppingList.addView(layoutShoppingListLook, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        listView = (ListView) findViewById(R.id.listview);
+        tv_TotalSumm = (TextView) findViewById(R.id.tv_TotalSumm);
+        tv_TotalCount = (TextView) findViewById(R.id.tv_TotalCount);
+        imageViewTovar = (ImageView) findViewById(R.id.imageViewTovar);
+        listView.setAdapter(shoppingListWorker.adapterShoppingList);
+        tv_TotalCount.setText("0");
+        tv_TotalSumm.setText("0.00");
     }
 
     /**

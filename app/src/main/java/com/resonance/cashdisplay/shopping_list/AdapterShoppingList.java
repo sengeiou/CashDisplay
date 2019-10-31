@@ -29,6 +29,7 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
     private ArrayList<ItemShoppingList> dataList;
     Context mContext;
     boolean inverse = false;
+    private int listItemResourceId;
 
     private class ViewHolder {
         TextView textview_tovar;
@@ -39,10 +40,11 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
         ImageView imageview_icon;
     }
 
-    public AdapterShoppingList(ArrayList<ItemShoppingList> data, Context context) {
-        super(context, R.layout.list_item, data);
-        this.dataList = data;
+    public AdapterShoppingList(Context context, int resource, ArrayList<ItemShoppingList> data) {
+        super(context, resource, data);
         this.mContext = context;
+        this.listItemResourceId = resource;
+        this.dataList = data;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
 
             viewHolder = new AdapterShoppingList.ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.list_item, parent, false);
+            convertView = inflater.inflate(listItemResourceId, parent, false);
             viewHolder.textview_npp = (TextView) convertView.findViewById(R.id.textview_npp);
             viewHolder.textview_tovar = (TextView) convertView.findViewById(R.id.textview_tovar);
             viewHolder.textview_Count = (TextView) convertView.findViewById(R.id.textview_Count);
