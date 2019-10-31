@@ -219,6 +219,11 @@ public class ShoppingListWorker {
             }
         });
 
+        if (MainActivity.preferenceParams.productListLookCode == 1){
+            MainActivity.imageViewTovar.setVisibility(View.GONE);
+            return;
+        }
+
         if (MainActivity.listView.getCount() == 0) {
             MainActivity.imageViewTovar.setVisibility(View.INVISIBLE);
         } else {

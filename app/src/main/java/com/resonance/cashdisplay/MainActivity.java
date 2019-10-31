@@ -88,14 +88,16 @@ public class MainActivity extends Activity {
     private static ImageView imageSdCardError;
     private static boolean lanSetupAlready = false;
 
+    private View layoutShoppingListLook;    // represent layout_shopping_list_look_x.xml, where x - number of desired look
     public static TextView tv_TotalSumm;
     public static TextView tv_TotalCount;
+    public static TextView textViewTotalDiscount;
+    public static TextView textViewTotalSummWithDiscount;
     public static ListView listView;
     public static TextView textViewDEBUG;
     public static ScrollView mScrollView;
     public static ImageView imageViewTovar;
 
-    private View layoutShoppingListLook;    // represent layout_shopping_list_look_x.xml, where x - number of desired look
     TextView tvVersion;
 
     @Override
@@ -302,10 +304,14 @@ public class MainActivity extends Activity {
         listView = (ListView) findViewById(R.id.listview);
         tv_TotalSumm = (TextView) findViewById(R.id.tv_TotalSumm);
         tv_TotalCount = (TextView) findViewById(R.id.tv_TotalCount);
+        textViewTotalDiscount = (TextView) findViewById(R.id.textview_discount_end_sum);
+        textViewTotalSummWithDiscount = (TextView) findViewById(R.id.textview_to_pay_end_sum);
         imageViewTovar = (ImageView) findViewById(R.id.imageViewTovar);
         listView.setAdapter(shoppingListWorker.adapterShoppingList);
         tv_TotalCount.setText("0");
         tv_TotalSumm.setText("0.00");
+        textViewTotalDiscount.setText("0.00");
+        textViewTotalSummWithDiscount.setText("0.00");
     }
 
     /************************************************************************************/

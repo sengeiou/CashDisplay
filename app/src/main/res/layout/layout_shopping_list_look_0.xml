@@ -113,14 +113,28 @@
         android:layout_weight="1625"
         android:orientation="horizontal">
 
+        <!--        for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
         <TextView
-            android:id="@+id/textViewTotTov"
+            android:id="@+id/textview_discount_end_sum"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+        <!--        for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
+        <TextView
+            android:id="@+id/textview_to_pay_end_sum"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/textview_total_products"
             android:layout_width="500px"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:gravity="clip_vertical"
-            android:text="Всього товарiв:  "
+            android:text="@string/total_products"
             android:textAlignment="viewEnd"
             android:textColor="@color/white"
             android:textSize="30sp"
@@ -139,13 +153,13 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/textview_to_pay"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:gravity="clip_vertical"
-            android:text="До сплати:  "
+            android:text="@string/to_pay_colon"
             android:textAlignment="viewEnd"
             android:textColor="@color/white"
             android:textSize="30sp"
