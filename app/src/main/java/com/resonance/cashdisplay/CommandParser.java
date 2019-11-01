@@ -37,10 +37,7 @@ public class CommandParser {
     private final String CMD_THNK = "THNK"; // Отобразить экран "Спасибо за покупку"  THNK95E5
     private final String CMD_UPDATE_SCREEN = "UPDT"; //Обновить экран
 
-
     private final String[] arrComands2 = new String[]{CMD_ADDL, CMD_CLRL, CMD_SETi, CMD_DELi, CMD_TOTL, CMD_NWRK, CMD_THNK};
-    private final String[] arrFunc2 = new String[]{"addTovarList", "clearTovarList", "setPositionTovarList",
-            "deletePositionTovarList", "totalSumTovarList", "setScreenCacheNotWork", "setScreenThanks"};
 
     private final int LEN_EXT_BUFFER = 1024 * 4;
 

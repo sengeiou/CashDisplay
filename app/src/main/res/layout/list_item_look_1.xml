@@ -57,7 +57,6 @@
             android:textAlignment="center"
             android:textColor="@color/text_list_item_look_1"
             android:textSize="@dimen/text_list_item_look_0"
-            android:textStyle="bold"
             tools:text="10" />
 
         <TextView
@@ -73,11 +72,10 @@
             android:textAlignment="textEnd"
             android:textColor="@color/text_list_item_look_1"
             android:textSize="@dimen/text_list_item_look_0"
-            android:textStyle="bold"
             tools:text="9999.99" />
 
         <TextView
-            android:id="@+id/textview_Summ"
+            android:id="@+id/textview_summ_without_discount"
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:layout_below="@+id/textview_Price"
@@ -89,7 +87,6 @@
             android:textAlignment="viewEnd"
             android:textColor="@color/text_list_item_look_1"
             android:textSize="@dimen/text_list_item_look_0"
-            android:textStyle="bold"
             tools:text="9999.99" />
 
         <TextView
@@ -105,11 +102,11 @@
             android:textAlignment="textEnd"
             android:textColor="@color/text_list_item_look_1"
             android:textSize="@dimen/text_list_item_look_0"
-            android:textStyle="bold"
             tools:text="9999.99" />
 
+<!--        here will be value received from COM port, already with discount -->
         <TextView
-            android:id="@+id/textview_to_pay"
+            android:id="@+id/textview_Summ"
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:layout_below="@+id/textview_Price"
@@ -121,7 +118,6 @@
             android:textAlignment="viewEnd"
             android:textColor="@color/text_list_item_look_1"
             android:textSize="@dimen/text_list_item_look_0"
-            android:textStyle="bold"
             tools:text="9999.99" />
     </LinearLayout>
 

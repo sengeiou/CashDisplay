@@ -92,7 +92,8 @@
                 android:id="@+id/imageview_list_header_underline"
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:background="@color/list_item_delimiter_look_0" />
+                android:background="@color/list_item_delimiter_look_0"
+                android:visibility="gone"/>
 
             <ListView
                 android:id="@+id/listview"
@@ -113,19 +114,19 @@
         android:layout_weight="1625"
         android:orientation="horizontal">
 
-        <!--        for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
+        <!--    dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
         <TextView
             android:id="@+id/textview_discount_end_sum"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
-        <!--        for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
+        <!--     dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
         <TextView
-            android:id="@+id/textview_to_pay_end_sum"
+            android:id="@+id/textview_sum_without_discount_end"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/textview_total_products"

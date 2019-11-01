@@ -89,10 +89,11 @@ public class MainActivity extends Activity {
     private static boolean lanSetupAlready = false;
 
     private View layoutShoppingListLook;    // represent layout_shopping_list_look_x.xml, where x - number of desired look
-    public static TextView tv_TotalSumm;
+    // next block of views must be in every layout_shopping_list_look_x.xml to provide compability
     public static TextView tv_TotalCount;
-    public static TextView textViewTotalDiscount;
-    public static TextView textViewTotalSummWithDiscount;
+    public static TextView textViewTotalSummWithDiscount;   // calculated value
+    public static TextView textViewTotalDiscount;           // calculated value
+    public static TextView tv_TotalSumm;             // value for this view received from COM port
     public static ListView listView;
     public static TextView textViewDEBUG;
     public static ScrollView mScrollView;
@@ -179,8 +180,7 @@ public class MainActivity extends Activity {
 
         //экран "Список покупок"
         shoppingListWorker = new ShoppingListWorker(this);
-
-        setLayoutForShoppingList(preferenceParams.productListLookCode);
+        setProductListLook();
 
         textViewDEBUG = (TextView) findViewById(R.id.textViewDEBUG);
         textViewDEBUG.setMovementMethod(new ScrollingMovementMethod());
@@ -223,7 +223,9 @@ public class MainActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             runOnUiThread(() -> {
                 setBackgroundScreen();
-                setLayoutForShoppingList(preferenceParams.productListLookCode);
+                // next need to change look of product list
+                shoppingListWorker = new ShoppingListWorker(MainActivity.context);
+                setProductListLook();
             });
         }
     };
@@ -277,41 +279,45 @@ public class MainActivity extends Activity {
     /**
      * Method inflates specified layout view in activity_main.xml and get references for actual views.
      * This changes the look of product list for different client's flavours.
-     *
-     * @param lookCode code of product list appearance
-     *                 0 - for Basket shop
-     *                 1 - for american shop in Dnepr
      */
-    private void setLayoutForShoppingList(int lookCode) {
+    private void setProductListLook() {
+        int lookCode = preferenceParams.productListLookCode;
+        // appropriate adapter must be created everytime for actual listview for specified look of product list
+        shoppingListWorker.createAdapterShoppingList(lookCode);
+
         RelativeLayout layShoppingList = (RelativeLayout) findViewById(R.id.lay_shoppingList);
         LayoutInflater li = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (layoutShoppingListLook != null)
             layShoppingList.removeView(layoutShoppingListLook);
 
+        int resource;
         switch (lookCode) {
             case 0:
-                layoutShoppingListLook = li.inflate(R.layout.layout_shopping_list_look_0, null);
+                resource = R.layout.layout_shopping_list_look_0;
                 break;
             case 1:
-                layoutShoppingListLook = li.inflate(R.layout.layout_shopping_list_look_1, null);
+                resource = R.layout.layout_shopping_list_look_1;
                 break;
             default:
+                resource = R.layout.layout_shopping_list_look_0;
                 break;
         }
+        layoutShoppingListLook = li.inflate(resource, null);
         layShoppingList.addView(layoutShoppingListLook, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
+        Log.d(TAG, "");
         listView = (ListView) findViewById(R.id.listview);
+        textViewTotalSummWithDiscount = (TextView) findViewById(R.id.textview_sum_without_discount_end);
+        textViewTotalDiscount = (TextView) findViewById(R.id.textview_discount_end_sum);
         tv_TotalSumm = (TextView) findViewById(R.id.tv_TotalSumm);
         tv_TotalCount = (TextView) findViewById(R.id.tv_TotalCount);
-        textViewTotalDiscount = (TextView) findViewById(R.id.textview_discount_end_sum);
-        textViewTotalSummWithDiscount = (TextView) findViewById(R.id.textview_to_pay_end_sum);
         imageViewTovar = (ImageView) findViewById(R.id.imageViewTovar);
-        listView.setAdapter(shoppingListWorker.adapterShoppingList);
+        listView.setAdapter(shoppingListWorker.getAdapterShoppingList());
         tv_TotalCount.setText("0");
-        tv_TotalSumm.setText("0.00");
-        textViewTotalDiscount.setText("0.00");
         textViewTotalSummWithDiscount.setText("0.00");
+        textViewTotalDiscount.setText("0.00");
+        tv_TotalSumm.setText("0.00");
     }
 
     /************************************************************************************/

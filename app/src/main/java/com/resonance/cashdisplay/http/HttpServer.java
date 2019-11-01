@@ -259,9 +259,6 @@ public class HttpServer {
 
                 prefValues.sPathToScreenImg = (String) jsonObject.get("host_screen_img");
 
-                // TODO: 30.10.2019 Get settings from web page
-                prefValues.productListLookCode = 1;
-
                 prefParams.setParameters(prefValues);
 
                 MainActivity.ethernetSettings.applyEthernetSettings();//контроль измененмя сетевых настроек

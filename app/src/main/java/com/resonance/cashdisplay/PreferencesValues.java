@@ -31,5 +31,5 @@ public class PreferencesValues {
     public String backgroundThanks;
     public String imageLogo;
 
-    public int productListLookCode;
+    public int productListLookCode; //
 }

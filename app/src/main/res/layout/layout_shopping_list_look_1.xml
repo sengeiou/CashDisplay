@@ -130,14 +130,16 @@
         android:layout_alignParentBottom="true"
         android:layout_weight="54"
         android:gravity="bottom|end"
+        android:paddingBottom="0dp"
+        android:background="@color/orange50"
         android:orientation="horizontal">
 
         <Space
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="8" />
+            android:layout_weight="10" />
 
-        <!--        for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
+        <!--       dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
         <TextView
             android:id="@+id/tv_TotalCount"
             android:layout_width="50dp"
@@ -155,10 +157,10 @@
             android:textSize="@dimen/text_total_look_1" />
 
         <TextView
-            android:id="@+id/tv_TotalSumm"
+            android:id="@+id/textview_sum_without_discount_end"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|start"
+            android:layout_gravity="start"
             android:layout_weight="2"
             android:paddingRight="10dp"
             android:text="12345678.99"
@@ -180,7 +182,7 @@
             android:id="@+id/textview_discount_end_sum"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|start"
+            android:layout_gravity="start"
             android:layout_weight="2"
             android:paddingRight="10dp"
             android:text="12345678.99"
@@ -199,10 +201,10 @@
             android:textSize="@dimen/text_total_look_1" />
 
         <TextView
-            android:id="@+id/textview_to_pay_end_sum"
+            android:id="@+id/tv_TotalSumm"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|start"
+            android:layout_gravity="start"
             android:layout_weight="2"
             android:paddingRight="10dp"
             android:text="12345678.99"

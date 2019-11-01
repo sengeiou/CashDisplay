@@ -9,9 +9,12 @@ import android.widget.Toast;
 
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
+import com.resonance.cashdisplay.PreferenceParams;
+import com.resonance.cashdisplay.PreferencesValues;
 import com.resonance.cashdisplay.R;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -31,14 +34,15 @@ public class ShoppingListWorker {
     public static final String TOTAL_COUNT_SHOPPING_LIST_ALERT = "TotalCount_TovarList";
     public static final String SCROLL_SHOPPING_LIST_ALERT = "Scroll_TovarList";
 
-    private static long totalSumm = 0;
+    private int totalSumWithoutDiscount = 0;
+    private int totalDiscount = 0;
+    private int totalSumm = 0;
     private static Context mContext;
 
-    private static BlockingQueue<Integer> needScrollQueue;//обеспечивает передачу событий для скроллинга списка товаров
+    private BlockingQueue<Integer> needScrollQueue;//обеспечивает передачу событий для скроллинга списка товаров
 
-    public static AdapterShoppingList adapterShoppingList;
+    private AdapterShoppingList adapterShoppingList;
     public static ArrayList<ItemShoppingList> arrayShoppingList;
-
 
     /**
      * @param context
@@ -49,11 +53,31 @@ public class ShoppingListWorker {
         needScrollQueue.clear();
 
         arrayShoppingList = new ArrayList<ItemShoppingList>();
-        adapterShoppingList = new AdapterShoppingList(mContext, R.layout.list_item_look_1, arrayShoppingList);
-
         runUpdateThread();
-
         Log.d(TAG, "ShoppingListWorker");
+    }
+
+    /**
+     * @param lookCode value of {@link PreferencesValues#productListLookCode}
+     */
+    public void createAdapterShoppingList(int lookCode) {
+        int resource;
+        switch (lookCode) {
+            case 0:
+                resource = R.layout.list_item_look_0;
+                break;
+            case 1:
+                resource = R.layout.list_item_look_1;
+                break;
+            default:
+                resource = R.layout.list_item_look_0;
+                break;
+        }
+        adapterShoppingList = new AdapterShoppingList(mContext, resource, arrayShoppingList);
+    }
+
+    public AdapterShoppingList getAdapterShoppingList() {
+        return adapterShoppingList;
     }
 
     /**
@@ -185,21 +209,25 @@ public class ShoppingListWorker {
      * Пересчет суммы по списку товаров
      */
     private void updateTotalSumm() {
+        totalSumWithoutDiscount = 0;
+        totalDiscount = 0;
         totalSumm = 0;
 
         for (int i = 0; i < arrayShoppingList.size(); i++) {
             ItemShoppingList selectedItem = arrayShoppingList.get(i);
+            totalSumWithoutDiscount += selectedItem.getSumWithoutDiscount();
+            totalDiscount += selectedItem.getDiscount();
             totalSumm += selectedItem.getSumm();
         }
 
         MainActivity.tv_TotalSumm.post(new Runnable() {
             public void run() {
+                MainActivity.textViewTotalSummWithDiscount.setText(String.format(Locale.ROOT, "%.2f", (float) (((float) totalSumWithoutDiscount) / 100)));
+                MainActivity.textViewTotalDiscount.setText(String.format(Locale.ROOT, "%.2f", (float) (((float) totalDiscount) / 100)));
                 MainActivity.tv_TotalSumm.setText(String.format("%.2f", (float) (((float) totalSumm) / 100)).replace(",", "."));
-            }
-        });
-        MainActivity.textViewDEBUG.post(new Runnable() {
-            public void run() {
-                MainActivity.textViewDEBUG.append("MSG_TS: " + totalSumm + "\n");
+                MainActivity.textViewDEBUG.append("MSG_totalSumWithoutDiscount: " + totalSumWithoutDiscount + "\n");
+                MainActivity.textViewDEBUG.append("MSG_totalDiscount: " + totalDiscount + "\n");
+                MainActivity.textViewDEBUG.append("MSG_totalSum: " + totalSumm + "\n");
             }
         });
     }
@@ -219,7 +247,7 @@ public class ShoppingListWorker {
             }
         });
 
-        if (MainActivity.preferenceParams.productListLookCode == 1){
+        if (MainActivity.preferenceParams.productListLookCode == PreferenceParams.LOOK_AMERICAN) {
             MainActivity.imageViewTovar.setVisibility(View.GONE);
             return;
         }
@@ -262,7 +290,6 @@ public class ShoppingListWorker {
                 item.setIndexPosition(-1);
                 return item;
             }
-
             item.setCodTovara(param.substring(index, nextSeparator));
             index = nextSeparator + 1;
 
@@ -272,7 +299,6 @@ public class ShoppingListWorker {
                 item.setIndexPosition(-1);
                 return item;
             }
-
             item.setDivisible(Integer.valueOf(param.substring(index, nextSeparator)));
             index = nextSeparator + 1;
 
@@ -282,7 +308,6 @@ public class ShoppingListWorker {
                 item.setIndexPosition(-1);
                 return item;
             }
-
             item.setCount(Long.valueOf(param.substring(index, nextSeparator)));
             index = nextSeparator + 1;
 
@@ -292,7 +317,6 @@ public class ShoppingListWorker {
                 item.setIndexPosition(-1);
                 return item;
             }
-
             item.setPrice(Long.valueOf(param.substring(index, nextSeparator)));
             index = nextSeparator + 1;
 
@@ -302,7 +326,6 @@ public class ShoppingListWorker {
                 item.setIndexPosition(-1);
                 return item;
             }
-
             item.setSumm(Long.valueOf(param.substring(index, nextSeparator)));
             index = nextSeparator + 1;
 
@@ -312,7 +335,6 @@ public class ShoppingListWorker {
                 item.setIndexPosition(-1);
                 return item;
             }
-
             item.setNameTovara(param.substring(index, nextSeparator));
 
         } catch (Exception e) {
@@ -347,9 +369,9 @@ public class ShoppingListWorker {
                                 }
                             });
 
-                            if (ShoppingListWorker.adapterShoppingList.getCount() > indexScroll) {
+                            if (adapterShoppingList.getCount() > indexScroll) {
 
-                                final ItemShoppingList selectedItem = ShoppingListWorker.adapterShoppingList.getItem(indexScroll);
+                                final ItemShoppingList selectedItem = adapterShoppingList.getItem(indexScroll);
                                 try {
                                     MainActivity.imageViewTovar.post(new Runnable() {
                                         @Override

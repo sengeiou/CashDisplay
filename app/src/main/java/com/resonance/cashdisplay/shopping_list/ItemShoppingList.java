@@ -2,8 +2,6 @@ package com.resonance.cashdisplay.shopping_list;
 
 
 public class ItemShoppingList {
-    public String action = "";
-
     private int indexPosition = -1;
     private int npp = 0;
     private String codTovara = "";
@@ -11,17 +9,16 @@ public class ItemShoppingList {
     private int divisible = 0;
     private long count = 0;
     private long price = 0;
-    private long summ = 0;
-
-    private long discount = 0;
-    private long summToPay = 0;
+    private long sumWithoutDiscount = 0;   // calculated value
+    private long discount = 0;              // calculated value
+    private long summ = 0;      // value from command
 
     public ItemShoppingList() {
         this.indexPosition = -1;
     }
 
     public ItemShoppingList(int indexPosition, String codTovara, String nameTovara, int divisible,
-                            long count, long price, long summ) {
+                            long count, long price, long summ, long discount, long sumWithoutDiscount) {
         this.indexPosition = indexPosition;
         this.codTovara = codTovara;
         this.nameTovara = nameTovara;
@@ -29,6 +26,8 @@ public class ItemShoppingList {
         this.count = count;
         this.price = price;
         this.summ = summ;
+        this.discount = discount;
+        this.sumWithoutDiscount = sumWithoutDiscount;
     }
 
     public int getIndexPosition() {
@@ -95,19 +94,13 @@ public class ItemShoppingList {
         this.summ = summ;
     }
 
-    public long getDiscount() {
-        return discount;
+    public float getDiscount() {
+        float amount = ((divisible == 1) ? ((float) count / 1000) : count);
+        return (amount * price) - summ;
     }
 
-    public void setDiscount(long discount) {
-        this.discount = discount;
-    }
-
-    public long getSummToPay() {
-        return summToPay;
-    }
-
-    public void setSummToPay(long summToPay) {
-        this.summToPay = summToPay;
+    public float getSumWithoutDiscount() {
+        float amount = ((divisible == 1) ? ((float) count / 1000) : count);
+        return amount * price;
     }
 }

@@ -21,22 +21,24 @@ import com.resonance.cashdisplay.utils.ImageUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Locale;
 
 
 public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implements View.OnClickListener {
 
     private final static String TAG = "ShoppingListActivity";
-    private ArrayList<ItemShoppingList> dataList;
     Context mContext;
     boolean inverse = false;
     private int listItemResourceId;
 
     private class ViewHolder {
+        TextView textview_npp;
         TextView textview_tovar;
         TextView textview_Count;
         TextView textview_Price;
+        TextView textViewSummWithoutDiscount;   // this value will be calculated
+        TextView textViewDiscount;              // this value will be calculated
         TextView textview_Summ;
-        TextView textview_npp;
         ImageView imageview_icon;
     }
 
@@ -44,7 +46,6 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
         super(context, resource, data);
         this.mContext = context;
         this.listItemResourceId = resource;
-        this.dataList = data;
     }
 
     @Override
@@ -70,6 +71,8 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
             viewHolder.textview_tovar = (TextView) convertView.findViewById(R.id.textview_tovar);
             viewHolder.textview_Count = (TextView) convertView.findViewById(R.id.textview_Count);
             viewHolder.textview_Price = (TextView) convertView.findViewById(R.id.textview_Price);
+            viewHolder.textViewSummWithoutDiscount = (TextView) convertView.findViewById(R.id.textview_summ_without_discount);
+            viewHolder.textViewDiscount = (TextView) convertView.findViewById(R.id.textview_discount);
             viewHolder.textview_Summ = (TextView) convertView.findViewById(R.id.textview_Summ);
             viewHolder.imageview_icon = (ImageView) convertView.findViewById(R.id.imageview_icon);
             result = convertView;
@@ -80,11 +83,12 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
         }
         viewHolder.textview_npp.setText("" + (position + 1));
         viewHolder.textview_tovar.setText(dataModel.getNameTovara());
-        viewHolder.textview_Count.setText(((dataModel.getDivisible() == 1) ? (String.format("%.03f", (float) dataModel.getCount() / 1000)) : "" + dataModel.getCount()).replace(",", "."));
+        viewHolder.textview_Count.setText(((dataModel.getDivisible() == 1) ? (String.format("%.03f", (float) dataModel.getCount() / 1000)) : ("" + dataModel.getCount())).replace(",", "."));
         viewHolder.textview_Price.setText(String.format("%.02f", (float) ((float) dataModel.getPrice() / 100)).replace(",", "."));
+        viewHolder.textViewSummWithoutDiscount.setText(String.format(Locale.ROOT,"%.02f", (float) ((float) dataModel.getSumWithoutDiscount() / 100)));
+        viewHolder.textViewDiscount.setText(String.format(Locale.ROOT,"%.02f", (float) ((float) dataModel.getDiscount() / 100)));
         viewHolder.textview_Summ.setText(String.format("%.02f", (float) ((float) dataModel.getSumm() / 100)).replace(",", "."));
         viewHolder.textview_tovar.setTag(position);
-
         return convertView;
     }
 
