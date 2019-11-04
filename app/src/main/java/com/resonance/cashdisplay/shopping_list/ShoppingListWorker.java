@@ -397,6 +397,7 @@ public class ShoppingListWorker {
                             Thread.sleep(100);
                         }
                     } catch (Exception e) {
+                        e.printStackTrace();
                         Log.e(TAG, "Exception:" + e);
                     }
                 }

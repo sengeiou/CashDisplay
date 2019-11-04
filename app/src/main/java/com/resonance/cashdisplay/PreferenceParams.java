@@ -27,7 +27,7 @@ public class PreferenceParams {
     public static final int LOOK_AMERICAN = 1;          // american shop in Dnepr
     public static final int[] PRODUCT_LIST_LOOK = {LOOK_BASKET, LOOK_AMERICAN};
     private static int productListLookCode = PRODUCT_LIST_LOOK[0];  // default and initial value
-    private static final String PRODUCT_LIST_BACK_IMAGE_PREFIX = "custom_background_";
+    private static final String PRODUCT_LIST_BACK_IMAGE_PREFIX = "custom_product_list_";
 
     public PreferenceParams() {
         // sharedPreferences = MainActivity.mContext.getSharedPreferences(SERIALIZER_KEY, MainActivity.mContext.MODE_PRIVATE);
@@ -69,7 +69,6 @@ public class PreferenceParams {
         params.sPathToScreenImg = sharedPreferences.getString("sPathToScreenImg", "/indi10/ScreenImg/");
 
         params.productListLookCode = sharedPreferences.getInt("productListLookCode", PRODUCT_LIST_LOOK[0]);
-        Log.d("prefe", "productListLookCode get " + params.productListLookCode);
 
         return params;
     }
@@ -122,6 +121,7 @@ public class PreferenceParams {
         sharedPreferences.edit().putString("sPathToScreenImg", parameters.sPathToScreenImg).apply();
 
         // determine from background image for product list if we have to set custom look or default
+        productListLookCode = PRODUCT_LIST_LOOK[0];
         if (parameters.backgroundShoppingList.matches(PRODUCT_LIST_BACK_IMAGE_PREFIX + "\\d+.*")) {
             String strLookCode = parameters.backgroundShoppingList.replaceAll("\\D+", "");
             int lookCode = Integer.valueOf(strLookCode);
@@ -131,9 +131,7 @@ public class PreferenceParams {
                     break;
                 }
             }
-        } else
-            productListLookCode = PRODUCT_LIST_LOOK[0];
-        Log.d("prefe", "productListLookCode save " + productListLookCode);
+        }
         sharedPreferences.edit().putInt("productListLookCode", productListLookCode).apply();
     }
 }

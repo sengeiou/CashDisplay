@@ -353,7 +353,6 @@ public class MainActivity extends Activity {
         super.onDestroy();
         unregisterReceiver(changeSettings);
         unregisterReceiver(uartWorker.uartChangeSettings);
-        unregisterReceiver(httpServer.httpHaltEvent);
         unregisterReceiver(videoSlideService.videoSlideEvents);
     }
 
