@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/height_list_item_look_0"
+        android:layout_height="@dimen/list_item_height_look_0"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:gravity="center_vertical"
@@ -38,7 +38,7 @@
             android:paddingTop="10dp"
             android:textAlignment="center"
             android:textColor="@color/red500"
-            android:textSize="@dimen/text_list_item_look_0"
+            android:textSize="@dimen/list_item_text_look_0"
             tools:text="№" />
 
         <TextView
@@ -49,8 +49,8 @@
             android:layout_marginLeft="10dp"
             android:gravity="center_horizontal|left"
             android:paddingTop="10dp"
-            android:textColor="@color/text_list_item_look_0"
-            android:textSize="@dimen/text_list_item_look_0"
+            android:textColor="@color/list_item_text_look_0"
+            android:textSize="@dimen/list_item_text_look_0"
             tools:text="This is Tovar" />
 
         <Space
@@ -68,8 +68,8 @@
             android:minWidth="200dp"
             android:paddingTop="10dp"
             android:textAlignment="center"
-            android:textColor="@color/text_list_item_look_0"
-            android:textSize="@dimen/text_list_item_look_0"
+            android:textColor="@color/list_item_text_look_0"
+            android:textSize="@dimen/list_item_text_look_0"
             android:textStyle="bold"
             tools:text="10" />
 
@@ -84,8 +84,8 @@
             android:paddingTop="10dp"
             android:paddingRight="10dp"
             android:textAlignment="textEnd"
-            android:textColor="@color/text_list_item_look_0"
-            android:textSize="@dimen/text_list_item_look_0"
+            android:textColor="@color/list_item_text_look_0"
+            android:textSize="@dimen/list_item_text_look_0"
             android:textStyle="bold"
             tools:text="9999.99" />
 
@@ -100,8 +100,8 @@
             android:minWidth="200dp"
             android:paddingTop="10dp"
             android:textAlignment="viewEnd"
-            android:textColor="@color/text_list_item_look_0"
-            android:textSize="@dimen/text_list_item_look_0"
+            android:textColor="@color/list_item_text_look_0"
+            android:textSize="@dimen/list_item_text_look_0"
             android:textStyle="bold"
             tools:text="9999.99" />
     </LinearLayout>

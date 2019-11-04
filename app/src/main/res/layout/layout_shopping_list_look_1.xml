@@ -43,8 +43,8 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical|center_horizontal"
                     android:text="@string/number_sign"
-                    android:textColor="@color/text_list_header_look_1"
-                    android:textSize="@dimen/text_list_header_look_1" />
+                    android:textColor="@color/list_header_text_look_1"
+                    android:textSize="@dimen/list_header_text_look_1" />
 
                 <TextView
                     android:id="@+id/textView6"
@@ -53,8 +53,8 @@
                     android:layout_weight="4"
                     android:gravity="center_vertical|center_horizontal"
                     android:text="@string/product_name"
-                    android:textColor="@color/text_list_header_look_1"
-                    android:textSize="@dimen/text_list_header_look_1" />
+                    android:textColor="@color/list_header_text_look_1"
+                    android:textSize="@dimen/list_header_text_look_1" />
 
                 <TextView
                     android:id="@+id/textView7"
@@ -63,8 +63,8 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical|center_horizontal"
                     android:text="@string/amount"
-                    android:textColor="@color/text_list_header_look_1"
-                    android:textSize="@dimen/text_list_header_look_1" />
+                    android:textColor="@color/list_header_text_look_1"
+                    android:textSize="@dimen/list_header_text_look_1" />
 
                 <TextView
                     android:id="@+id/textView8"
@@ -73,8 +73,8 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical|center_horizontal"
                     android:text="@string/price"
-                    android:textColor="@color/text_list_header_look_1"
-                    android:textSize="@dimen/text_list_header_look_1" />
+                    android:textColor="@color/list_header_text_look_1"
+                    android:textSize="@dimen/list_header_text_look_1" />
 
                 <TextView
                     android:id="@+id/textView9"
@@ -83,8 +83,8 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical|center_horizontal"
                     android:text="@string/sum"
-                    android:textColor="@color/text_list_header_look_1"
-                    android:textSize="@dimen/text_list_header_look_1" />
+                    android:textColor="@color/list_header_text_look_1"
+                    android:textSize="@dimen/list_header_text_look_1" />
 
                 <TextView
                     android:id="@+id/textview_discount"
@@ -93,8 +93,8 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical|center_horizontal"
                     android:text="@string/discount"
-                    android:textColor="@color/text_list_header_look_1"
-                    android:textSize="@dimen/text_list_header_look_1" />
+                    android:textColor="@color/list_header_text_look_1"
+                    android:textSize="@dimen/list_header_text_look_1" />
 
                 <TextView
                     android:id="@+id/textview_to_pay"
@@ -103,8 +103,8 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical|center_horizontal"
                     android:text="@string/to_pay"
-                    android:textColor="@color/text_list_header_look_1"
-                    android:textSize="@dimen/text_list_header_look_1" />
+                    android:textColor="@color/list_header_text_look_1"
+                    android:textSize="@dimen/list_header_text_look_1" />
             </LinearLayout>
 
             <ImageView
@@ -153,7 +153,7 @@
             android:text="@string/total"
             android:textAlignment="viewEnd"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_total_look_1" />
+            android:textSize="@dimen/total_text_look_1" />
 
         <TextView
             android:id="@+id/textview_sum_without_discount_end"
@@ -163,7 +163,7 @@
             android:paddingRight="10dp"
             android:text="12345678.99"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_total_num_look_1"
+            android:textSize="@dimen/total_text_num_look_1"
             android:textStyle="bold" />
 
         <TextView
@@ -174,7 +174,7 @@
             android:text="@string/discount"
             android:textAlignment="viewEnd"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_total_look_1" />
+            android:textSize="@dimen/total_text_look_1" />
 
         <TextView
             android:id="@+id/textview_discount_end_sum"
@@ -184,7 +184,7 @@
             android:paddingRight="10dp"
             android:text="12345678.99"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_total_num_look_1"
+            android:textSize="@dimen/total_text_num_look_1"
             android:textStyle="bold" />
 
         <TextView
@@ -195,7 +195,7 @@
             android:text="@string/to_pay"
             android:textAlignment="viewEnd"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_total_look_1" />
+            android:textSize="@dimen/total_text_look_1" />
 
         <TextView
             android:id="@+id/tv_TotalSumm"
@@ -205,7 +205,7 @@
             android:text="12345678.99"
             android:textAlignment="viewEnd"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_total_num_look_1"
+            android:textSize="@dimen/total_text_num_look_1"
             android:textStyle="bold" />
 
     </LinearLayout>
