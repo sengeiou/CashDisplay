@@ -6,111 +6,92 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/list_item_height_look_1"
-        android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:gravity="center_vertical"
-        android:minHeight="200px"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/textview_npp"
-            android:layout_width="50dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:layout_marginLeft="1dp"
-            android:gravity="center_horizontal|left"
-            android:paddingLeft="1dp"
-            android:paddingTop="10dp"
-            android:textAlignment="center"
+            android:layout_weight="0.4"
+            android:gravity="center"
             android:textColor="@color/list_item_text_look_1"
             android:textSize="@dimen/list_item_text_look_1"
             tools:text="№" />
 
         <TextView
             android:id="@+id/textview_tovar"
-            android:layout_width="450dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:layout_marginLeft="10dp"
-            android:gravity="center_horizontal|left"
-            android:paddingTop="10dp"
+            android:layout_weight="3.3"
+            android:ellipsize="end"
+            android:gravity="left|center_vertical"
+            android:maxLines="1"
+            android:paddingLeft="7dp"
             android:textColor="@color/list_item_text_look_1"
             android:textSize="@dimen/list_item_text_look_1"
             tools:text="This is Tovar" />
 
         <TextView
             android:id="@+id/textview_Count"
-            android:layout_width="200dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_below="@+id/textview_tovar"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:layout_weight="1"
-            android:minWidth="200dp"
-            android:paddingTop="10dp"
-            android:textAlignment="center"
+            android:layout_weight="0.8"
+            android:gravity="center"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
             android:textColor="@color/list_item_text_look_1"
             android:textSize="@dimen/list_item_text_look_1"
             tools:text="10" />
 
         <TextView
             android:id="@+id/textview_Price"
-            android:layout_width="200dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_below="@+id/textview_Count"
-            android:layout_gravity="right|center_vertical"
             android:layout_weight="1"
-            android:minWidth="200dp"
-            android:paddingTop="10dp"
-            android:paddingRight="10dp"
-            android:textAlignment="textEnd"
+            android:gravity="center"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
             android:textColor="@color/list_item_text_look_1"
             android:textSize="@dimen/list_item_text_look_1"
             tools:text="9999.99" />
 
         <TextView
             android:id="@+id/textview_summ_without_discount"
-            android:layout_width="200dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_below="@+id/textview_Price"
-            android:layout_gravity="center_vertical|end"
-            android:layout_marginRight="10dp"
             android:layout_weight="1"
-            android:minWidth="200dp"
-            android:paddingTop="10dp"
-            android:textAlignment="viewEnd"
+            android:gravity="center"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
             android:textColor="@color/list_item_text_look_1"
             android:textSize="@dimen/list_item_text_look_1"
             tools:text="9999.99" />
 
         <TextView
             android:id="@+id/textview_discount"
-            android:layout_width="200dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_below="@+id/textview_Count"
-            android:layout_gravity="right|center_vertical"
             android:layout_weight="1"
-            android:minWidth="200dp"
-            android:paddingTop="10dp"
-            android:paddingRight="10dp"
-            android:textAlignment="textEnd"
+            android:gravity="center"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
             android:textColor="@color/list_item_text_look_1"
             android:textSize="@dimen/list_item_text_look_1"
             tools:text="9999.99" />
 
-<!--        here will be value received from COM port, already with discount -->
+        <!--        here will be value received from COM port, already with discount -->
         <TextView
             android:id="@+id/textview_Summ"
-            android:layout_width="200dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_below="@+id/textview_Price"
-            android:layout_gravity="center_vertical|end"
-            android:layout_marginRight="10dp"
             android:layout_weight="1"
-            android:minWidth="200dp"
-            android:paddingTop="10dp"
-            android:textAlignment="viewEnd"
+            android:gravity="center"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
             android:textColor="@color/list_item_text_look_1"
             android:textSize="@dimen/list_item_text_look_1"
             tools:text="9999.99" />
