@@ -283,7 +283,7 @@ public class MainActivity extends Activity {
     private void setProductListLook() {
         int lookCode = preferenceParams.productListLookCode;
         // appropriate adapter must be created everytime for actual listview for specified look of product list
-        shoppingListWorker.createAdapterShoppingList(lookCode);
+        shoppingListWorker.createAdapterProductList(lookCode);
 
         RelativeLayout layShoppingList = (RelativeLayout) findViewById(R.id.lay_shoppingList);
         LayoutInflater li = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -306,14 +306,13 @@ public class MainActivity extends Activity {
         layoutShoppingListLook = li.inflate(resource, null);
         layShoppingList.addView(layoutShoppingListLook, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-        Log.d(TAG, "");
         listView = (ListView) findViewById(R.id.listview);
         textViewTotalSummWithDiscount = (TextView) findViewById(R.id.textview_sum_without_discount_end);
         textViewTotalDiscount = (TextView) findViewById(R.id.textview_discount_end_sum);
         tv_TotalSumm = (TextView) findViewById(R.id.tv_TotalSumm);
         tv_TotalCount = (TextView) findViewById(R.id.tv_TotalCount);
         imageViewTovar = (ImageView) findViewById(R.id.imageViewTovar);
-        listView.setAdapter(shoppingListWorker.getAdapterShoppingList());
+        listView.setAdapter(shoppingListWorker.getAdapterProductList());
         tv_TotalCount.setText("0");
         textViewTotalSummWithDiscount.setText("0.00");
         textViewTotalDiscount.setText("0.00");
@@ -413,8 +412,8 @@ public class MainActivity extends Activity {
                     break;
                 case MSG_SET_SCREEN_THANKS:
                     Log.d(TAG, "MSG_SET_SCREEN_THANKS");
-                    setVisibleContext(CONTEXT_THANKS, msg.arg2);
                     shoppingListWorker.closeDisplayShoppingList();
+                    setVisibleContext(CONTEXT_THANKS, msg.arg2);
                     setEnableMedia(true);
                     resetMediaTime();
                     break;

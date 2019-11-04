@@ -24,25 +24,24 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 
-public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implements View.OnClickListener {
+public class AdapterProductList extends ArrayAdapter<ItemShoppingList> implements View.OnClickListener {
 
     private final static String TAG = "ShoppingListActivity";
     Context mContext;
-    boolean inverse = false;
     private int listItemResourceId;
 
     private class ViewHolder {
         TextView textview_npp;
         TextView textview_tovar;
-        TextView textview_Count;
-        TextView textview_Price;
+        TextView textview_Count;                // value received from COM port
+        TextView textview_Price;                // value received from COM port
         TextView textViewSummWithoutDiscount;   // this value will be calculated
         TextView textViewDiscount;              // this value will be calculated
-        TextView textview_Summ;
+        TextView textview_Summ;                 // value received from COM port
         ImageView imageview_icon;
     }
 
-    public AdapterShoppingList(Context context, int resource, ArrayList<ItemShoppingList> data) {
+    public AdapterProductList(Context context, int resource, ArrayList<ItemShoppingList> data) {
         super(context, resource, data);
         this.mContext = context;
         this.listItemResourceId = resource;
@@ -59,14 +58,13 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
         // Получить элемент данных для этой позиции
         ItemShoppingList dataModel = getItem(position);
 
-        final AdapterShoppingList.ViewHolder viewHolder;
-        final View result;
+        final AdapterProductList.ViewHolder viewHolder;
+        final View resultView;
 
         if (convertView == null) {
-
-            viewHolder = new AdapterShoppingList.ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(listItemResourceId, parent, false);
+            viewHolder = new AdapterProductList.ViewHolder();
             viewHolder.textview_npp = (TextView) convertView.findViewById(R.id.textview_npp);
             viewHolder.textview_tovar = (TextView) convertView.findViewById(R.id.textview_tovar);
             viewHolder.textview_Count = (TextView) convertView.findViewById(R.id.textview_Count);
@@ -75,11 +73,11 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
             viewHolder.textViewDiscount = (TextView) convertView.findViewById(R.id.textview_discount);
             viewHolder.textview_Summ = (TextView) convertView.findViewById(R.id.textview_Summ);
             viewHolder.imageview_icon = (ImageView) convertView.findViewById(R.id.imageview_icon);
-            result = convertView;
             convertView.setTag(viewHolder);
+            resultView = convertView;
         } else {
-            viewHolder = (AdapterShoppingList.ViewHolder) convertView.getTag();
-            result = convertView;
+            viewHolder = (AdapterProductList.ViewHolder) convertView.getTag();
+            resultView = convertView;
         }
         viewHolder.textview_npp.setText("" + (position + 1));
         viewHolder.textview_tovar.setText(dataModel.getNameTovara());
@@ -89,7 +87,7 @@ public class AdapterShoppingList extends ArrayAdapter<ItemShoppingList> implemen
         viewHolder.textViewDiscount.setText(String.format(Locale.ROOT,"%.02f", (float) ((float) dataModel.getDiscount() / 100)));
         viewHolder.textview_Summ.setText(String.format("%.02f", (float) ((float) dataModel.getSumm() / 100)).replace(",", "."));
         viewHolder.textview_tovar.setTag(position);
-        return convertView;
+        return resultView;          // here was convertView initially, mistake ????
     }
 
     /**

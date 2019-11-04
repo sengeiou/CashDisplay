@@ -41,8 +41,8 @@ public class ShoppingListWorker {
 
     private BlockingQueue<Integer> needScrollQueue;//обеспечивает передачу событий для скроллинга списка товаров
 
-    private AdapterShoppingList adapterShoppingList;
-    public static ArrayList<ItemShoppingList> arrayShoppingList;
+    private AdapterProductList adapterProductList;
+    private ArrayList<ItemShoppingList> arrayProductList;
 
     /**
      * @param context
@@ -52,7 +52,7 @@ public class ShoppingListWorker {
         needScrollQueue = new ArrayBlockingQueue<Integer>(50);
         needScrollQueue.clear();
 
-        arrayShoppingList = new ArrayList<ItemShoppingList>();
+        arrayProductList = new ArrayList<ItemShoppingList>();
         runUpdateThread();
         Log.d(TAG, "ShoppingListWorker");
     }
@@ -60,7 +60,7 @@ public class ShoppingListWorker {
     /**
      * @param lookCode value of {@link PreferencesValues#productListLookCode}
      */
-    public void createAdapterShoppingList(int lookCode) {
+    public void createAdapterProductList(int lookCode) {
         int resource;
         switch (lookCode) {
             case 0:
@@ -73,11 +73,11 @@ public class ShoppingListWorker {
                 resource = R.layout.list_item_look_0;
                 break;
         }
-        adapterShoppingList = new AdapterShoppingList(mContext, resource, arrayShoppingList);
+        adapterProductList = new AdapterProductList(mContext, resource, arrayProductList);
     }
 
-    public AdapterShoppingList getAdapterShoppingList() {
-        return adapterShoppingList;
+    public AdapterProductList getAdapterProductList() {
+        return adapterProductList;
     }
 
     /**
@@ -107,15 +107,16 @@ public class ShoppingListWorker {
     }
 
     public void closeDisplayShoppingList() {
-        arrayShoppingList.clear();
-        adapterShoppingList.notifyDataSetChanged();
+        clearTovarList("on product list display closed");
+        arrayProductList.clear();
+        adapterProductList.notifyDataSetChanged();
     }
 
     public void updateScreen(final int position) {
-        adapterShoppingList.notifyDataSetChanged();
         scrollToPosition(position);
         updateTotalSumm();
         updateTotalCount();
+        adapterProductList.notifyDataSetChanged();
     }
 
     /*обработчик команд для экран "Список покупок"*/
@@ -131,15 +132,15 @@ public class ShoppingListWorker {
         final ItemShoppingList item = parseData(param);
         if (item.getIndexPosition() < 0) return;
 
-        if (item.getIndexPosition() <= arrayShoppingList.size()) {
+        if (item.getIndexPosition() <= arrayProductList.size()) {
             addProductDebug(param);
 
-            arrayShoppingList.add(item.getIndexPosition(), item);
+            arrayProductList.add(item.getIndexPosition(), item);
 
             updateScreen(item.getIndexPosition());
         } else {
             showToast("Невiрнi параметри при внесеннi товару, необхідно очистити чек!");
-            Log.d(TAG, " ОШИБКА, количество товаров в списке: " + arrayShoppingList.size() + ", добавляется товар на позицию:" + item.getIndexPosition());
+            Log.d(TAG, " ОШИБКА, количество товаров в списке: " + arrayProductList.size() + ", добавляется товар на позицию:" + item.getIndexPosition());
         }
     }
 
@@ -149,9 +150,9 @@ public class ShoppingListWorker {
      * @param param строка "сырых" данных
      */
     public void clearTovarList(String param) {
-        arrayShoppingList.clear();
+        arrayProductList.clear();
         MainActivity.imageViewTovar.setImageBitmap(null);
-        updateScreen((arrayShoppingList.size() > 0) ? arrayShoppingList.size() - 1 : -1);
+        updateScreen((arrayProductList.size() > 0) ? arrayProductList.size() - 1 : -1);
         Log.d(TAG, "clearTovarList :" + param);
         addProductDebug(param);
     }
@@ -165,17 +166,15 @@ public class ShoppingListWorker {
 
         Log.d(TAG, "setPositionTovarList :" + param);
         addProductDebug(param);
-        if (arrayShoppingList.size() > 0) {
+        if (arrayProductList.size() > 0) {
             final ItemShoppingList item = parseData(param);
 
             if (item.getIndexPosition() < 0) return;
 
-            if (item.getIndexPosition() < arrayShoppingList.size()) {
-
-                ItemShoppingList dummy_item = arrayShoppingList.get(item.getIndexPosition());
-                if ((dummy_item.getCount() != item.getCount()) || (dummy_item.getSumm() != item.getSumm()) || (!dummy_item.getCodTovara().equals(item.getCodTovara()))) {
-
-                    arrayShoppingList.set(item.getIndexPosition(), item);
+            if (item.getIndexPosition() < arrayProductList.size()) {
+                ItemShoppingList dummyItem = arrayProductList.get(item.getIndexPosition());
+                if ((dummyItem.getCount() != item.getCount()) || (dummyItem.getSumm() != item.getSumm()) || (!dummyItem.getCodTovara().equals(item.getCodTovara()))) {
+                    arrayProductList.set(item.getIndexPosition(), item);
                     updateScreen(item.getIndexPosition());
                 }
             } else {
@@ -196,11 +195,11 @@ public class ShoppingListWorker {
 
         int indexPosition = Integer.valueOf(param.substring(0, 2));//2
 
-        if (arrayShoppingList.size() > 0) {
-            if ((arrayShoppingList.size() - 1) >= indexPosition) {
-                arrayShoppingList.remove(indexPosition);
+        if (arrayProductList.size() > 0) {
+            if ((arrayProductList.size() - 1) >= indexPosition) {
+                arrayProductList.remove(indexPosition);
             }
-            updateScreen((arrayShoppingList.size() > 0) ? arrayShoppingList.size() - 1 : 0);
+            updateScreen((arrayProductList.size() > 0) ? arrayProductList.size() - 1 : 0);
         }
         Log.d(TAG, "deletePositionTovarList :" + indexPosition);
     }
@@ -213,8 +212,8 @@ public class ShoppingListWorker {
         totalDiscount = 0;
         totalSumm = 0;
 
-        for (int i = 0; i < arrayShoppingList.size(); i++) {
-            ItemShoppingList selectedItem = arrayShoppingList.get(i);
+        for (int i = 0; i < arrayProductList.size(); i++) {
+            ItemShoppingList selectedItem = arrayProductList.get(i);
             totalSumWithoutDiscount += selectedItem.getSumWithoutDiscount();
             totalDiscount += selectedItem.getDiscount();
             totalSumm += selectedItem.getSumm();
@@ -238,12 +237,12 @@ public class ShoppingListWorker {
     private void updateTotalCount() {
         MainActivity.tv_TotalCount.post(new Runnable() {
             public void run() {
-                MainActivity.tv_TotalCount.setText(("" + arrayShoppingList.size()).replace(",", "."));
+                MainActivity.tv_TotalCount.setText(("" + arrayProductList.size()).replace(",", "."));
             }
         });
         MainActivity.textViewDEBUG.post(new Runnable() {
             public void run() {
-                MainActivity.textViewDEBUG.append("MSG_TC: " + arrayShoppingList.size() + "\n");
+                MainActivity.textViewDEBUG.append("MSG_TC: " + arrayProductList.size() + "\n");
             }
         });
 
@@ -362,21 +361,20 @@ public class ShoppingListWorker {
                             MainActivity.listView.post(new Runnable() {
                                 @Override
                                 public void run() {
-
                                     MainActivity.listView.setSelection(indexScroll);
                                     MainActivity.listView.smoothScrollToPositionFromTop(indexScroll, 0);
                                     Log.d(TAG, "5 ScrollToPosition :" + indexScroll);
                                 }
                             });
 
-                            if (adapterShoppingList.getCount() > indexScroll) {
+                            if (adapterProductList.getCount() > indexScroll) {
 
-                                final ItemShoppingList selectedItem = adapterShoppingList.getItem(indexScroll);
+                                final ItemShoppingList selectedItem = adapterProductList.getItem(indexScroll);
                                 try {
                                     MainActivity.imageViewTovar.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            MainActivity.imageViewTovar.setImageBitmap(AdapterShoppingList.getImage(selectedItem.getCodTovara()));
+                                            MainActivity.imageViewTovar.setImageBitmap(AdapterProductList.getImage(selectedItem.getCodTovara()));
                                         }
                                     });
                                 } catch (Exception e) {
@@ -384,11 +382,12 @@ public class ShoppingListWorker {
                                 }
                             }
                         } else {
+                            Log.d(TAG, "MainActivity.listView.getSelectedItemPosition() = " + Integer.toString(MainActivity.listView.getSelectedItemPosition()));
+                            Log.d(TAG, "indexScroll = " + indexScroll);
                             if (MainActivity.listView.getSelectedItemPosition() != indexScroll) {
                                 MainActivity.listView.post(new Runnable() {
                                     @Override
                                     public void run() {
-
                                         MainActivity.listView.setSelection(indexScroll);
                                         MainActivity.listView.smoothScrollToPositionFromTop(indexScroll, 0);
                                     }
