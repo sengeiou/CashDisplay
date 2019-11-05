@@ -94,16 +94,16 @@ public class CommandParser {
 
     private void doBufferData(byte[] buf, int lenBuf) {
 
-        FormatCommand formatComand = new FormatCommand();
+        FormatCommand formatCommand = new FormatCommand();
         if (buf.length >= 4) {
-            formatComand.command = new String(buf, 0, 4, ENCODING_CHARSET);//команда
+            formatCommand.command = new String(buf, 0, 4, ENCODING_CHARSET);//команда
         }
         //перешлем на отображение на экран для отладки
         sendToMain(MSG_ADD_PRODUCT_DEBUG, "[" + new String(buf, 0, lenBuf, ENCODING_CHARSET) + "]", 0, 0);
 
         //Идентификация  протокола Ver 2
         for (int i = 0; i < arrComands2.length; i++) {
-            if (formatComand.command.contains(arrComands2[i])) {
+            if (formatCommand.command.contains(arrComands2[i])) {
                 byte tmpBuf[] = Arrays.copyOfRange(buf, 0, lenBuf - 4);
                 int CRC16_calculated = countCRC16(tmpBuf, tmpBuf.length);
                 try {
@@ -116,8 +116,8 @@ public class CommandParser {
                         myToast.show();
                         return;
                     }
-                    formatComand.params = new String(buf, 4, lenBuf - 4, ENCODING_CHARSET);
-                    handle(formatComand.command, formatComand.params);
+                    formatCommand.params = new String(buf, 4, lenBuf - 4, ENCODING_CHARSET);
+                    handleCommand(formatCommand.command, formatCommand.params);
                 } catch (Exception e) {
                     Log.e(TAG, "Ошибка парсера(v2) :  " + e + " >>" + new String(buf, 0, lenBuf));
                     e.printStackTrace();
@@ -130,26 +130,26 @@ public class CommandParser {
     /**
      * Prepares data to send message to handler of screen "Список покупок"
      */
-    private void handle(String command, String param) {
+    private void handleCommand(String command, String param) {
         switch (command) {
             case CMD_ADDL:
-                sendToMain(MainActivity.MSG_ADD_TOVAR_SHOPPING_LIST, param, 0, 0);
+                sendToMain(MainActivity.MSG_ADD_TOVAR_PRODUCT_LIST, param, 0, 0);
                 Log.d(TAG, "CMD_ADDL :" + param);
                 break;
             case CMD_CLRL:
-                sendToMain(MainActivity.MSG_CLEAR_SHOPPING_LIST, param, 0, 0);
+                sendToMain(MainActivity.MSG_CLEAR_PRODUCT_LIST, param, 0, 0);
                 Log.d(TAG, "CMD_CLRL :" + param);
                 break;
             case CMD_SETi:
-                sendToMain(MainActivity.MSG_SET_TOVAR_SHOPPING_LIST, param, 0, 0);
+                sendToMain(MainActivity.MSG_SET_TOVAR_PRODUCT_LIST, param, 0, 0);
                 Log.d(TAG, "CMD_SETi :" + param);
                 break;
             case CMD_DELi:
-                sendToMain(MainActivity.MSG_DEL_TOVAR_SHOPPING_LIST, param, 0, 0);
+                sendToMain(MainActivity.MSG_DEL_TOVAR_PRODUCT_LIST, param, 0, 0);
                 Log.d(TAG, "CMD_DELi :" + param);
                 break;
             case CMD_TOTL:
-                sendToMain(MainActivity.MSG_TOTAL_SUMM_SHOPPING_LIST, param, 0, 0);
+                sendToMain(MainActivity.MSG_TOTAL_SUMM_PRODUCT_LIST, param, 0, 0);
                 Log.d(TAG, "CMD_TOTL :" + param);
                 break;
             case CMD_NWRK:

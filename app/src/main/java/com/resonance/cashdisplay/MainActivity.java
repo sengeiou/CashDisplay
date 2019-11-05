@@ -36,7 +36,7 @@ import com.resonance.cashdisplay.eth.EthernetSettings;
 import com.resonance.cashdisplay.http.HttpServer;
 import com.resonance.cashdisplay.http.WebStatus;
 import com.resonance.cashdisplay.load.DownloadMedia;
-import com.resonance.cashdisplay.shopping_list.ShoppingListWorker;
+import com.resonance.cashdisplay.shopping_list.ProductListWorker;
 import com.resonance.cashdisplay.slide_show.VideoSlideService;
 import com.resonance.cashdisplay.sound.Sound;
 import com.resonance.cashdisplay.su.Modify_SU_Preferences;
@@ -52,28 +52,28 @@ public class MainActivity extends Activity {
     private static final String TAG = "Main";
     public static final int CONTEXT_CONNECT = 0;        //слой подключения
     public static final int CONTEXT_THANKS = 1;         //слой спасибо
-    public static final int CONTEXT_SHOPPING_LIST = 2;  //Слой список товаров
+    public static final int CONTEXT_PRODUCT_LIST = 2;  //Слой список товаров
 
     public static String CHANGE_SETTINGS = "change_settings";
 
-    public static final int MSG_ADD_TOVAR_SHOPPING_LIST = 34;
-    public static final int MSG_SET_TOVAR_SHOPPING_LIST = 35;
-    public static final int MSG_DEL_TOVAR_SHOPPING_LIST = 36;
-    public static final int MSG_CLEAR_SHOPPING_LIST = 37;
-    public static final int MSG_TOTAL_SUMM_SHOPPING_LIST = 38;
+    public static final int MSG_ADD_TOVAR_PRODUCT_LIST = 34;
+    public static final int MSG_SET_TOVAR_PRODUCT_LIST = 35;
+    public static final int MSG_DEL_TOVAR_PRODUCT_LIST = 36;
+    public static final int MSG_CLEAR_PRODUCT_LIST = 37;
+    public static final int MSG_TOTAL_SUMM_PRODUCT_LIST = 38;
     public static final int MSG_SET_SCREEN_NOT_WORK = 39;
     public static final int MSG_SET_SCREEN_THANKS = 40;
     public static final int MSG_FROM_EKKR = 41;
     public static final int MSG_ADD_PRODUCT_DEBUG = 1234;
 
-    public static PreferencesValues preferenceParams;       //настройки
+    private PreferencesValues preferenceParams;       //настройки
     private static UartWorker uartWorker;                   //обработчик UART
     public static WebStatus webStatus = null;               //канал передачи сообщений для браузера
     public static HttpServer httpServer = null;             //http сервер
     private CommandParser cmdParser;                        //класс обработки команд и данных
     private VideoSlideService videoSlideService;            //класс управления медиа
     private Sound sound;                                    //звук
-    private static ShoppingListWorker shoppingListWorker;   //обслуживание списка товаров
+    private ProductListWorker productListWorker;      //обслуживание списка товаров
     private ProductInfo productInfo;
     public static EthernetSettings ethernetSettings = null; //Настройка сети
     public static DownloadMedia downloadMedia;
@@ -88,7 +88,7 @@ public class MainActivity extends Activity {
     private static ImageView imageSdCardError;
     private static boolean lanSetupAlready = false;
 
-    private View layoutShoppingListLook;    // represent layout_shopping_list_look_x.xml, where x - number of desired look
+    private View layoutProductListLook = null;    // represent layout_shopping_list_look_x.xml, where x - number of desired look
     // next block of views must be in every layout_shopping_list_look_x.xml to provide compability
     public static TextView tv_TotalCount;
     public static TextView textViewTotalSummWithDiscount;   // calculated value
@@ -155,7 +155,7 @@ public class MainActivity extends Activity {
         //слой для вывода информации по товару
         relativeLayout = new RelativeLayout[]{(RelativeLayout) findViewById(R.id.idLayoutConnect),
                 (RelativeLayout) findViewById(R.id.idLayoutThanks),
-                (RelativeLayout) findViewById(R.id.lay_shoppingList)
+                (RelativeLayout) findViewById(R.id.layout_product_list)
         };
 
         imageSdCardError = (ImageView) findViewById(R.id.imageSdCardError);
@@ -179,7 +179,7 @@ public class MainActivity extends Activity {
         updateFirmware = new UpdateFirmware(this);
 
         //экран "Список покупок"
-        shoppingListWorker = new ShoppingListWorker(this);
+        productListWorker = new ProductListWorker(context);
         setProductListLook();
 
         textViewDEBUG = (TextView) findViewById(R.id.textViewDEBUG);
@@ -223,8 +223,8 @@ public class MainActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             runOnUiThread(() -> {
                 setBackgroundScreen();
-                // next need to change look of product list
-                shoppingListWorker = new ShoppingListWorker(MainActivity.context);
+
+                productListWorker = new ProductListWorker(MainActivity.context);
                 setProductListLook();
             });
         }
@@ -244,11 +244,11 @@ public class MainActivity extends Activity {
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
             drawable = new BitmapDrawable(bitmap);
-            relativeLayout[CONTEXT_SHOPPING_LIST].setBackground(drawable);
+            relativeLayout[CONTEXT_PRODUCT_LIST].setBackground(drawable);
         } else {
-            relativeLayout[CONTEXT_SHOPPING_LIST].setBackgroundResource(R.drawable.bg);
+            relativeLayout[CONTEXT_PRODUCT_LIST].setBackgroundResource(R.drawable.bg);
         }
-        relativeLayout[CONTEXT_SHOPPING_LIST].invalidate();
+        relativeLayout[CONTEXT_PRODUCT_LIST].invalidate();
 
         //Фонове зображення экрану "Каса не працює"
         String uriBackgroundCashNotWork = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN + ((PreferenceParams.getParameters().backgroundCashNotWork.length() > 0) ? PreferenceParams.getParameters().backgroundCashNotWork : "noimg");
@@ -272,6 +272,7 @@ public class MainActivity extends Activity {
         } else {
             relativeLayout[CONTEXT_THANKS].setBackgroundResource(R.drawable.screen_thanks);
         }
+        relativeLayout[CONTEXT_THANKS].invalidate();
     }
 
     /************************************************************************************/
@@ -281,15 +282,7 @@ public class MainActivity extends Activity {
      * This changes the look of product list for different client's flavours.
      */
     private void setProductListLook() {
-        int lookCode = preferenceParams.productListLookCode;
-        // appropriate adapter must be created everytime for actual listview for specified look of product list
-        shoppingListWorker.createAdapterProductList(lookCode);
-
-        RelativeLayout layShoppingList = (RelativeLayout) findViewById(R.id.lay_shoppingList);
-        LayoutInflater li = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        if (layoutShoppingListLook != null)
-            layShoppingList.removeView(layoutShoppingListLook);
+        int lookCode = PreferenceParams.getParameters().productListLookCode;
 
         int resource;
         switch (lookCode) {
@@ -303,16 +296,21 @@ public class MainActivity extends Activity {
                 resource = R.layout.layout_shopping_list_look_0;
                 break;
         }
-        layoutShoppingListLook = li.inflate(resource, null);
-        layShoppingList.addView(layoutShoppingListLook, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        if (layoutProductListLook != null)
+            relativeLayout[CONTEXT_PRODUCT_LIST].removeView(layoutProductListLook);
+        LayoutInflater li = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        layoutProductListLook = li.inflate(resource, null);
+        relativeLayout[CONTEXT_PRODUCT_LIST].addView(layoutProductListLook, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        relativeLayout[CONTEXT_PRODUCT_LIST].invalidate();
 
-        listView = (ListView) findViewById(R.id.listview);
-        textViewTotalSummWithDiscount = (TextView) findViewById(R.id.textview_sum_without_discount_end);
-        textViewTotalDiscount = (TextView) findViewById(R.id.textview_discount_end_sum);
-        tv_TotalSumm = (TextView) findViewById(R.id.tv_TotalSumm);
-        tv_TotalCount = (TextView) findViewById(R.id.tv_TotalCount);
-        imageViewTovar = (ImageView) findViewById(R.id.imageViewTovar);
-        listView.setAdapter(shoppingListWorker.getAdapterProductList());
+        listView = (ListView) layoutProductListLook.findViewById(R.id.listview);
+        textViewTotalSummWithDiscount = (TextView) layoutProductListLook.findViewById(R.id.textview_sum_without_discount_end);
+        textViewTotalDiscount = (TextView) layoutProductListLook.findViewById(R.id.textview_discount_end_sum);
+        tv_TotalSumm = (TextView) layoutProductListLook.findViewById(R.id.tv_TotalSumm);
+        tv_TotalCount = (TextView) layoutProductListLook.findViewById(R.id.tv_TotalCount);
+        imageViewTovar = (ImageView) layoutProductListLook.findViewById(R.id.imageViewTovar);
+        // appropriate adapter must be created everytime for actual listview for specified look of product list
+        listView.setAdapter(productListWorker.createAdapterProductList(lookCode));
         tv_TotalCount.setText("0");
         textViewTotalSummWithDiscount.setText("0.00");
         textViewTotalDiscount.setText("0.00");
@@ -322,12 +320,12 @@ public class MainActivity extends Activity {
     /************************************************************************************/
 
     public void setVisibleContext(int contextType, Object param) {
-        setVisibleLayer(CONTEXT_SHOPPING_LIST, View.INVISIBLE);
+        setVisibleLayer(CONTEXT_PRODUCT_LIST, View.INVISIBLE);
         setVisibleLayer(CONTEXT_CONNECT, View.INVISIBLE);
         setVisibleLayer(CONTEXT_THANKS, View.INVISIBLE);
         switch (contextType) {
-            case CONTEXT_SHOPPING_LIST:
-                setVisibleLayer(CONTEXT_SHOPPING_LIST, View.VISIBLE);
+            case CONTEXT_PRODUCT_LIST:
+                setVisibleLayer(CONTEXT_PRODUCT_LIST, View.VISIBLE);
                 break;
             case CONTEXT_CONNECT:
                 setVisibleLayer(CONTEXT_CONNECT, View.VISIBLE);
@@ -386,33 +384,33 @@ public class MainActivity extends Activity {
         public void handleMessage(Message msg) {
             setEnableMedia(false);
             switch (msg.what) {
-                case MSG_ADD_TOVAR_SHOPPING_LIST:
+                case MSG_ADD_TOVAR_PRODUCT_LIST:
                     Log.d(TAG, "MSG_ADD_TOVAR_SHOPPING_LIST");
-                    shoppingListWorker.addTovarList((String) msg.obj);
-                    setVisibleContext(CONTEXT_SHOPPING_LIST, msg.arg2);
+                    productListWorker.addTovarList((String) msg.obj);
+                    setVisibleContext(CONTEXT_PRODUCT_LIST, msg.arg2);
                     break;
-                case MSG_SET_TOVAR_SHOPPING_LIST:
+                case MSG_SET_TOVAR_PRODUCT_LIST:
                     Log.d(TAG, "MSG_SET_TOVAR_SHOPPING_LIST");
-                    shoppingListWorker.setPositionTovarList((String) msg.obj);
-                    setVisibleContext(CONTEXT_SHOPPING_LIST, msg.arg2);
+                    productListWorker.setPositionTovarList((String) msg.obj);
+                    setVisibleContext(CONTEXT_PRODUCT_LIST, msg.arg2);
                     break;
-                case MSG_DEL_TOVAR_SHOPPING_LIST:
+                case MSG_DEL_TOVAR_PRODUCT_LIST:
                     Log.d(TAG, "MSG_DEL_TOVAR_SHOPPING_LIST");
-                    shoppingListWorker.deletePositionTovarList((String) msg.obj);
-                    setVisibleContext(CONTEXT_SHOPPING_LIST, msg.arg2);
+                    productListWorker.deletePositionTovarList((String) msg.obj);
+                    setVisibleContext(CONTEXT_PRODUCT_LIST, msg.arg2);
                     break;
-                case MSG_CLEAR_SHOPPING_LIST:
+                case MSG_CLEAR_PRODUCT_LIST:
                     Log.d(TAG, "MSG_CLEAR_SHOPPING_LIST");
-                    shoppingListWorker.clearTovarList((String) msg.obj);
+                    productListWorker.clearTovarList((String) msg.obj);
                     break;
                 case MSG_SET_SCREEN_NOT_WORK:
                     Log.d(TAG, "MSG_SET_SCREEN_NOT_WORK");
-                    shoppingListWorker.closeDisplayShoppingList();
+                    productListWorker.clearTovarList("MSG_SET_SCREEN_NOT_WORK");
                     setVisibleContext(CONTEXT_CONNECT, msg.arg2);
                     break;
                 case MSG_SET_SCREEN_THANKS:
                     Log.d(TAG, "MSG_SET_SCREEN_THANKS");
-                    shoppingListWorker.closeDisplayShoppingList();
+                    productListWorker.clearTovarList("MSG_SET_SCREEN_THANKS");
                     setVisibleContext(CONTEXT_THANKS, msg.arg2);
                     setEnableMedia(true);
                     resetMediaTime();
@@ -421,7 +419,7 @@ public class MainActivity extends Activity {
                     Log.d(TAG, "MSG_FROM_EKKR");
                     break;
                 case MSG_ADD_PRODUCT_DEBUG:
-                    shoppingListWorker.addProductDebug((String) msg.obj);
+                    productListWorker.addProductDebug((String) msg.obj);
                     break;
                 default:
                     Log.e(TAG, "Handler default message:" + String.valueOf(msg.what));
@@ -609,4 +607,3 @@ public class MainActivity extends Activity {
 }
 
 // TODO: 23.10.2019 По ftp протоколу видео файлы могут "ломаться" (видео проигрывается, но картинка искажена)
-// TODO: 28.10.2019 Внедрить Crashlytics 

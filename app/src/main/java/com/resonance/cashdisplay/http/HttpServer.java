@@ -407,7 +407,7 @@ public class HttpServer {
         msg.arg2 = 0;
         Handler h = webStatus.getWebMessageHandler();
         if (h != null)
-            webStatus.getWebMessageHandler().sendMessage(msg);
+            h.sendMessage(msg);
     }
 
     private class СreateProducerConsumer extends Thread {
@@ -418,16 +418,13 @@ public class HttpServer {
             //Log.d(TAG, "createProducerConsumer  started");
             while (!isInterrupted()) {
                 try {
-                    // FIXME: 30.10.2019 Not good to create new String every 300ms
-                    String msg = "";
-                    if ((msg = webStatus.getStrStatus()).length() > 0) {
-
+                    if (!webStatus.isEmptySmbMessageQueue()) {
+                        String msg = webStatus.getStrStatus();
                         iCurStatus = STAT_LOAD_FILES;
                         iCurStatusMsg = msg;
                         Log.w(TAG, "Smb_messageQueue.take:" + iCurStatusMsg);
-
                     } else {
-                        Thread.sleep(300);
+                        Thread.sleep(500);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

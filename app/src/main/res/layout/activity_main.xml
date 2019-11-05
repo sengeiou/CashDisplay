@@ -199,7 +199,7 @@
         <!--Слой Списка товаров-->
         <!--We add programmatically different variants of layouts here for different client's flavours-->
     <RelativeLayout
-        android:id="@+id/lay_shoppingList"
+        android:id="@+id/layout_product_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg">

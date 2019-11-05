@@ -9,7 +9,7 @@ import android.content.SharedPreferences;
  */
 public class PreferenceParams {
 
-    private static final String SERIALIZER_KEY = "ce.serializer";
+    private static final String SERIALIZER_KEY = "ce.serilizer";    // not change already, users has settings with this name
     public static int _SMB1 = 0;
     public static int _SMB2 = 1;
     public static int _FTP = 2;

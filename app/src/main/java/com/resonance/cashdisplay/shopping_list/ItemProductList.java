@@ -1,7 +1,7 @@
 package com.resonance.cashdisplay.shopping_list;
 
 
-public class ItemShoppingList {
+public class ItemProductList {
     private int indexPosition = -1;
     private int npp = 0;
     private String codTovara = "";
@@ -9,25 +9,25 @@ public class ItemShoppingList {
     private int divisible = 0;
     private long count = 0;
     private long price = 0;
-    private long sumWithoutDiscount = 0;   // calculated value
-    private long discount = 0;              // calculated value
-    private long summ = 0;      // value from command
+    private float sumWithoutDiscount = 0;   // calculated value
+    private float discount = 0;              // calculated value
+    private long summ = 0;      // value from command from COM port
 
-    public ItemShoppingList() {
+    public ItemProductList() {
         this.indexPosition = -1;
     }
 
-    public ItemShoppingList(int indexPosition, String codTovara, String nameTovara, int divisible,
-                            long count, long price, long summ, long discount, long sumWithoutDiscount) {
+    public ItemProductList(int indexPosition, String codTovara, String nameTovara, int divisible,
+                           long count, long price, long summ, long discount, long sumWithoutDiscount) {
         this.indexPosition = indexPosition;
         this.codTovara = codTovara;
         this.nameTovara = nameTovara;
         this.divisible = divisible;
         this.count = count;
         this.price = price;
-        this.summ = summ;
-        this.discount = discount;
         this.sumWithoutDiscount = sumWithoutDiscount;
+        this.discount = discount;
+        this.summ = summ;
     }
 
     public int getIndexPosition() {
@@ -96,11 +96,13 @@ public class ItemShoppingList {
 
     public float getDiscount() {
         float amount = ((divisible == 1) ? ((float) count / 1000) : count);
-        return (amount * price) - summ;
+        discount = (amount * price) - summ;
+        return discount;
     }
 
     public float getSumWithoutDiscount() {
         float amount = ((divisible == 1) ? ((float) count / 1000) : count);
-        return amount * price;
+        sumWithoutDiscount = amount * price;
+        return sumWithoutDiscount;
     }
 }

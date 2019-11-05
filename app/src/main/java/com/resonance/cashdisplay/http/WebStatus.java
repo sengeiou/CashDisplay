@@ -54,14 +54,16 @@ public class WebStatus {
         smbMessageQueue.clear();
     }
 
+    public synchronized boolean isEmptySmbMessageQueue() {
+        return smbMessageQueue.isEmpty();
+    }
+
     public synchronized String getStrStatus() {
         String msg = "";
-        if (!smbMessageQueue.isEmpty()) {
-            try {
-                msg = smbMessageQueue.take();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            msg = smbMessageQueue.take();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return msg;
     }

@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 
-public class AdapterProductList extends ArrayAdapter<ItemShoppingList> implements View.OnClickListener {
+public class AdapterProductList extends ArrayAdapter<ItemProductList> implements View.OnClickListener {
 
     private final static String TAG = "ShoppingListActivity";
     Context mContext;
@@ -41,7 +41,7 @@ public class AdapterProductList extends ArrayAdapter<ItemShoppingList> implement
         ImageView imageview_icon;
     }
 
-    public AdapterProductList(Context context, int resource, ArrayList<ItemShoppingList> data) {
+    public AdapterProductList(Context context, int resource, ArrayList<ItemProductList> data) {
         super(context, resource, data);
         this.mContext = context;
         this.listItemResourceId = resource;
@@ -56,7 +56,7 @@ public class AdapterProductList extends ArrayAdapter<ItemShoppingList> implement
     public View getView(int position, View convertView, ViewGroup parent) {
 
         // Получить элемент данных для этой позиции
-        ItemShoppingList dataModel = getItem(position);
+        ItemProductList dataModel = getItem(position);
 
         final AdapterProductList.ViewHolder viewHolder;
         final View resultView;
@@ -74,20 +74,21 @@ public class AdapterProductList extends ArrayAdapter<ItemShoppingList> implement
             viewHolder.textview_Summ = (TextView) convertView.findViewById(R.id.textview_Summ);
             viewHolder.imageview_icon = (ImageView) convertView.findViewById(R.id.imageview_icon);
             convertView.setTag(viewHolder);
-            resultView = convertView;
         } else {
             viewHolder = (AdapterProductList.ViewHolder) convertView.getTag();
-            resultView = convertView;
         }
+
         viewHolder.textview_npp.setText("" + (position + 1));
         viewHolder.textview_tovar.setText(dataModel.getNameTovara());
         viewHolder.textview_Count.setText(((dataModel.getDivisible() == 1) ? (String.format("%.03f", (float) dataModel.getCount() / 1000)) : ("" + dataModel.getCount())).replace(",", "."));
         viewHolder.textview_Price.setText(String.format("%.02f", (float) ((float) dataModel.getPrice() / 100)).replace(",", "."));
-        viewHolder.textViewSummWithoutDiscount.setText(String.format(Locale.ROOT,"%.02f", (float) ((float) dataModel.getSumWithoutDiscount() / 100)));
-        viewHolder.textViewDiscount.setText(String.format(Locale.ROOT,"%.02f", (float) ((float) dataModel.getDiscount() / 100)));
+        viewHolder.textViewSummWithoutDiscount.setText(String.format(Locale.ROOT, "%.02f", (float) ((float) dataModel.getSumWithoutDiscount() / 100)));
+        viewHolder.textViewDiscount.setText(String.format(Locale.ROOT, "%.02f", (float) ((float) dataModel.getDiscount() / 100)));
         viewHolder.textview_Summ.setText(String.format("%.02f", (float) ((float) dataModel.getSumm() / 100)).replace(",", "."));
         viewHolder.textview_tovar.setTag(position);
-        return resultView;          // here was convertView initially, mistake ????
+
+        resultView = convertView;
+        return resultView;
     }
 
     /**
