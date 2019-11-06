@@ -13,4 +13,6 @@
 .externalNativeBuild
 *.apk
 examples/
+/app/release
+/app/debug
 */google-services.json

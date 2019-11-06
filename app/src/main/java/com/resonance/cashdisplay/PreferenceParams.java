@@ -23,9 +23,9 @@ public class PreferenceParams {
     public static final String[] DEF_UARTS = new String[]{"EKKR", "PC"};
 
     // product list look will be choose using specified code
-    public static final int LOOK_BASKET = 0;            // shop Basket
-    public static final int LOOK_AMERICAN = 1;          // american shop in Dnepr
-    public static final int[] PRODUCT_LIST_LOOK = {LOOK_BASKET, LOOK_AMERICAN};
+    public static final int LOOK_BASKET = 0;            // shop in Kharkov
+    public static final int LOOK_DMART = 1;             //  shop in Dnepr
+    public static final int[] PRODUCT_LIST_LOOK = {LOOK_BASKET, LOOK_DMART};
     private static int productListLookCode = PRODUCT_LIST_LOOK[0];  // default and initial value
     private static final String PRODUCT_LIST_BACK_IMAGE_PREFIX = "custom_product_list_";
 
