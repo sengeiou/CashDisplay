@@ -1,4 +1,4 @@
-package com.resonance.cashdisplay.shopping_list;
+package com.resonance.cashdisplay.product_list;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -26,12 +26,12 @@ import java.util.Locale;
 
 public class AdapterProductList extends ArrayAdapter<ItemProductList> implements View.OnClickListener {
 
-    private final static String TAG = "ShoppingListActivity";
+    private final static String TAG = "AdapterProductList";
     Context mContext;
     private int listItemResourceId;
 
     private class ViewHolder {
-        TextView textview_npp;
+        TextView textviewN;
         TextView textview_tovar;
         TextView textview_Count;                // value received from COM port
         TextView textview_Price;                // value received from COM port
@@ -65,7 +65,7 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> implements
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(listItemResourceId, parent, false);
             viewHolder = new AdapterProductList.ViewHolder();
-            viewHolder.textview_npp = (TextView) convertView.findViewById(R.id.textview_npp);
+            viewHolder.textviewN = (TextView) convertView.findViewById(R.id.textview_npp);
             viewHolder.textview_tovar = (TextView) convertView.findViewById(R.id.textview_tovar);
             viewHolder.textview_Count = (TextView) convertView.findViewById(R.id.textview_Count);
             viewHolder.textview_Price = (TextView) convertView.findViewById(R.id.textview_Price);
@@ -78,13 +78,13 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> implements
             viewHolder = (AdapterProductList.ViewHolder) convertView.getTag();
         }
 
-        viewHolder.textview_npp.setText("" + (position + 1));
-        viewHolder.textview_tovar.setText(dataModel.getNameTovara());
+        viewHolder.textviewN.setText("" + (position + 1));
+        viewHolder.textview_tovar.setText(dataModel.getName());
         viewHolder.textview_Count.setText(((dataModel.getDivisible() == 1) ? (String.format("%.03f", (float) dataModel.getCount() / 1000)) : ("" + dataModel.getCount())).replace(",", "."));
         viewHolder.textview_Price.setText(String.format("%.02f", (float) ((float) dataModel.getPrice() / 100)).replace(",", "."));
         viewHolder.textViewSummWithoutDiscount.setText(String.format(Locale.ROOT, "%.02f", (float) ((float) dataModel.getSumWithoutDiscount() / 100)));
         viewHolder.textViewDiscount.setText(String.format(Locale.ROOT, "%.02f", (float) ((float) dataModel.getDiscount() / 100)));
-        viewHolder.textview_Summ.setText(String.format("%.02f", (float) ((float) dataModel.getSumm() / 100)).replace(",", "."));
+        viewHolder.textview_Summ.setText(String.format("%.02f", (float) ((float) dataModel.getSum() / 100)).replace(",", "."));
         viewHolder.textview_tovar.setTag(position);
 
         resultView = convertView;

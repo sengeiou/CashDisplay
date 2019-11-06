@@ -1,4 +1,4 @@
-package com.resonance.cashdisplay.shopping_list;
+package com.resonance.cashdisplay.product_list;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -31,7 +31,7 @@ public class ProductListWorker {
 
     public ProductListWorker(Context context) {
         this.context = context;
-        Log.d(TAG, "New ShoppingListWorker created.");
+        Log.d(TAG, "New ProductListWorker created.");
     }
 
     /**
@@ -73,9 +73,9 @@ public class ProductListWorker {
      *
      * @param param строка "сырых" данных
      */
-    public void addTovarList(String param) {
+    public void addProductToList(String param) {
 
-        final ItemProductList item = parseData(param);
+        ItemProductList item = parseData(param);
         if (item.getIndexPosition() < 0)
             return;
         if (item.getIndexPosition() <= arrayProductList.size()) {
@@ -93,25 +93,25 @@ public class ProductListWorker {
      *
      * @param param строка "сырых" данных
      */
-    public void setPositionTovarList(String param) {
+    public void setProductToList(String param) {
 
-        Log.d(TAG, "setPositionTovarList :" + param);
+        Log.d(TAG, "setProductToList :" + param);
         addProductDebug(param);
         if (arrayProductList.size() > 0) {
-            final ItemProductList item = parseData(param);
+            ItemProductList item = parseData(param);
             if (item.getIndexPosition() < 0)
                 return;
             if (item.getIndexPosition() < arrayProductList.size()) {
                 ItemProductList dummyItem = arrayProductList.get(item.getIndexPosition());
-                if ((dummyItem.getCount() != item.getCount()) || (dummyItem.getSumm() != item.getSumm()) || (!dummyItem.getCodTovara().equals(item.getCodTovara()))) {
+                if ((dummyItem.getCount() != item.getCount()) || (dummyItem.getSum() != item.getSum()) || (!dummyItem.getCode().equals(item.getCode()))) {
                     arrayProductList.set(item.getIndexPosition(), item);
                     updateScreen(item.getIndexPosition());
                 }
             } else {
-                addTovarList(param);
+                addProductToList(param);
             }
         } else {
-            addTovarList(param);
+            addProductToList(param);
         }
     }
 
@@ -120,7 +120,7 @@ public class ProductListWorker {
      *
      * @param param строка "сырых" данных
      */
-    public void deletePositionTovarList(String param) {
+    public void deleteProductFromList(String param) {
         addProductDebug(param);
         int indexPosition = Integer.valueOf(param.substring(0, 2));  // 2
         if (arrayProductList.size() > 0) {
@@ -129,7 +129,7 @@ public class ProductListWorker {
             }
             updateScreen((arrayProductList.size() > 0) ? (arrayProductList.size() - 1) : 0);
         }
-        Log.d(TAG, "deletePositionTovarList :" + indexPosition);
+        Log.d(TAG, "deleteProductFromList :" + indexPosition);
     }
 
     /**
@@ -137,19 +137,18 @@ public class ProductListWorker {
      *
      * @param param строка "сырых" данных
      */
-    public void clearTovarList(String param) {
+    public void clearProductList(String param) {
         addProductDebug(param);
         arrayProductList.clear();
         updateScreen(0);
-        Log.d(TAG, "clearTovarList: " + param);
+        Log.d(TAG, "clearProductList: " + param);
     }
 
     private void updateScreen(int position) {
         adapterProductList.notifyDataSetChanged();
         scrollToPosition(position);
         setProductImage(position);
-        updateTotalSumm();
-        updateTotalCount();
+        updateTotalValues();
     }
 
     private void scrollToPosition(int index) {
@@ -158,19 +157,19 @@ public class ProductListWorker {
         Log.d(TAG, "ScrollToPosition: " + index);
     }
 
-    private void setProductImage(int index){
+    private void setProductImage(int index) {
         if (adapterProductList.getCount() > 0) {
             ItemProductList selectedItem = adapterProductList.getItem(index);
-            MainActivity.imageViewTovar.setImageBitmap(AdapterProductList.getImage(selectedItem.getCodTovara()));
-            Log.d(TAG, "selectedItem.getCodTovara() " + selectedItem.getCodTovara());
+            MainActivity.imageViewTovar.setImageBitmap(AdapterProductList.getImage(selectedItem.getCode()));
+            Log.d(TAG, "selectedItem.getCodTovara() " + selectedItem.getCode());
         } else
             MainActivity.imageViewTovar.setImageBitmap(null);
     }
 
     /**
-     * Пересчет суммы по списку товаров
+     * Calculation of total values for all product list and exposing results
      */
-    private void updateTotalSumm() {
+    private void updateTotalValues() {
         int totalSumWithoutDiscount = 0;
         int totalDiscount = 0;
         int totalSumm = 0;
@@ -179,97 +178,65 @@ public class ProductListWorker {
             ItemProductList selectedItem = arrayProductList.get(i);
             totalSumWithoutDiscount += selectedItem.getSumWithoutDiscount();
             totalDiscount += selectedItem.getDiscount();
-            totalSumm += selectedItem.getSumm();
+            totalSumm += selectedItem.getSum();
         }
 
         MainActivity.textViewTotalSummWithDiscount.setText(String.format(Locale.ROOT, "%.2f", (float) (((float) totalSumWithoutDiscount) / 100)));
         MainActivity.textViewTotalDiscount.setText(String.format(Locale.ROOT, "%.2f", (float) (((float) totalDiscount) / 100)));
         MainActivity.tv_TotalSumm.setText(String.format("%.2f", (float) (((float) totalSumm) / 100)).replace(",", "."));
+        MainActivity.tv_TotalCount.setText(("" + arrayProductList.size()).replace(",", "."));
         MainActivity.textViewDEBUG.append("MSG_totalSumWithoutDiscount: " + totalSumWithoutDiscount + "\n");
         MainActivity.textViewDEBUG.append("MSG_totalDiscount: " + totalDiscount + "\n");
         MainActivity.textViewDEBUG.append("MSG_totalSum: " + totalSumm + "\n");
-    }
-
-    /**
-     * Пересчет количества товаров в списке
-     */
-    private void updateTotalCount() {
-        MainActivity.tv_TotalCount.setText(("" + arrayProductList.size()).replace(",", "."));
         MainActivity.textViewDEBUG.append("MSG_TotalCount: " + arrayProductList.size() + "\n");
     }
 
     /**
      * Парсер данных с ResPos
      *
-     * @param param строка "сырых" данных
-     * @return ItemShoppingList
+     * @param param raw data from ADDL and SETi commands
+     * @return ItemProductList
      */
     private ItemProductList parseData(String param) {
         ItemProductList item = new ItemProductList();
         try {
             int index = 0;
-            int nextSeparator = param.indexOf(SYMBOL_SEPARATOR, index);
-            if (nextSeparator < 0) {
-                item.setIndexPosition(-1);
-                return item;
+            int nextSeparator;
+            int parametersAmount = 7;
+
+            for (int parNum = 0; parNum < parametersAmount; parNum++) {
+                nextSeparator = param.indexOf(SYMBOL_SEPARATOR, index);
+                if (nextSeparator < 0) {
+                    item.setIndexPosition(-1);
+                    return item;
+                }
+                switch (parNum) {
+                    case 0:
+                        item.setIndexPosition(Integer.valueOf(param.substring(index, nextSeparator)));
+                        break;
+                    case 1:
+                        item.setCode(param.substring(index, nextSeparator));
+                        break;
+                    case 2:
+                        item.setDivisible(Integer.valueOf(param.substring(index, nextSeparator)));
+                        break;
+                    case 3:
+                        item.setCount(Long.valueOf(param.substring(index, nextSeparator)));
+                        break;
+                    case 4:
+                        item.setPrice(Long.valueOf(param.substring(index, nextSeparator)));
+                        break;
+                    case 5:
+                        item.setSum(Long.valueOf(param.substring(index, nextSeparator)));
+                        break;
+                    case 6:
+                        item.setName(param.substring(index, nextSeparator));
+                        break;
+                    default:
+                        break;
+                }
+                index = nextSeparator + 1;
             }
-
-            item.setIndexPosition(Integer.valueOf(param.substring(index, nextSeparator)));
-            index = nextSeparator + 1;
-
-            //код товара
-            nextSeparator = param.indexOf(SYMBOL_SEPARATOR, index);
-            if (nextSeparator < 0) {
-                item.setIndexPosition(-1);
-                return item;
-            }
-            item.setCodTovara(param.substring(index, nextSeparator));
-            index = nextSeparator + 1;
-
-            //делимость
-            nextSeparator = param.indexOf(SYMBOL_SEPARATOR, index);
-            if (nextSeparator < 0) {
-                item.setIndexPosition(-1);
-                return item;
-            }
-            item.setDivisible(Integer.valueOf(param.substring(index, nextSeparator)));
-            index = nextSeparator + 1;
-
-            //количество
-            nextSeparator = param.indexOf(SYMBOL_SEPARATOR, index);
-            if (nextSeparator < 0) {
-                item.setIndexPosition(-1);
-                return item;
-            }
-            item.setCount(Long.valueOf(param.substring(index, nextSeparator)));
-            index = nextSeparator + 1;
-
-            //цена
-            nextSeparator = param.indexOf(SYMBOL_SEPARATOR, index);
-            if (nextSeparator < 0) {
-                item.setIndexPosition(-1);
-                return item;
-            }
-            item.setPrice(Long.valueOf(param.substring(index, nextSeparator)));
-            index = nextSeparator + 1;
-
-            //Сумма
-            nextSeparator = param.indexOf(SYMBOL_SEPARATOR, index);
-            if (nextSeparator < 0) {
-                item.setIndexPosition(-1);
-                return item;
-            }
-            item.setSumm(Long.valueOf(param.substring(index, nextSeparator)));
-            index = nextSeparator + 1;
-
-            //Наименование
-            nextSeparator = param.indexOf(SYMBOL_SEPARATOR, index);
-            if (nextSeparator < 0) {
-                item.setIndexPosition(-1);
-                return item;
-            }
-            item.setNameTovara(param.substring(index, nextSeparator));
-
         } catch (Exception e) {
             Log.e(TAG, "ERROR ParseData :" + e);
         }

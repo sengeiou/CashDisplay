@@ -36,7 +36,7 @@ import com.resonance.cashdisplay.eth.EthernetSettings;
 import com.resonance.cashdisplay.http.HttpServer;
 import com.resonance.cashdisplay.http.WebStatus;
 import com.resonance.cashdisplay.load.DownloadMedia;
-import com.resonance.cashdisplay.shopping_list.ProductListWorker;
+import com.resonance.cashdisplay.product_list.ProductListWorker;
 import com.resonance.cashdisplay.slide_show.VideoSlideService;
 import com.resonance.cashdisplay.sound.Sound;
 import com.resonance.cashdisplay.su.Modify_SU_Preferences;
@@ -386,31 +386,31 @@ public class MainActivity extends Activity {
             switch (msg.what) {
                 case MSG_ADD_TOVAR_PRODUCT_LIST:
                     Log.d(TAG, "MSG_ADD_TOVAR_SHOPPING_LIST");
-                    productListWorker.addTovarList((String) msg.obj);
+                    productListWorker.addProductToList((String) msg.obj);
                     setVisibleContext(CONTEXT_PRODUCT_LIST, msg.arg2);
                     break;
                 case MSG_SET_TOVAR_PRODUCT_LIST:
                     Log.d(TAG, "MSG_SET_TOVAR_SHOPPING_LIST");
-                    productListWorker.setPositionTovarList((String) msg.obj);
+                    productListWorker.setProductToList((String) msg.obj);
                     setVisibleContext(CONTEXT_PRODUCT_LIST, msg.arg2);
                     break;
                 case MSG_DEL_TOVAR_PRODUCT_LIST:
                     Log.d(TAG, "MSG_DEL_TOVAR_SHOPPING_LIST");
-                    productListWorker.deletePositionTovarList((String) msg.obj);
+                    productListWorker.deleteProductFromList((String) msg.obj);
                     setVisibleContext(CONTEXT_PRODUCT_LIST, msg.arg2);
                     break;
                 case MSG_CLEAR_PRODUCT_LIST:
                     Log.d(TAG, "MSG_CLEAR_SHOPPING_LIST");
-                    productListWorker.clearTovarList((String) msg.obj);
+                    productListWorker.clearProductList((String) msg.obj);
                     break;
                 case MSG_SET_SCREEN_NOT_WORK:
                     Log.d(TAG, "MSG_SET_SCREEN_NOT_WORK");
-                    productListWorker.clearTovarList("MSG_SET_SCREEN_NOT_WORK");
+                    productListWorker.clearProductList("MSG_SET_SCREEN_NOT_WORK");
                     setVisibleContext(CONTEXT_CONNECT, msg.arg2);
                     break;
                 case MSG_SET_SCREEN_THANKS:
                     Log.d(TAG, "MSG_SET_SCREEN_THANKS");
-                    productListWorker.clearTovarList("MSG_SET_SCREEN_THANKS");
+                    productListWorker.clearProductList("MSG_SET_SCREEN_THANKS");
                     setVisibleContext(CONTEXT_THANKS, msg.arg2);
                     setEnableMedia(true);
                     resetMediaTime();

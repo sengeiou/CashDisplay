@@ -1,33 +1,33 @@
-package com.resonance.cashdisplay.shopping_list;
+package com.resonance.cashdisplay.product_list;
 
 
 public class ItemProductList {
     private int indexPosition = -1;
-    private int npp = 0;
-    private String codTovara = "";
-    private String nameTovara = "";
+    private int n = 0;
+    private String code = "";
     private int divisible = 0;
     private long count = 0;
     private long price = 0;
+    private long sum = 0;      // value from command from COM port
+    private String name = "";
     private float sumWithoutDiscount = 0;   // calculated value
     private float discount = 0;              // calculated value
-    private long summ = 0;      // value from command from COM port
 
     public ItemProductList() {
         this.indexPosition = -1;
     }
 
-    public ItemProductList(int indexPosition, String codTovara, String nameTovara, int divisible,
-                           long count, long price, long summ, long discount, long sumWithoutDiscount) {
+    public ItemProductList(int indexPosition, String code, int divisible, long count,
+                           long price, long sum, String name, long sumWithoutDiscount, long discount) {
         this.indexPosition = indexPosition;
-        this.codTovara = codTovara;
-        this.nameTovara = nameTovara;
+        this.code = code;
         this.divisible = divisible;
         this.count = count;
         this.price = price;
+        this.sum = sum;
+        this.name = name;
         this.sumWithoutDiscount = sumWithoutDiscount;
         this.discount = discount;
-        this.summ = summ;
     }
 
     public int getIndexPosition() {
@@ -38,28 +38,20 @@ public class ItemProductList {
         this.indexPosition = indexPosition;
     }
 
-    public int getNpp() {
-        return npp;
+    public int getN() {
+        return n;
     }
 
-    public void setNpp(int npp) {
-        this.npp = npp;
+    public void setN(int n) {
+        this.n = n;
     }
 
-    public String getCodTovara() {
-        return codTovara;
+    public String getCode() {
+        return code;
     }
 
-    public void setCodTovara(String codTovara) {
-        this.codTovara = codTovara;
-    }
-
-    public String getNameTovara() {
-        return nameTovara;
-    }
-
-    public void setNameTovara(String nameTovara) {
-        this.nameTovara = nameTovara;
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public int getDivisible() {
@@ -86,23 +78,31 @@ public class ItemProductList {
         this.price = price;
     }
 
-    public long getSumm() {
-        return summ;
+    public long getSum() {
+        return sum;
     }
 
-    public void setSumm(long summ) {
-        this.summ = summ;
+    public void setSum(long sum) {
+        this.sum = sum;
     }
 
-    public float getDiscount() {
-        float amount = ((divisible == 1) ? ((float) count / 1000) : count);
-        discount = (amount * price) - summ;
-        return discount;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public float getSumWithoutDiscount() {
         float amount = ((divisible == 1) ? ((float) count / 1000) : count);
         sumWithoutDiscount = amount * price;
         return sumWithoutDiscount;
+    }
+
+    public float getDiscount() {
+        float amount = ((divisible == 1) ? ((float) count / 1000) : count);
+        discount = (amount * price) - sum;
+        return discount;
     }
 }

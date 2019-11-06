@@ -10,24 +10,25 @@ android {
         enabled = true
     }
 
-    splits {
-        abi {
-            enable true
-            reset()
-            include 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a' //select ABIs to build APKs for
-        }
-    }
+//    splits {
+//        abi {
+//            enable true
+//            reset()
+////            include 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a' //select ABIs to build APKs for
+//            include 'armeabi-v7a' //select ABIs to build APKs for
+//        }
+//    }
 
     signingConfigs {
         debug {
 
-            storeFile file('D:\\Projects\\Key\\.signing\\KeyStore.jks')
+            storeFile file('D:\\Projects\\Keys\\.signing\\CashDisplay\\KeyStoreCashDisplay.jks')
             storePassword '123456'
             keyPassword '123456'
             keyAlias = 'KeyAlias'
         }// здесь никаких изменений нет
         release {
-            storeFile file('D:\\Projects\\Key\\.signing\\KeyStore.jks')
+            storeFile file('D:\\Projects\\Keys\\.signing\\CashDisplay\\KeyStoreCashDisplay.jks')
             storePassword '123456'
             keyAlias = 'KeyAlias'
             keyPassword '123456'

@@ -49,12 +49,12 @@ public class UpdateFirmware {
         this.mContext = context;
     }
 
-    private void unregisterReceiver() {
-        mContext.unregisterReceiver(br);
-    }
-
     private void registerReceiver() {
         mContext.registerReceiver(br, new IntentFilter(BROADCAST_ACTION));
+    }
+
+    private void unregisterReceiver() {
+        mContext.unregisterReceiver(br);
     }
 
     BroadcastReceiver br = new BroadcastReceiver() {
