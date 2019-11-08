@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.resonance.cashdisplay.ExtSDSource;
-import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.PreferenceParams;
 import com.resonance.cashdisplay.PreferencesValues;
@@ -24,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 
-public class AdapterProductList extends ArrayAdapter<ItemProductList> implements View.OnClickListener {
+public class AdapterProductList extends ArrayAdapter<ItemProductList> {
 
     private final static String TAG = "AdapterProductList";
     Context mContext;
@@ -32,24 +31,19 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> implements
 
     private class ViewHolder {
         TextView textviewN;
-        TextView textview_tovar;
-        TextView textview_Count;                // value received from COM port
-        TextView textview_Price;                // value received from COM port
-        TextView textViewSummWithoutDiscount;   // this value will be calculated
+        TextView textviewProduct;
+        TextView textviewCount;                // value received from COM port
+        TextView textviewPrice;                // value received from COM port
+        TextView textViewSumWithoutDiscount;   // this value will be calculated
         TextView textViewDiscount;              // this value will be calculated
-        TextView textview_Summ;                 // value received from COM port
-        ImageView imageview_icon;
+        TextView textviewSum;                 // value received from COM port
+        ImageView imageviewIcon;
     }
 
     public AdapterProductList(Context context, int resource, ArrayList<ItemProductList> data) {
         super(context, resource, data);
         this.mContext = context;
         this.listItemResourceId = resource;
-    }
-
-    @Override
-    public void onClick(View v) {
-        Log.d(TAG, "onClick :+position");
     }
 
     @Override
@@ -66,26 +60,26 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> implements
             convertView = inflater.inflate(listItemResourceId, parent, false);
             viewHolder = new AdapterProductList.ViewHolder();
             viewHolder.textviewN = (TextView) convertView.findViewById(R.id.textview_npp);
-            viewHolder.textview_tovar = (TextView) convertView.findViewById(R.id.textview_tovar);
-            viewHolder.textview_Count = (TextView) convertView.findViewById(R.id.textview_Count);
-            viewHolder.textview_Price = (TextView) convertView.findViewById(R.id.textview_Price);
-            viewHolder.textViewSummWithoutDiscount = (TextView) convertView.findViewById(R.id.textview_summ_without_discount);
+            viewHolder.textviewProduct = (TextView) convertView.findViewById(R.id.textview_product);
+            viewHolder.textviewCount = (TextView) convertView.findViewById(R.id.textview_count);
+            viewHolder.textviewPrice = (TextView) convertView.findViewById(R.id.textview_price);
+            viewHolder.textViewSumWithoutDiscount = (TextView) convertView.findViewById(R.id.textview_sum_without_discount);
             viewHolder.textViewDiscount = (TextView) convertView.findViewById(R.id.textview_discount);
-            viewHolder.textview_Summ = (TextView) convertView.findViewById(R.id.textview_Summ);
-            viewHolder.imageview_icon = (ImageView) convertView.findViewById(R.id.imageview_icon);
+            viewHolder.textviewSum = (TextView) convertView.findViewById(R.id.textview_sum);
+            viewHolder.imageviewIcon = (ImageView) convertView.findViewById(R.id.imageview_icon);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (AdapterProductList.ViewHolder) convertView.getTag();
         }
 
         viewHolder.textviewN.setText("" + (position + 1));
-        viewHolder.textview_tovar.setText(dataModel.getName());
-        viewHolder.textview_Count.setText(((dataModel.getDivisible() == 1) ? (String.format("%.03f", (float) dataModel.getCount() / 1000)) : ("" + dataModel.getCount())).replace(",", "."));
-        viewHolder.textview_Price.setText(String.format("%.02f", (float) ((float) dataModel.getPrice() / 100)).replace(",", "."));
-        viewHolder.textViewSummWithoutDiscount.setText(String.format(Locale.ROOT, "%.02f", (float) ((float) dataModel.getSumWithoutDiscount() / 100)));
-        viewHolder.textViewDiscount.setText(String.format(Locale.ROOT, "%.02f", (float) ((float) dataModel.getDiscount() / 100)));
-        viewHolder.textview_Summ.setText(String.format("%.02f", (float) ((float) dataModel.getSum() / 100)).replace(",", "."));
-        viewHolder.textview_tovar.setTag(position);
+        viewHolder.textviewProduct.setText(dataModel.getName());
+        viewHolder.textviewCount.setText((dataModel.getDivisible() == 1) ? (String.format(Locale.ROOT, "%.03f", (double) dataModel.getCount() / 1000)) : (String.valueOf(dataModel.getCount())));
+        viewHolder.textviewPrice.setText(String.format(Locale.ROOT, "%.02f", (double) dataModel.getPrice() / 100));
+        viewHolder.textViewSumWithoutDiscount.setText(String.format(Locale.ROOT, "%.02f", (double) dataModel.getSumWithoutDiscount() / 100));
+        viewHolder.textViewDiscount.setText(String.format(Locale.ROOT, "%.02f", (double) dataModel.getDiscount() / 100));
+        viewHolder.textviewSum.setText(String.format(Locale.ROOT, "%.02f", (double) dataModel.getSum() / 100));
+        viewHolder.textviewProduct.setTag(position);
 
         resultView = convertView;
         return resultView;

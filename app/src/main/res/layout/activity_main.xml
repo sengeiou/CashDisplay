@@ -205,7 +205,7 @@
         android:background="@drawable/bg">
 
         <ScrollView
-            android:id="@+id/mScrollView"
+            android:id="@+id/scrollview"
             android:layout_width="500dp"
             android:layout_height="300dp"
             android:layout_gravity="center_horizontal|top"
@@ -215,7 +215,7 @@
             android:visibility="invisible">
 
             <TextView
-                android:id="@+id/textViewDEBUG"
+                android:id="@+id/textview_debug"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"

@@ -12,12 +12,12 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_above="@+id/idLayTotalSumm"
-        android:layout_weight="940"
+        android:layout_weight="94125"
         android:orientation="horizontal">
 
         <!--       dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
         <ImageView
-            android:id="@+id/imageViewTovar"
+            android:id="@+id/imageview_product"
             android:layout_width="400px"
             android:layout_height="500dp"
             android:visibility="gone" />
@@ -31,7 +31,7 @@
                 android:id="@+id/list_header"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="44"
+                android:layout_weight="4383"
                 android:orientation="horizontal">
 
                 <TextView
@@ -109,15 +109,17 @@
                 android:id="@+id/imageview_list_header_underline"
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:background="@color/colorBlack" />
+                android:background="@color/list_item_divider_look_1" />
 
             <ListView
                 android:id="@+id/listview"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="956"
+                android:layout_weight="95617"
                 android:choiceMode="singleChoice"
-                android:clickable="true"></ListView>
+                android:clickable="true"
+                android:divider="@color/list_item_divider_look_1"
+                android:dividerHeight="1px"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -126,7 +128,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_alignParentBottom="true"
-        android:layout_weight="60"
+        android:layout_weight="5875"
         android:gravity="bottom|end"
         android:orientation="horizontal"
         android:paddingBottom="5dp">
@@ -138,7 +140,7 @@
 
         <!--       dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
         <TextView
-            android:id="@+id/tv_TotalCount"
+            android:id="@+id/textview_total_count"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:visibility="gone" />
@@ -154,7 +156,7 @@
             android:textSize="@dimen/total_text_look_1" />
 
         <TextView
-            android:id="@+id/textview_sum_without_discount_end"
+            android:id="@+id/textview_total_sum_without_discount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2"
@@ -175,7 +177,7 @@
             android:textSize="@dimen/total_text_look_1" />
 
         <TextView
-            android:id="@+id/textview_discount_end_sum"
+            android:id="@+id/textview_total_discount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1.5"
@@ -196,7 +198,7 @@
             android:textSize="@dimen/total_text_look_1" />
 
         <TextView
-            android:id="@+id/tv_TotalSumm"
+            android:id="@+id/textview_total_sum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="right"

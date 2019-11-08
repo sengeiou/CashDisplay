@@ -12,11 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_above="@+id/idLayTotalSumm"
-        android:layout_weight="8375"
+        android:layout_weight="84125"
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/imageViewTovar"
+            android:id="@+id/imageview_product"
             android:layout_width="400px"
             android:layout_height="500dp"
             android:layout_alignParentRight="true"
@@ -33,7 +33,7 @@
                 android:id="@+id/list_header"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="55"
+                android:layout_weight="57"
                 android:gravity="end"
                 android:orientation="horizontal">
 
@@ -92,16 +92,18 @@
                 android:id="@+id/imageview_list_header_underline"
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:background="@color/list_item_delimiter_look_0"
+                android:background="@color/list_item_divider_look_0"
                 android:visibility="gone"/>
 
             <ListView
                 android:id="@+id/listview"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="945"
+                android:layout_weight="943"
                 android:choiceMode="singleChoice"
-                android:clickable="true"></ListView>
+                android:clickable="true"
+                android:divider="@color/list_item_divider_look_0"
+                android:dividerHeight="1px"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -111,19 +113,19 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_alignParentBottom="true"
-        android:layout_weight="1625"
+        android:layout_weight="15875"
         android:orientation="horizontal">
 
         <!--    dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
         <TextView
-            android:id="@+id/textview_discount_end_sum"
+            android:id="@+id/textview_total_discount"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:visibility="gone" />
 
         <!--     dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
         <TextView
-            android:id="@+id/textview_sum_without_discount_end"
+            android:id="@+id/textview_total_sum_without_discount"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:visibility="gone" />
@@ -142,7 +144,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tv_TotalCount"
+            android:id="@+id/textview_total_count"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -167,7 +169,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tv_TotalSumm"
+            android:id="@+id/textview_total_sum"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"

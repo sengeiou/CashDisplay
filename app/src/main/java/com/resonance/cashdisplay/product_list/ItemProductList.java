@@ -6,18 +6,18 @@ public class ItemProductList {
     private int n = 0;
     private String code = "";
     private int divisible = 0;
-    private long count = 0;
+    private int count = 0;
     private long price = 0;
     private long sum = 0;      // value from command from COM port
     private String name = "";
-    private float sumWithoutDiscount = 0;   // calculated value
-    private float discount = 0;              // calculated value
+    private long sumWithoutDiscount = 0;   // calculated value
+    private long discount = 0;              // calculated value
 
     public ItemProductList() {
         this.indexPosition = -1;
     }
 
-    public ItemProductList(int indexPosition, String code, int divisible, long count,
+    public ItemProductList(int indexPosition, String code, int divisible, int count,
                            long price, long sum, String name, long sumWithoutDiscount, long discount) {
         this.indexPosition = indexPosition;
         this.code = code;
@@ -62,11 +62,11 @@ public class ItemProductList {
         this.divisible = divisible;
     }
 
-    public long getCount() {
+    public int getCount() {
         return count;
     }
 
-    public void setCount(long count) {
+    public void setCount(int count) {
         this.count = count;
     }
 
@@ -94,15 +94,14 @@ public class ItemProductList {
         this.name = name;
     }
 
-    public float getSumWithoutDiscount() {
-        float amount = ((divisible == 1) ? ((float) count / 1000) : count);
-        sumWithoutDiscount = amount * price;
+    public long getSumWithoutDiscount() {
+        double amount = ((divisible == 1) ? (((double) count) / 1000) : count);
+        sumWithoutDiscount = Math.round(amount * price);
         return sumWithoutDiscount;
     }
 
-    public float getDiscount() {
-        float amount = ((divisible == 1) ? ((float) count / 1000) : count);
-        discount = (amount * price) - sum;
+    public long getDiscount() {
+        discount = getSumWithoutDiscount() - sum;
         return discount;
     }
 }

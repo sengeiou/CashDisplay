@@ -60,12 +60,12 @@ public class ProductListWorker {
      */
     public void addProductDebug(final String msg) {
 
-        final int start = MainActivity.textViewDEBUG.getText().length();
-        MainActivity.textViewDEBUG.append(msg + "\n");
-        int end = MainActivity.textViewDEBUG.getText().length();
-        Spannable spannableText = (Spannable) MainActivity.textViewDEBUG.getText();
+        final int start = MainActivity.textViewDebug.getText().length();
+        MainActivity.textViewDebug.append(msg + "\n");
+        int end = MainActivity.textViewDebug.getText().length();
+        Spannable spannableText = (Spannable) MainActivity.textViewDebug.getText();
         spannableText.setSpan(new ForegroundColorSpan(Color.BLUE), start, end, 0);
-        MainActivity.mScrollView.fullScroll(View.FOCUS_DOWN);
+        MainActivity.scrollView.fullScroll(View.FOCUS_DOWN);
     }
 
     /**
@@ -101,15 +101,18 @@ public class ProductListWorker {
             ItemProductList item = parseData(param);
             if (item.getIndexPosition() < 0)
                 return;
+
             if (item.getIndexPosition() < arrayProductList.size()) {
-                ItemProductList dummyItem = arrayProductList.get(item.getIndexPosition());
-                if ((dummyItem.getCount() != item.getCount()) || (dummyItem.getSum() != item.getSum()) || (!dummyItem.getCode().equals(item.getCode()))) {
+                ItemProductList presentItem = arrayProductList.get(item.getIndexPosition());
+                if ((presentItem.getCount() != item.getCount())
+                        || (presentItem.getSum() != item.getSum())
+                        || (!presentItem.getCode().equals(item.getCode())))
                     arrayProductList.set(item.getIndexPosition(), item);
-                    updateScreen(item.getIndexPosition());
-                }
+                updateScreen(item.getIndexPosition());
             } else {
                 addProductToList(param);
             }
+
         } else {
             addProductToList(param);
         }
@@ -152,43 +155,42 @@ public class ProductListWorker {
     }
 
     private void scrollToPosition(int index) {
-        MainActivity.listView.setSelection(index);
-        MainActivity.listView.smoothScrollToPositionFromTop(index, 0);
+        MainActivity.listViewProducts.smoothScrollToPositionFromTop(index, 0, 400);
         Log.d(TAG, "ScrollToPosition: " + index);
     }
 
     private void setProductImage(int index) {
         if (adapterProductList.getCount() > 0) {
             ItemProductList selectedItem = adapterProductList.getItem(index);
-            MainActivity.imageViewTovar.setImageBitmap(AdapterProductList.getImage(selectedItem.getCode()));
+            MainActivity.imageviewTovar.setImageBitmap(AdapterProductList.getImage(selectedItem.getCode()));
             Log.d(TAG, "selectedItem.getCodTovara() " + selectedItem.getCode());
         } else
-            MainActivity.imageViewTovar.setImageBitmap(null);
+            MainActivity.imageviewTovar.setImageBitmap(null);
     }
 
     /**
      * Calculation of total values for all product list and exposing results
      */
     private void updateTotalValues() {
-        int totalSumWithoutDiscount = 0;
-        int totalDiscount = 0;
-        int totalSumm = 0;
+        long totalSumWithoutDiscount = 0;
+        long totalDiscount = 0;
+        long totalSum = 0;
 
         for (int i = 0; i < arrayProductList.size(); i++) {
             ItemProductList selectedItem = arrayProductList.get(i);
             totalSumWithoutDiscount += selectedItem.getSumWithoutDiscount();
             totalDiscount += selectedItem.getDiscount();
-            totalSumm += selectedItem.getSum();
+            totalSum += selectedItem.getSum();
         }
 
-        MainActivity.textViewTotalSummWithDiscount.setText(String.format(Locale.ROOT, "%.2f", (float) (((float) totalSumWithoutDiscount) / 100)));
-        MainActivity.textViewTotalDiscount.setText(String.format(Locale.ROOT, "%.2f", (float) (((float) totalDiscount) / 100)));
-        MainActivity.tv_TotalSumm.setText(String.format("%.2f", (float) (((float) totalSumm) / 100)).replace(",", "."));
-        MainActivity.tv_TotalCount.setText(("" + arrayProductList.size()).replace(",", "."));
-        MainActivity.textViewDEBUG.append("MSG_totalSumWithoutDiscount: " + totalSumWithoutDiscount + "\n");
-        MainActivity.textViewDEBUG.append("MSG_totalDiscount: " + totalDiscount + "\n");
-        MainActivity.textViewDEBUG.append("MSG_totalSum: " + totalSumm + "\n");
-        MainActivity.textViewDEBUG.append("MSG_TotalCount: " + arrayProductList.size() + "\n");
+        MainActivity.textViewTotalSumWithoutDiscount.setText(String.format(Locale.ROOT, "%.2f", (double) totalSumWithoutDiscount / 100));
+        MainActivity.textViewTotalDiscount.setText(String.format(Locale.ROOT, "%.2f", (double) totalDiscount / 100));
+        MainActivity.textViewTotalSum.setText(String.format(Locale.ROOT, "%.2f", (double) totalSum / 100));
+        MainActivity.textViewTotalCount.setText(String.valueOf(arrayProductList.size()));
+        MainActivity.textViewDebug.append("MSG_totalSumWithoutDiscount: " + totalSumWithoutDiscount + "\n");
+        MainActivity.textViewDebug.append("MSG_totalDiscount: " + totalDiscount + "\n");
+        MainActivity.textViewDebug.append("MSG_totalSum: " + totalSum + "\n");
+        MainActivity.textViewDebug.append("MSG_TotalCount: " + arrayProductList.size() + "\n");
     }
 
     /**
@@ -221,7 +223,7 @@ public class ProductListWorker {
                         item.setDivisible(Integer.valueOf(param.substring(index, nextSeparator)));
                         break;
                     case 3:
-                        item.setCount(Long.valueOf(param.substring(index, nextSeparator)));
+                        item.setCount(Integer.valueOf(param.substring(index, nextSeparator)));
                         break;
                     case 4:
                         item.setPrice(Long.valueOf(param.substring(index, nextSeparator)));

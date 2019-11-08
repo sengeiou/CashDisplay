@@ -11,10 +11,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="@dimen/list_item_height_look_0"
-        android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:gravity="center_vertical"
-        android:minHeight="200px"
         android:orientation="horizontal">
 
         <!--    dummy, for compability only, must be in another list_item_look_x.xml (visibility = gone) -->
@@ -25,7 +23,7 @@
             android:visibility="gone"/>
         <!--    dummy, for compability only, must be in another list_item_look_x.xml (visibility = gone) -->
         <TextView
-            android:id="@+id/textview_summ_without_discount"
+            android:id="@+id/textview_sum_without_discount"
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:visibility="gone"/>
@@ -45,7 +43,7 @@
             tools:text="№" />
 
         <TextView
-            android:id="@+id/textview_tovar"
+            android:id="@+id/textview_product"
             android:layout_width="450dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical"
@@ -62,10 +60,9 @@
             android:foregroundGravity="center_vertical" />
 
         <TextView
-            android:id="@+id/textview_Count"
+            android:id="@+id/textview_count"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textview_tovar"
             android:layout_gravity="center_horizontal|center_vertical"
             android:layout_weight="1"
             android:minWidth="200dp"
@@ -77,10 +74,9 @@
             tools:text="10" />
 
         <TextView
-            android:id="@+id/textview_Price"
+            android:id="@+id/textview_price"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textview_Count"
             android:layout_gravity="right|center_vertical"
             android:layout_weight="1"
             android:minWidth="200dp"
@@ -93,10 +89,9 @@
             tools:text="9999.99" />
 
         <TextView
-            android:id="@+id/textview_Summ"
+            android:id="@+id/textview_sum"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textview_Price"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="10dp"
             android:layout_weight="1"
@@ -108,12 +103,6 @@
             android:textStyle="bold"
             tools:text="9999.99" />
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/imageview_list_item_delimiter"
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="@color/list_item_delimiter_look_0" />
 
     <ImageView
             android:id="@+id/imageview_icon"

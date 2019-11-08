@@ -90,14 +90,14 @@ public class MainActivity extends Activity {
 
     private View layoutProductListLook = null;    // represent layout_shopping_list_look_x.xml, where x - number of desired look
     // next block of views must be in every layout_shopping_list_look_x.xml to provide compability
-    public static TextView tv_TotalCount;
-    public static TextView textViewTotalSummWithDiscount;   // calculated value
+    public static TextView textViewTotalCount;
+    public static TextView textViewTotalSumWithoutDiscount;    // calculated value
     public static TextView textViewTotalDiscount;           // calculated value
-    public static TextView tv_TotalSumm;             // value for this view received from COM port
-    public static ListView listView;
-    public static TextView textViewDEBUG;
-    public static ScrollView mScrollView;
-    public static ImageView imageViewTovar;
+    public static TextView textViewTotalSum;             // value for this view received from COM port
+    public static ListView listViewProducts;
+    public static TextView textViewDebug;
+    public static ScrollView scrollView;
+    public static ImageView imageviewTovar;
 
     TextView tvVersion;
 
@@ -182,9 +182,9 @@ public class MainActivity extends Activity {
         productListWorker = new ProductListWorker(context);
         setProductListLook();
 
-        textViewDEBUG = (TextView) findViewById(R.id.textViewDEBUG);
-        textViewDEBUG.setMovementMethod(new ScrollingMovementMethod());
-        mScrollView = (ScrollView) findViewById(R.id.mScrollView);
+        textViewDebug = (TextView) findViewById(R.id.textview_debug);
+        textViewDebug.setMovementMethod(new ScrollingMovementMethod());
+        scrollView = (ScrollView) findViewById(R.id.scrollview);
 
         registerReceiver(changeSettings, new IntentFilter(CHANGE_SETTINGS));
         setBackgroundScreen();
@@ -303,18 +303,18 @@ public class MainActivity extends Activity {
         relativeLayout[CONTEXT_PRODUCT_LIST].addView(layoutProductListLook, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         relativeLayout[CONTEXT_PRODUCT_LIST].invalidate();
 
-        listView = (ListView) layoutProductListLook.findViewById(R.id.listview);
-        textViewTotalSummWithDiscount = (TextView) layoutProductListLook.findViewById(R.id.textview_sum_without_discount_end);
-        textViewTotalDiscount = (TextView) layoutProductListLook.findViewById(R.id.textview_discount_end_sum);
-        tv_TotalSumm = (TextView) layoutProductListLook.findViewById(R.id.tv_TotalSumm);
-        tv_TotalCount = (TextView) layoutProductListLook.findViewById(R.id.tv_TotalCount);
-        imageViewTovar = (ImageView) layoutProductListLook.findViewById(R.id.imageViewTovar);
+        listViewProducts = (ListView) layoutProductListLook.findViewById(R.id.listview);
+        textViewTotalSumWithoutDiscount = (TextView) layoutProductListLook.findViewById(R.id.textview_total_sum_without_discount);
+        textViewTotalDiscount = (TextView) layoutProductListLook.findViewById(R.id.textview_total_discount);
+        textViewTotalSum = (TextView) layoutProductListLook.findViewById(R.id.textview_total_sum);
+        textViewTotalCount = (TextView) layoutProductListLook.findViewById(R.id.textview_total_count);
+        imageviewTovar = (ImageView) layoutProductListLook.findViewById(R.id.imageview_product);
         // appropriate adapter must be created everytime for actual listview for specified look of product list
-        listView.setAdapter(productListWorker.createAdapterProductList(lookCode));
-        tv_TotalCount.setText("0");
-        textViewTotalSummWithDiscount.setText("0.00");
+        listViewProducts.setAdapter(productListWorker.createAdapterProductList(lookCode));
+        textViewTotalCount.setText("0");
+        textViewTotalSumWithoutDiscount.setText("0.00");
         textViewTotalDiscount.setText("0.00");
-        tv_TotalSumm.setText("0.00");
+        textViewTotalSum.setText("0.00");
     }
 
     /************************************************************************************/

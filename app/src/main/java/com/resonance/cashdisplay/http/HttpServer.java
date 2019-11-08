@@ -99,7 +99,6 @@ public class HttpServer {
         }
     };
 
-
     private void createServerAsync() {
         if (mServer != null) {
             return;
