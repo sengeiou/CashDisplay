@@ -112,7 +112,7 @@
                 android:background="@color/list_item_divider_look_1" />
 
             <ListView
-                android:id="@+id/listview"
+                android:id="@+id/listview_products"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="95617"

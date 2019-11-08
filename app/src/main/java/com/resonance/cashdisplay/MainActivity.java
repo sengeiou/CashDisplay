@@ -88,7 +88,7 @@ public class MainActivity extends Activity {
     private static ImageView imageSdCardError;
     private static boolean lanSetupAlready = false;
 
-    private View layoutProductListLook = null;    // represent layout_shopping_list_look_x.xml, where x - number of desired look
+    public static View layoutProductListLook = null;    // represent layout_shopping_list_look_x.xml, where x - number of desired look
     // next block of views must be in every layout_shopping_list_look_x.xml to provide compability
     public static TextView textViewTotalCount;
     public static TextView textViewTotalSumWithoutDiscount;    // calculated value
@@ -97,7 +97,7 @@ public class MainActivity extends Activity {
     public static ListView listViewProducts;
     public static TextView textViewDebug;
     public static ScrollView scrollView;
-    public static ImageView imageviewTovar;
+    public static ImageView imageViewProduct;
 
     TextView tvVersion;
 
@@ -303,18 +303,19 @@ public class MainActivity extends Activity {
         relativeLayout[CONTEXT_PRODUCT_LIST].addView(layoutProductListLook, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         relativeLayout[CONTEXT_PRODUCT_LIST].invalidate();
 
-        listViewProducts = (ListView) layoutProductListLook.findViewById(R.id.listview);
+        listViewProducts = (ListView) layoutProductListLook.findViewById(R.id.listview_products);
+        textViewTotalCount = (TextView) layoutProductListLook.findViewById(R.id.textview_total_count);
         textViewTotalSumWithoutDiscount = (TextView) layoutProductListLook.findViewById(R.id.textview_total_sum_without_discount);
         textViewTotalDiscount = (TextView) layoutProductListLook.findViewById(R.id.textview_total_discount);
         textViewTotalSum = (TextView) layoutProductListLook.findViewById(R.id.textview_total_sum);
-        textViewTotalCount = (TextView) layoutProductListLook.findViewById(R.id.textview_total_count);
-        imageviewTovar = (ImageView) layoutProductListLook.findViewById(R.id.imageview_product);
+        imageViewProduct = (ImageView) layoutProductListLook.findViewById(R.id.imageview_product);
         // appropriate adapter must be created everytime for actual listview for specified look of product list
         listViewProducts.setAdapter(productListWorker.createAdapterProductList(lookCode));
         textViewTotalCount.setText("0");
         textViewTotalSumWithoutDiscount.setText("0.00");
         textViewTotalDiscount.setText("0.00");
         textViewTotalSum.setText("0.00");
+        imageViewProduct.setImageBitmap(null);
     }
 
     /************************************************************************************/
@@ -349,8 +350,6 @@ public class MainActivity extends Activity {
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(changeSettings);
-        unregisterReceiver(uartWorker.uartChangeSettings);
-        unregisterReceiver(videoSlideService.videoSlideEvents);
     }
 
     /***************************************

@@ -5,6 +5,9 @@ import android.graphics.Color;
 import android.text.Spannable;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.resonance.cashdisplay.Log;
@@ -156,16 +159,21 @@ public class ProductListWorker {
 
     private void scrollToPosition(int index) {
         MainActivity.listViewProducts.smoothScrollToPositionFromTop(index, 0, 400);
+
+        LinearLayout layoutListItem = (LinearLayout) MainActivity.layoutProductListLook.findViewById(R.id.layout_list_item);
+        Animation startAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_out);
+        Log.d(TAG, layoutListItem + " " + startAnimation + " " + " ");
+        layoutListItem.startAnimation(startAnimation);
         Log.d(TAG, "ScrollToPosition: " + index);
     }
 
     private void setProductImage(int index) {
         if (adapterProductList.getCount() > 0) {
             ItemProductList selectedItem = adapterProductList.getItem(index);
-            MainActivity.imageviewTovar.setImageBitmap(AdapterProductList.getImage(selectedItem.getCode()));
+            MainActivity.imageViewProduct.setImageBitmap(AdapterProductList.getImage(selectedItem.getCode()));
             Log.d(TAG, "selectedItem.getCodTovara() " + selectedItem.getCode());
         } else
-            MainActivity.imageviewTovar.setImageBitmap(null);
+            MainActivity.imageViewProduct.setImageBitmap(null);
     }
 
     /**

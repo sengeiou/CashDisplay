@@ -96,7 +96,7 @@
                 android:visibility="gone"/>
 
             <ListView
-                android:id="@+id/listview"
+                android:id="@+id/listview_products"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="943"
