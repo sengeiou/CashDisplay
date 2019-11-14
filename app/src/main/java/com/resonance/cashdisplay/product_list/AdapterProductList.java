@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.resonance.cashdisplay.ExtSDSource;
+import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.PreferenceParams;
 import com.resonance.cashdisplay.PreferencesValues;
@@ -30,14 +31,14 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
     private int listItemResourceId;
 
     private class ViewHolder {
-        TextView textviewN;
-        TextView textviewProduct;
-        TextView textviewCount;                // value received from COM port
-        TextView textviewPrice;                // value received from COM port
+        TextView textViewN;
+        TextView textViewProduct;
+        TextView textViewCount;                // value received from COM port
+        TextView textViewPrice;                // value received from COM port
         TextView textViewSumWithoutDiscount;   // this value will be calculated
-        TextView textViewDiscount;              // this value will be calculated
-        TextView textviewSum;                 // value received from COM port
-        ImageView imageviewIcon;
+        TextView textViewDiscount;             // this value will be calculated
+        TextView textViewSum;                  // value received from COM port
+        ImageView imageViewIcon;
     }
 
     public AdapterProductList(Context context, int resource, ArrayList<ItemProductList> data) {
@@ -59,29 +60,32 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(listItemResourceId, parent, false);
             viewHolder = new AdapterProductList.ViewHolder();
-            viewHolder.textviewN = (TextView) convertView.findViewById(R.id.textview_npp);
-            viewHolder.textviewProduct = (TextView) convertView.findViewById(R.id.textview_product);
-            viewHolder.textviewCount = (TextView) convertView.findViewById(R.id.textview_count);
-            viewHolder.textviewPrice = (TextView) convertView.findViewById(R.id.textview_price);
+            viewHolder.textViewN = (TextView) convertView.findViewById(R.id.textview_npp);
+            viewHolder.textViewProduct = (TextView) convertView.findViewById(R.id.textview_product);
+            viewHolder.textViewCount = (TextView) convertView.findViewById(R.id.textview_count);
+            viewHolder.textViewPrice = (TextView) convertView.findViewById(R.id.textview_price);
             viewHolder.textViewSumWithoutDiscount = (TextView) convertView.findViewById(R.id.textview_sum_without_discount);
             viewHolder.textViewDiscount = (TextView) convertView.findViewById(R.id.textview_discount);
-            viewHolder.textviewSum = (TextView) convertView.findViewById(R.id.textview_sum);
-            viewHolder.imageviewIcon = (ImageView) convertView.findViewById(R.id.imageview_icon);
+            viewHolder.textViewSum = (TextView) convertView.findViewById(R.id.textview_sum);
+            viewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.imageview_icon);
             convertView.setTag(viewHolder);
+            Log.d(TAG, "converView = null");
         } else {
+            Log.d(TAG, "converView exists");
             viewHolder = (AdapterProductList.ViewHolder) convertView.getTag();
         }
 
-        viewHolder.textviewN.setText("" + (position + 1));
-        viewHolder.textviewProduct.setText(dataModel.getName());
-        viewHolder.textviewCount.setText((dataModel.getDivisible() == 1) ? (String.format(Locale.ROOT, "%.03f", (double) dataModel.getCount() / 1000)) : (String.valueOf(dataModel.getCount())));
-        viewHolder.textviewPrice.setText(String.format(Locale.ROOT, "%.02f", (double) dataModel.getPrice() / 100));
+        viewHolder.textViewN.setText("" + (position + 1));
+        viewHolder.textViewProduct.setText(dataModel.getName());
+        viewHolder.textViewCount.setText((dataModel.getDivisible() == 1) ? (String.format(Locale.ROOT, "%.03f", (double) dataModel.getCount() / 1000)) : (String.valueOf(dataModel.getCount())));
+        viewHolder.textViewPrice.setText(String.format(Locale.ROOT, "%.02f", (double) dataModel.getPrice() / 100));
         viewHolder.textViewSumWithoutDiscount.setText(String.format(Locale.ROOT, "%.02f", (double) dataModel.getSumWithoutDiscount() / 100));
         viewHolder.textViewDiscount.setText(String.format(Locale.ROOT, "%.02f", (double) dataModel.getDiscount() / 100));
-        viewHolder.textviewSum.setText(String.format(Locale.ROOT, "%.02f", (double) dataModel.getSum() / 100));
-        viewHolder.textviewProduct.setTag(position);
+        viewHolder.textViewSum.setText(String.format(Locale.ROOT, "%.02f", (double) dataModel.getSum() / 100));
+        viewHolder.textViewProduct.setTag(position);
 
         resultView = convertView;
+
         return resultView;
     }
 

@@ -2,12 +2,14 @@ package com.resonance.cashdisplay.product_list;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Spannable;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
+import android.widget.AbsListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.resonance.cashdisplay.Log;
@@ -17,6 +19,8 @@ import com.resonance.cashdisplay.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
+
+import static com.resonance.cashdisplay.MainActivity.listViewProducts;
 
 /**
  * Класс обрабатывает экран "Список товаров"
@@ -152,19 +156,55 @@ public class ProductListWorker {
 
     private void updateScreen(int position) {
         adapterProductList.notifyDataSetChanged();
-        scrollToPosition(position);
+        // need some time to update list view with new data
+        new Handler(Looper.getMainLooper()).post(() -> {
+            scrollToPosition(position);
+        });
         setProductImage(position);
         updateTotalValues();
     }
 
-    private void scrollToPosition(int index) {
-        MainActivity.listViewProducts.smoothScrollToPositionFromTop(index, 0, 400);
+    private void scrollToPosition(final int position) {
+        listViewProducts.smoothScrollToPositionFromTop(position, 0, 100);
+        Log.d(TAG, "scrollToPosition: " + position);
 
-        LinearLayout layoutListItem = (LinearLayout) MainActivity.layoutProductListLook.findViewById(R.id.layout_list_item);
-        Animation startAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_out);
-        Log.d(TAG, layoutListItem + " " + startAnimation + " " + " ");
-        layoutListItem.startAnimation(startAnimation);
-        Log.d(TAG, "ScrollToPosition: " + index);
+        listViewProducts.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == SCROLL_STATE_IDLE) {
+                    int totalItemsCount = listViewProducts.getCount();
+                    int visibleItemsCount = (listViewProducts.getLastVisiblePosition() - listViewProducts.getFirstVisiblePosition()) + 1;
+                    int positionViewPort = position;
+                    if (adapterProductList.getCount() > visibleItemsCount) {
+                        positionViewPort = visibleItemsCount - (totalItemsCount - position);
+                        if (positionViewPort < 0)
+                            positionViewPort = 0;
+                    }
+
+                    View listItem = listViewProducts.getChildAt(positionViewPort);
+
+                    Log.d(TAG, "listItem = " + ((TextView) listItem.findViewById(R.id.textview_product)).getText());
+
+                    AnimationDrawable animDrawable = (AnimationDrawable) listItem.getBackground();
+//        animDrawable.setOneShot(false);
+                    Log.d(TAG, "animDrawable = " + animDrawable);
+                    animDrawable.setEnterFadeDuration(0);
+                    animDrawable.setExitFadeDuration(500);
+                    animDrawable.start();
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                Log.d(TAG, "firstVisibleItem " + firstVisibleItem);
+                Log.d(TAG, "visibleItemCount " + visibleItemCount);
+                Log.d(TAG, "totalItemCount " + totalItemCount);
+            }
+        });
+
+        Log.d(TAG, "listViewProducts.getCount() = " + listViewProducts.getCount());
+
+
     }
 
     private void setProductImage(int index) {

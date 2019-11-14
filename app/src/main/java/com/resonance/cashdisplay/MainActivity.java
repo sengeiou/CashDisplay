@@ -287,13 +287,13 @@ public class MainActivity extends Activity {
         int resource;
         switch (lookCode) {
             case 0:
-                resource = R.layout.layout_shopping_list_look_0;
+                resource = R.layout.layout_product_list_look_0;
                 break;
             case 1:
-                resource = R.layout.layout_shopping_list_look_1;
+                resource = R.layout.layout_product_list_look_1;
                 break;
             default:
-                resource = R.layout.layout_shopping_list_look_0;
+                resource = R.layout.layout_product_list_look_0;
                 break;
         }
         if (layoutProductListLook != null)
