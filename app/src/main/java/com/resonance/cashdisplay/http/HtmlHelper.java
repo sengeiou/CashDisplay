@@ -18,7 +18,7 @@ import java.net.URLEncoder;
 
 public class HtmlHelper {
 
-    private static final String TAG = "html_Helper";
+    private static final String TAG = "HtmlHelper";
 
     public static String urlDecode(final String s) {
         String decoded;

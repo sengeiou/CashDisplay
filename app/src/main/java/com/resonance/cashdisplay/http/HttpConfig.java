@@ -1,7 +1,7 @@
 package com.resonance.cashdisplay.http;
 
 public class HttpConfig {
-    private transient static final String TAG = "http_Config";
+    private transient static final String TAG = "HttpConfig";
 
     public final int port = 8182;
 

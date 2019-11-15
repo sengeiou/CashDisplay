@@ -37,9 +37,9 @@ public class HttpServer {
     public static String HTTP_HALT_EVENT = "http_halt_event";
     private AsyncHttpServer mServer = null;
     private AsyncServer mAsyncServer = null;//new AsyncServer();
-    private HttpConfig http_config = null;
+    private HttpConfig httpСonfig = null;
     private WebStatus webStatus;
-    private static final String TAG = "http_Server";
+    private static final String TAG = "HttpServer";
     private final int STAT_IDLE = 0;
     private final int STAT_LOAD_FILES = 1;
     private final int STAT_SAVE = 2;
@@ -103,7 +103,7 @@ public class HttpServer {
         if (mServer != null) {
             return;
         }
-        http_config = HttpConfig.get();
+        httpСonfig = HttpConfig.get();
 
         mServer = new AsyncHttpServer();
         mServer.setContext(mContext);
@@ -123,14 +123,13 @@ public class HttpServer {
                 Log.w(TAG, "**CompletedCallback");
             }
         });
-        mServer.listen(mAsyncServer, http_config.port);
+        mServer.listen(mAsyncServer, httpСonfig.port);
     }
 
     private final HttpServerRequestCallback LoginCallback = new HttpServerRequestCallback() {
         @Override
         public void onRequest(final AsyncHttpServerRequest request, final AsyncHttpServerResponse response) {
             if (!shouldPass(request, response)) {
-
                 return;
             }
             Log.d(TAG, "** LoginCallback:" + request.getPath());
@@ -374,19 +373,24 @@ public class HttpServer {
     }
 
     private boolean isAuthenticated(final AsyncHttpServerRequest req) {
-        final boolean isAuth = !http_config.useAuth;
+        final boolean isAuth = !httpСonfig.useAuth;
         final String authHeader = req.getHeaders().get("Authorization");
 
         if (!isAuth && !TextUtils.isEmpty(authHeader)) {
 
-            final String[] parts = new String(Base64.decode(authHeader.replace("Basic", "").trim(), Base64.DEFAULT)).split(":");
+            String[] authData = new String(Base64.decode(authHeader.replace("Basic", "").trim(), Base64.DEFAULT))
+                    .split(":");
 
-            // Log.w(TAG, "isAuth:"+isAuth+" authHeader:"+authHeader+" parts[0]:"+parts[0]+" parts[1]:"+parts[1]);
-
-            return parts[0] != null
-                    && parts[1] != null
-                    && parts[0].equals(http_config.username)
-                    && parts[1].equals(http_config.password);
+            switch (authData.length) {
+                case 1:                     // only login was typed
+                    return httpСonfig.username.equals(authData[0])
+                            && httpСonfig.password.equals("");
+                case 2:                     // login and password were typed
+                    return httpСonfig.username.equals(authData[0])
+                            && httpСonfig.password.equals(authData[1]);
+                default:                    // nor login nor password were typed (or typed mess data)
+                    return false;
+            }
         }
         return isAuth;
     }
