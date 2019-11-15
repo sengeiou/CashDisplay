@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -70,10 +69,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="25dp"
                         android:layout_gravity="left"
-
                         android:gravity="bottom|start"
                         android:text="@{productinfo.line1}"
-
                         android:textColor="@color/grey500"
                         android:textSize="@dimen/text_size_medium"
                         android:textStyle="normal" />
@@ -101,7 +98,6 @@
                 <LinearLayout
                     android:layout_width="300dp"
                     android:layout_height="wrap_content"
-
                     android:layout_gravity="bottom"
                     android:layout_marginLeft="5dp"
                     android:foregroundGravity="right"
@@ -115,7 +111,6 @@
                         android:layout_gravity="bottom|right"
                         android:gravity="right"
                         android:text="..."
-                        android:textAlignment="textEnd"
                         android:textColor="@color/grey500"
                         android:textSize="@dimen/text_size_medium" />
 
@@ -129,7 +124,6 @@
                         android:shadowColor="#ead4d4"
                         android:singleLine="true"
                         android:text="@{productinfo.statusConnection}"
-                        android:textAlignment="textEnd"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/grey500"
                         android:textColorHighlight="#f9f2f2"
