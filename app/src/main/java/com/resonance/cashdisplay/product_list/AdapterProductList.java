@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.resonance.cashdisplay.ExtSDSource;
-import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.PreferenceParams;
 import com.resonance.cashdisplay.PreferencesValues;
@@ -69,9 +68,7 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
             viewHolder.textViewSum = (TextView) convertView.findViewById(R.id.textview_sum);
             viewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.imageview_icon);
             convertView.setTag(viewHolder);
-            Log.d(TAG, "converView = null");
         } else {
-            Log.d(TAG, "converView exists");
             viewHolder = (AdapterProductList.ViewHolder) convertView.getTag();
         }
 
