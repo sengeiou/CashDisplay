@@ -6,8 +6,10 @@ public class HttpConfig {
     public final int port = 8182;
 
     public boolean useAuth = true;
-    public String username = "admin";
+    public String userName = "admin";
     public String password = "admin";
+
+    public String userNameTestMode = "otk";
 
     private transient static HttpConfig instance;
 

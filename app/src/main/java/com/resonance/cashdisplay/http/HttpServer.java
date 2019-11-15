@@ -110,7 +110,7 @@ public class HttpServer {
         mAsyncServer = new AsyncServer();
         Log.w(TAG, "[!] Server created");
 
-        mServer.get("/", LoginCallback);
+        mServer.get("/", loginCallback);
         mServer.get("/getsettings", getSettingsCallback);
         mServer.get("/getstatus", getStatusCallback);
         mServer.post("/download_files", download_filesCallback);
@@ -126,16 +126,16 @@ public class HttpServer {
         mServer.listen(mAsyncServer, httpСonfig.port);
     }
 
-    private final HttpServerRequestCallback LoginCallback = new HttpServerRequestCallback() {
+    private final HttpServerRequestCallback loginCallback = new HttpServerRequestCallback() {
         @Override
         public void onRequest(final AsyncHttpServerRequest request, final AsyncHttpServerResponse response) {
             if (!shouldPass(request, response)) {
                 return;
             }
-            Log.d(TAG, "** LoginCallback:" + request.getPath());
+            Log.d(TAG, "** loginCallback:" + request.getPath());
 
             final String path = remapPath(request.getPath());
-            Log.d(TAG, "** LoginCallback:" + request.getPath() + ", path:" + path);
+            Log.d(TAG, "** loginCallback:" + request.getPath() + ", path:" + path);
 
             response.getHeaders().set("Content-Type", ContentTypes.getInstance().getContentType(path));
             response.send(HtmlHelper.loadPathAsString(path));
@@ -382,11 +382,19 @@ public class HttpServer {
                     .split(":");
 
             switch (authData.length) {
-                case 1:                     // only login was typed
-                    return httpСonfig.username.equals(authData[0])
+                case 1:                                                  // only login was typed
+                    if (httpСonfig.userNameTestMode.equals(authData[0])) {  // tester name
+                        if (req.getPath().equals("/")) {       // only if request is from loginCallback)
+                            MainActivity.testMode = true;
+                            Intent intent = new Intent(MainActivity.CHANGE_SETTINGS);
+                            MainActivity.context.sendBroadcast(intent);
+                        }
+                        return true;
+                    }
+                    return httpСonfig.userName.equals(authData[0])
                             && httpСonfig.password.equals("");
-                case 2:                     // login and password were typed
-                    return httpСonfig.username.equals(authData[0])
+                case 2:                                             // login and password were typed
+                    return httpСonfig.userName.equals(authData[0])
                             && httpСonfig.password.equals(authData[1]);
                 default:                    // nor login nor password were typed (or typed mess data)
                     return false;

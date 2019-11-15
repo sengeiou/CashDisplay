@@ -2,6 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+
         <variable
             name="productinfo"
             type="com.resonance.cashdisplay.ProductInfo" />
@@ -13,14 +14,14 @@
         android:id="@+id/layout_main_relative_layout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:background="@android:color/white"
         android:scaleType="centerInside">
 
-<!--Слой подключения-->
+        <!--Слой подключения-->
         <RelativeLayout
             android:id="@+id/idLayoutConnect"
             android:layout_width="wrap_content"
@@ -46,6 +47,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
+            <TextView
+                android:id="@+id/textview_cashbox_not_work"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="КАСА НЕ ПРАЦЮЄ \n\n       (Test Mode)"
+                android:textColor="@color/grey500"
+                android:textSize="50sp"
+                android:visibility="gone" />
+
             <LinearLayout
                 android:id="@+id/linearLayout3"
                 android:layout_width="match_parent"
@@ -60,32 +71,29 @@
                     android:layout_centerVertical="false"
                     android:layout_gravity="bottom|left"
                     android:layout_marginStart="10dp"
-                    android:gravity="left"
-                    android:orientation="vertical"
-                    android:weightSum="1">
+                    android:gravity="bottom|left"
+                    android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/id_indikator_line1"
+                        android:id="@+id/textview_emul2line_indicator_1"
                         android:layout_width="match_parent"
-                        android:layout_height="25dp"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="left"
-                        android:gravity="bottom|start"
+                        android:gravity="start|center"
                         android:text="@{productinfo.line1}"
                         android:textColor="@color/grey500"
-                        android:textSize="@dimen/text_size_medium"
+                        android:textSize="@dimen/text_size_large"
                         android:textStyle="normal" />
 
                     <TextView
-                        android:id="@+id/id_indikator_line2"
+                        android:id="@+id/textview_emul2line_indicator_2"
                         android:layout_width="match_parent"
-                        android:layout_height="25dp"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="left"
-                        android:layout_weight="1"
-                        android:gravity="bottom|start"
+                        android:gravity="start|center"
                         android:text="@{productinfo.line2}"
-                        android:textAlignment="textStart"
                         android:textColor="@color/grey500"
-                        android:textSize="@dimen/text_size_medium"
+                        android:textSize="@dimen/text_size_large"
                         android:textStyle="normal" />
 
                 </LinearLayout>
@@ -140,7 +148,7 @@
 
         </RelativeLayout>
 
- <!--слой товара-->
+        <!--слой товара-->
 
         <!--Слой видео-->
 
@@ -171,17 +179,17 @@
             android:layout_alignParentEnd="false"
             android:background="@android:color/white"
             android:id="@+id/PayLayout"-->
-    <!--Слой оплаты-->
+        <!--Слой оплаты-->
 
 
         <!--Слой Дякую  НОВЫЙ-->
 
         <!--Слой Дякую-->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/idLayoutThanks"
-        android:visibility="invisible"/>
+        <RelativeLayout
+            android:id="@+id/idLayoutThanks"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible" />
 
         <!--Слой скидка,бонус, QR-код -->
 
@@ -193,34 +201,34 @@
 
         <!--Слой Списка товаров-->
         <!--We add programmatically different variants of layouts here for different client's flavours-->
-    <RelativeLayout
-        android:id="@+id/layout_product_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:animateLayoutChanges="true"
-        android:background="@drawable/bg">
+        <RelativeLayout
+            android:id="@+id/layout_product_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
+            android:background="@drawable/bg">
 
-        <ScrollView
-            android:id="@+id/scrollview"
-            android:layout_width="500dp"
-            android:layout_height="300dp"
-            android:layout_gravity="center_horizontal|top"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
-            android:scrollbars="vertical"
-            android:visibility="invisible">
-
-            <TextView
-                android:id="@+id/textview_debug"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+            <ScrollView
+                android:id="@+id/scrollview"
+                android:layout_width="500dp"
+                android:layout_height="300dp"
+                android:layout_gravity="center_horizontal|top"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
                 android:scrollbars="vertical"
-                android:text="..."
-                android:textSize="14dp" />
+                android:visibility="gone">
 
-        </ScrollView>
+                <TextView
+                    android:id="@+id/textview_debug"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="vertical"
+                    android:text="..."
+                    android:textSize="14dp" />
 
-    </RelativeLayout>
+            </ScrollView>
+
+        </RelativeLayout>
 
         <!--/RelativeLayout-->
     </RelativeLayout>

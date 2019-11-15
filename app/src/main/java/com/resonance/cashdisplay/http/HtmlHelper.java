@@ -62,26 +62,29 @@ public class HtmlHelper {
         return loadPathInternal(path);
     }
 
-    @NonNull public static String loadPathAsString(String path) {
+    @NonNull
+    public static String loadPathAsString(String path) {
         path = cleanupPath(path);
         return loadPathAsStringInternal(path);
     }
 
-    @Nullable private static InputStream loadPathInternal(final String path) {
+    @Nullable
+    private static InputStream loadPathInternal(final String path) {
         try {
             return MainActivity.context.getAssets().open(path);
         } catch (Exception exc) {
-            Log.e(TAG, "loadPathInternal",exc);
+            Log.e(TAG, "loadPathInternal", exc);
         }
         return null;
     }
 
-    @NonNull private static String loadPathAsStringInternal(final String path) {
+    @NonNull
+    private static String loadPathAsStringInternal(final String path) {
         try {
-            Log.i( TAG,"try to load  file from asset:"+path);
+            Log.i(TAG, "try to load  file from asset:" + path);
             return loadFromAssets(path);
         } catch (Exception exc) {
-            Log.e( TAG,"loadPathAsStringInternal",exc);
+            Log.e(TAG, "loadPathAsStringInternal", exc);
         }
         return "";
     }
@@ -113,12 +116,14 @@ public class HtmlHelper {
         if (closeable instanceof Flushable) {
             try {
                 ((Flushable) closeable).flush();
-            } catch (IOException ignored) { }
+            } catch (IOException ignored) {
+            }
         }
         if (closeable instanceof Closeable) {
             try {
                 ((Closeable) closeable).close();
-            } catch (IOException ignored) { }
+            } catch (IOException ignored) {
+            }
         }
     }
 }

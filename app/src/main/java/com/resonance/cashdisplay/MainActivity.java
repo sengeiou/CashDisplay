@@ -45,16 +45,15 @@ import com.resonance.cashdisplay.utils.ImageUtils;
 
 import java.io.File;
 
-//import android.util.Log;
-
 public class MainActivity extends Activity {
 
     private static final String TAG = "Main";
     public static final int CONTEXT_CONNECT = 0;        //слой подключения
     public static final int CONTEXT_THANKS = 1;         //слой спасибо
-    public static final int CONTEXT_PRODUCT_LIST = 2;  //Слой список товаров
+    public static final int CONTEXT_PRODUCT_LIST = 2;   //Слой список товаров
 
     public static String CHANGE_SETTINGS = "change_settings";
+    public static boolean testMode = false;              // used to specify that app is in test mode
 
     public static final int MSG_ADD_TOVAR_PRODUCT_LIST = 34;
     public static final int MSG_SET_TOVAR_PRODUCT_LIST = 35;
@@ -98,6 +97,8 @@ public class MainActivity extends Activity {
     public static TextView textViewDebug;
     public static ScrollView scrollView;
     public static ImageView imageViewProduct;
+
+
 
     TextView tvVersion;
 
@@ -260,6 +261,14 @@ public class MainActivity extends Activity {
         } else {
             relativeLayout[CONTEXT_CONNECT].setBackgroundResource(R.drawable.screen_cache_not_work);
         }
+        if (testMode == true) {
+            relativeLayout[CONTEXT_CONNECT].setBackground(null);
+            productInfo.setLine1("1234567890");
+            productInfo.setLine2("qwerretewrt");
+            findViewById(R.id.textview_cashbox_not_work).setVisibility(View.VISIBLE);
+            scrollView.setVisibility(View.VISIBLE);
+        }
+
         relativeLayout[CONTEXT_CONNECT].invalidate();
 
         //Фонове зображення экрану "Дякуємо за покупку"
