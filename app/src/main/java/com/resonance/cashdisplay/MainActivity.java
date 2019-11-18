@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
     public static final int MSG_TOTAL_SUMM_PRODUCT_LIST = 38;
     public static final int MSG_SET_SCREEN_NOT_WORK = 39;
     public static final int MSG_SET_SCREEN_THANKS = 40;
-    public static final int MSG_FROM_EKKR = 41;
+    public static final int MSG_FROM_EKKR = 41;           // for emulation of 2x20 display
     public static final int MSG_ADD_PRODUCT_DEBUG = 1234;
 
     private PreferencesValues preferenceParams;       //настройки
@@ -97,7 +97,6 @@ public class MainActivity extends Activity {
     public static TextView textViewDebug;
     public static ScrollView scrollView;
     public static ImageView imageViewProduct;
-
 
 
     TextView tvVersion;
@@ -261,14 +260,13 @@ public class MainActivity extends Activity {
         } else {
             relativeLayout[CONTEXT_CONNECT].setBackgroundResource(R.drawable.screen_cache_not_work);
         }
-        if (testMode == true) {
+        if (testMode) {
             relativeLayout[CONTEXT_CONNECT].setBackground(null);
-            productInfo.setLine1("1234567890");
-            productInfo.setLine2("qwerretewrt");
             findViewById(R.id.textview_cashbox_not_work).setVisibility(View.VISIBLE);
+            findViewById(R.id.textview_emul2line_indicator_1).setVisibility(View.VISIBLE);
+            findViewById(R.id.textview_emul2line_indicator_2).setVisibility(View.VISIBLE);
             scrollView.setVisibility(View.VISIBLE);
         }
-
         relativeLayout[CONTEXT_CONNECT].invalidate();
 
         //Фонове зображення экрану "Дякуємо за покупку"

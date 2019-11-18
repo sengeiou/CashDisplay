@@ -232,13 +232,13 @@ public class ProductInfo extends BaseObservable {
         notifyPropertyChanged(com.resonance.cashdisplay.BR.sum);
     }
 
-    public void setLine1(String Line1) {
-        this.line1 = Line1;
+    public void setLine1(String line1) {
+        this.line1 = line1;
         notifyPropertyChanged(com.resonance.cashdisplay.BR.line1);
     }
 
-    public void setLine2(String Line2) {
-        this.line2 = Line2;
+    public void setLine2(String line2) {
+        this.line2 = line2;
         notifyPropertyChanged(com.resonance.cashdisplay.BR.line2);
     }
 

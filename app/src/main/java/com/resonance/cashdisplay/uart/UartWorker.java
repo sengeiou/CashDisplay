@@ -63,7 +63,7 @@ public class UartWorker {
         SERIAL_PORT = (!dev.isEmpty() ? dev : SERIAL_PORT);
         DATA_BAUDRATE = (baudrate != 0 ? baudrate : DATA_BAUDRATE);
 
-        //инит порта
+        // инит порта
         try {
             serialPort = new SerialPort(new File(SERIAL_PORT), DATA_BAUDRATE, flags);
 

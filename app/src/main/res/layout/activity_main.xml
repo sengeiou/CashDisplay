@@ -83,7 +83,8 @@
                         android:text="@{productinfo.line1}"
                         android:textColor="@color/grey500"
                         android:textSize="@dimen/text_size_large"
-                        android:textStyle="normal" />
+                        android:textStyle="normal"
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/textview_emul2line_indicator_2"
@@ -94,7 +95,8 @@
                         android:text="@{productinfo.line2}"
                         android:textColor="@color/grey500"
                         android:textSize="@dimen/text_size_large"
-                        android:textStyle="normal" />
+                        android:textStyle="normal"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 

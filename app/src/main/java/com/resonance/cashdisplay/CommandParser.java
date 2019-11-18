@@ -41,11 +41,13 @@ public class CommandParser {
 
     private final int LEN_EXT_BUFFER = 1024 * 4;
 
-    private ProductInfo mProductInfo;
+    private ProductInfo productInfo;
     private static Boolean extHeadFound = false;
     private byte[] extBuf;
     private int indexExtBuf = 0;
     private Handler mHandler;
+
+    private Display2x20Emulator display2x20Emulator;
 
     private String uriImgSource;
 
@@ -63,31 +65,51 @@ public class CommandParser {
         this.uriImgSource = uriImg;
         this.mHandler = handler;
         this.mContext = context;
-        mProductInfo = productInfo;
+        this.productInfo = productInfo;
+        this.display2x20Emulator = new Display2x20Emulator();
         extBuf = new byte[LEN_EXT_BUFFER];
     }
 
     public void parseInputStr(byte[] arr, int cnt) {
         for (int i = 0; i < cnt; i++) {
-            if (indexExtBuf >= LEN_EXT_BUFFER) { //переполнение буфера
+            if (indexExtBuf >= LEN_EXT_BUFFER) {       // переполнение буфера
                 extHeadFound = false;
                 indexExtBuf = 0;
             }
-            if (arr[i] == CMD_START_OF_TEXT) { //найден символ начала пакета данных
+            if (arr[i] == CMD_START_OF_TEXT) {         // найден символ начала пакета данных
                 extHeadFound = true;
                 indexExtBuf = 0;
                 continue;
-            } else if (arr[i] == CMD_END_OF_TEXT) { //найден символ окончания пакета данных
+            } else if (arr[i] == CMD_END_OF_TEXT) {    // найден символ окончания пакета данных
                 if (indexExtBuf > 1)
                     doBufferData(extBuf, indexExtBuf);
                 extHeadFound = false;
                 indexExtBuf = 0;
                 continue;
             }
-            if (extHeadFound) {//найден заголовок расширенной команды или QR команда для 2 строчного дисплея
-                extBuf[indexExtBuf] = (byte) arr[i];//добавляем в буффер
+            if (extHeadFound) {   //найден заголовок расширенной команды или QR команда для 2 строчного дисплея
+                extBuf[indexExtBuf] = (byte) arr[i];   // добавляем в буффер
                 indexExtBuf++;
                 continue;
+            }
+        }
+
+        if (MainActivity.testMode) {
+            for (byte b : arr) {        // intended for data from EKKR basically (parse data for 2x20 display)
+                switch (b) {
+                    case 0x0B:
+                        if (display2x20Emulator.lineDetectCounter == 3)     // 1-st line
+                            display2x20Emulator.startNewLine(1);
+                        display2x20Emulator.lineDetectCounter++;
+                        break;
+                    case 0x0A:
+                        if (display2x20Emulator.lineDetectCounter == 3)     // 2-nd line
+                            display2x20Emulator.startNewLine(2);
+                        break;
+                    default:
+                        display2x20Emulator.addToLineBuffer(b);
+                        break;
+                }
             }
         }
     }
@@ -200,5 +222,44 @@ public class CommandParser {
         private String params;
         private int length;
         private int crc16;
+    }
+
+    /**
+     * Class for display 2x20 emulation
+     */
+    private class Display2x20Emulator {
+        private int charInLineAmount = 20;
+        private int lineNumber;
+        private int lineDetectCounter = 0;
+        private int bufferCursor = 0;
+        private byte[] buffer = new byte[20];
+
+        public Display2x20Emulator() {
+            productInfo.setLine1("");
+            productInfo.setLine2("");
+        }
+
+        private void startNewLine(int number) {
+            lineNumber = number;
+            bufferCursor = 0;
+        }
+
+        private void addToLineBuffer(byte b) {
+            buffer[bufferCursor] = b;
+            bufferCursor++;
+            if (bufferCursor == charInLineAmount) {
+                sendToDisplay();
+                bufferCursor = 0;
+                lineDetectCounter = 0;
+            }
+        }
+
+        private void sendToDisplay() {
+            String data = new String(buffer, 0, bufferCursor, ENCODING_CHARSET);
+            if (lineNumber == 1)
+                productInfo.setLine1(data);
+            if (lineNumber == 2)
+                productInfo.setLine2(data);
+        }
     }
 }
