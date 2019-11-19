@@ -2,11 +2,14 @@ package com.resonance.cashdisplay.product_list;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Spannable;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
+import android.widget.AbsListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.resonance.cashdisplay.Log;
@@ -165,43 +168,43 @@ public class ProductListWorker {
         listViewProducts.smoothScrollToPositionFromTop(position, 0, 100);
         Log.d(TAG, "scrollToPosition: " + position);
 
-//        listViewProducts.setOnScrollListener(new AbsListView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(AbsListView view, int scrollState) {
-//                if (scrollState == SCROLL_STATE_IDLE) {
-//                    int totalItemsCount = listViewProducts.getCount();
-//                    int visibleItemsCount = (listViewProducts.getLastVisiblePosition() - listViewProducts.getFirstVisiblePosition()) + 1;
-//                    int positionViewPort = position;
-//                    if (adapterProductList.getCount() > visibleItemsCount) {
-//                        positionViewPort = visibleItemsCount - (totalItemsCount - position);
-//                        if (positionViewPort < 0)
-//                            positionViewPort = 0;
-//                    }
-//
-//                    View listItem = listViewProducts.getChildAt(positionViewPort);
-//
-//                    Log.d(TAG, "listItem = " + ((TextView) listItem.findViewById(R.id.textview_product)).getText());
-//
-//                    AnimationDrawable animDrawable = (AnimationDrawable) listItem.getBackground();
-////        animDrawable.setOneShot(false);
-//                    Log.d(TAG, "animDrawable = " + animDrawable);
-//                    animDrawable.setEnterFadeDuration(0);
-//                    animDrawable.setExitFadeDuration(500);
-//                    animDrawable.start();
-//                }
-//            }
-//
-//            @Override
-//            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-//                Log.d(TAG, "firstVisibleItem " + firstVisibleItem);
-//                Log.d(TAG, "visibleItemCount " + visibleItemCount);
-//                Log.d(TAG, "totalItemCount " + totalItemCount);
-//            }
-//        });
-//
-//        Log.d(TAG, "listViewProducts.getCount() = " + listViewProducts.getCount());
+        listViewProducts.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == SCROLL_STATE_IDLE) {
+                    int totalItemsCount = listViewProducts.getCount();
+                    int visibleItemsCount = (listViewProducts.getLastVisiblePosition() - listViewProducts.getFirstVisiblePosition()) + 1;
+                    int positionViewPort = position;
+                    if (adapterProductList.getCount() > visibleItemsCount) {
+                        positionViewPort = visibleItemsCount - (totalItemsCount - position);
+                        if (positionViewPort < 0)
+                            positionViewPort = 0;
+                    }
+
+                    View listItem = listViewProducts.getChildAt(positionViewPort);
+
+                    Log.d(TAG, "listItem = " + ((TextView) listItem.findViewById(R.id.textview_product)).getText());
 
 
+                    AnimationDrawable animDrawable = (AnimationDrawable) listItem.getBackground();
+                    Log.d(TAG, "animDrawable = " + animDrawable);
+                    // Enter Fade duration is part of duration in xml (starts when xml frame starts, but no longer then xml duration)
+                    // Exit Fade is added to duration in xml (xml plays, then this fade starts with next xml item - intersection).
+                    animDrawable.setEnterFadeDuration(0);    // duration of item in xml has priority (if in xml 0, fade in = 0; if in xml 100, fade in = 100)
+                    animDrawable.setExitFadeDuration(1200);  // this duration plays always (if in xml 400, then 400 + fade out)
+                    animDrawable.start();
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                Log.d(TAG, "firstVisibleItem " + firstVisibleItem);
+                Log.d(TAG, "visibleItemCount " + visibleItemCount);
+                Log.d(TAG, "totalItemCount " + totalItemCount);
+            }
+        });
+
+        Log.d(TAG, "listViewProducts.getCount() = " + listViewProducts.getCount());
     }
 
     private void setProductImage(int index) {

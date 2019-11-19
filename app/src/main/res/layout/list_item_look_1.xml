@@ -4,10 +4,9 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/list_item"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height_look_1"
-    android:background="@drawable/animation_list"
+    android:background="@drawable/list_item_background"
     android:orientation="vertical">
 
     <LinearLayout
