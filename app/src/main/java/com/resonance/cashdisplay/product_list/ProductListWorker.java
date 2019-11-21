@@ -2,14 +2,10 @@ package com.resonance.cashdisplay.product_list;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Handler;
-import android.os.Looper;
 import android.text.Spannable;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.resonance.cashdisplay.Log;
@@ -65,9 +61,8 @@ public class ProductListWorker {
     /**
      * Добавлен вывод на экран отладочной информации
      */
-    public void addProductDebug(final String msg) {
-
-        final int start = MainActivity.textViewDebug.getText().length();
+    public void addProductDebug(String msg) {
+        int start = MainActivity.textViewDebug.getText().length();
         MainActivity.textViewDebug.append(msg + "\n");
         int end = MainActivity.textViewDebug.getText().length();
         Spannable spannableText = (Spannable) MainActivity.textViewDebug.getText();
@@ -81,14 +76,12 @@ public class ProductListWorker {
      * @param param строка "сырых" данных
      */
     public void addProductToList(String param) {
-
         ItemProductList item = parseData(param);
         if (item.getIndexPosition() < 0)
             return;
         if (item.getIndexPosition() <= arrayProductList.size()) {
-            addProductDebug(param);
             arrayProductList.add(item.getIndexPosition(), item);
-            updateScreen(item.getIndexPosition());
+            updateScreen(item.getIndexPosition(), true);
         } else {
             showToast("Невiрнi параметри при внесеннi товару, необхідно очистити чек!");
             Log.d(TAG, " ОШИБКА, количество товаров в списке: " + arrayProductList.size() + ", добавляется товар на позицию:" + item.getIndexPosition());
@@ -101,9 +94,7 @@ public class ProductListWorker {
      * @param param строка "сырых" данных
      */
     public void setProductToList(String param) {
-
         Log.d(TAG, "setProductToList :" + param);
-        addProductDebug(param);
         if (arrayProductList.size() > 0) {
             ItemProductList item = parseData(param);
             if (item.getIndexPosition() < 0)
@@ -115,7 +106,7 @@ public class ProductListWorker {
                         || (presentItem.getSum() != item.getSum())
                         || (!presentItem.getCode().equals(item.getCode())))
                     arrayProductList.set(item.getIndexPosition(), item);
-                updateScreen(item.getIndexPosition());
+                updateScreen(item.getIndexPosition(), true);
             } else {
                 addProductToList(param);
             }
@@ -131,13 +122,12 @@ public class ProductListWorker {
      * @param param строка "сырых" данных
      */
     public void deleteProductFromList(String param) {
-        addProductDebug(param);
         int indexPosition = Integer.valueOf(param.substring(0, 2));  // 2
         if (arrayProductList.size() > 0) {
             if ((arrayProductList.size() - 1) >= indexPosition) {
                 arrayProductList.remove(indexPosition);
             }
-            updateScreen((arrayProductList.size() > 0) ? (arrayProductList.size() - 1) : 0);
+            updateScreen((arrayProductList.size() > 0) ? (arrayProductList.size() - 1) : 0, false);
         }
         Log.d(TAG, "deleteProductFromList :" + indexPosition);
     }
@@ -148,63 +138,37 @@ public class ProductListWorker {
      * @param param строка "сырых" данных
      */
     public void clearProductList(String param) {
-        addProductDebug(param);
         arrayProductList.clear();
-        updateScreen(0);
+        updateScreen(0, false);
         Log.d(TAG, "clearProductList: " + param);
     }
 
-    private void updateScreen(int position) {
+    /**
+     * Update list view with new data.
+     *
+     * @param position      absolute serial number of item in list view
+     * @param highlightItem indicates if selected item must be highlighted or not
+     */
+    private void updateScreen(int position, boolean highlightItem) {
         adapterProductList.notifyDataSetChanged();
-        // need some time to update list view with new data
-        new Handler(Looper.getMainLooper()).post(() -> {
-            scrollToPosition(position);
-        });
+        scrollToPosition(position, highlightItem);
         setProductImage(position);
         updateTotalValues();
     }
 
-    private void scrollToPosition(final int position) {
-        listViewProducts.smoothScrollToPositionFromTop(position, 0, 100);
-        Log.d(TAG, "scrollToPosition: " + position);
-
-        listViewProducts.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (scrollState == SCROLL_STATE_IDLE) {
-                    int totalItemsCount = listViewProducts.getCount();
-                    int visibleItemsCount = (listViewProducts.getLastVisiblePosition() - listViewProducts.getFirstVisiblePosition()) + 1;
-                    int positionViewPort = position;
-                    if (adapterProductList.getCount() > visibleItemsCount) {
-                        positionViewPort = visibleItemsCount - (totalItemsCount - position);
-                        if (positionViewPort < 0)
-                            positionViewPort = 0;
-                    }
-
-                    View listItem = listViewProducts.getChildAt(positionViewPort);
-
-                    Log.d(TAG, "listItem = " + ((TextView) listItem.findViewById(R.id.textview_product)).getText());
-
-
-                    AnimationDrawable animDrawable = (AnimationDrawable) listItem.getBackground();
-                    Log.d(TAG, "animDrawable = " + animDrawable);
-                    // Enter Fade duration is part of duration in xml (starts when xml frame starts, but no longer then xml duration)
-                    // Exit Fade is added to duration in xml (xml plays, then this fade starts with next xml item - intersection).
-                    animDrawable.setEnterFadeDuration(0);    // duration of item in xml has priority (if in xml 0, fade in = 0; if in xml 100, fade in = 100)
-                    animDrawable.setExitFadeDuration(1200);  // this duration plays always (if in xml 400, then 400 + fade out)
-                    animDrawable.start();
-                }
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                Log.d(TAG, "firstVisibleItem " + firstVisibleItem);
-                Log.d(TAG, "visibleItemCount " + visibleItemCount);
-                Log.d(TAG, "totalItemCount " + totalItemCount);
-            }
+    /**
+     * Scrolls list view to specified absolute position. Optionally highlights selected item.
+     *
+     * @param position      absolute serial number of item in list view
+     * @param highlightItem indicates if selected item must be highlighted or not
+     */
+    private void scrollToPosition(int position, boolean highlightItem) {
+        new Handler().post(() -> {
+            listViewProducts.setSelection(position);
+            if (highlightItem)
+                listViewProducts.performItemClick(listViewProducts, position, listViewProducts.getItemIdAtPosition(position));
         });
-
-        Log.d(TAG, "listViewProducts.getCount() = " + listViewProducts.getCount());
+        Log.d(TAG, "scrollToPosition: " + position);
     }
 
     private void setProductImage(int index) {
@@ -238,7 +202,8 @@ public class ProductListWorker {
         MainActivity.textViewDebug.append("MSG_totalSumWithoutDiscount: " + totalSumWithoutDiscount + "\n");
         MainActivity.textViewDebug.append("MSG_totalDiscount: " + totalDiscount + "\n");
         MainActivity.textViewDebug.append("MSG_totalSum: " + totalSum + "\n");
-        MainActivity.textViewDebug.append("MSG_TotalCount: " + arrayProductList.size() + "\n");
+        MainActivity.textViewDebug.append("MSG_totalCount: " + arrayProductList.size() + "\n");
+        new Handler().post(() -> MainActivity.scrollView.fullScroll(View.FOCUS_DOWN));
     }
 
     /**

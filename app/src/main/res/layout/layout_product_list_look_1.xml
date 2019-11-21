@@ -10,9 +10,7 @@
     <LinearLayout
         android:id="@+id/idLay1"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_above="@+id/idLayTotalSumm"
-        android:layout_weight="94125"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <!--       dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
@@ -24,14 +22,13 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/list_header"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="4383"
+                android:layout_height="32dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -114,8 +111,7 @@
             <ListView
                 android:id="@+id/listview_products"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="95617"
+                android:layout_height="720dp"
                 android:choiceMode="singleChoice"
                 android:clickable="true"
                 android:divider="@color/list_item_divider_look_1"
@@ -126,9 +122,8 @@
     <LinearLayout
         android:id="@+id/idLayTotalSumm"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="47dp"
         android:layout_alignParentBottom="true"
-        android:layout_weight="5875"
         android:gravity="bottom|end"
         android:orientation="horizontal"
         android:paddingBottom="5dp">

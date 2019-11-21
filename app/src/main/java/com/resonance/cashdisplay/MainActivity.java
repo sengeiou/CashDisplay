@@ -12,12 +12,14 @@ import android.content.pm.ActivityInfo;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.Settings;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -25,12 +27,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.resonance.cashdisplay.databinding.ActivityMainBinding;
 import com.resonance.cashdisplay.eth.EthernetSettings;
 import com.resonance.cashdisplay.http.HttpServer;
@@ -105,6 +109,10 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        Crashlytics.setUserIdentifier(androidId);
+        Log.d(TAG, "androidId: " + androidId);
+
         lanSetupAlready = false;
         Log.d(TAG, "                        ");
         Log.d(TAG, "***  START SYSTEM  *** " + BuildConfig.BUILD_TYPE + ", build: " + BuildConfig.VERSION_CODE);
@@ -125,6 +133,7 @@ public class MainActivity extends Activity {
         display.getSize(sizeScreen);
         sizeScreen.y += 48;
         Log.d(TAG, "Size screen x:" + sizeScreen.x + ", y:" + sizeScreen.y);
+        Crashlytics.setString("screen_size", "x:" + sizeScreen.x + ", y:" + sizeScreen.y);
 
         //Получим настройки системы
         preferenceParams = PreferenceParams.getParameters();
@@ -266,6 +275,8 @@ public class MainActivity extends Activity {
             findViewById(R.id.textview_emul2line_indicator_1).setVisibility(View.VISIBLE);
             findViewById(R.id.textview_emul2line_indicator_2).setVisibility(View.VISIBLE);
             scrollView.setVisibility(View.VISIBLE);
+            new Handler().post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+
         }
         relativeLayout[CONTEXT_CONNECT].invalidate();
 
@@ -316,8 +327,43 @@ public class MainActivity extends Activity {
         textViewTotalDiscount = (TextView) layoutProductListLook.findViewById(R.id.textview_total_discount);
         textViewTotalSum = (TextView) layoutProductListLook.findViewById(R.id.textview_total_sum);
         imageViewProduct = (ImageView) layoutProductListLook.findViewById(R.id.imageview_product);
+
         // appropriate adapter must be created everytime for actual listview for specified look of product list
         listViewProducts.setAdapter(productListWorker.createAdapterProductList(lookCode));
+
+        // item click listener we use ot highlight selected item
+        listViewProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                new Handler().post(() -> {
+                    int totalItemCount = parent.getCount();
+                    if (totalItemCount == 0)
+                        return;
+
+                    int visibleItemCount = (parent.getLastVisiblePosition() - parent.getFirstVisiblePosition()) + 1;
+
+                    int positionViewPort = position;
+                    if (totalItemCount > visibleItemCount) {
+                        positionViewPort = visibleItemCount - (totalItemCount - position);
+                        if (positionViewPort < 0)
+                            positionViewPort = 0;
+                    }
+                    try {
+                        View listItem = parent.getChildAt(positionViewPort);
+                        AnimationDrawable animDrawable = (AnimationDrawable) listItem.getBackground();
+                        // Enter Fade duration is part of duration in xml (starts when xml frame starts, but no longer then xml duration)
+                        // Exit Fade is added to duration in xml (xml plays, then this fade starts with next xml item - intersection).
+//                    animDrawable.setEnterFadeDuration(0);    // duration of item in xml has priority (if in xml 0, fade in = 0; if in xml 100, fade in = 100)
+                        animDrawable.setExitFadeDuration(1200);  // this duration plays always (if in xml 400, then 400 + fade out)
+                        animDrawable.start();
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        });
+
         textViewTotalCount.setText("0");
         textViewTotalSumWithoutDiscount.setText("0.00");
         textViewTotalDiscount.setText("0.00");
@@ -536,6 +582,7 @@ public class MainActivity extends Activity {
                         if (!ip.equals(networkInterfaceIpAddress)) {
                             ip = networkInterfaceIpAddress;
                             Log.d(TAG, "Подключение LAN : " + ip);
+                            Crashlytics.setString("ip_address", networkInterfaceIpAddress);
                         }
                     } else {
                         String stat = ethernetSettings.getCurrentStatus();
