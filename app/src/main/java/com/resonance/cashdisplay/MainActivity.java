@@ -330,7 +330,7 @@ public class MainActivity extends Activity {
 
         // appropriate adapter must be created everytime for actual listview for specified look of product list
         listViewProducts.setAdapter(productListWorker.createAdapterProductList(lookCode));
-
+        listViewProducts.addFooterView(new View(context), null, true);  // need for bottom line (android bug)
         // item click listener we use ot highlight selected item
         listViewProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
