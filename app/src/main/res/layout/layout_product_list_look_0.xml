@@ -17,7 +17,7 @@
 
         <ImageView
             android:id="@+id/imageview_product"
-            android:layout_width="400px"
+            android:layout_width="400dp"
             android:layout_height="500dp"
             android:layout_alignParentRight="true"
             android:layout_gravity="center_vertical"
@@ -93,7 +93,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:background="@color/list_item_divider_look_0"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <ListView
                 android:id="@+id/listview_products"
@@ -101,9 +101,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="943"
                 android:choiceMode="singleChoice"
-                android:clickable="true"
-                android:divider="@color/list_item_divider_look_0"
-                android:dividerHeight="1px"/>
+                android:clickable="true" />
+
         </LinearLayout>
     </LinearLayout>
 

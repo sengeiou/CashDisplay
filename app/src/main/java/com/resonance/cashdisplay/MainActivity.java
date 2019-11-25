@@ -39,7 +39,7 @@ import com.resonance.cashdisplay.databinding.ActivityMainBinding;
 import com.resonance.cashdisplay.eth.EthernetSettings;
 import com.resonance.cashdisplay.http.HttpServer;
 import com.resonance.cashdisplay.http.WebStatus;
-import com.resonance.cashdisplay.load.DownloadMedia;
+import com.resonance.cashdisplay.load.UploadMedia;
 import com.resonance.cashdisplay.product_list.ProductListWorker;
 import com.resonance.cashdisplay.slide_show.VideoSlideService;
 import com.resonance.cashdisplay.sound.Sound;
@@ -79,7 +79,7 @@ public class MainActivity extends Activity {
     private ProductListWorker productListWorker;      //обслуживание списка товаров
     private ProductInfo productInfo;
     public static EthernetSettings ethernetSettings = null; //Настройка сети
-    public static DownloadMedia downloadMedia;
+    public static UploadMedia uploadMedia;
     public static UpdateFirmware updateFirmware = null;     //обновление ПО
 
     private static Modify_SU_Preferences su_preferences;
@@ -101,7 +101,6 @@ public class MainActivity extends Activity {
     public static TextView textViewDebug;
     public static ScrollView scrollView;
     public static ImageView imageViewProduct;
-
 
     TextView tvVersion;
 
@@ -155,10 +154,10 @@ public class MainActivity extends Activity {
         ethernetSettings = new EthernetSettings(this);
         ethernetSettings.setSetupLanCallback(mCallbackLanIsSet);
 
-        downloadMedia = new DownloadMedia(this);
+        uploadMedia = new UploadMedia(this);
 
         //обработчик команд и данных
-        String uriImgSource = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_URI;
+        String uriImgSource = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_URI;
         cmdParser = new CommandParser(productInfo, messageHandler, MainActivity.this, uriImgSource);
 
         //слой для вывода информации по товару
@@ -248,7 +247,7 @@ public class MainActivity extends Activity {
         //установка фона экрана "Список покупок"
         Bitmap bitmap;
         Drawable drawable;
-        String uriBackgroundShoppingList = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN + ((PreferenceParams.getParameters().backgroundShoppingList.length() > 0) ? PreferenceParams.getParameters().backgroundShoppingList : "noimg");
+        String uriBackgroundShoppingList = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PreferenceParams.getParameters().backgroundShoppingList.length() > 0) ? PreferenceParams.getParameters().backgroundShoppingList : "noimg");
         File fileImg = new File(uriBackgroundShoppingList);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
@@ -260,7 +259,7 @@ public class MainActivity extends Activity {
         relativeLayout[CONTEXT_PRODUCT_LIST].invalidate();
 
         //Фонове зображення экрану "Каса не працює"
-        String uriBackgroundCashNotWork = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN + ((PreferenceParams.getParameters().backgroundCashNotWork.length() > 0) ? PreferenceParams.getParameters().backgroundCashNotWork : "noimg");
+        String uriBackgroundCashNotWork = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PreferenceParams.getParameters().backgroundCashNotWork.length() > 0) ? PreferenceParams.getParameters().backgroundCashNotWork : "noimg");
         fileImg = new File(uriBackgroundCashNotWork);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
@@ -281,7 +280,7 @@ public class MainActivity extends Activity {
         relativeLayout[CONTEXT_CONNECT].invalidate();
 
         //Фонове зображення экрану "Дякуємо за покупку"
-        String uriBackgroundThanks = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN + ((PreferenceParams.getParameters().backgroundThanks.length() > 0) ? PreferenceParams.getParameters().backgroundThanks : "noimg");
+        String uriBackgroundThanks = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PreferenceParams.getParameters().backgroundThanks.length() > 0) ? PreferenceParams.getParameters().backgroundThanks : "noimg");
         fileImg = new File(uriBackgroundThanks);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
@@ -330,7 +329,6 @@ public class MainActivity extends Activity {
 
         // appropriate adapter must be created everytime for actual listview for specified look of product list
         listViewProducts.setAdapter(productListWorker.createAdapterProductList(lookCode));
-        listViewProducts.addFooterView(new View(context), null, true);  // need for bottom line (android bug)
         // item click listener we use ot highlight selected item
         listViewProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -571,7 +569,7 @@ public class MainActivity extends Activity {
                     if (EthernetSettings.isConnected()) {
                         if (!loadMediaAtStartSystem && preferenceParams.sDownloadAtStart) {
                             loadMediaAtStartSystem = true;
-                            downloadMedia.download();
+                            uploadMedia.upload();
                         }
 
                         String stat = ethernetSettings.getCurrentStatus();

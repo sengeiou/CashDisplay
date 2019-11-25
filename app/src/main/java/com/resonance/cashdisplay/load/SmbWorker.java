@@ -26,19 +26,14 @@ import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileInputStream;
 import jcifs.smb.SmbFileOutputStream;
 
-import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_BAD_ARGUMENTS;
-import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_CONNECTION_ERROR;
-import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_ERROR_SMB_SERVER;
-import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_IO_ERROR;
-import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_NOT_FREE_MEMORY;
-import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_NOT_SUPPORT_PROTOCOL;
-import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR;
-import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_SUCCESSFULL;
-
-//import android.util.Log;
-//import com.resonance.FileOperation;
-
-
+import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_BAD_ARGUMENTS;
+import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_CONNECTION_ERROR;
+import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_ERROR_SMB_SERVER;
+import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_IO_ERROR;
+import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_NOT_FREE_MEMORY;
+import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_NOT_SUPPORT_PROTOCOL;
+import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_SHARE_CONNECTION_ERROR;
+import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_SUCCESSFULL;
 
 public class SmbWorker {
 
@@ -77,7 +72,6 @@ public class SmbWorker {
         callback_onEndSmbDownload.onSmbEndDownload(status);
     }
 
-
 /*****************************************************************************************************/
     public void doDownload(HashMap<String , Object> au_hashMap,
                            HashMap<String , Object> img_hashMap,
@@ -88,16 +82,14 @@ public class SmbWorker {
         new SmbTask().execute(au_hashMap, img_hashMap, video_hashMap, slide_hashMap, screen_img_hashMap);
     }
 
-
     /***********************************************************************************************/
-
 
     private class SmbTask extends AsyncTask<HashMap<String , Object>, Void, Integer> {
 
-        DownloadResult resultImg = new DownloadResult();
-        DownloadResult resultVideo = new DownloadResult();
-        DownloadResult resultSlide = new DownloadResult();
-        DownloadResult resultScreenImg = new DownloadResult();
+        UploadResult resultImg = new UploadResult();
+        UploadResult resultVideo = new UploadResult();
+        UploadResult resultSlide = new UploadResult();
+        UploadResult resultScreenImg = new UploadResult();
 
         protected void onPreExecute() {
             super.onPreExecute();
@@ -138,12 +130,9 @@ public class SmbWorker {
             String DestinationScreenImg = (String)screenimg_hashMap.get("DestinationScreenImg");
             String[] extensionScreenImg = (String[])screenimg_hashMap.get("extensionArrayScreenImg");
 
-
             Log.d(TAG, "SmbTask... ");
 
-
             try {
-
                 //download Screen images
                 resultScreenImg = HandlerFiles(User, Passw, Host, shareScreenImg, folderScreenImg, DestinationScreenImg, extensionScreenImg);
                 //download IMG
@@ -200,25 +189,25 @@ public class SmbWorker {
             } catch (Exception e) {
                 Log.e(TAG, "Smb Exception: "+e);
 
-                error = DOWNLOAD_RESULT_ERROR_SMB_SERVER;
+                error = UPLOAD_RESULT_ERROR_SMB_SERVER;
                 if  (e.getMessage().contains("Could not connect")||e.getMessage().contains("failed to connect")){
-                    error = DOWNLOAD_RESULT_CONNECTION_ERROR;
+                    error = UPLOAD_RESULT_CONNECTION_ERROR;
 
                 }
                 if  (e.getMessage().contains("IllegalArgumentException")){
-                    error = DOWNLOAD_RESULT_BAD_ARGUMENTS;
+                    error = UPLOAD_RESULT_BAD_ARGUMENTS;
                 }
             }finally {
 
                 try {
                     //выгрузим на сервер лог загрузки
                     String ConnStr = Host + (shareScreenImg.startsWith("/") ? "" : "/") + shareScreenImg + "/LOG/";//(folderScreenImg.startsWith("/") ? "" : "/") + folderScreenImg;
-                    uplopadToSmb(User, Passw, ConnStr, DownloadMedia.mLogFile);
+                    uplopadToSmb(User, Passw, ConnStr, UploadMedia.mLogFile);
                 } catch (Exception e) {
                     Log.e(TAG, "Smb Exception: " + e);
                 }
                 //удалим лог, предназначеный для передачи на сервер
-                DownloadMedia.deleteDownloadLog();
+                UploadMedia.deleteUploadLog();
 
             }
                 return error;
@@ -234,41 +223,39 @@ public class SmbWorker {
             String ExtendedError_video ="підключення до сервера не вдалося" ;
             String ExtendedError_screenImg ="підключення до сервера не вдалося" ;
 
-            if (resultImg.HasError == DOWNLOAD_RESULT_NOT_FREE_MEMORY)
+            if (resultImg.hasError == UPLOAD_RESULT_NOT_FREE_MEMORY)
                 ExtendedError_image = "недостатньо пам'ятi";
 
-            if (resultVideo.HasError == DOWNLOAD_RESULT_NOT_FREE_MEMORY)
+            if (resultVideo.hasError == UPLOAD_RESULT_NOT_FREE_MEMORY)
                 ExtendedError_video = "недостатньо пам'ятi";
 
-            if (resultSlide.HasError == DOWNLOAD_RESULT_NOT_FREE_MEMORY)
+            if (resultSlide.hasError == UPLOAD_RESULT_NOT_FREE_MEMORY)
                 ExtendedError_slide = "недостатньо пам'ятi";
 
             switch (result){
-
-
-                case DOWNLOAD_RESULT_SUCCESSFULL:
-                case DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR:
+                case UPLOAD_RESULT_SUCCESSFULL:
+                case UPLOAD_RESULT_SHARE_CONNECTION_ERROR:
 
                     String status =
-                                    "<font color=\"blue\"><B>Фоновi зображення:</B><br></font>["+(resultScreenImg.HasError>0?ExtendedError_screenImg:"завантажено : <B>"+resultScreenImg.CountFiles+"</B>, iснуючих : <B>"+resultScreenImg.CountSkiped+"</B>, видалено : <B>"+resultScreenImg.CountDeleted)+"</B>];  <br>"+
-                                    "<font color=\"blue\"><B>Вiдео:</B><br></font>["+(resultVideo.HasError>0?ExtendedError_video:"завантажено : <B>"+resultVideo.CountFiles+"</B>, iснуючих : <B>"+resultVideo.CountSkiped+"</B>, видалено : <B>"+resultVideo.CountDeleted)+"</B>];  <br>"+
-                                    "<font color=\"blue\"><B>Зображення товарiв:</B><br></font>["+(resultImg.HasError>0?ExtendedError_image:"завантажено : <B>"+resultImg.CountFiles+"</B>, iснуючих : <B>"+resultImg.CountSkiped+"</B>, видалено : <B>"+resultImg.CountDeleted)+"</B>];  <br>"+
-                                    "<font color=\"blue\"><B>Слайди:</B><br></font>["+(resultSlide.HasError>0?ExtendedError_slide:"завантажено : <B>"+resultSlide.CountFiles+"</B>, iснуючих : <B>"+resultSlide.CountSkiped+"</B>, видалено : <B>"+resultSlide.CountDeleted)+"</B>];";
+                                    "<font color=\"blue\"><B>Фоновi зображення:</B><br></font>["+(resultScreenImg.hasError>0?ExtendedError_screenImg:"завантажено : <B>"+resultScreenImg.countFiles+"</B>, iснуючих : <B>"+resultScreenImg.countSkipped+"</B>, видалено : <B>"+resultScreenImg.countDeleted)+"</B>];  <br>"+
+                                    "<font color=\"blue\"><B>Вiдео:</B><br></font>["+(resultVideo.hasError>0?ExtendedError_video:"завантажено : <B>"+resultVideo.countFiles+"</B>, iснуючих : <B>"+resultVideo.countSkipped+"</B>, видалено : <B>"+resultVideo.countDeleted)+"</B>];  <br>"+
+                                    "<font color=\"blue\"><B>Зображення товарiв:</B><br></font>["+(resultImg.hasError>0?ExtendedError_image:"завантажено : <B>"+resultImg.countFiles+"</B>, iснуючих : <B>"+resultImg.countSkipped+"</B>, видалено : <B>"+resultImg.countDeleted)+"</B>];  <br>"+
+                                    "<font color=\"blue\"><B>Слайди:</B><br></font>["+(resultSlide.hasError>0?ExtendedError_slide:"завантажено : <B>"+resultSlide.countFiles+"</B>, iснуючих : <B>"+resultSlide.countSkipped+"</B>, видалено : <B>"+resultSlide.countDeleted)+"</B>];";
                     ChangeStatus(status, true);
                     break;
-                case DOWNLOAD_RESULT_NOT_SUPPORT_PROTOCOL:
+                case UPLOAD_RESULT_NOT_SUPPORT_PROTOCOL:
                     ChangeStatus("Сервер не підтримує протокол ", true);
                     break;
-                case DOWNLOAD_RESULT_CONNECTION_ERROR:
+                case UPLOAD_RESULT_CONNECTION_ERROR:
                     ChangeStatus("Неможливо пiдключитися до файлового сервера", true);
                     break;
-                case DOWNLOAD_RESULT_BAD_ARGUMENTS:
+                case UPLOAD_RESULT_BAD_ARGUMENTS:
                     ChangeStatus("Невiрнi параметри пiдключення до файлового сервера", true);
                     break;
-                case DOWNLOAD_RESULT_NOT_FREE_MEMORY:
+                case UPLOAD_RESULT_NOT_FREE_MEMORY:
                     ChangeStatus("недостатньо пам'яті на носії"+ExtSDSource.getAvailableMemory_SD(), true);
                     break;
-                case DOWNLOAD_RESULT_ERROR_SMB_SERVER:
+                case UPLOAD_RESULT_ERROR_SMB_SERVER:
                     ChangeStatus("Помилка сервера SMB", true);
                     break;
 
@@ -278,13 +265,13 @@ public class SmbWorker {
         }
     }
 
-    private DownloadResult HandlerFiles(String User, String Passw, String Host, String share, String source_folder, String destination_folder, String[] extension_files )
+    private UploadResult HandlerFiles(String User, String Passw, String Host, String share, String source_folder, String destination_folder, String[] extension_files )
     {
-        DownloadResult result = new DownloadResult();
-        result.HasError = DOWNLOAD_RESULT_SUCCESSFULL;
+        UploadResult result = new UploadResult();
+        result.hasError = UPLOAD_RESULT_SUCCESSFULL;
 
         String  ConnectionStr = Host + (share.startsWith("/") ? "" : "/") + share + (source_folder.startsWith("/") ? "" : "/") + source_folder;
-        DownloadMedia.append_to_DownloadLog("(SMB1) "+ConnectionStr);
+        UploadMedia.appendToUploadLog("(SMB1) "+ConnectionStr);
         ChangeStatus(mContext.getString(R.string.connect_to_server) + ": " + ConnectionStr, true);
         SmbFile smb = ConnectToSource(ConnectionStr, User, Passw, false);
 
@@ -292,7 +279,7 @@ public class SmbWorker {
 
             Log.d(TAG, "Соединение c " + ConnectionStr + " - не удалось");
             ChangeStatus("підключення до сервера не вдалося:" + ConnectionStr, true);
-            result.HasError =  DOWNLOAD_RESULT_CONNECTION_ERROR;
+            result.hasError =  UPLOAD_RESULT_CONNECTION_ERROR;
         } else {
             Log.d(TAG, "Соединение c " + ConnectionStr);
             result = DownloadFromShareFolder(smb, destination_folder, extension_files);
@@ -359,14 +346,14 @@ public class SmbWorker {
         return f;
     }
 
-    private DownloadResult DownloadFromShareFolder(SmbFile smb,  String DestinationFolder,String[] extensionFile)
+    private UploadResult DownloadFromShareFolder(SmbFile smb,  String DestinationFolder,String[] extensionFile)
     {
         String[] FilesAlreadyExists = null;//список файлов уже существующих
-        DownloadResult dr = new DownloadResult();
-        dr.HasError = DOWNLOAD_RESULT_SUCCESSFULL;
-        dr.CountFiles = 0;
-        dr.CountSkiped= 0;
-        dr.CountDeleted = 0;
+        UploadResult dr = new UploadResult();
+        dr.hasError = UPLOAD_RESULT_SUCCESSFULL;
+        dr.countFiles = 0;
+        dr.countSkipped= 0;
+        dr.countDeleted = 0;
 
         //получим список файлов уже существующих
         File dirSou = new File(DestinationFolder);
@@ -378,17 +365,17 @@ public class SmbWorker {
         try{
             SmbFile[] arr_smb_files = smb.listFiles();
             ChangeStatus("файлiв..."+arr_smb_files.length, false);
-            DownloadMedia.append_to_DownloadLog("*** Файлов на обработку :"+arr_smb_files.length+" ***");
+            UploadMedia.appendToUploadLog("*** Файлов на обработку :"+arr_smb_files.length+" ***");
 
             for (int i = 0; i < arr_smb_files.length; i++)
             {
-                DownloadMedia.resetMediaPlay();//остановка демонстрации видео/слайдов
+                UploadMedia.resetMediaPlay();//остановка демонстрации видео/слайдов
                 //если файл существует, копировать не будем
-                if (DownloadMedia.ifAlreadyExistFile(DestinationFolder, arr_smb_files[i].getName(), arr_smb_files[i].length())) {
+                if (UploadMedia.ifAlreadyExistFile(DestinationFolder, arr_smb_files[i].getName(), arr_smb_files[i].length())) {
                     Log.d(TAG, "Smb file: " + arr_smb_files[i].getPath()  + "  - SKIPED");
-                    DownloadMedia.append_to_DownloadLog("Файл :"+arr_smb_files[i].getPath()+" - пропущен");
-                    dr.CountSkiped++;
-                    if (dr.CountSkiped%10 ==0)
+                    UploadMedia.appendToUploadLog("Файл :"+arr_smb_files[i].getPath()+" - пропущен");
+                    dr.countSkipped++;
+                    if (dr.countSkipped%10 ==0)
                     ChangeStatus("пропущено..."+arr_smb_files[i].getPath(), true);
                     continue;
                 }
@@ -396,8 +383,8 @@ public class SmbWorker {
                 if (ExtSDSource.getAvailableMemory(MainActivity.context, ExtSDSource.DEFAULT_SD)<arr_smb_files[i].length())
                 {
                     Log.e(TAG, "Not anougth memory");
-                    DownloadMedia.append_to_DownloadLog("Недостаточно памяти на SD карте: "+ExtSDSource.getAvailableMemory(MainActivity.context, ExtSDSource.DEFAULT_SD));
-                    dr.HasError = DOWNLOAD_RESULT_NOT_FREE_MEMORY;
+                    UploadMedia.appendToUploadLog("Недостаточно памяти на SD карте: "+ExtSDSource.getAvailableMemory(MainActivity.context, ExtSDSource.DEFAULT_SD));
+                    dr.hasError = UPLOAD_RESULT_NOT_FREE_MEMORY;
                     break;
                 }
 
@@ -430,7 +417,7 @@ public class SmbWorker {
                     totalRead += readBytes;
                     if (update_progress++>50){
                         update_progress=0;
-                        DownloadMedia.resetMediaPlay();//остановка демонстрации видео/слайдов
+                        UploadMedia.resetMediaPlay();//остановка демонстрации видео/слайдов
                         ChangeStatus("Завантаження  "+arr_smb_files[i].getName()+" - "+(int)((100*totalRead)/arr_smb_files[i].length())+" %,  загалом "+(int)((100*i)/arr_smb_files.length)+" %" , true);
                     }
                 }
@@ -443,9 +430,9 @@ public class SmbWorker {
                 out.close();
 
 
-                dr.CountFiles++;
+                dr.countFiles++;
 
-                DownloadMedia.append_to_DownloadLog("Загружен : "+arr_smb_files[i].getName()+", размер : "+arr_smb_files[i].length());
+                UploadMedia.appendToUploadLog("Загружен : "+arr_smb_files[i].getName()+", размер : "+arr_smb_files[i].length());
 
                 File destination = new File(DestinationFolder, arr_smb_files[i].getName());
                 if (!destination.exists())
@@ -471,9 +458,9 @@ public class SmbWorker {
                             Log.w(TAG, "To delete: " + FilesAlreadyExists[i]);
 
                             FileOperation.deleteFile(dirSou.getCanonicalPath()+"/"+FilesAlreadyExists[i]);
-                            DownloadMedia.append_to_DownloadLog("Удален : "+FilesAlreadyExists[i]);
-                            dr.CountDeleted++;
-                            if (dr.CountDeleted%10==0)
+                            UploadMedia.appendToUploadLog("Удален : "+FilesAlreadyExists[i]);
+                            dr.countDeleted++;
+                            if (dr.countDeleted%10==0)
                             ChangeStatus("Видалення..."+FilesAlreadyExists[i], true);
                             //new File(DirSou, FilesAlreadyExists[i]).delete();
 
@@ -486,17 +473,17 @@ public class SmbWorker {
             // showToast("ОШИБКА ЗАГРУЗКИ :\n"+e.getMessage());
 
             ChangeStatus("ПОМИЛКА ЗАВАНТАЖЕННЯ :"+e.getMessage(), false);
-            dr.HasError = DOWNLOAD_RESULT_ERROR_SMB_SERVER;
+            dr.hasError = UPLOAD_RESULT_ERROR_SMB_SERVER;
         }catch (IOException e) {
             Log.e(TAG, "IOException:" + e.getMessage());
 
             ChangeStatus("ПОМИЛКА ЗАВАНТАЖЕННЯ :"+e.getMessage(), false);
-            dr.HasError = DOWNLOAD_RESULT_IO_ERROR;
+            dr.hasError = UPLOAD_RESULT_IO_ERROR;
         }catch (Exception e){
             Log.e(TAG,"Exception:"+e.getMessage());
 
             ChangeStatus("ПОМИЛКА ЗАВАНТАЖЕННЯ :"+e.getMessage(), false);
-            dr.HasError = DOWNLOAD_RESULT_IO_ERROR;
+            dr.hasError = UPLOAD_RESULT_IO_ERROR;
         }
         return dr;
     }

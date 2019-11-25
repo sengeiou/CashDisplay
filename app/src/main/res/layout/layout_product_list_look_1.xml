@@ -17,13 +17,13 @@
         <!--       dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
         <ImageView
             android:id="@+id/imageview_product"
-            android:layout_width="400px"
+            android:layout_width="400dp"
             android:layout_height="500dp"
             android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <LinearLayout
@@ -114,12 +114,10 @@
                 android:id="@+id/listview_products"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:choiceMode="singleChoice"
                 android:layout_weight="95617"
-                android:clickable="true"
-                android:footerDividersEnabled="true"
-                android:divider="@color/list_item_divider_look_1"
-                android:dividerHeight="1px"/>
+                android:choiceMode="singleChoice"
+                android:clickable="true" />
+
         </LinearLayout>
     </LinearLayout>
 
@@ -127,8 +125,8 @@
         android:id="@+id/idLayTotalSumm"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="5875"
         android:layout_alignParentBottom="true"
+        android:layout_weight="5875"
         android:gravity="bottom|end"
         android:orientation="horizontal"
         android:paddingBottom="5dp">

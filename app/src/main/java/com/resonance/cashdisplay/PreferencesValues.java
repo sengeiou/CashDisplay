@@ -27,9 +27,10 @@ public class PreferencesValues {
     public int sTimeSlideImage;
     public int sVideoOrSlide;
     public String backgroundShoppingList;
+    public boolean highlightItem;
     public String backgroundCashNotWork;
     public String backgroundThanks;
     public String imageLogo;
 
-    public int productListLookCode; //
+    public int productListLookCode;
 }

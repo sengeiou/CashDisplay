@@ -26,63 +26,56 @@ import java.util.Date;
 import java.util.HashMap;
 
 import static com.resonance.cashdisplay.PreferenceParams.DEF_PROTOCOL;
-import static com.resonance.cashdisplay.PreferenceParams._FTP;
-import static com.resonance.cashdisplay.PreferenceParams._SMB1;
-import static com.resonance.cashdisplay.PreferenceParams._SMB2;
-
-//import android.util.Log;
-//import com.resonance.FileOperation;
-
+import static com.resonance.cashdisplay.PreferenceParams.FTP;
+import static com.resonance.cashdisplay.PreferenceParams.SMB1;
+import static com.resonance.cashdisplay.PreferenceParams.SMB2;
 
 /**
- * Класс управления загрузкой изображений товаров, видеоб слайдов
+ * Класс управления загрузкой изображений товаров, видео, слайдов
  */
-public class DownloadMedia {
+public class UploadMedia {
     private static final FileOperation FileOperation = new FileOperation();
-    public final String TAG = "DownloadMedia";
+    public final String TAG = "UploadMedia";
 
-    public final int ATTEMPTS_TO_DOWNLOAD = 1;
     private static final String NEW_LINE = System.getProperty("line.separator");
     private static final String DATE_FORMAT = "yyyy-MM-dd HH-mm-ss";
     private static final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 
     public static File mLogFile;
 
-    public static final int DOWNLOAD_RESULT_SUCCESSFULL = 0;
-    public static final int DOWNLOAD_RESULT_NOT_FREE_MEMORY = 1;
-    public static final int DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR = 2;
-    public static final int DOWNLOAD_RESULT_CONNECTION_ERROR = 3;
-    public static final int DOWNLOAD_RESULT_NOT_SUPPORT_PROTOCOL = 4;
-    public static final int DOWNLOAD_RESULT_BAD_ARGUMENTS = 5;
-    public static final int DOWNLOAD_RESULT_IO_ERROR = 6;
-    public static final int DOWNLOAD_RESULT_FILE_NOT_FOUND = 7;
-    public static final int DOWNLOAD_RESULT_ERROR_SMB_SERVER = 8;
-
+    public static final int UPLOAD_RESULT_SUCCESSFULL = 0;
+    public static final int UPLOAD_RESULT_NOT_FREE_MEMORY = 1;
+    public static final int UPLOAD_RESULT_SHARE_CONNECTION_ERROR = 2;
+    public static final int UPLOAD_RESULT_CONNECTION_ERROR = 3;
+    public static final int UPLOAD_RESULT_NOT_SUPPORT_PROTOCOL = 4;
+    public static final int UPLOAD_RESULT_BAD_ARGUMENTS = 5;
+    public static final int UPLOAD_RESULT_IO_ERROR = 6;
+    public static final int UPLOAD_RESULT_FILE_NOT_FOUND = 7;
+    public static final int UPLOAD_RESULT_ERROR_SMB_SERVER = 8;
 
     public static final String IMG_URI = "/Documents/IMG/";
     public static final String VIDEO_URI = "/Documents/VIDEO/";
     public static final String SLIDE_URI = "/Documents/SLIDE/";
-    public static final String IMG_SCREEN = "/Documents/SCREEN/";//изображения экранов
+    public static final String IMG_SCREEN = "/Documents/SCREEN/";   // изображения экранов
 
-    private static boolean downloadThreadStarted = false;//флаг активации загрузки файлов
+    private static boolean uploadThreadStarted = false;             // флаг активации загрузки файлов
 
-    public static String[] Destination_Dirs = null;
-    public static final int _IMAGE = 0;
-    public static final int _VIDEO = 1;
-    public static final int _SLIDE = 2;
-    public static final int _SCREEN = 3;
+    public static String[] destinationDirs = null;
+    public static final int IMAGE = 0;
+    public static final int VIDEO = 1;
+    public static final int SLIDE = 2;
+    public static final int SCREEN = 3;
 
-
-    private static Context mContext;
+    private Context context;
     private static SmbjWorker smbjWorker = null;
     private static SmbWorker smbWorker = null;
     private static FtpWorker ftpWorker = null;
 
-    private static HashMap<String, Object> au_param;
-    private static HashMap<String, Object> img_param;
-    private static HashMap<String, Object> video_param;
-    private static HashMap<String, Object> slide_param;
-    private static HashMap<String, Object> screen_img_param;
+    private static HashMap<String, Object> authParam;
+    private static HashMap<String, Object> imgParam;
+    private static HashMap<String, Object> videoParam;
+    private static HashMap<String, Object> slideParam;
+    private static HashMap<String, Object> screenImgParam;
 
     enum eResult {
         OK,
@@ -90,35 +83,34 @@ public class DownloadMedia {
         SD_CARD_ERROR
     }
 
-    public DownloadMedia(Context context) {
-        mContext = context;
+    public UploadMedia(Context context) {
 
-        au_param = new HashMap<>();
-        img_param = new HashMap<>();
-        video_param = new HashMap<>();
-        slide_param = new HashMap<>();
-        screen_img_param = new HashMap<>();
+        this.context = context;
+
+        authParam = new HashMap<>();
+        imgParam = new HashMap<>();
+        videoParam = new HashMap<>();
+        slideParam = new HashMap<>();
+        screenImgParam = new HashMap<>();
 
         //Инициализация всех возможных вариантов загрузки
-        smbjWorker = new SmbjWorker(mContext);
-        smbjWorker.onChangeStatusCallBack(smbj_statusCallback);
-        smbjWorker.onEndDownloadCallBack(smbj_endDownloadCallback);
+        smbjWorker = new SmbjWorker(context);
+        smbjWorker.onChangeStatusCallBack(smbjStatusCallback);
+        smbjWorker.onEndDownloadCallBack(smbjEndDownloadCallback);
 
-        smbWorker = new SmbWorker(mContext);
-        smbWorker.onChangeSmbStatusCallBack(smb_statusCallback);
-        smbWorker.onEndDownloadCallBack(smb_endDownloadCallback);
+        smbWorker = new SmbWorker(context);
+        smbWorker.onChangeSmbStatusCallBack(smbStatusCallback);
+        smbWorker.onEndDownloadCallBack(smbEndDownloadCallback);
 
-        ftpWorker = new FtpWorker(mContext);
-        ftpWorker.onChangeStatusCallBack(ftp_statusCallback);
-        ftpWorker.onEndDownloadCallBack(ftp_endDownloadCallback);
-
-
+        ftpWorker = new FtpWorker(context);
+        ftpWorker.onChangeStatusCallBack(ftpStatusCallback);
+        ftpWorker.onEndDownloadCallBack(ftpEndDownloadCallback);
     }
 
     /**
      * Коллбэк обновления статуса загрузки SMB2  на WEB консоли
      */
-    private SmbjWorker.SMBJ_StatusCallback smbj_statusCallback = new SmbjWorker.SMBJ_StatusCallback() {
+    private SmbjWorker.SMBJ_StatusCallback smbjStatusCallback = new SmbjWorker.SMBJ_StatusCallback() {
         @Override
         public void onSmbjStatus(final String msg, final boolean delRemaininng) {
             MainActivity.httpServer.sendQueWebStatus(msg, delRemaininng);
@@ -128,16 +120,16 @@ public class DownloadMedia {
     /**
      * Коллбэк окончания загрузки SMB2
      */
-    private SmbjWorker.SMBJ_EndDownloadCallback smbj_endDownloadCallback = new SmbjWorker.SMBJ_EndDownloadCallback() {
+    private SmbjWorker.SMBJ_EndDownloadCallback smbjEndDownloadCallback = new SmbjWorker.SMBJ_EndDownloadCallback() {
         @Override
         public void onSmbjEndDownload(final int msg) {
-            downloadThreadStarted = false;//флаг активации загрузки файлов
+            uploadThreadStarted = false;//флаг активации загрузки файлов
         }
     };
     /**
      * Коллбэк обновления статуса загрузки SMB1  на WEB консоли
      */
-    private SmbWorker.SMB_StatusCallback smb_statusCallback = new SmbWorker.SMB_StatusCallback() {
+    private SmbWorker.SMB_StatusCallback smbStatusCallback = new SmbWorker.SMB_StatusCallback() {
         @Override
         public void onSmbStatus(final String msg, final boolean delRemaininng) {
             MainActivity.httpServer.sendQueWebStatus(msg, delRemaininng);
@@ -146,10 +138,10 @@ public class DownloadMedia {
     /**
      * Коллбэк окончания загрузки SMB1
      */
-    private SmbWorker.SMB_EndDownloadCallback smb_endDownloadCallback = new SmbWorker.SMB_EndDownloadCallback() {
+    private SmbWorker.SMB_EndDownloadCallback smbEndDownloadCallback = new SmbWorker.SMB_EndDownloadCallback() {
         @Override
         public void onSmbEndDownload(final int msg) {
-            downloadThreadStarted = false;//флаг активации загрузки файлов
+            uploadThreadStarted = false;//флаг активации загрузки файлов
         }
     };
 /*******************************************************************************/
@@ -157,7 +149,7 @@ public class DownloadMedia {
      * Коллбэк обновления статуса загрузки FTP на WEB консоли
      */
 
-    private FtpWorker.FTP_StatusCallback ftp_statusCallback = new FtpWorker.FTP_StatusCallback() {
+    private FtpWorker.FTP_StatusCallback ftpStatusCallback = new FtpWorker.FTP_StatusCallback() {
         @Override
         public void onFtpStatus(final String msg, final boolean delRemaininng) {
             MainActivity.httpServer.sendQueWebStatus(msg, delRemaininng);
@@ -167,20 +159,18 @@ public class DownloadMedia {
     /**
      * Коллбэк окончания загрузки FTP
      */
-    private FtpWorker.FTP_EndDownloadCallback ftp_endDownloadCallback = new FtpWorker.FTP_EndDownloadCallback() {
+    private FtpWorker.FTP_EndDownloadCallback ftpEndDownloadCallback = new FtpWorker.FTP_EndDownloadCallback() {
         @Override
         public void onFtpEndDownload(final int msg) {
-            downloadThreadStarted = false;//флаг активации загрузки файлов
+            uploadThreadStarted = false;//флаг активации загрузки файлов
         }
-
     };
-
 
     /**
      * Инициация загрузки
      */
-    public void download() {
-        if (downloadThreadStarted)
+    public void upload() {
+        if (uploadThreadStarted)
             return;
         MainActivity.httpServer.sendQueWebStatus("Завантаження...", true);
 
@@ -235,49 +225,49 @@ public class DownloadMedia {
         //подготовка параметров загрузки соответствующему загрузчику
 
         //параметры аутентификации
-        au_param.clear();
-        au_param.put("User", prefValues.sUser);
-        au_param.put("Passw", prefValues.sPassw);
-        au_param.put("Host", prefValues.sSmbHost);
+        authParam.clear();
+        authParam.put("User", prefValues.sUser);
+        authParam.put("Passw", prefValues.sPassw);
+        authParam.put("Host", prefValues.sSmbHost);
 
         //изображения для товаров
-        img_param.clear();
-        img_param.put("shareImg", ParseImg.share);
-        img_param.put("folderImg", ParseImg.folder);
-        img_param.put("DestinationImg", Destination_Dirs[_IMAGE]);
-        img_param.put("extensionArrayImg", new String[]{"*.png", "*.jpg"});
+        imgParam.clear();
+        imgParam.put("shareImg", ParseImg.share);
+        imgParam.put("folderImg", ParseImg.folder);
+        imgParam.put("DestinationImg", destinationDirs[IMAGE]);
+        imgParam.put("extensionArrayImg", new String[]{"*.png", "*.jpg"});
 
         //видео
-        video_param.clear();
-        video_param.put("shareVideo", ParseVideo.share);
-        video_param.put("folderVideo", ParseVideo.folder);
-        video_param.put("DestinationVideo", Destination_Dirs[_VIDEO]);
-        video_param.put("extensionArrayVideo", new String[]{"*.avi", "*.mp4"});
+        videoParam.clear();
+        videoParam.put("shareVideo", ParseVideo.share);
+        videoParam.put("folderVideo", ParseVideo.folder);
+        videoParam.put("DestinationVideo", destinationDirs[VIDEO]);
+        videoParam.put("extensionArrayVideo", new String[]{"*.avi", "*.mp4"});
 
         //изображения для слайдов
-        slide_param.clear();
-        slide_param.put("shareSlide", ParseSlide.share);
-        slide_param.put("folderSlide", ParseSlide.folder);
-        slide_param.put("DestinationSlide", Destination_Dirs[_SLIDE]);
-        slide_param.put("extensionArraySlide", new String[]{"*.png", "*.jpg"});
+        slideParam.clear();
+        slideParam.put("shareSlide", ParseSlide.share);
+        slideParam.put("folderSlide", ParseSlide.folder);
+        slideParam.put("DestinationSlide", destinationDirs[SLIDE]);
+        slideParam.put("extensionArraySlide", new String[]{"*.png", "*.jpg"});
 
         //фоновые изображения экранов
-        screen_img_param.clear();
-        screen_img_param.put("shareScreenImg", ParseScreen.share);
-        screen_img_param.put("folderScreenImg", ParseScreen.folder);
-        screen_img_param.put("DestinationScreenImg", Destination_Dirs[_SCREEN]);
-        screen_img_param.put("extensionArrayScreenImg", new String[]{"*.png", "*.jpg"});
+        screenImgParam.clear();
+        screenImgParam.put("shareScreenImg", ParseScreen.share);
+        screenImgParam.put("folderScreenImg", ParseScreen.folder);
+        screenImgParam.put("DestinationScreenImg", destinationDirs[SCREEN]);
+        screenImgParam.put("extensionArrayScreenImg", new String[]{"*.png", "*.jpg"});
 
-        if (prefValues.sProtocol.equals(DEF_PROTOCOL[_SMB2])) {
-            downloadThreadStarted = true;
-            smbjWorker.doDownload(au_param, img_param, video_param, slide_param, screen_img_param);
-        } else if (prefValues.sProtocol.equals(DEF_PROTOCOL[_SMB1])) {
-            downloadThreadStarted = true;
-            smbWorker.doDownload(au_param, img_param, video_param, slide_param, screen_img_param);
+        if (prefValues.sProtocol.equals(DEF_PROTOCOL[SMB2])) {
+            uploadThreadStarted = true;
+            smbjWorker.doDownload(authParam, imgParam, videoParam, slideParam, screenImgParam);
+        } else if (prefValues.sProtocol.equals(DEF_PROTOCOL[SMB1])) {
+            uploadThreadStarted = true;
+            smbWorker.doDownload(authParam, imgParam, videoParam, slideParam, screenImgParam);
 
-        } else if (prefValues.sProtocol.equals(DEF_PROTOCOL[_FTP])) {
-            downloadThreadStarted = true;
-            ftpWorker.doDownload(au_param, img_param, video_param, slide_param);
+        } else if (prefValues.sProtocol.equals(DEF_PROTOCOL[FTP])) {
+            uploadThreadStarted = true;
+            ftpWorker.doDownload(authParam, imgParam, videoParam, slideParam);
         }
     }
 
@@ -299,7 +289,6 @@ public class DownloadMedia {
 
             }
         }
-
         return shareParam;
     }
 
@@ -310,22 +299,21 @@ public class DownloadMedia {
      */
     private eResult verifyDestinationDirs() {
 
-        Log.d("SSS", "SD CARD isMounted:" + ExtSDSource.isMounted(mContext) + ", isReadOnly :" + ExtSDSource.isReadOnly());
+        Log.d("SSS", "SD CARD isMounted:" + ExtSDSource.isMounted(context) + ", isReadOnly :" + ExtSDSource.isReadOnly());
 
-        Destination_Dirs = new String[]{ExtSDSource.getExternalSdCardPath() + IMG_URI, ExtSDSource.getExternalSdCardPath() + VIDEO_URI, ExtSDSource.getExternalSdCardPath() + SLIDE_URI, ExtSDSource.getExternalSdCardPath() + IMG_SCREEN};
+        destinationDirs = new String[]{ExtSDSource.getExternalSdCardPath() + IMG_URI, ExtSDSource.getExternalSdCardPath() + VIDEO_URI, ExtSDSource.getExternalSdCardPath() + SLIDE_URI, ExtSDSource.getExternalSdCardPath() + IMG_SCREEN};
 
-        if (!ExtSDSource.isMounted(mContext)) {
+        if (!ExtSDSource.isMounted(context)) {
             showToast("ОТСУТСТВУЕТ SD карта");
             MainActivity.httpServer.sendQueWebStatus("Вiдсутнiй SD носiй", true);
             return eResult.SD_CARD_ERROR;
         }
 
-        for (int i = 0; i < Destination_Dirs.length; i++) {
-
+        for (int i = 0; i < destinationDirs.length; i++) {
             //Проверка директории
-            File dir = new File(Destination_Dirs[i]);
+            File dir = new File(destinationDirs[i]);
             if (!dir.exists()) {
-                Log.d("SSS", "CREATE IMAGE DIR:" + Destination_Dirs);
+                Log.d("SSS", "CREATE IMAGE DIR:" + destinationDirs);
                 dir.mkdirs();
             }
             if (!dir.exists() || !dir.isDirectory()) {
@@ -337,27 +325,22 @@ public class DownloadMedia {
         return eResult.OK;
     }
 
-
-    private void showToast(final String message) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            public void run() {
-                Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
-            }
-        });
+    private void showToast(String message) {
+        new Handler(Looper.getMainLooper()).post(
+                () -> Toast.makeText(context, message, Toast.LENGTH_LONG).show());
     }
 
     /**
      * Проверка наличия файла
      *
-     * @param UrlDest  путь к папке с файлами
+     * @param urlDest  путь к папке с файлами
      * @param fileName имя файла
      * @param sizeFile размер файла
      * @return
      */
-    public static boolean ifAlreadyExistFile(String UrlDest, String fileName, long sizeFile) {
+    public static boolean ifAlreadyExistFile(String urlDest, String fileName, long sizeFile) {
         boolean result = false;
-        File f = new File(UrlDest + fileName);
+        File f = new File(urlDest + fileName);
 
         if (f.exists()) {
             if (f.length() == sizeFile) {
@@ -386,7 +369,7 @@ public class DownloadMedia {
         c = Calendar.getInstance();
         c.setTime(currentDate);
 
-        mLogFile = new File(Environment.getExternalStorageDirectory(), "Download " + EthernetSettings.getNetworkInterfaceIpAddress() + " " + dateFormat.format(c.getTime()) + ".log");
+        mLogFile = new File(Environment.getExternalStorageDirectory(), "Upload " + EthernetSettings.getNetworkInterfaceIpAddress() + " " + dateFormat.format(c.getTime()) + ".log");
 
         //удалим существующий файл
         if (mLogFile.exists()) {
@@ -408,7 +391,7 @@ public class DownloadMedia {
      *
      * @param text
      */
-    public static synchronized void append_to_DownloadLog(String text) {
+    public static synchronized void appendToUploadLog(String text) {
         if (!mLogFile.exists())
             initLogFile();
 
@@ -426,7 +409,7 @@ public class DownloadMedia {
     /**
      * Удаляет лог-файл
      */
-    public static synchronized void deleteDownloadLog() {
+    public static synchronized void deleteUploadLog() {
         //удалим существующий файл
         if (mLogFile.exists()) {
             mLogFile.delete();

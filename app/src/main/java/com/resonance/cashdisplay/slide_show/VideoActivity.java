@@ -21,7 +21,7 @@ import com.resonance.cashdisplay.FileOperation;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.R;
-import com.resonance.cashdisplay.load.DownloadMedia;
+import com.resonance.cashdisplay.load.UploadMedia;
 
 import java.io.File;
 
@@ -80,7 +80,7 @@ public class VideoActivity extends AppCompatActivity {
         videoView.forceLayout();
         videoView.setFitsSystemWindows(true);
 
-        this.mediaDir = ExtSDSource.getExternalSdCardPath() + DownloadMedia.VIDEO_URI;
+        this.mediaDir = ExtSDSource.getExternalSdCardPath() + UploadMedia.VIDEO_URI;
 
         this.registerReceiver(this.finishAlert, new IntentFilter(FINISH_ALERT));
 

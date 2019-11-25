@@ -5,13 +5,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/list_item_height_look_1"
+    android:layout_height="wrap_content"
     android:background="@drawable/list_item_background"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/list_item_height_look_1"
         android:layout_weight="1"
         android:gravity="center_vertical"
         android:orientation="horizontal">
@@ -100,6 +100,11 @@
             android:textSize="@dimen/list_item_text_look_1"
             tools:text="9999.99" />
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/list_item_divider_look_1" />
 
     <ImageView
         android:id="@+id/imageview_icon"

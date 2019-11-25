@@ -10,9 +10,9 @@ import android.content.SharedPreferences;
 public class PreferenceParams {
 
     private static final String SERIALIZER_KEY = "ce.serilizer";    // not change already, users has settings with this name
-    public static int _SMB1 = 0;
-    public static int _SMB2 = 1;
-    public static int _FTP = 2;
+    public static int SMB1 = 0;
+    public static int SMB2 = 1;
+    public static int FTP = 2;
 
     public static int _VIDEO = 0;
     public static int _SLIDE = 1;
@@ -56,13 +56,14 @@ public class PreferenceParams {
         params.sGW = sharedPreferences.getString("sGW", "192.168.1.1");
         params.sDNS = sharedPreferences.getString("sDNS", "8.8.8.8");
         params.sDHCP = sharedPreferences.getBoolean("sDHCP", true);
-        params.sProtocol = sharedPreferences.getString("sProtocol", DEF_PROTOCOL[_SMB1]);
+        params.sProtocol = sharedPreferences.getString("sProtocol", DEF_PROTOCOL[SMB1]);
         params.sDefaultBackGroundImage = sharedPreferences.getString("sDefaultBackGroundImage", "default_background_picture.png");
         params.sShowNavigationBar = sharedPreferences.getBoolean("sShowNavigationBar", false);
         params.sTimeSlideImage = sharedPreferences.getInt("sTimeSlideImage", 10);
         params.sVideoOrSlide = sharedPreferences.getInt("sVideoOrSlide", _VIDEO);
 
         params.backgroundShoppingList = sharedPreferences.getString("background_shopping_list", "default_background_picture.png");
+        params.highlightItem = sharedPreferences.getBoolean("highlight_item", false);
         params.backgroundCashNotWork = sharedPreferences.getString("background_cash_not_work", "default_background_picture.png");
         params.backgroundThanks = sharedPreferences.getString("background_thanks", "default_background_picture.png");
 
@@ -103,7 +104,7 @@ public class PreferenceParams {
         sharedPreferences.edit().putString("sGW", parameters.sGW).apply();
         sharedPreferences.edit().putString("sDNS", parameters.sDNS).apply();
         sharedPreferences.edit().putBoolean("sDHCP", parameters.sDHCP).apply();
-        assert (parameters.sProtocol != DEF_PROTOCOL[_SMB1] && parameters.sProtocol != DEF_PROTOCOL[_SMB2] && parameters.sProtocol != DEF_PROTOCOL[_FTP]);
+        assert (parameters.sProtocol != DEF_PROTOCOL[SMB1] && parameters.sProtocol != DEF_PROTOCOL[SMB2] && parameters.sProtocol != DEF_PROTOCOL[FTP]);
         sharedPreferences.edit().putString("sProtocol", parameters.sProtocol).apply();
         sharedPreferences.edit().putString("sDefaultBackGroundImage", parameters.sDefaultBackGroundImage).apply();
         sharedPreferences.edit().putBoolean("sShowNavigationBar", parameters.sShowNavigationBar).apply();
@@ -116,8 +117,10 @@ public class PreferenceParams {
         sharedPreferences.edit().putInt("sVideoOrSlide", parameters.sVideoOrSlide).apply();
 
         sharedPreferences.edit().putString("background_shopping_list", parameters.backgroundShoppingList).apply();
+        sharedPreferences.edit().putBoolean("highlight_item", parameters.highlightItem).apply();
         sharedPreferences.edit().putString("background_cash_not_work", parameters.backgroundCashNotWork).apply();
         sharedPreferences.edit().putString("background_thanks", parameters.backgroundThanks).apply();
+
         sharedPreferences.edit().putString("sPathToScreenImg", parameters.sPathToScreenImg).apply();
 
         // determine from background image for product list if we have to set custom look or default

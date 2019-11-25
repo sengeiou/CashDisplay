@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.resonance.cashdisplay.load.DownloadMedia.SLIDE_URI;
+import static com.resonance.cashdisplay.load.UploadMedia.SLIDE_URI;
 
 //import android.util.Log;
 //import com.resonance.FileOperation;

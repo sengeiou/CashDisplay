@@ -9,6 +9,7 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Base64;
 
+import com.crashlytics.android.Crashlytics;
 import com.koushikdutta.async.AsyncServer;
 import com.koushikdutta.async.callback.CompletedCallback;
 import com.koushikdutta.async.http.body.AsyncHttpRequestBody;
@@ -22,7 +23,7 @@ import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.PreferenceParams;
 import com.resonance.cashdisplay.PreferencesValues;
-import com.resonance.cashdisplay.load.DownloadMedia;
+import com.resonance.cashdisplay.load.UploadMedia;
 import com.resonance.cashdisplay.sound.Sound;
 import com.resonance.cashdisplay.su.Modify_SU_Preferences;
 
@@ -55,23 +56,20 @@ public class HttpServer {
     public HttpServer(Context context, WebStatus webstat) {
         mContext = context;
         webStatus = webstat;
+
         // createServerAsync();
-        final Thread t = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    createServerAsync();
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                }
-                super.run();
+        new Thread(() -> {
+            try {
+                createServerAsync();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Crashlytics.logException(e);
             }
-        };
-        t.run();
+        }).start();
+
         new СreateProducerConsumer().start();
 
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(HTTP_HALT_EVENT);
+        IntentFilter intentFilter = new IntentFilter(HTTP_HALT_EVENT);
         mContext.registerReceiver(httpHaltEvent, intentFilter);
     }
 
@@ -83,18 +81,14 @@ public class HttpServer {
             if (intent.getAction().equals(HTTP_HALT_EVENT)) {
                 Log.d(TAG, "** RESTART HTTP SERVER **");
                 stopHttpServer();
-                final Thread t = new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            createServerAsync();
-                        } catch (final Exception e) {
-                            e.printStackTrace();
-                        }
-                        super.run();
+                new Thread(() -> {
+                    try {
+                        createServerAsync();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Crashlytics.logException(e);
                     }
-                };
-                t.run();
+                }).start();
             }
         }
     };
@@ -113,14 +107,15 @@ public class HttpServer {
         mServer.get("/", loginCallback);
         mServer.get("/getsettings", getSettingsCallback);
         mServer.get("/getstatus", getStatusCallback);
-        mServer.post("/download_files", download_filesCallback);
-        mServer.post("/start_remote_update", start_remote_updateCallback);
-        mServer.post("/start_reboot", start_rebootCallback);
+        mServer.post("/download_files", uploadFilesCallback);
+        mServer.post("/start_remote_update", startRemoteUpdateCallback);
+        mServer.post("/start_reboot", startRebootCallback);
         mServer.post("/setsettings", setSettingsCallback);
         mServer.setErrorCallback(new CompletedCallback() {
             @Override
             public void onCompleted(Exception ex) {
-                Log.w(TAG, "**CompletedCallback");
+                Log.w(TAG, "**ErrorCallback.onCompleted");
+                Crashlytics.logException(ex);
             }
         });
         mServer.listen(mAsyncServer, httpСonfig.port);
@@ -191,6 +186,37 @@ public class HttpServer {
                 Log.d(TAG, "Send JSON: " + requestBody.toString());
                 response.send(requestBody.toString());
                 System.gc();
+            } catch (JSONException e) {
+                Log.e(TAG, "JSONException:" + e.getMessage());
+            }
+        }
+    };
+
+    private final HttpServerRequestCallback getStatusCallback = new HttpServerRequestCallback() {
+        @Override
+        public void onRequest(final AsyncHttpServerRequest request, final AsyncHttpServerResponse response) {
+            if (!shouldPass(request, response)) {
+                return;
+            }
+            Log.d(TAG, "** /getStatus:" + request.getPath());
+            try {
+
+                JSONObject requestBody = new JSONObject();
+
+                requestBody.put("status", iCurStatus);
+                requestBody.put("CurStatusMsg", iCurStatusMsg);
+                requestBody.put("lab_current_ver", BuildConfig.VERSION_CODE);
+                requestBody.put("sdcard_state", "<font color=\"blue\"><B>пам`ятi вiльно " + ExtSDSource.getAvailableMemory_SD() + "</B></font> ");
+
+                Log.d(TAG, "send status : " + requestBody.toString());
+
+                response.send(requestBody.toString());
+                System.gc();
+
+                if (iCurStatus == STAT_SAVE) {
+                    iCurStatusMsg = "";
+                    iCurStatus = STAT_IDLE;
+                }
             } catch (JSONException e) {
                 Log.e(TAG, "JSONException:" + e.getMessage());
             }
@@ -271,38 +297,7 @@ public class HttpServer {
         }
     };
 
-    private final HttpServerRequestCallback getStatusCallback = new HttpServerRequestCallback() {
-        @Override
-        public void onRequest(final AsyncHttpServerRequest request, final AsyncHttpServerResponse response) {
-            if (!shouldPass(request, response)) {
-                return;
-            }
-            Log.d(TAG, "** /getStatus:" + request.getPath());
-            try {
-
-                JSONObject requestBody = new JSONObject();
-
-                requestBody.put("status", iCurStatus);
-                requestBody.put("CurStatusMsg", iCurStatusMsg);
-                requestBody.put("lab_current_ver", BuildConfig.VERSION_CODE);
-                requestBody.put("sdcard_state", "<font color=\"blue\"><B>пам`ятi вiльно " + ExtSDSource.getAvailableMemory_SD() + "</B></font> ");
-
-                Log.d(TAG, "send status : " + requestBody.toString());
-
-                response.send(requestBody.toString());
-                System.gc();
-
-                if (iCurStatus == STAT_SAVE) {
-                    iCurStatusMsg = "";
-                    iCurStatus = STAT_IDLE;
-                }
-            } catch (JSONException e) {
-                Log.e(TAG, "JSONException:" + e.getMessage());
-            }
-        }
-    };
-
-    private final HttpServerRequestCallback download_filesCallback = new HttpServerRequestCallback() {
+    private final HttpServerRequestCallback uploadFilesCallback = new HttpServerRequestCallback() {
 
         @Override
         public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
@@ -311,11 +306,11 @@ public class HttpServer {
             asyncHttpServerResponse.code(200);
             Log.d(TAG, "download_files...");
             iCurStatus = STAT_LOAD_FILES;
-            MainActivity.downloadMedia.download();
+            MainActivity.uploadMedia.upload();
         }
     };
 
-    private final HttpServerRequestCallback start_remote_updateCallback = new HttpServerRequestCallback() {
+    private final HttpServerRequestCallback startRemoteUpdateCallback = new HttpServerRequestCallback() {
 
         @Override
         public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
@@ -328,7 +323,7 @@ public class HttpServer {
         }
     };
 
-    private final HttpServerRequestCallback start_rebootCallback = new HttpServerRequestCallback() {
+    private final HttpServerRequestCallback startRebootCallback = new HttpServerRequestCallback() {
 
         @Override
         public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
@@ -336,7 +331,7 @@ public class HttpServer {
             AsyncHttpRequestBody requestBody = asyncHttpServerRequest.getBody();
             asyncHttpServerResponse.code(200);
             iCurStatus = STAT_IDLE;
-            DownloadMedia.resetMediaPlay();
+            UploadMedia.resetMediaPlay();
             Log.d(TAG, "set_start_reboot...");
             try {
                 Thread.sleep(3000);
@@ -357,9 +352,9 @@ public class HttpServer {
     private boolean shouldPass(final AsyncHttpServerRequest req, final AsyncHttpServerResponse res) {
         if (isStopped) {
             Log.w(TAG, "isStopped");
-            res.code(404);
+            res.code(503);
             res.end();
-            Log.w(TAG, "Пароль не подтвержден");
+            Log.w(TAG, "Сервер остановлен!!!");
             return false;
         }
         if (!isAuthenticated(req)) {
@@ -382,7 +377,7 @@ public class HttpServer {
                     .split(":");
 
             switch (authData.length) {
-                case 1:                                                  // only login was typed
+                case 1:                                                     // only login was typed
                     if (httpСonfig.userNameTestMode.equals(authData[0])) {  // tester name
                         if (req.getPath().equals("/")) {       // only if request is from loginCallback)
                             MainActivity.testMode = true;
@@ -424,15 +419,12 @@ public class HttpServer {
     private class СreateProducerConsumer extends Thread {
         @Override
         public void run() {
-            super.run();
-
-            //Log.d(TAG, "createProducerConsumer  started");
+            Log.d(TAG, "createProducerConsumer  started");
             while (!isInterrupted()) {
                 try {
                     if (!webStatus.isEmptySmbMessageQueue()) {
-                        String msg = webStatus.getStrStatus();
                         iCurStatus = STAT_LOAD_FILES;
-                        iCurStatusMsg = msg;
+                        iCurStatusMsg = webStatus.getStrStatus();
                         Log.w(TAG, "Smb_messageQueue.take:" + iCurStatusMsg);
                     } else {
                         Thread.sleep(500);
