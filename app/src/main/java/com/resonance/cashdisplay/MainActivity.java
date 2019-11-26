@@ -38,7 +38,6 @@ import com.crashlytics.android.Crashlytics;
 import com.resonance.cashdisplay.databinding.ActivityMainBinding;
 import com.resonance.cashdisplay.eth.EthernetSettings;
 import com.resonance.cashdisplay.http.HttpServer;
-import com.resonance.cashdisplay.http.WebStatus;
 import com.resonance.cashdisplay.load.UploadMedia;
 import com.resonance.cashdisplay.product_list.ProductListWorker;
 import com.resonance.cashdisplay.slide_show.VideoSlideService;
@@ -71,7 +70,6 @@ public class MainActivity extends Activity {
 
     private PreferencesValues preferenceParams;       //настройки
     private static UartWorker uartWorker;                   //обработчик UART
-    public static WebStatus webStatus = null;               //канал передачи сообщений для браузера
     public static HttpServer httpServer = null;             //http сервер
     private CommandParser cmdParser;                        //класс обработки команд и данных
     private VideoSlideService videoSlideService;            //класс управления медиа
@@ -148,8 +146,6 @@ public class MainActivity extends Activity {
         su_preferences = new Modify_SU_Preferences(this);
         su_preferences.setSetupRootCallback(mCallbackRootIsSet);
         su_preferences.verifyRootRights();
-
-        webStatus = new WebStatus();
 
         ethernetSettings = new EthernetSettings(this);
         ethernetSettings.setSetupLanCallback(mCallbackLanIsSet);
@@ -508,7 +504,6 @@ public class MainActivity extends Activity {
     private class CheckSystemStart extends Thread {
         @Override
         public void run() {
-            super.run();
             while (!isInterrupted()) {
                 if (Modify_SU_Preferences.checkSystemBootCompleted()) {
                     Log.d(TAG, "property set: SYSTEM BOOT COMPLETED");
@@ -531,8 +526,6 @@ public class MainActivity extends Activity {
     private class CheckConnectionEth extends Thread {
         @Override
         public void run() {
-            super.run();
-
             //немного музыки в момент запуска
             if (sound != null) {
                 sound.setVolume(80);
@@ -651,7 +644,7 @@ public class MainActivity extends Activity {
                 lanSetupAlready = true;
                 Log.d(TAG, "mCallbackSetupLAN :" + result);
                 new CheckConnectionEth().start();//проверка и установка сети
-                httpServer = new HttpServer(context, webStatus);
+                httpServer = new HttpServer(context);
             }
         }
     };

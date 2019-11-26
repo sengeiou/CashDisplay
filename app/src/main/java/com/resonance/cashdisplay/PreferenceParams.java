@@ -14,8 +14,8 @@ public class PreferenceParams {
     public static int SMB2 = 1;
     public static int FTP = 2;
 
-    public static int _VIDEO = 0;
-    public static int _SLIDE = 1;
+    public static int VIDEO = 0;
+    public static int SLIDE = 1;
 
     public static final int MIN_VIDEO_TIMEOUT = 10;
     public static final int MIN_SLIDE_TIME_SHOW = 1;
@@ -60,7 +60,7 @@ public class PreferenceParams {
         params.sDefaultBackGroundImage = sharedPreferences.getString("sDefaultBackGroundImage", "default_background_picture.png");
         params.sShowNavigationBar = sharedPreferences.getBoolean("sShowNavigationBar", false);
         params.sTimeSlideImage = sharedPreferences.getInt("sTimeSlideImage", 10);
-        params.sVideoOrSlide = sharedPreferences.getInt("sVideoOrSlide", _VIDEO);
+        params.sVideoOrSlide = sharedPreferences.getInt("sVideoOrSlide", VIDEO);
 
         params.backgroundShoppingList = sharedPreferences.getString("background_shopping_list", "default_background_picture.png");
         params.highlightItem = sharedPreferences.getBoolean("highlight_item", false);

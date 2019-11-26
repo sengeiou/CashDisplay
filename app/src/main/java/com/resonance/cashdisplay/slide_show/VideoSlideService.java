@@ -160,8 +160,8 @@ public class VideoSlideService {
                     if (!bNowPlay) {
                         //  Log.d(TAG, "----#6");
                         //  Log.d(TAG, "воспроизведение видео");
-                        if (PreferenceParams.getParameters().sVideoOrSlide == PreferenceParams._VIDEO) {
-                            currentSourceForPlay = PreferenceParams._VIDEO;
+                        if (PreferenceParams.getParameters().sVideoOrSlide == PreferenceParams.VIDEO) {
+                            currentSourceForPlay = PreferenceParams.VIDEO;
                             //старт Видео
                             Handler handler = new Handler(Looper.getMainLooper());
                             handler.post(new Runnable() {
@@ -178,7 +178,7 @@ public class VideoSlideService {
                             bNowPlay = true;
                         } else {
                             Log.d(TAG, "----#7");
-                            currentSourceForPlay = PreferenceParams._SLIDE;
+                            currentSourceForPlay = PreferenceParams.SLIDE;
                             //старт Слайд шоу
 
                             Handler handler = new Handler(Looper.getMainLooper());

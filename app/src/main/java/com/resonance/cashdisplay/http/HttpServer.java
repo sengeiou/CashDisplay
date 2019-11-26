@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 import android.util.Base64;
 
@@ -30,7 +28,6 @@ import com.resonance.cashdisplay.su.Modify_SU_Preferences;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.resonance.cashdisplay.http.WebStatus.CLEAR_QUEUE_WEB_MESSAGE;
 import static com.resonance.cashdisplay.uart.UartWorker.UART_CHANGE_SETTINGS;
 
 public class HttpServer {
@@ -39,7 +36,6 @@ public class HttpServer {
     private AsyncHttpServer mServer = null;
     private AsyncServer mAsyncServer = null;//new AsyncServer();
     private HttpConfig httpСonfig = null;
-    private WebStatus webStatus;
     private static final String TAG = "HttpServer";
     private final int STAT_IDLE = 0;
     private final int STAT_LOAD_FILES = 1;
@@ -53,11 +49,10 @@ public class HttpServer {
     private Context mContext;
     private int counttemp = 0;
 
-    public HttpServer(Context context, WebStatus webstat) {
+    public HttpServer(Context context) {
         mContext = context;
-        webStatus = webstat;
 
-        // createServerAsync();
+        createServerAsync();
         new Thread(() -> {
             try {
                 createServerAsync();
@@ -66,8 +61,6 @@ public class HttpServer {
                 Crashlytics.logException(e);
             }
         }).start();
-
-        new СreateProducerConsumer().start();
 
         IntentFilter intentFilter = new IntentFilter(HTTP_HALT_EVENT);
         mContext.registerReceiver(httpHaltEvent, intentFilter);
@@ -127,13 +120,11 @@ public class HttpServer {
             if (!shouldPass(request, response)) {
                 return;
             }
-            Log.d(TAG, "** loginCallback:" + request.getPath());
-
-            final String path = remapPath(request.getPath());
-            Log.d(TAG, "** loginCallback:" + request.getPath() + ", path:" + path);
-
-            response.getHeaders().set("Content-Type", ContentTypes.getInstance().getContentType(path));
-            response.send(HtmlHelper.loadPathAsString(path));
+            String requestPath = request.getPath();
+            String responsePath = (TextUtils.equals("/", requestPath)) ? "index.html" : requestPath;
+            Log.d(TAG, "** loginCallback: \"" + requestPath + "\"" + ", path: \"" + responsePath + "\"");
+            response.getHeaders().set("Content-Type", ContentTypes.getInstance().getContentType(responsePath));
+            response.send(HtmlHelper.loadFileAsString(responsePath));   // sends all *.html file as string
         }
     };
 
@@ -143,51 +134,52 @@ public class HttpServer {
             if (!shouldPass(request, response)) {
                 return;
             }
-            Log.d(TAG, "** /getsettings:" + request.getPath());
+            Log.d(TAG, "** /getsettings: \"" + request.getPath() + "\"");
             iCurStatus = STAT_LOAD_FILES;
             iCurStatusMsg = "Пiдключено";
 
             try {
-                JSONObject requestBody = new JSONObject();
+                JSONObject responseBody = new JSONObject();
                 PreferenceParams prefParams = new PreferenceParams();
                 PreferencesValues prefValues = prefParams.getParameters();
 
-                requestBody.put("uart_select", prefValues.sUartName);
-                requestBody.put("host_img", prefValues.sSmbImg);
-                requestBody.put("host_video", prefValues.sSmbVideo);
-                requestBody.put("host_slide", prefValues.sSmbSlide);
-                requestBody.put("host_screen_img", prefValues.sPathToScreenImg);
-                requestBody.put("host", prefValues.sSmbHost);
-                requestBody.put("ftp_user", prefValues.sUser);
-                requestBody.put("ftp_pass", prefValues.sPassw);
-                requestBody.put("timeout_video", prefValues.videoTimeout);
-                requestBody.put("enable_video", prefValues.sCheckEnableVideo);
-                requestBody.put("admin_user", prefValues.sAdmin);
-                requestBody.put("admin_pass", prefValues.sAdminPassw);
-                requestBody.put("download_at_start", prefValues.sDownloadAtStart);
-                requestBody.put("volume", prefValues.sPercentVolume);
-                requestBody.put("stat_adress", prefValues.sIP);
-                requestBody.put("stat_mask", prefValues.sMask);
-                requestBody.put("stat_gate", prefValues.sGW);
-                requestBody.put("stat_dns", prefValues.sDNS);
+                responseBody.put("uart_select", prefValues.sUartName);
+                responseBody.put("host_img", prefValues.sSmbImg);
+                responseBody.put("host_video", prefValues.sSmbVideo);
+                responseBody.put("host_slide", prefValues.sSmbSlide);
+                responseBody.put("host_screen_img", prefValues.sPathToScreenImg);
+                responseBody.put("host", prefValues.sSmbHost);
+                responseBody.put("ftp_user", prefValues.sUser);
+                responseBody.put("ftp_pass", prefValues.sPassw);
+                responseBody.put("timeout_video", prefValues.videoTimeout);
+                responseBody.put("enable_video", prefValues.sCheckEnableVideo);
+                responseBody.put("admin_user", prefValues.sAdmin);
+                responseBody.put("admin_pass", prefValues.sAdminPassw);
+                responseBody.put("download_at_start", prefValues.sDownloadAtStart);
+                responseBody.put("volume", prefValues.sPercentVolume);
+                responseBody.put("stat_adress", prefValues.sIP);
+                responseBody.put("stat_mask", prefValues.sMask);
+                responseBody.put("stat_gate", prefValues.sGW);
+                responseBody.put("stat_dns", prefValues.sDNS);
 
-                requestBody.put("dhcp", prefValues.sDHCP);
-                requestBody.put("lab_current_ver", BuildConfig.VERSION_CODE);
-                requestBody.put("protocol", prefValues.sProtocol);
-                requestBody.put("def_background_img", prefValues.sDefaultBackGroundImage);
+                responseBody.put("dhcp", prefValues.sDHCP);
+                responseBody.put("lab_current_ver", BuildConfig.VERSION_CODE);
+                responseBody.put("protocol", prefValues.sProtocol);
+                responseBody.put("def_background_img", prefValues.sDefaultBackGroundImage);
 
-                requestBody.put("time_slide_image", prefValues.sTimeSlideImage);
-                requestBody.put("option_video_slide", (prefValues.sVideoOrSlide == PreferenceParams._VIDEO ? true : false));
+                responseBody.put("time_slide_image", prefValues.sTimeSlideImage);
+                responseBody.put("option_video_slide", (prefValues.sVideoOrSlide == PreferenceParams.VIDEO ? true : false));
 
-                requestBody.put("image_screen_shoppinglist", prefValues.backgroundShoppingList);
-                requestBody.put("image_screen_cash_not_work", prefValues.backgroundCashNotWork);
-                requestBody.put("image_screen_thanks", prefValues.backgroundThanks);
+                responseBody.put("image_screen_shoppinglist", prefValues.backgroundShoppingList);
+                responseBody.put("image_screen_cash_not_work", prefValues.backgroundCashNotWork);
+                responseBody.put("image_screen_thanks", prefValues.backgroundThanks);
 
-                Log.d(TAG, "Send JSON: " + requestBody.toString());
-                response.send(requestBody.toString());
+                Log.d(TAG, "Server responses settings (JSON string): " + responseBody.toString());
+                response.send(responseBody.toString());
                 System.gc();
             } catch (JSONException e) {
                 Log.e(TAG, "JSONException:" + e.getMessage());
+                Crashlytics.logException(e);
             }
         }
     };
@@ -198,19 +190,18 @@ public class HttpServer {
             if (!shouldPass(request, response)) {
                 return;
             }
-            Log.d(TAG, "** /getStatus:" + request.getPath());
+            Log.d(TAG, "** /getStatus:" + request.getPath() + "\"");
             try {
+                JSONObject responseBody = new JSONObject();
 
-                JSONObject requestBody = new JSONObject();
+                responseBody.put("status", iCurStatus);
+                responseBody.put("CurStatusMsg", iCurStatusMsg);
+                responseBody.put("lab_current_ver", BuildConfig.VERSION_CODE);
+                responseBody.put("sdcard_state", "<font color=\"blue\"><B>пам`ятi вiльно " + ExtSDSource.getAvailableMemory_SD() + "</B></font> ");
 
-                requestBody.put("status", iCurStatus);
-                requestBody.put("CurStatusMsg", iCurStatusMsg);
-                requestBody.put("lab_current_ver", BuildConfig.VERSION_CODE);
-                requestBody.put("sdcard_state", "<font color=\"blue\"><B>пам`ятi вiльно " + ExtSDSource.getAvailableMemory_SD() + "</B></font> ");
+                Log.d(TAG, "Server responses status (JSON string): " + responseBody.toString());
 
-                Log.d(TAG, "send status : " + requestBody.toString());
-
-                response.send(requestBody.toString());
+                response.send(responseBody.toString());
                 System.gc();
 
                 if (iCurStatus == STAT_SAVE) {
@@ -219,7 +210,52 @@ public class HttpServer {
                 }
             } catch (JSONException e) {
                 Log.e(TAG, "JSONException:" + e.getMessage());
+                Crashlytics.logException(e);
             }
+        }
+    };
+
+    private final HttpServerRequestCallback uploadFilesCallback = new HttpServerRequestCallback() {
+
+        @Override
+        public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
+
+            AsyncHttpRequestBody requestBody = asyncHttpServerRequest.getBody();
+            asyncHttpServerResponse.code(200);
+            Log.d(TAG, "** /upload_files");
+            iCurStatus = STAT_LOAD_FILES;
+            MainActivity.uploadMedia.upload();
+        }
+    };
+
+    private final HttpServerRequestCallback startRemoteUpdateCallback = new HttpServerRequestCallback() {
+
+        @Override
+        public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
+
+            AsyncHttpRequestBody requestBody = asyncHttpServerRequest.getBody();
+            asyncHttpServerResponse.code(200);
+            Log.d(TAG, "** /start_remote_update");
+            iCurStatus = STAT_LOAD_FIRMWARE;
+            MainActivity.updateFirmware.update();
+        }
+    };
+
+    private final HttpServerRequestCallback startRebootCallback = new HttpServerRequestCallback() {
+
+        @Override
+        public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
+
+            AsyncHttpRequestBody requestBody = asyncHttpServerRequest.getBody();
+            asyncHttpServerResponse.code(200);
+            iCurStatus = STAT_IDLE;
+            UploadMedia.resetMediaPlay();
+            Log.d(TAG, "** /start_reboot");
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+            }
+            Modify_SU_Preferences.executeCmd("reboot", 2000);
         }
     };
 
@@ -230,7 +266,7 @@ public class HttpServer {
 
             AsyncHttpRequestBody requestBody = asyncHttpServerRequest.getBody();
             asyncHttpServerResponse.code(200);
-            Log.d(TAG, "** setsettings:" + requestBody);
+            Log.d(TAG, "** /setsettings" + requestBody);
             iCurStatus = STAT_SAVE;
             iCurStatusMsg = "Збереження налаштуваннь ";
 
@@ -238,7 +274,7 @@ public class HttpServer {
             PreferencesValues prefValues = prefParams.getParameters();
             try {
                 JSONObject jsonObject = new JSONObject(requestBody.toString());
-                Log.d(TAG, "Save settings: " + jsonObject.toString());
+                Log.d(TAG, "Save settings received from client: " + jsonObject.toString());
 
                 prefValues.sUartName = jsonObject.get("uart_select").toString();
                 prefValues.sSmbImg = jsonObject.get("host_img").toString();
@@ -273,7 +309,7 @@ public class HttpServer {
                 String tmpTimeSlideImg = jsonObject.get("time_slide_image").toString();
                 prefValues.sTimeSlideImage = Integer.parseInt(tmpTimeSlideImg.length() > 0 ? tmpTimeSlideImg : "10");
                 String tmpvideo_slide = jsonObject.get("option_video_slide").toString();
-                prefValues.sVideoOrSlide = (tmpvideo_slide.equals("true") ? PreferenceParams._VIDEO : PreferenceParams._SLIDE);
+                prefValues.sVideoOrSlide = (tmpvideo_slide.equals("true") ? PreferenceParams.VIDEO : PreferenceParams.SLIDE);
 
                 prefValues.backgroundShoppingList = (String) jsonObject.get("image_screen_shoppinglist");
                 prefValues.backgroundCashNotWork = (String) jsonObject.get("image_screen_cash_not_work");
@@ -297,51 +333,6 @@ public class HttpServer {
         }
     };
 
-    private final HttpServerRequestCallback uploadFilesCallback = new HttpServerRequestCallback() {
-
-        @Override
-        public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
-
-            AsyncHttpRequestBody requestBody = asyncHttpServerRequest.getBody();
-            asyncHttpServerResponse.code(200);
-            Log.d(TAG, "download_files...");
-            iCurStatus = STAT_LOAD_FILES;
-            MainActivity.uploadMedia.upload();
-        }
-    };
-
-    private final HttpServerRequestCallback startRemoteUpdateCallback = new HttpServerRequestCallback() {
-
-        @Override
-        public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
-
-            AsyncHttpRequestBody requestBody = asyncHttpServerRequest.getBody();
-            asyncHttpServerResponse.code(200);
-            Log.d(TAG, "set_start_remote_update...");
-            iCurStatus = STAT_LOAD_FIRMWARE;
-            MainActivity.updateFirmware.update();
-        }
-    };
-
-    private final HttpServerRequestCallback startRebootCallback = new HttpServerRequestCallback() {
-
-        @Override
-        public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
-
-            AsyncHttpRequestBody requestBody = asyncHttpServerRequest.getBody();
-            asyncHttpServerResponse.code(200);
-            iCurStatus = STAT_IDLE;
-            UploadMedia.resetMediaPlay();
-            Log.d(TAG, "set_start_reboot...");
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-            }
-            Modify_SU_Preferences.executeCmd("reboot", 2000);
-        }
-    };
-
-
     public void stopHttpServer() {
         mServer.stop();
         mAsyncServer.stop();
@@ -349,16 +340,15 @@ public class HttpServer {
         isStopped = true;
     }
 
-    private boolean shouldPass(final AsyncHttpServerRequest req, final AsyncHttpServerResponse res) {
+    private boolean shouldPass(AsyncHttpServerRequest req, AsyncHttpServerResponse res) {
         if (isStopped) {
-            Log.w(TAG, "isStopped");
+            Log.w(TAG, "Сервер остановлен!!! (method shouldPass, condition isStopped).");
             res.code(503);
             res.end();
-            Log.w(TAG, "Сервер остановлен!!!");
             return false;
         }
         if (!isAuthenticated(req)) {
-            Log.w(TAG, "!isAuthenticated");
+            Log.w(TAG, "Не пройдена аутентификация! (method shouldPass, condition isAuthenticated).");
             res.getHeaders().add("WWW-Authenticate", "Basic realm=\"DeviceControl\"");
             res.code(401);
             res.end();
@@ -367,9 +357,9 @@ public class HttpServer {
         return true;
     }
 
-    private boolean isAuthenticated(final AsyncHttpServerRequest req) {
-        final boolean isAuth = !httpСonfig.useAuth;
-        final String authHeader = req.getHeaders().get("Authorization");
+    private boolean isAuthenticated(AsyncHttpServerRequest req) {
+        boolean isAuth = !httpСonfig.useAuth;
+        String authHeader = req.getHeaders().get("Authorization");
 
         if (!isAuth && !TextUtils.isEmpty(authHeader)) {
 
@@ -398,42 +388,9 @@ public class HttpServer {
         return isAuth;
     }
 
-    private String remapPath(final String path) {
-        if (TextUtils.equals("/", path)) {
-            return "index.html";
-        }
-        return path;
-    }
-
     public synchronized void sendQueWebStatus(String strMsg, boolean clearQueue) {
-        Message msg = new Message();
-        msg.what = WebStatus.SEND_TO_QUEUE_WEB_MESSAGE;
-        msg.obj = strMsg;
-        msg.arg1 = (clearQueue ? CLEAR_QUEUE_WEB_MESSAGE : 0);
-        msg.arg2 = 0;
-        Handler h = webStatus.getWebMessageHandler();
-        if (h != null)
-            h.sendMessage(msg);
-    }
-
-    private class СreateProducerConsumer extends Thread {
-        @Override
-        public void run() {
-            Log.d(TAG, "createProducerConsumer  started");
-            while (!isInterrupted()) {
-                try {
-                    if (!webStatus.isEmptySmbMessageQueue()) {
-                        iCurStatus = STAT_LOAD_FILES;
-                        iCurStatusMsg = webStatus.getStrStatus();
-                        Log.w(TAG, "Smb_messageQueue.take:" + iCurStatusMsg);
-                    } else {
-                        Thread.sleep(500);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            Log.w(TAG, "***createProducerConsumer  stoped****");
-        }
+        iCurStatus = STAT_LOAD_FILES;
+        iCurStatusMsg = strMsg;
+        Log.w(TAG, "Smb_messageQueue.take: " + iCurStatusMsg + "\"");
     }
 }

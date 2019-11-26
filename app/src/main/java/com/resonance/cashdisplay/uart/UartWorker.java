@@ -144,7 +144,6 @@ public class UartWorker {
 
         @Override
         public void run() {
-            super.run();
 
             while (!isInterrupted()) {
                 int size = 0;

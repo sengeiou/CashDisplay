@@ -43,7 +43,7 @@ public class HtmlHelper {
     }
 
     @NonNull
-    private static String cleanupPath(final String path) {
+    private static String cleanupPath(String path) {
         if (TextUtils.isEmpty(path)) {
             return "";
         }
@@ -63,9 +63,9 @@ public class HtmlHelper {
     }
 
     @NonNull
-    public static String loadPathAsString(String path) {
+    public static String loadFileAsString(String path) {
         path = cleanupPath(path);
-        return loadPathAsStringInternal(path);
+        return loadFileAsStringInternal(path);
     }
 
     @Nullable
@@ -79,9 +79,9 @@ public class HtmlHelper {
     }
 
     @NonNull
-    private static String loadPathAsStringInternal(final String path) {
+    private static String loadFileAsStringInternal(String path) {
         try {
-            Log.i(TAG, "try to load  file from asset:" + path);
+            Log.i(TAG, "Try to load  file from asset:" + path);
             return loadFromAssets(path);
         } catch (Exception exc) {
             Log.e(TAG, "loadPathAsStringInternal", exc);
@@ -89,7 +89,7 @@ public class HtmlHelper {
         return "";
     }
 
-    private static String loadFromAssets(final String path) throws Exception {
+    private static String loadFromAssets(String path) throws Exception {
         final StringBuilder sb = new StringBuilder();
 
         InputStream htmlStream = null;

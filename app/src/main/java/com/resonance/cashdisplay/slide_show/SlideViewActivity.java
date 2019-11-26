@@ -255,7 +255,7 @@ public class SlideViewActivity extends AppCompatActivity {
 
                 long StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().sTimeSlideImage);
            // Log.w(TAG, "Time to show  : " + PreferenceParams.getParameters().sTimeSlideImage+" : "+PreferenceParams.getParameters().sVideoOrSlide );
-                while (bShowSlide && (PreferenceParams.getParameters().sVideoOrSlide==PreferenceParams._SLIDE)) {
+                while (bShowSlide && (PreferenceParams.getParameters().sVideoOrSlide==PreferenceParams.SLIDE)) {
 
                     if (recyclerView != null) {
 

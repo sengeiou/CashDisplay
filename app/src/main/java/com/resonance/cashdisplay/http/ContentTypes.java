@@ -78,8 +78,8 @@ public class ContentTypes {
     }
 
     @NonNull
-    public String getContentType(final String path) {
-        final String type = tryGetContentType(path);
+    public String getContentType(String path) {
+        String type = tryGetContentType(path);
         if (type != null) {
             return type;
         }
@@ -87,12 +87,12 @@ public class ContentTypes {
     }
 
     @Nullable
-    private String tryGetContentType(final String path) {
-        final int index = path.lastIndexOf(".");
+    private String tryGetContentType(String path) {
+        int index = path.lastIndexOf(".");
         if (index != -1) {
-            final String fileExtension = path.substring(index + 1);
-            Log.w(TAG, "fileExtension: "+ fileExtension);
-            final String ct = contentTypeTable.get(fileExtension);
+            String fileExtension = path.substring(index + 1);
+            Log.w(TAG, "fileExtension: \""+ fileExtension + "\"");
+            String ct = contentTypeTable.get(fileExtension);
             if (ct != null) {
                 return ct;
             }
