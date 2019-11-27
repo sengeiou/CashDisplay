@@ -17,10 +17,6 @@ import java.io.OutputStream;
 
 import static com.resonance.cashdisplay.PreferenceParams.DEF_UARTS;
 
-//import android.util.Log;
-//import com.resonance.cashdisplay.SerialPortFinder;
-
-
 /**
  * Класс обработчик данных от USART
  */
@@ -65,7 +61,12 @@ public class UartWorker {
 
         // инит порта
         try {
-            serialPort = new SerialPort(new File(SERIAL_PORT), DATA_BAUDRATE, flags);
+            serialPort = SerialPort
+                    .newBuilder(new File(SERIAL_PORT), DATA_BAUDRATE) // Serial address, baud rate
+                    .parity(0) // Parity bit; 0: No parity bit (NONE, default); 1: Odd parity bit (ODD); 2: Even parity bit (EVEN)
+                    .dataBits(8) // Data bits, default 8; optional values are 5 ~ 8
+                    .stopBits(1) // Stop bit, default 1; 1: 1 stop bit; 2: 2 stop bit
+                    .build();
 
         } catch (SecurityException e) {
             Log.e(TAG, "SecurityException: " + e.getMessage());
@@ -96,8 +97,8 @@ public class UartWorker {
      * Закрытие порта
      */
     public void closeSerialPort() {
+        if (mReadThread != null) mReadThread.interrupt();
         if (serialPort != null) {
-            mReadThread.interrupt();
             serialPort.close();
             serialPort = null;
             Log.w(TAG, "SerialPort CLOSE");
@@ -145,35 +146,26 @@ public class UartWorker {
         @Override
         public void run() {
 
+            int size;
             while (!isInterrupted()) {
-                int size = 0;
-                byte[] buffer;
-                if (serialPort != null) {
-                    try {
-                        if (mInputStream == null) {
-
-                            sendMsgToParent(ACTION_UART_ERROR, null, 0);
-                            this.interrupt();
-                            return;
-                        }
-                        if (mInputStream.available() > 0) {
-                            buffer = new byte[mInputStream.available()];
-                            for (int i = 0; i < buffer.length; i++)
-                                buffer[i] = 0;
-                            size = mInputStream.read(buffer);
-                            if (size > 0) {
-                                if (mHandler != null)
-                                    mHandler.obtainMessage(ACTION_UART_READ, 1, size, (byte[]) buffer).sendToTarget();
-                            }
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                try {
+                    if (mInputStream == null || serialPort == null) {
                         sendMsgToParent(ACTION_UART_ERROR, null, 0);
                         return;
                     }
+                    byte[] buffer = new byte[64];
+                    size = mInputStream.read(buffer);
+                    if (size > 0) {
+                        if (mHandler != null)
+                            mHandler.obtainMessage(ACTION_UART_READ, 1, size, buffer).sendToTarget();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    sendMsgToParent(ACTION_UART_ERROR, null, 0);
+                    return;
                 }
             }
-            Log.w("SSS", "ReadThread  CLOSED");
+            Log.w(TAG, "ReadThread  CLOSED");
         }
     }
 
