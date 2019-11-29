@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 
+import com.crashlytics.android.Crashlytics;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.PreferenceParams;
@@ -150,6 +151,7 @@ public class UartWorker {
             while (!isInterrupted()) {
                 try {
                     if (mInputStream == null || serialPort == null) {
+                        Log.e(TAG, "SerialPort or it's mInputStream became null unexpectedly");
                         sendMsgToParent(ACTION_UART_ERROR, null, 0);
                         return;
                     }
@@ -162,6 +164,7 @@ public class UartWorker {
                 } catch (IOException e) {
                     e.printStackTrace();
                     sendMsgToParent(ACTION_UART_ERROR, null, 0);
+                    Crashlytics.logException(e);
                     return;
                 }
             }

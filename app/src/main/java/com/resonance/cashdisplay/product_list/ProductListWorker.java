@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
+import com.resonance.cashdisplay.PreferenceParams;
 import com.resonance.cashdisplay.PreferencesValues;
 import com.resonance.cashdisplay.R;
 
@@ -151,7 +152,7 @@ public class ProductListWorker {
      */
     private void updateScreen(int position, boolean highlightItem) {
         adapterProductList.notifyDataSetChanged();
-        scrollToPosition(position, highlightItem);
+        scrollToPosition(position, PreferenceParams.getParameters().highlightItem && highlightItem);
         setProductImage(position);
         updateTotalValues();
     }

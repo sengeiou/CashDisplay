@@ -38,7 +38,7 @@
               <a class="nav-link" id="pills-indicator-tab" data-toggle="pill" href="#pills-indicator" role="tab"
                 aria-controls="pills-indicator" aria-selected="false">Налаштування індикатора</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" style="display: none">
               <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab"
                 aria-controls="pills-profile" aria-selected="false">Аутентифікація</a>
             </li>
@@ -51,58 +51,70 @@
           <div class="tab-content" id="pills-tabContent" style="max-width: 540px;">
             <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
               <form action="setsettings" method="post">
-
+			  
                 <div class="form-group">
-                  <label>IP адреса серверу:</label>
+				  <h5>Параметри файлового сервера</h5>
+			      <hr>
+                  <label>IP адреса сервера:</label>
                   <input type="text" class="form-control" id="host"title="Вкажiть IP адресу файлового серверу">
-                  <label>Ім'я користувача для авторизації на сервері:</label>
+                  
+				  <label>Ім'я користувача для авторизації на сервері:</label>
                   <input type="text" class="form-control" id="ftp_user" title="Якщо необхідно виконати анонімне підключення, залиште порожніми поля користувача і пароль">
-                  <label>Пароль для авторизації на сервері:</label>
+                  
+				  <label>Пароль для авторизації на сервері:</label>
                   <input type="password" class="form-control" id="ftp_pass">
-
                   <!--div class="custom-control custom-checkbox">
                     <input type="checkbox" class="custom-control-input" id="enter_anon" disabled>
                     <label class="custom-control-label" for="enter_anon">Анонімний вхід</label>
                   </div-->
-                </div>
-
-
-                <div class="form-group">
-                  <label>шлях до папки з допоміжними зображеннями :</label>
-                  <input type="text" class="form-control" id="host_screen_img"title="Вкажiть шлях до папки, що містить фоновi зображення, а також зображення, яki, будуть замiнювати вiдсутнi зображення для товарiв &#013;наприклад:/exchange/screen/">
-
-                  <label>шлях до папки з зображеннями товарiв:</label>
-                  <input type="text" class="form-control" id="host_img"title="Вкажiть шлях до папки, що містить зображення товарiв&#013;наприклад: /exchange/IMG/">
-
-                  <label>шлях до папки з відео:</label>
-                  <input type="text" class="form-control" id="host_video"title="Вкажiть шлях до папки, що містить вiдео,&#013;наприклад: /exchange/Video/">
-                  <label>шлях до папки з зображеннями для слайдшоу:</label>
-                  <input type="text" class="form-control" id="host_slide"title="Вкажiть шлях до папки, що містить зображення для слайдшоу,&#013;наприклад: /exchange/Slide/">
-
-                </div>
-                <p>
-                  <label>Ресурс зберігання файлів, SD CARD : </label>
-                  <label id="id_lab_sdcard_state">...</label>
-                </p>
-
-                <div class="form-group">
+				  
+				  <div class="form-group">
                   <label>Тип протоколу для виконання завантаження:</label>
-                
                     <select id="protocol_select" class="btn btn-light" style="border: 1px solid #CCC; background-color:#fff; width:100%; margin-bottom: 2%; float: left;">
-  
                       <option>SMB1</option>
                       <option>SMB2</option>
-                      <option>FTP</option>
-                      
+                      <option>FTP</option>             
                     </select>
-
                   </div>
+                </div>
+				
+				<br>
+			    <hr>
+				  
+                <div class="form-group">
+				  <h5>Шляхи до потрібних файлів</h5>
+			      <hr>
+                  <label>Шлях до папки з допоміжними зображеннями:</label>
+                  <input type="text" class="form-control" id="host_screen_img"title="Вкажiть шлях до папки, що містить фоновi зображення, а також зображення, яki, будуть замiнювати вiдсутнi зображення для товарiв &#013;наприклад:/exchange/screen/">
 
-                <br>
+                  <label>Шлях до папки з зображеннями товарiв:</label>
+                  <input type="text" class="form-control" id="host_img"title="Вкажiть шлях до папки, що містить зображення товарiв&#013;наприклад: /exchange/IMG/">
 
-                <button type="button" class="btn btn-success" id="btn_download_files">Виконати завантаження файлів</button>
-                   
-              </form>
+                  <label>Шлях до папки з відео:</label>
+                  <input type="text" class="form-control" id="host_video"title="Вкажiть шлях до папки, що містить вiдео,&#013;наприклад: /exchange/Video/">
+                  
+				  <label>Шлях до папки з зображеннями для слайдшоу:</label>
+                  <input type="text" class="form-control" id="host_slide"title="Вкажiть шлях до папки, що містить зображення для слайдшоу,&#013;наприклад: /exchange/Slide/">
+                </div>
+				
+			    <hr>	
+				
+				<button type="button" class="btn btn-success" id="btn_download_files" style="margin-top: 10px;">Виконати завантаження файлів</button>
+						
+				<br>		
+				<p>	
+				
+				<div class="custom-control custom-checkbox">
+				  <input type="checkbox" class="custom-control-input" id="chk_download_at_start" name="chk_download_at_start">
+				  <label class="custom-control-label" for="chk_download_at_start">Завантажувати зображення та відео в індикатор при увімкненні</label>
+				</div> 
+						
+				<hr>
+				
+                <label>Ресурс зберігання файлів, SD CARD : </label>
+                <label id="id_lab_sdcard_state">...</label>
+
+			  </form>
 
               <!-- <div id="status" style="font-weight: bold">
                 <div class="spinner-border" role="status">
@@ -112,53 +124,88 @@
             </div>
 
             <div class="tab-pane fade" id="pills-indicator" role="tabpanel" aria-labelledby="pills-indicator-tab">
-              <div class="form-group">
-
-                <div class="form-group">
-                  <label>комунiкацiйний порт для управлiння:</label>
-                  <select id="uart_select" class="btn btn-light" style="border: 1px solid #CCC; background-color:#fff; width:69%; margin-right: 2%; float: left;">
-
-                    <option>EKKR</option>
-                    <option>PC</option>
-                  </select>
-
-                </div>
-
-                <div class="custom-control custom-checkbox">
-                  <input type="checkbox" class="custom-control-input" id="chk_download_at_start" name="chk_download_at_start">
-                  <label class="custom-control-label" for="chk_download_at_start">завантажувати зображення і відео при стартi</label>
-                </div>
-                <div class="custom-control custom-checkbox">
-                  <input type="checkbox" class="custom-control-input" id="ck_enableVideo" name="ck_enableVideo">
-                  <label class="custom-control-label" for="ck_enableVideo">Дозволити програвання відео/слайдшоу</label>
-                </div>
-                <br>
-                <div class="btn-group btn-group-toggle " data-toggle="buttons" style="margin-bottom: 5px;">
-
-                  <label class="btn btn-secondary active" id="video">
-                    <input type="radio" name="options_" id="option_video_play" autocomplete="off" > Відео
-                  </label>
-                  <label class="btn btn-secondary" id="slide">
-                    <input type="radio" name="options_" id="option_slide_play" autocomplete="off" checked> Слайдшоу
-                  </label>
-                </div>
-                <br>
-                <label>Тайм-аут відтворення відео/слайдшоу(секунд):</label>
-                <input type="number" class="form-control" id="timeout_video" data-toggle="tooltip" title="тайм-аут, після закінчення якого, буде програватися відеоролик або показ слайдшоу">
+	
+			  <div class="form-group">
+				<h5>З'єднання з керуючим пристроєм</h5>
+				<hr>
+				<label>Комунiкацiйний порт:</label>
+				<select id="uart_select" class="btn btn-light" style="border: 1px solid #CCC; background-color:#fff; width:69%; margin-right: 2%; float: left;">
+				  <option>EKKR</option>
+				  <option>PC</option>
+				</select>
               </div>
-
-
-
-              <div class="slide_play" style="display: none">
-                <div class="form-group">
-
-                  <label>Час затримки зображення при показi слайдшоу:</label>
-                  <input type="number" class = "form-control" id="time_slide_image" data-toggle="tooltip" title="Час затримки зображення при показi слайдшоу">
-
+			  
+			  <br>
+			  <hr>
+				
+			  <div class="form-group">
+				<h5>Параметри мережі</h5>
+				<hr>
+                <div style="margin-top: 5px;">
+                  <span>IP адреса:</span>
+				  <br>
+                  <div class="btn-group btn-group-toggle " style="margin-top: 5px;" data-toggle="buttons">
+                    <label class="btn btn-secondary active" id="stat">
+                      <input type="radio" name="radio_adress" id="option_static" autocomplete="off" > Статична
+                    </label>
+                    <label class="btn btn-secondary" id="dynam">
+                      <input type="radio" name="radio_adress" id="option_dynamic" autocomplete="off" checked> Динамiчна
+                    </label>
+                  </div>
+				  <br>
+				  <p>
                 </div>
-              </div>
+                <div class="ip_adress">
+                  <div class="form-group">
+                    <label>IP:</label>
+                    <input type="text" class="form-control" id="stat_adress">
 
-              <!--div class="form-group">
+                    <label>Маска:</label>
+                    <input type="text" class="form-control" id="stat_mask">
+
+                    <label>Шлюз:</label>
+                    <input type="text" class="form-control" id="stat_gate">
+
+                    <label>DNS:</label>
+                    <input type="text" class="form-control" id="stat_dns">
+                  </div>
+                </div>
+              </div>	
+
+			  <hr>
+			
+			  <div class="form-group">
+			    <h5>Відтворення мультимедіа</h5>
+				<hr>
+				<div class="custom-control custom-checkbox">
+				  <input type="checkbox" class="custom-control-input" id="ck_enable_video" name="ck_enable_video">
+				  <label class="custom-control-label" for="ck_enable_video">Дозволити відтворення відео/слайдшоу</label>
+			    </div>
+				<div class="form-group" id="div_multimedia_settings" style="display: none">
+				  <br>
+			      <div class="btn-group btn-group-toggle " data-toggle="buttons" style="margin-bottom: 5px;">
+				    <label class="btn btn-secondary active" id="video">
+				      <input type="radio" name="options_" id="option_video_play" autocomplete="off" > Відео
+				    </label>
+				    <label class="btn btn-secondary" id="slide">
+				      <input type="radio" name="options_" id="option_slide_play" autocomplete="off" checked> Слайдшоу
+				    </label>
+				  </div>
+				  <br>
+				  <div class="form-group">
+				    <label>Гучність % (0-100):</label>
+                    <input type="number" class = "form-control" id="volume_video" data-toggle="tooltip" title="Гучність, з якою буде програватися відеоролик" onchange="handleChange(this);">
+				  
+				    <label>Тайм-аут відтворення відео/слайдшоу (секунд):</label>
+			        <input type="number" class="form-control" id="timeout_video" data-toggle="tooltip" title="Тайм-аут, після закінчення якого, буде програватися відеоролик або показ слайдшоу">
+
+                    <label id="timeSlideImageLabel" style="display: none">Час показу одного зображення при відтворенні слайдшоу:</label>
+                    <input type="number" class = "form-control" id="timeSlideImageInput" style="display: none" data-toggle="tooltip" title="Час показу одного зображення при відтворенні слайдшоу">
+                  </div>
+			    </div>
+			  </div>
+			  
+			  <!--div class="form-group">
                 <label>Оберіть шрифт відображення рядків та його розмiр:</label>
               
                   <select id="font-select" class="btn btn-light" style="border: 1px solid #CCC; background-color:#fff; width:69%; margin-right: 2%; float: left;">
@@ -173,34 +220,37 @@
 
                 <input type="number" class="form-control" id="id_font_size" data-toggle="tooltip" title="Розмiр тексту" style="width: 29%;
                 height: 2.3em;;">
-                </div-->
-
-                <div class="form-group">
-                  <label>Гучність % (0-100):</label>
-                <input type="number" class = "form-control" id="volume_video" data-toggle="tooltip" title="гучність з якою буде програватися відеоролик" onchange="handleChange(this);">
-                </div>
-
+              </div-->
+			  
+		      <hr>				
+				
               <div class="form-group">
+			  	<h5>Налаштування інтерфейсу</h5>
+				<hr>
+				<div class="custom-control custom-checkbox">
+				  <input type="checkbox" class="custom-control-input" id="highlight_item" name="highlight_item">
+				  <label class="custom-control-label" for="highlight_item">Виділяти підсвічуванням позицію товару, яка була додана чи змінена (не для ResPOS)</label>
+				</div>
+				
+				<br>
+				
                 <label>Зображення, що буде замінювати відсутній файл зображення товару:</label>
-                  <input type="text" class="form-control" id="id_background_img" data-toggle="tooltip" title="" onchange="handleChange(this);">
+                <input type="text" class="form-control" id="id_background_img" data-toggle="tooltip" title="" onchange="handleChange(this);">
 
-
-              </div>
-                  <hr>
-            
-                  <div class="form-group">
-                    <label>Фонове зображення экрану "Список покупок":</label>
-                    <input type="text" class="form-control" id="id_back_screen_shoppinglist" title="Вкажiть назву файлу зображення, що буде вiдображатись на екранi 'Список покупок'">
+                <label>Фонове зображення экрану "Список покупок":</label>
+                <input type="text" class="form-control" id="id_back_screen_shoppinglist" title="Вкажiть назву файлу зображення, що буде вiдображатись на екранi 'Список покупок'">
   
-                    <label>Фонове зображення экрану "Каса не працює":</label>
-                    <input type="text" class="form-control" id="id_back_screen_cash_not_work" title="Вкажiть назву файлу зображення, що буде вiдображатись на екранi 'Каса не працює'">
+                <label>Фонове зображення экрану "Каса не працює":</label>
+                <input type="text" class="form-control" id="id_back_screen_cash_not_work" title="Вкажiть назву файлу зображення, що буде вiдображатись на екранi 'Каса не працює'">
 
-                    <label>Фонове зображення экрану "Дякуємо за покупку":</label>
-                    <input type="text" class="form-control" id="id_back_screen_thanks"title="Вкажiть назву файлу зображення, що буде вiдображатись на екранi 'Дякуємо за покупку'">
-                  </div>
+                <label>Фонове зображення экрану "Дякуємо за покупку":</label>
+                <input type="text" class="form-control" id="id_back_screen_thanks"title="Вкажiть назву файлу зображення, що буде вiдображатись на екранi 'Дякуємо за покупку'">
+              </div>
+
             </div>
-
-            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+			
+			
+            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" style="display: none">
               <div class="form-group">
                 <label>Адміністратор:</label>
                 <input type="text" class="form-control" id="admin_user">
@@ -208,65 +258,35 @@
                 <label>Пароль:</label>
                 <input type="password" class="form-control" id="admin_pass">
               </div>
-
-              <div style="margin-top: 5px;">
-                <span>IP адреса:</span><br>
-                <div class="btn-group btn-group-toggle " data-toggle="buttons">
-
-                  <label class="btn btn-secondary active" id="stat">
-                    <input type="radio" name="radio_adress" id="option_static" autocomplete="off" > Статична
-                  </label>
-                  <label class="btn btn-secondary" id="dynam">
-                    <input type="radio" name="radio_adress" id="option_dynamic" autocomplete="off" checked> Динамiчна
-                  </label>
-                </div>
-              </div><br>
-
-              <div class="ip_adress">
-                <div class="form-group">
-                  <label>IP:</label>
-                  <input type="text" class="form-control" id="stat_adress">
-
-                  <label>Маска:</label>
-                  <input type="text" class="form-control" id="stat_mask">
-
-                  <label>Шлюз:</label>
-                  <input type="text" class="form-control" id="stat_gate">
-
-                  <label>DNS:</label>
-                  <input type="text" class="form-control" id="stat_dns">
-                </div>
-              </div>
               
               <!-- <button type="button" class="btn btn-primary" id="btn_save_admin_data"  name="send">Застосувати</button> -->
             </div>
 
             <div class="tab-pane fade" id="pills-update" role="tabpanel" aria-labelledby="pills-update-tab">
-            
-                <p>
-                  <label id="lab_current_ver">Поточна версія:</label>
-                  </p>
-
+			  <h5>Оновлення ПЗ</h5>
+			  <hr>
+              <label id="lab_current_ver">Поточна версія:</label>
               <div>
                 <!--p>Укажіть файл оновлення
                 </p-->
                 <!--input type="file" id="upfile" name="upfile" accept=".apk"/-->
                 <!-- <button type="button" id="#1" name="send" class="btn btn-secondary">Отправить</button> -->
-
                 <div style="margin-bottom:10px">
                     <button type="button" id="btn_remote_update" class="btn btn-success">Оновлення ПЗ</button>
-
                     <!--button type="button" id="#2" class="btn btn-primary">Локальне оновлення</button-->
                     <button type="button" style="margin-left:150px" id="btn_reboot" class="btn btn-light">Перезавантажити систему</button>
                 </div>
-                
               </div>
-              
             </div>
+			
+			<hr>
+			
           </div>
+		  		  
         </div>
         
       </div>
+	  
       <div class="col-md-2"></div>
 
     </div>
@@ -317,6 +337,7 @@
     var def_chk_download_at_start = "unchecked";
     var def_font_size = 10;
     var def_volume_video = 50;
+	var def_highlightItem = "unchecked";
     var def_stat_adress = "0.0.0.0";
     var def_stat_mask = "0.0.0.0";
     var def_stat_gate = "0.0.0.0";
@@ -326,8 +347,6 @@
     var def_option_video_play = "true";
     var def_option_slide_play = "false";
     var def_time_slide_image = "10";
-
-
 
     var raw_request_counter = 0;
 
@@ -352,14 +371,15 @@
         return true;
     }
 
-
     (function () {
       $("#video").click(function () {
-        $(".slide_play").hide();
+        $("#timeSlideImageLabel").hide();
+        $("#timeSlideImageInput").hide();
       });
 
       $("#slide").click(function () {
-        $(".slide_play").show();
+        $("#timeSlideImageLabel").show();
+        $("#timeSlideImageInput").show();
       });
 
       $("#stat").click(function () {
@@ -368,14 +388,25 @@
       $("#dynam").click(function () {
         $(".ip_adress").hide();
       });
+	  
+	  $("#ck_enable_video").click(ck_enableVideoHandler);
     })();
 
-     $(function(){
-        $(".dropdown-menu a").click(function(){
-          $(".btn:first-child").text($(this).text());
-          $(".btn:first-child").val($(this).text());
-        });
+    // checks specified checkbox and make appropriate changes
+    function ck_enableVideoHandler() {
+      if ($("#ck_enable_video").is(":checked")){
+		$("#div_multimedia_settings").show();
+	  } else {
+	    $("#div_multimedia_settings").hide();
+	  }
+    };
+
+    $(function(){
+      $(".dropdown-menu a").click(function(){
+        $(".btn:first-child").text($(this).text());
+        $(".btn:first-child").val($(this).text());
       });
+    });
 
       $("#host").keyup(function()
         {
@@ -449,12 +480,11 @@
         }
       });
 
-      function handleChange(input) {
-    if (input.value < 0) input.value = 0;
-    if (input.value > 100) input.value = 100;
+    function handleChange(input) {
+      if (input.value < 0) input.value = 0;
+      if (input.value > 100) input.value = 100;
     };
 
-       
 /***************************************************************************************/
     function poll_status() {
       console.log("Poll status");
@@ -497,8 +527,6 @@
 
         }
 
-
-
         if (!passed && (self.last_status == NO_CONNECTION)) {
           last_status = NO_CONNECTION;
           document.getElementById("status").innerHTML = "помилка зв'язку";
@@ -534,11 +562,11 @@
       document.getElementById("host_slide").value = def_host_slide;
       document.getElementById("ftp_user").value = def_user;
       document.getElementById("ftp_pass").value = def_pass;
-      document.getElementById("ck_enableVideo").checked = def_enableVideo;
+      document.getElementById("ck_enable_video").checked = def_enableVideo;
       document.getElementById("volume_video").value = def_volume_video;
-
+	  document.getElementById("highlight_item").checked = def_highlightItem;
+	  
      // document.getElementById("id_font_size").value = def_font_size;
-
 
       document.getElementById("admin_user").value = def_admin_user;
       document.getElementById("admin_pass").value = def_admin_pass;
@@ -547,8 +575,7 @@
      // $("#font-select").val("Ubuntumono");
       $("#protocol_select").val("SMB1");
 
-
-      document.getElementById("chk_download_at_start").checked = def_chk_download_at_start;
+    //  document.getElementById("chk_download_at_start").checked = def_chk_download_at_start;
 
       // get value
       //console.log( $("#font-select").val());
@@ -576,8 +603,9 @@
           console.log("Got settings");
           console.log(httpRequest.responseText);
           var myArr = JSON.parse(httpRequest.responseText);
-          document.getElementById("ck_enableVideo").checked = myArr.enable_video;
-
+          document.getElementById("ck_enable_video").checked = myArr.enable_video;
+      ck_enableVideoHandler();
+		  
           document.getElementById("host").value = myArr.host;
           document.getElementById("host_img").value = myArr.host_img;
           document.getElementById("host_screen_img").value = myArr.host_screen_img;
@@ -597,7 +625,8 @@
 
 
           document.getElementById("volume_video").value = myArr.volume;
-
+		  document.getElementById("highlight_item").checked = myArr.highlightItem;
+		  
           document.getElementById("stat_adress").value = myArr.stat_adress;
           document.getElementById("stat_mask").value = myArr.stat_mask;
           document.getElementById("stat_gate").value = myArr.stat_gate;
@@ -608,10 +637,9 @@
           document.getElementById("id_background_img").value = myArr.def_background_img;
 
 
-          document.getElementById("time_slide_image").value = myArr.time_slide_image;
+          document.getElementById("timeSlideImageInput").value = myArr.time_slide_image;
           document.getElementById("option_video_play").checked = myArr.option_video_slide;
           document.getElementById("option_slide_play").checked = !myArr.option_video_slide;
-
 
 
 
@@ -623,9 +651,6 @@
           def_stat_gate = myArr.stat_gate;
           def_stat_dns = myArr.stat_dns;
           def_option_dynamic = myArr.dhcp;
-
-
-
 
 
           if (myArr.dhcp === false ){
@@ -662,6 +687,7 @@ console.log("*Init option_video_play: "+document.getElementById("option_video_pl
 
         }
       };
+
       httpRequest.open("GET", "/getsettings");
       httpRequest.send();
     });
@@ -763,7 +789,8 @@ console.log("option_dynamic: "+document.getElementById("option_dynamic").checked
         ftp_pass: document.getElementById("ftp_pass").value,
         timeout_video: document.getElementById("timeout_video").value,
         volume: document.getElementById("volume_video").value,
-        enable_video: document.getElementById("ck_enableVideo").checked,
+		highlightItem: document.getElementById("highlight_item").checked,
+        enable_video: document.getElementById("ck_enable_video").checked,
         download_at_start:document.getElementById("chk_download_at_start").checked,
       //  font_size: document.getElementById("id_font_size").value,
 
@@ -781,8 +808,7 @@ console.log("option_dynamic: "+document.getElementById("option_dynamic").checked
         admin_pass: document.getElementById("admin_pass").value,
         dhcp: document.getElementById("option_dynamic").checked,
 
-        time_slide_image: document.getElementById("time_slide_image").value,
-
+        time_slide_image: document.getElementById("timeSlideImageInput").value,
 
         option_video_slide:  document.getElementById("option_video_play").checked,
 

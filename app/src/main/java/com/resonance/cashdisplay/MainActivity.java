@@ -172,7 +172,6 @@ public class MainActivity extends Activity {
 
         //UART
         uartWorker = new UartWorker(uartHandler);
-        setVisibleContext(CONTEXT_CONNECT, 0);
         if (uartWorker.openSerialPort(UartWorker.getCoreNameUart(preferenceParams.sUartName), 0, 0) == 0) {
             productInfo.setStatusConnection("інтерфейс RS232 ініціалізованo");
         } else {
@@ -554,7 +553,7 @@ public class MainActivity extends Activity {
                             productInfo.setStatusConnection("*** Вiдсутнiй SD носiй ***");
                             productInfo.setStatusConnection2("*** Вiдсутнiй SD носiй ***");
                             uartWorker.closeSerialPort();
-                            Log.e(TAG, "Вiдсутнiй SD носiй");
+                            Log.w(TAG, "SD-card is absent");
                         } else
                             imageSdCardError.setVisibility(View.INVISIBLE);
                     });
@@ -608,10 +607,10 @@ public class MainActivity extends Activity {
                         imageSdCardError.setVisibility(View.VISIBLE);
                         sound.setVolume(80);
                         sound.playSound(Sound.WARNING_VOICE);
-
                         productInfo.setStatusConnection("*** Вiдсутнiй SD носiй ***");
                         productInfo.setStatusConnection2("*** Вiдсутнiй SD носiй ***");
                         uartWorker.closeSerialPort();
+                        Log.w(TAG, "SD-card is absent");
                     }
 
                     if (result == 1) {
