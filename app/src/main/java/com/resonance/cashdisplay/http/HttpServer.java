@@ -157,7 +157,6 @@ public class HttpServer {
                 responseBody.put("admin_pass", prefValues.sAdminPassw);
                 responseBody.put("download_at_start", prefValues.sDownloadAtStart);
                 responseBody.put("volume", prefValues.sPercentVolume);
-                responseBody.put("highlightItem", prefValues.highlightItem);
                 responseBody.put("stat_adress", prefValues.sIP);
                 responseBody.put("stat_mask", prefValues.sMask);
                 responseBody.put("stat_gate", prefValues.sGW);
@@ -298,7 +297,6 @@ public class HttpServer {
                 if (prefValues.sPercentVolume != prevVolume) {
                     Sound.setVolume(prefValues.sPercentVolume);
                 }
-                prefValues.highlightItem = (boolean) jsonObject.get("highlightItem");
 
                 prefValues.sIP = (String) jsonObject.get("stat_adress");
                 prefValues.sMask = (String) jsonObject.get("stat_mask");

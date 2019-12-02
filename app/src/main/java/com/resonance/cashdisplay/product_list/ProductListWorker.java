@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
-import com.resonance.cashdisplay.PreferenceParams;
 import com.resonance.cashdisplay.PreferencesValues;
 import com.resonance.cashdisplay.R;
 
@@ -82,6 +81,7 @@ public class ProductListWorker {
             return;
         if (item.getIndexPosition() <= arrayProductList.size()) {
             arrayProductList.add(item.getIndexPosition(), item);
+            Log.d(TAG, "addProductToList: " + param);
             updateScreen(item.getIndexPosition(), true);
         } else {
             showToast("Невiрнi параметри при внесеннi товару, необхідно очистити чек!");
@@ -95,7 +95,6 @@ public class ProductListWorker {
      * @param param строка "сырых" данных
      */
     public void setProductToList(String param) {
-        Log.d(TAG, "setProductToList :" + param);
         if (arrayProductList.size() > 0) {
             ItemProductList item = parseData(param);
             if (item.getIndexPosition() < 0)
@@ -105,9 +104,11 @@ public class ProductListWorker {
                 ItemProductList presentItem = arrayProductList.get(item.getIndexPosition());
                 if ((presentItem.getCount() != item.getCount())
                         || (presentItem.getSum() != item.getSum())
-                        || (!presentItem.getCode().equals(item.getCode())))
+                        || (!presentItem.getCode().equals(item.getCode()))) {
                     arrayProductList.set(item.getIndexPosition(), item);
-                updateScreen(item.getIndexPosition(), true);
+                    Log.d(TAG, "setProductToList :" + param);
+                    updateScreen(item.getIndexPosition(), true);    // updates only changed position
+                }                                                               // !!! important for ResPOS
             } else {
                 addProductToList(param);
             }
@@ -127,10 +128,10 @@ public class ProductListWorker {
         if (arrayProductList.size() > 0) {
             if ((arrayProductList.size() - 1) >= indexPosition) {
                 arrayProductList.remove(indexPosition);
+                Log.d(TAG, "deleteProductFromList :" + indexPosition);
             }
             updateScreen((arrayProductList.size() > 0) ? (arrayProductList.size() - 1) : 0, false);
         }
-        Log.d(TAG, "deleteProductFromList :" + indexPosition);
     }
 
     /**
@@ -140,8 +141,8 @@ public class ProductListWorker {
      */
     public void clearProductList(String param) {
         arrayProductList.clear();
-        updateScreen(0, false);
         Log.d(TAG, "clearProductList: " + param);
+        updateScreen(0, false);
     }
 
     /**
@@ -152,7 +153,7 @@ public class ProductListWorker {
      */
     private void updateScreen(int position, boolean highlightItem) {
         adapterProductList.notifyDataSetChanged();
-        scrollToPosition(position, PreferenceParams.getParameters().highlightItem && highlightItem);
+        scrollToPosition(position, highlightItem);
         setProductImage(position);
         updateTotalValues();
     }
@@ -176,7 +177,12 @@ public class ProductListWorker {
         if (adapterProductList.getCount() > 0) {
             ItemProductList selectedItem = adapterProductList.getItem(index);
             MainActivity.imageViewProduct.setImageBitmap(AdapterProductList.getImage(selectedItem.getCode()));
-            Log.d(TAG, "selectedItem.getCodTovara() " + selectedItem.getCode());
+
+
+
+
+
+            Log.d(TAG, "selectedItem.getCode() " + selectedItem.getCode());
         } else
             MainActivity.imageViewProduct.setImageBitmap(null);
     }

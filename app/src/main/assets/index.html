@@ -227,13 +227,7 @@
               <div class="form-group">
 			  	<h5>Налаштування інтерфейсу</h5>
 				<hr>
-				<div class="custom-control custom-checkbox">
-				  <input type="checkbox" class="custom-control-input" id="highlight_item" name="highlight_item">
-				  <label class="custom-control-label" for="highlight_item">Виділяти підсвічуванням позицію товару, яка була додана чи змінена (не для ResPOS)</label>
-				</div>
-				
-				<br>
-				
+
                 <label>Зображення, що буде замінювати відсутній файл зображення товару:</label>
                 <input type="text" class="form-control" id="id_background_img" data-toggle="tooltip" title="" onchange="handleChange(this);">
 
@@ -337,7 +331,6 @@
     var def_chk_download_at_start = "unchecked";
     var def_font_size = 10;
     var def_volume_video = 50;
-	var def_highlightItem = "unchecked";
     var def_stat_adress = "0.0.0.0";
     var def_stat_mask = "0.0.0.0";
     var def_stat_gate = "0.0.0.0";
@@ -564,8 +557,7 @@
       document.getElementById("ftp_pass").value = def_pass;
       document.getElementById("ck_enable_video").checked = def_enableVideo;
       document.getElementById("volume_video").value = def_volume_video;
-	  document.getElementById("highlight_item").checked = def_highlightItem;
-	  
+
      // document.getElementById("id_font_size").value = def_font_size;
 
       document.getElementById("admin_user").value = def_admin_user;
@@ -625,8 +617,7 @@
 
 
           document.getElementById("volume_video").value = myArr.volume;
-		  document.getElementById("highlight_item").checked = myArr.highlightItem;
-		  
+
           document.getElementById("stat_adress").value = myArr.stat_adress;
           document.getElementById("stat_mask").value = myArr.stat_mask;
           document.getElementById("stat_gate").value = myArr.stat_gate;
@@ -789,7 +780,6 @@ console.log("option_dynamic: "+document.getElementById("option_dynamic").checked
         ftp_pass: document.getElementById("ftp_pass").value,
         timeout_video: document.getElementById("timeout_video").value,
         volume: document.getElementById("volume_video").value,
-		highlightItem: document.getElementById("highlight_item").checked,
         enable_video: document.getElementById("ck_enable_video").checked,
         download_at_start:document.getElementById("chk_download_at_start").checked,
       //  font_size: document.getElementById("id_font_size").value,

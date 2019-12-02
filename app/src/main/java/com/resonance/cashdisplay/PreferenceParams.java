@@ -63,7 +63,6 @@ public class PreferenceParams {
         params.sVideoOrSlide = sharedPreferences.getInt("sVideoOrSlide", VIDEO);
 
         params.backgroundShoppingList = sharedPreferences.getString("background_shopping_list", "default_background_picture.png");
-        params.highlightItem = sharedPreferences.getBoolean("highlight_item", false);
         params.backgroundCashNotWork = sharedPreferences.getString("background_cash_not_work", "default_background_picture.png");
         params.backgroundThanks = sharedPreferences.getString("background_thanks", "default_background_picture.png");
 
@@ -117,7 +116,6 @@ public class PreferenceParams {
         sharedPreferences.edit().putInt("sVideoOrSlide", parameters.sVideoOrSlide).apply();
 
         sharedPreferences.edit().putString("background_shopping_list", parameters.backgroundShoppingList).apply();
-        sharedPreferences.edit().putBoolean("highlight_item", parameters.highlightItem).apply();
         sharedPreferences.edit().putString("background_cash_not_work", parameters.backgroundCashNotWork).apply();
         sharedPreferences.edit().putString("background_thanks", parameters.backgroundThanks).apply();
 
