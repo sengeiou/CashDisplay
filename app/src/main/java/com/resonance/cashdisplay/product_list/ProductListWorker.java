@@ -1,11 +1,14 @@
 package com.resonance.cashdisplay.product_list;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Handler;
 import android.text.Spannable;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Toast;
 
 import com.resonance.cashdisplay.Log;
@@ -28,12 +31,21 @@ public class ProductListWorker {
     private final byte SYMBOL_SEPARATOR = (byte) 0x03;
 
     private Context context;
+    // animations for products images
+    private Animation fadeOut;
+    private Animation fadeIn;
 
     private AdapterProductList adapterProductList;
     private ArrayList<ItemProductList> arrayProductList = new ArrayList<ItemProductList>();
 
     public ProductListWorker(Context context) {
         this.context = context;
+
+        fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setDuration(100);
+        fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setDuration(300);
+
         Log.d(TAG, "New ProductListWorker created.");
     }
 
@@ -82,7 +94,7 @@ public class ProductListWorker {
         if (item.getIndexPosition() <= arrayProductList.size()) {
             arrayProductList.add(item.getIndexPosition(), item);
             Log.d(TAG, "addProductToList: " + param);
-            updateScreen(item.getIndexPosition(), true);
+            updateScreen(item.getIndexPosition(), true, true);
         } else {
             showToast("Невiрнi параметри при внесеннi товару, необхідно очистити чек!");
             Log.d(TAG, " ОШИБКА, количество товаров в списке: " + arrayProductList.size() + ", добавляется товар на позицию:" + item.getIndexPosition());
@@ -107,7 +119,7 @@ public class ProductListWorker {
                         || (!presentItem.getCode().equals(item.getCode()))) {
                     arrayProductList.set(item.getIndexPosition(), item);
                     Log.d(TAG, "setProductToList :" + param);
-                    updateScreen(item.getIndexPosition(), true);    // updates only changed position
+                    updateScreen(item.getIndexPosition(), true, true);   // updates only changed position
                 }                                                               // !!! important for ResPOS
             } else {
                 addProductToList(param);
@@ -130,7 +142,7 @@ public class ProductListWorker {
                 arrayProductList.remove(indexPosition);
                 Log.d(TAG, "deleteProductFromList :" + indexPosition);
             }
-            updateScreen((arrayProductList.size() > 0) ? (arrayProductList.size() - 1) : 0, false);
+            updateScreen((arrayProductList.size() > 0) ? (arrayProductList.size() - 1) : 0, false, false);
         }
     }
 
@@ -142,19 +154,20 @@ public class ProductListWorker {
     public void clearProductList(String param) {
         arrayProductList.clear();
         Log.d(TAG, "clearProductList: " + param);
-        updateScreen(0, false);
+        updateScreen(0, false, false);
     }
 
     /**
      * Update list view with new data.
      *
-     * @param position      absolute serial number of item in list view
-     * @param highlightItem indicates if selected item must be highlighted or not
+     * @param position         absolute serial number of item in list view
+     * @param highlightItem    indicates if selected item must be highlighted or not
+     * @param animProductImage changes product images with animation fade out and fade in
      */
-    private void updateScreen(int position, boolean highlightItem) {
+    private void updateScreen(int position, boolean highlightItem, boolean animProductImage) {
         adapterProductList.notifyDataSetChanged();
         scrollToPosition(position, highlightItem);
-        setProductImage(position);
+        setProductImage(position, animProductImage);
         updateTotalValues();
     }
 
@@ -173,14 +186,31 @@ public class ProductListWorker {
         Log.d(TAG, "scrollToPosition: " + position);
     }
 
-    private void setProductImage(int index) {
+    private void setProductImage(int position, boolean animProductImage) {
         if (adapterProductList.getCount() > 0) {
-            ItemProductList selectedItem = adapterProductList.getItem(index);
-            MainActivity.imageViewProduct.setImageBitmap(AdapterProductList.getImage(selectedItem.getCode()));
+            ItemProductList selectedItem = adapterProductList.getItem(position);
+            Bitmap productImage = AdapterProductList.getImage(selectedItem.getCode());
 
+            fadeOut.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
 
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
 
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    MainActivity.imageViewProduct.setImageBitmap(productImage);
+                    MainActivity.imageViewProduct.startAnimation(fadeIn);
+                }
+            });
 
+            if (animProductImage)
+                MainActivity.imageViewProduct.startAnimation(fadeOut);
+            else
+                MainActivity.imageViewProduct.setImageBitmap(productImage);
 
             Log.d(TAG, "selectedItem.getCode() " + selectedItem.getCode());
         } else
