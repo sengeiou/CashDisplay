@@ -1,11 +1,11 @@
 <resources>
     <dimen name="list_header_text_look_0">20sp</dimen>
     <dimen name="list_item_text_look_0">30sp</dimen>
-    <dimen name="list_item_height_look_0">126dp</dimen>
+    <dimen name="list_item_height_look_0">126dp</dimen>  <!-- clear height without list item divider -->
 
     <dimen name="list_header_text_look_1">22sp</dimen>
     <dimen name="list_item_text_look_1">30sp</dimen>
-    <dimen name="list_item_height_look_1">71dp</dimen>
+    <dimen name="list_item_height_look_1">71dp</dimen>   <!-- clear height without list item divider -->
     <dimen name="total_text_look_1">22dp</dimen>
     <dimen name="total_text_num_look_1">36dp</dimen>
 

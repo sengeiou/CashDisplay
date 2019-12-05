@@ -11,8 +11,7 @@
         android:id="@+id/idLay1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_above="@+id/idLayTotalSumm"
-        android:layout_weight="84125"
+        android:layout_weight="8425"
         android:orientation="horizontal">
 
         <ImageView
@@ -33,7 +32,7 @@
                 android:id="@+id/list_header"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="57"
+                android:layout_weight="5785"
                 android:gravity="end"
                 android:orientation="horizontal">
 
@@ -99,7 +98,7 @@
                 android:id="@+id/listview_products"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="943"
+                android:layout_weight="94215"
                 android:choiceMode="singleChoice"
                 android:clickable="true" />
 
@@ -112,7 +111,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_alignParentBottom="true"
-        android:layout_weight="15875"
+        android:layout_weight="1575"
         android:orientation="horizontal">
 
         <!--    dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->

@@ -30,7 +30,7 @@
                 android:id="@+id/list_header"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="4383"
+                android:layout_weight="4256"
                 android:orientation="horizontal">
 
                 <TextView
@@ -114,7 +114,7 @@
                 android:id="@+id/listview_products"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="95617"
+                android:layout_weight="95744"
                 android:choiceMode="singleChoice"
                 android:clickable="true" />
 

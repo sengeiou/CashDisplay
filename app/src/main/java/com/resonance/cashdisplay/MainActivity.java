@@ -322,6 +322,7 @@ public class MainActivity extends Activity {
         textViewTotalSum = (TextView) layoutProductListLook.findViewById(R.id.textview_total_sum);
         imageViewProduct = (ImageView) layoutProductListLook.findViewById(R.id.imageview_product);
 
+        listViewProducts.setDividerHeight(0);   // we create our own dividers, because of bug with last divider visibility
         // appropriate adapter must be created everytime for actual listview for specified look of product list
         listViewProducts.setAdapter(productListWorker.createAdapterProductList(lookCode));
         // item click listener we use ot highlight selected item
