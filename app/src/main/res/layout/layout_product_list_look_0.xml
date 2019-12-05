@@ -11,7 +11,7 @@
         android:id="@+id/idLay1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="8425"
+        android:layout_weight="8413"
         android:orientation="horizontal">
 
         <ImageView
@@ -111,7 +111,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_alignParentBottom="true"
-        android:layout_weight="1575"
+        android:layout_weight="1587"
         android:orientation="horizontal">
 
         <!--    dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->

@@ -333,14 +333,8 @@ public class MainActivity extends Activity {
                     if (totalItemCount == 0)
                         return;
 
-                    int visibleItemCount = (parent.getLastVisiblePosition() - parent.getFirstVisiblePosition()) + 1;
+                    int positionViewPort = position - parent.getFirstVisiblePosition();
 
-                    int positionViewPort = position;
-                    if (totalItemCount > visibleItemCount) {
-                        positionViewPort = visibleItemCount - (totalItemCount - position);
-                        if (positionViewPort < 0)
-                            positionViewPort = 0;
-                    }
                     try {
                         View listItem = parent.getChildAt(positionViewPort);
                         AnimationDrawable animDrawable = (AnimationDrawable) listItem.getBackground();
