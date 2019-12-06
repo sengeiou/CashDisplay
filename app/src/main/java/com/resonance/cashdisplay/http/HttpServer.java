@@ -100,7 +100,7 @@ public class HttpServer {
         mServer.get("/", loginCallback);
         mServer.get("/getsettings", getSettingsCallback);
         mServer.get("/getstatus", getStatusCallback);
-        mServer.post("/download_files", uploadFilesCallback);
+        mServer.post("/upload_files", uploadFilesCallback);
         mServer.post("/start_remote_update", startRemoteUpdateCallback);
         mServer.post("/start_reboot", startRebootCallback);
         mServer.post("/setsettings", setSettingsCallback);
@@ -143,32 +143,32 @@ public class HttpServer {
                 PreferenceParams prefParams = new PreferenceParams();
                 PreferencesValues prefValues = prefParams.getParameters();
 
-                responseBody.put("uart_select", prefValues.sUartName);
-                responseBody.put("host_img", prefValues.sSmbImg);
-                responseBody.put("host_video", prefValues.sSmbVideo);
-                responseBody.put("host_slide", prefValues.sSmbSlide);
-                responseBody.put("host_screen_img", prefValues.sPathToScreenImg);
-                responseBody.put("host", prefValues.sSmbHost);
-                responseBody.put("ftp_user", prefValues.sUser);
-                responseBody.put("ftp_pass", prefValues.sPassw);
+                responseBody.put("uart_select", prefValues.uartName);
+                responseBody.put("host_img", prefValues.smbImg);
+                responseBody.put("host_video", prefValues.smbVideo);
+                responseBody.put("host_slide", prefValues.smbSlide);
+                responseBody.put("host_screen_img", prefValues.pathToScreenImg);
+                responseBody.put("host", prefValues.smbHost);
+                responseBody.put("ftp_user", prefValues.user);
+                responseBody.put("ftp_pass", prefValues.passw);
                 responseBody.put("timeout_video", prefValues.videoTimeout);
-                responseBody.put("enable_video", prefValues.sCheckEnableVideo);
-                responseBody.put("admin_user", prefValues.sAdmin);
-                responseBody.put("admin_pass", prefValues.sAdminPassw);
-                responseBody.put("download_at_start", prefValues.sDownloadAtStart);
-                responseBody.put("volume", prefValues.sPercentVolume);
-                responseBody.put("stat_adress", prefValues.sIP);
-                responseBody.put("stat_mask", prefValues.sMask);
-                responseBody.put("stat_gate", prefValues.sGW);
-                responseBody.put("stat_dns", prefValues.sDNS);
+                responseBody.put("enable_video", prefValues.checkEnableVideo);
+                responseBody.put("admin_user", prefValues.admin);
+                responseBody.put("admin_pass", prefValues.adminPassw);
+                responseBody.put("download_at_start", prefValues.downloadAtStart);
+                responseBody.put("volume", prefValues.percentVolume);
+                responseBody.put("stat_adress", prefValues.ip);
+                responseBody.put("stat_mask", prefValues.mask);
+                responseBody.put("stat_gate", prefValues.gateWay);
+                responseBody.put("stat_dns", prefValues.dns);
 
-                responseBody.put("dhcp", prefValues.sDHCP);
+                responseBody.put("dhcp", prefValues.dhcp);
                 responseBody.put("lab_current_ver", BuildConfig.VERSION_CODE);
-                responseBody.put("protocol", prefValues.sProtocol);
-                responseBody.put("def_background_img", prefValues.sDefaultBackGroundImage);
+                responseBody.put("protocol", prefValues.transferProtocol);
+                responseBody.put("def_background_img", prefValues.defaultBackgroundImage);
 
-                responseBody.put("time_slide_image", prefValues.sTimeSlideImage);
-                responseBody.put("option_video_slide", (prefValues.sVideoOrSlide == PreferenceParams.VIDEO ? true : false));
+                responseBody.put("time_slide_image", prefValues.timeSlideImage);
+                responseBody.put("option_video_slide", (prefValues.videoOrSlide == PreferenceParams.VIDEO ? true : false));
 
                 responseBody.put("image_screen_shoppinglist", prefValues.backgroundShoppingList);
                 responseBody.put("image_screen_cash_not_work", prefValues.backgroundCashNotWork);
@@ -270,57 +270,56 @@ public class HttpServer {
             iCurStatus = STAT_SAVE;
             iCurStatusMsg = "Збереження налаштуваннь ";
 
-            PreferenceParams prefParams = new PreferenceParams();
-            PreferencesValues prefValues = prefParams.getParameters();
+            PreferencesValues prefValues = PreferenceParams.getParameters();
             try {
                 JSONObject jsonObject = new JSONObject(requestBody.toString());
                 Log.d(TAG, "Save settings received from client: " + jsonObject.toString());
 
-                prefValues.sUartName = jsonObject.get("uart_select").toString();
-                prefValues.sSmbImg = jsonObject.get("host_img").toString();
-                prefValues.sSmbVideo = jsonObject.get("host_video").toString();
-                prefValues.sSmbSlide = jsonObject.get("host_slide").toString();
+                prefValues.uartName = jsonObject.get("uart_select").toString();
+                prefValues.smbImg = jsonObject.get("host_img").toString();
+                prefValues.smbVideo = jsonObject.get("host_video").toString();
+                prefValues.smbSlide = jsonObject.get("host_slide").toString();
 
-                prefValues.sSmbHost = jsonObject.get("host").toString();
-                prefValues.sUser = jsonObject.get("ftp_user").toString();
-                prefValues.sPassw = jsonObject.get("ftp_pass").toString();
-                prefValues.sCheckEnableVideo = (boolean) jsonObject.get("enable_video");
+                prefValues.smbHost = jsonObject.get("host").toString();
+                prefValues.user = jsonObject.get("ftp_user").toString();
+                prefValues.passw = jsonObject.get("ftp_pass").toString();
+                prefValues.checkEnableVideo = (boolean) jsonObject.get("enable_video");
                 String timeout_Str = (String) jsonObject.get("timeout_video");
                 prefValues.videoTimeout = Integer.parseInt(timeout_Str.length() > 0 ? timeout_Str : "20");//поставим по умолчанию 5 сек
                 if (prefValues.videoTimeout < 5)
                     prefValues.videoTimeout = 5;
 
-                prefValues.sDownloadAtStart = (boolean) jsonObject.get("download_at_start");
-                int prevVolume = prefValues.sPercentVolume;
+                prefValues.downloadAtStart = (boolean) jsonObject.get("download_at_start");
+                int prevVolume = prefValues.percentVolume;
                 String volume_Str = (String) jsonObject.get("volume");
-                prefValues.sPercentVolume = Integer.parseInt(volume_Str.length() > 0 ? volume_Str : "50");//поставим по умолчанию 50
-                if (prefValues.sPercentVolume != prevVolume) {
-                    Sound.setVolume(prefValues.sPercentVolume);
+                prefValues.percentVolume = Integer.parseInt(volume_Str.length() > 0 ? volume_Str : "50");//поставим по умолчанию 50
+                if (prefValues.percentVolume != prevVolume) {
+                    Sound.setVolume(prefValues.percentVolume);
                 }
 
-                prefValues.sIP = (String) jsonObject.get("stat_adress");
-                prefValues.sMask = (String) jsonObject.get("stat_mask");
-                prefValues.sGW = (String) jsonObject.get("stat_gate");
-                prefValues.sDNS = (String) jsonObject.get("stat_dns");
-                prefValues.sDHCP = (boolean) jsonObject.get("dhcp");
+                prefValues.ip = (String) jsonObject.get("stat_adress");
+                prefValues.mask = (String) jsonObject.get("stat_mask");
+                prefValues.gateWay = (String) jsonObject.get("stat_gate");
+                prefValues.dns = (String) jsonObject.get("stat_dns");
+                prefValues.dhcp = (boolean) jsonObject.get("dhcp");
 
-                prefValues.sProtocol = jsonObject.get("protocol").toString();
-                prefValues.sDefaultBackGroundImage = jsonObject.get("def_background_img").toString();
+                prefValues.transferProtocol = jsonObject.get("protocol").toString();
+                prefValues.defaultBackgroundImage = jsonObject.get("def_background_img").toString();
 
                 String tmpTimeSlideImg = jsonObject.get("time_slide_image").toString();
-                prefValues.sTimeSlideImage = Integer.parseInt(tmpTimeSlideImg.length() > 0 ? tmpTimeSlideImg : "10");
+                prefValues.timeSlideImage = Integer.parseInt(tmpTimeSlideImg.length() > 0 ? tmpTimeSlideImg : "10");
                 String tmpvideo_slide = jsonObject.get("option_video_slide").toString();
-                prefValues.sVideoOrSlide = (tmpvideo_slide.equals("true") ? PreferenceParams.VIDEO : PreferenceParams.SLIDE);
+                prefValues.videoOrSlide = (tmpvideo_slide.equals("true") ? PreferenceParams.VIDEO : PreferenceParams.SLIDE);
 
                 prefValues.backgroundShoppingList = (String) jsonObject.get("image_screen_shoppinglist");
                 prefValues.backgroundCashNotWork = (String) jsonObject.get("image_screen_cash_not_work");
                 prefValues.backgroundThanks = (String) jsonObject.get("image_screen_thanks");
 
-                prefValues.sPathToScreenImg = (String) jsonObject.get("host_screen_img");
+                prefValues.pathToScreenImg = (String) jsonObject.get("host_screen_img");
 
-                prefParams.setParameters(prefValues);
+                PreferenceParams.setParameters(prefValues);
 
-                MainActivity.ethernetSettings.applyEthernetSettings();//контроль измененмя сетевых настроек
+                MainActivity.ethernetSettings.applyEthernetSettings();  //контроль измененмя сетевых настроек
 
                 //сигнал на изменение настройки UART
                 Intent intent = new Intent(UART_CHANGE_SETTINGS);

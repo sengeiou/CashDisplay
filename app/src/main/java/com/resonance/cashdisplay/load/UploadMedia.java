@@ -196,29 +196,29 @@ public class UploadMedia {
 
         initLogFile();//инициализация лог файла для отправки на удаленный сервер
 
-        ShareParam ParseImg = ParseSmbjFolders(prefValues.sSmbImg);
-        ShareParam ParseVideo = ParseSmbjFolders(prefValues.sSmbVideo);
-        ShareParam ParseSlide = ParseSmbjFolders(prefValues.sSmbSlide);
-        ShareParam ParseScreen = ParseSmbjFolders(prefValues.sPathToScreenImg);
+        ShareParam ParseImg = ParseSmbjFolders(prefValues.smbImg);
+        ShareParam ParseVideo = ParseSmbjFolders(prefValues.smbVideo);
+        ShareParam ParseSlide = ParseSmbjFolders(prefValues.smbSlide);
+        ShareParam ParseScreen = ParseSmbjFolders(prefValues.pathToScreenImg);
 
         if (!ParseImg.result) {
-            Log.d(TAG, "Ошибка разбора параметров пути:" + prefValues.sSmbImg);
-            MainActivity.httpServer.sendQueWebStatus("Неправильно вказанi параметри до ресурсу зображень : [" + prefValues.sSmbImg + "]", true);
+            Log.d(TAG, "Ошибка разбора параметров пути:" + prefValues.smbImg);
+            MainActivity.httpServer.sendQueWebStatus("Неправильно вказанi параметри до ресурсу зображень : [" + prefValues.smbImg + "]", true);
             return;
         }
         if (!ParseVideo.result) {
-            Log.d(TAG, "Ошибка разбора параметров пути :" + prefValues.sSmbVideo);
-            MainActivity.httpServer.sendQueWebStatus("Неправильно вказанi параметри до ресурсу вiдео : [" + prefValues.sSmbVideo + "]", true);
+            Log.d(TAG, "Ошибка разбора параметров пути :" + prefValues.smbVideo);
+            MainActivity.httpServer.sendQueWebStatus("Неправильно вказанi параметри до ресурсу вiдео : [" + prefValues.smbVideo + "]", true);
             return;
         }
         if (!ParseSlide.result) {
-            Log.d(TAG, "Ошибка разбора параметров пути :" + prefValues.sSmbSlide);
-            MainActivity.httpServer.sendQueWebStatus("Неправильно вказанi параметри до ресурсу слайдiв : [" + prefValues.sSmbSlide + "]", true);
+            Log.d(TAG, "Ошибка разбора параметров пути :" + prefValues.smbSlide);
+            MainActivity.httpServer.sendQueWebStatus("Неправильно вказанi параметри до ресурсу слайдiв : [" + prefValues.smbSlide + "]", true);
             return;
         }
         if (!ParseScreen.result) {
-            Log.d(TAG, "Ошибка разбора параметров пути :" + prefValues.sPathToScreenImg);
-            MainActivity.httpServer.sendQueWebStatus("Неправильно вказанi параметри до ресурсу фонових зображень : [" + prefValues.sPathToScreenImg + "]", true);
+            Log.d(TAG, "Ошибка разбора параметров пути :" + prefValues.pathToScreenImg);
+            MainActivity.httpServer.sendQueWebStatus("Неправильно вказанi параметри до ресурсу фонових зображень : [" + prefValues.pathToScreenImg + "]", true);
             return;
         }
 
@@ -226,9 +226,9 @@ public class UploadMedia {
 
         //параметры аутентификации
         authParam.clear();
-        authParam.put("User", prefValues.sUser);
-        authParam.put("Passw", prefValues.sPassw);
-        authParam.put("Host", prefValues.sSmbHost);
+        authParam.put("User", prefValues.user);
+        authParam.put("Passw", prefValues.passw);
+        authParam.put("Host", prefValues.smbHost);
 
         //изображения для товаров
         imgParam.clear();
@@ -258,14 +258,14 @@ public class UploadMedia {
         screenImgParam.put("DestinationScreenImg", destinationDirs[SCREEN]);
         screenImgParam.put("extensionArrayScreenImg", new String[]{"*.png", "*.jpg"});
 
-        if (prefValues.sProtocol.equals(DEF_PROTOCOL[SMB2])) {
+        if (prefValues.transferProtocol.equals(DEF_PROTOCOL[SMB2])) {
             uploadThreadStarted = true;
             smbjWorker.doDownload(authParam, imgParam, videoParam, slideParam, screenImgParam);
-        } else if (prefValues.sProtocol.equals(DEF_PROTOCOL[SMB1])) {
+        } else if (prefValues.transferProtocol.equals(DEF_PROTOCOL[SMB1])) {
             uploadThreadStarted = true;
             smbWorker.doDownload(authParam, imgParam, videoParam, slideParam, screenImgParam);
 
-        } else if (prefValues.sProtocol.equals(DEF_PROTOCOL[FTP])) {
+        } else if (prefValues.transferProtocol.equals(DEF_PROTOCOL[FTP])) {
             uploadThreadStarted = true;
             ftpWorker.doDownload(authParam, imgParam, videoParam, slideParam);
         }

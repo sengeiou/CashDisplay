@@ -2,30 +2,30 @@ package com.resonance.cashdisplay;
 
 public class PreferencesValues {
 
-    public String sUartName;
-    public String sSmbHost;
-    public String sSmbImg;
-    public String sSmbVideo;
-    public String sSmbSlide;
-    public String sPathToScreenImg;
-    public String sUser;
-    public String sPassw;
-    public boolean sCheckEnableVideo;
-    public boolean sDownloadAtStart;
+    public String uartName;
+    public String smbHost;
+    public String smbImg;
+    public String smbVideo;
+    public String smbSlide;
+    public String pathToScreenImg;
+    public String user;
+    public String passw;
+    public boolean checkEnableVideo;
+    public boolean downloadAtStart;
     public long videoTimeout;
-    public String sAdmin;
-    public String sAdminPassw;
-    public int sPercentVolume;
-    public boolean sDHCP;
-    public String sIP;
-    public String sMask;
-    public String sGW;
-    public String sDNS;
-    public String sProtocol;//SMB1, SMB2, FTP
-    public String sDefaultBackGroundImage;//Фон по умолчанию на экране
-    public boolean sShowNavigationBar;//показывать строку навигации
-    public int sTimeSlideImage;
-    public int sVideoOrSlide;
+    public String admin;
+    public String adminPassw;
+    public int percentVolume;
+    public boolean dhcp;
+    public String ip;
+    public String mask;
+    public String gateWay;
+    public String dns;
+    public String transferProtocol;//SMB1, SMB2, FTP
+    public String defaultBackgroundImage;//Фон по умолчанию на экране
+    public boolean showNavigationBar;//показывать строку навигации
+    public int timeSlideImage;
+    public int videoOrSlide;
     public String backgroundShoppingList;
     public boolean highlightItem;
     public String backgroundCashNotWork;

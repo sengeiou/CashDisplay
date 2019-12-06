@@ -141,7 +141,7 @@ public class MainActivity extends Activity {
         binding.setProductinfo(productInfo);
 
         sound = new Sound(this);
-        sound.setVolume(preferenceParams.sPercentVolume);
+        sound.setVolume(preferenceParams.percentVolume);
 
         su_preferences = new Modify_SU_Preferences(this);
         su_preferences.setSetupRootCallback(mCallbackRootIsSet);
@@ -172,7 +172,7 @@ public class MainActivity extends Activity {
 
         //UART
         uartWorker = new UartWorker(uartHandler);
-        if (uartWorker.openSerialPort(UartWorker.getCoreNameUart(preferenceParams.sUartName), 0, 0) == 0) {
+        if (uartWorker.openSerialPort(UartWorker.getCoreNameUart(preferenceParams.uartName), 0, 0) == 0) {
             productInfo.setStatusConnection("інтерфейс RS232 ініціалізованo");
         } else {
             Log.e(TAG, "ERROR Open Port");
@@ -524,7 +524,7 @@ public class MainActivity extends Activity {
             if (sound != null) {
                 sound.setVolume(80);
                 sound.playSound(Sound.START_VOICE);
-                sound.setVolume(preferenceParams.sPercentVolume);
+                sound.setVolume(preferenceParams.percentVolume);
             }
 
             try {
@@ -554,7 +554,7 @@ public class MainActivity extends Activity {
                     });
 
                     if (EthernetSettings.isConnected()) {
-                        if (!loadMediaAtStartSystem && preferenceParams.sDownloadAtStart) {
+                        if (!loadMediaAtStartSystem && preferenceParams.downloadAtStart) {
                             loadMediaAtStartSystem = true;
                             uploadMedia.upload();
                         }
@@ -611,7 +611,7 @@ public class MainActivity extends Activity {
                     if (result == 1) {
                         if (BuildConfig.BUILD_TYPE.equals("release")) {
                             if (sizeScreen.x != 1920) //только для 10"
-                                Modify_SU_Preferences.setSystemUIEnabled(preferenceParams.sShowNavigationBar);//спрячем строку навигации
+                                Modify_SU_Preferences.setSystemUIEnabled(preferenceParams.showNavigationBar);//спрячем строку навигации
                         } else
                             Modify_SU_Preferences.setSystemUIEnabled(true);//покажем строку навигации
 
@@ -633,7 +633,7 @@ public class MainActivity extends Activity {
     //событие об окончании настройки сети
     private EthernetSettings.SetupLanCallback mCallbackLanIsSet = new EthernetSettings.SetupLanCallback() {
         @Override
-        public void onSetupLAN(final int result) {
+        public void onSetupLAN(int result) {
             if (!lanSetupAlready) {//запуск только 1 раз
                 lanSetupAlready = true;
                 Log.d(TAG, "mCallbackSetupLAN :" + result);

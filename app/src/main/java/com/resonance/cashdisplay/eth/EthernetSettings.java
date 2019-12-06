@@ -64,7 +64,6 @@ public class EthernetSettings {
             "android.net.ethernet.ETH_STATE_CHANGED";
     public static final String EXTRA_ETH_STATE = "eth_state";
 
-
     //private static final String CMD_ROOT = "busybox whoami";
     private static final String CMD_GET_IP_MASK = "ifconfig eth0";
     private static final String CMD_GET_GW = "ip route show";
@@ -73,7 +72,6 @@ public class EthernetSettings {
     private static final String CMD_ETH_DOWN = "ifconfig eth0 down";
     private static final String CMD_DHCP_START = "ifconfig eth0 dhcp start";
     private static final String CMD_REBOOT = "reboot";
-
 
     private static String currentStatus = "";
     private int isEthAlwaysOn;
@@ -92,8 +90,17 @@ public class EthernetSettings {
         //Получим настройки программы
         PreferencesValues preferencesValues = PreferenceParams.getParameters();
 
-        Log.d(TAG, "get connected mode DHCP: " + preferencesValues.sDHCP);
-        if (preferencesValues.sDHCP) {
+
+
+        com.resonance.cashdisplay.Log.d("1234", PreferenceParams.getParameters().dhcp + " DHCP");
+        com.resonance.cashdisplay.Log.d("1234", PreferenceParams.getParameters().ip + " IP");
+        com.resonance.cashdisplay.Log.d("1234", PreferenceParams.getParameters().mask + " Mask");
+        com.resonance.cashdisplay.Log.d("1234", PreferenceParams.getParameters().gateWay + " Gateway");
+        com.resonance.cashdisplay.Log.d("1234", PreferenceParams.getParameters().dns + " DNS");
+
+
+        Log.d(TAG, "get connected mode DHCP: " + preferencesValues.dhcp);
+        if (preferencesValues.dhcp) {
             if (!isConnected())
                 start_DHCP();
         } else {
@@ -101,11 +108,11 @@ public class EthernetSettings {
 
             Log.d(TAG, "STATIC ip: " + ip_settings.getIp() + " nm: " + ip_settings.getNetmask() + " gw:" + ip_settings.getGateway());
 
-            if ((!ip_settings.getIp().contains(preferencesValues.sIP)) ||
-                    (!ip_settings.getNetmask().contains(preferencesValues.sMask)) ||
-                    (!ip_settings.getGateway().contains(preferencesValues.sGW))) {
+            if ((!ip_settings.getIp().contains(preferencesValues.ip)) ||
+                    (!ip_settings.getNetmask().contains(preferencesValues.mask)) ||
+                    (!ip_settings.getGateway().contains(preferencesValues.gateWay))) {
 
-                set_IP_MASK_GW(preferencesValues.sIP, preferencesValues.sMask, preferencesValues.sGW);
+                set_IP_MASK_GW(preferencesValues.ip, preferencesValues.mask, preferencesValues.gateWay);
             }
         }
         currentStatus = "";
@@ -385,8 +392,6 @@ public class EthernetSettings {
         }
         return result;
     }
-
-
 }
 
 

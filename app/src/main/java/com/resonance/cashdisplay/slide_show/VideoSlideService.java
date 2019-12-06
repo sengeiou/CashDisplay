@@ -60,7 +60,7 @@ public class VideoSlideService {
         public void onReceive(Context context, Intent intent) {
 
             if (intent.getAction().equals(VIDEO_SLIDE_CHANGE_SETTINGS)) {
-                if (PreferenceParams.getParameters().sCheckEnableVideo) {
+                if (PreferenceParams.getParameters().checkEnableVideo) {
                 }
             } else if (intent.getAction().equals(VIDEO_SLIDE_RESET_TIME)) {
                 bResetTimeToPlay = true;
@@ -90,7 +90,7 @@ public class VideoSlideService {
             @Override
             public void run() {
                 // Log.d(TAG, "WatchVideoSlide start");
-                int currentSourceForPlay = PreferenceParams.getParameters().sVideoOrSlide;
+                int currentSourceForPlay = PreferenceParams.getParameters().videoOrSlide;
                 long stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
 
                 while (bEnableMediaPlay) {
@@ -104,7 +104,7 @@ public class VideoSlideService {
                         continue;
                     }
 
-                    if (!PreferenceParams.getParameters().sCheckEnableVideo) {
+                    if (!PreferenceParams.getParameters().checkEnableVideo) {
                         if (bNowPlay) {
                             finishSlideAndVideoPlay();
                             bNowPlay = false;
@@ -140,7 +140,7 @@ public class VideoSlideService {
                             finishSlideAndVideoPlay();
                             break;
                         }
-                        if (PreferenceParams.getParameters().sVideoOrSlide != currentSourceForPlay) {
+                        if (PreferenceParams.getParameters().videoOrSlide != currentSourceForPlay) {
                             //  Log.d(TAG, "----#3,2");
                             stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
                             // Log.d(TAG, "#######1 ");
@@ -152,7 +152,7 @@ public class VideoSlideService {
                         // Log.d(TAG, "----#4");
                     }
                     //Log.d(TAG, "----#4,1");
-                    if (!PreferenceParams.getParameters().sCheckEnableVideo || !bEnableMediaPlay) {
+                    if (!PreferenceParams.getParameters().checkEnableVideo || !bEnableMediaPlay) {
                         stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().videoTimeout);
                         continue;
                     }
@@ -160,7 +160,7 @@ public class VideoSlideService {
                     if (!bNowPlay) {
                         //  Log.d(TAG, "----#6");
                         //  Log.d(TAG, "воспроизведение видео");
-                        if (PreferenceParams.getParameters().sVideoOrSlide == PreferenceParams.VIDEO) {
+                        if (PreferenceParams.getParameters().videoOrSlide == PreferenceParams.VIDEO) {
                             currentSourceForPlay = PreferenceParams.VIDEO;
                             //старт Видео
                             Handler handler = new Handler(Looper.getMainLooper());
@@ -192,7 +192,7 @@ public class VideoSlideService {
                         }
                     } else {
                         // Log.d(TAG, "----#8");
-                        if (PreferenceParams.getParameters().sVideoOrSlide != currentSourceForPlay) {
+                        if (PreferenceParams.getParameters().videoOrSlide != currentSourceForPlay) {
                             //   Log.d(TAG, "----#9");
                             currentSourceForPlay = -1;
                             bNowPlay = false;

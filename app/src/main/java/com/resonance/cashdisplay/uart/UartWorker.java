@@ -181,7 +181,7 @@ public class UartWorker {
             Log.d(TAG, "BroadcastReceiver [uartChangeSettings]");
 
             if (intent.getAction().equals(UART_CHANGE_SETTINGS)) {
-                String newConnection = getCoreNameUart(PreferenceParams.getParameters().sUartName);
+                String newConnection = getCoreNameUart(PreferenceParams.getParameters().uartName);
                 if (!newConnection.equals(SERIAL_PORT)) {
                     closeSerialPort();
                     SERIAL_PORT = newConnection;

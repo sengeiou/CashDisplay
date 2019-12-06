@@ -253,9 +253,9 @@ public class SlideViewActivity extends AppCompatActivity {
         public void run() {
             bShowSlide = true;
 
-                long StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().sTimeSlideImage);
+                long StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().timeSlideImage);
            // Log.w(TAG, "Time to show  : " + PreferenceParams.getParameters().sTimeSlideImage+" : "+PreferenceParams.getParameters().sVideoOrSlide );
-                while (bShowSlide && (PreferenceParams.getParameters().sVideoOrSlide==PreferenceParams.SLIDE)) {
+                while (bShowSlide && (PreferenceParams.getParameters().videoOrSlide==PreferenceParams.SLIDE)) {
 
                     if (recyclerView != null) {
 
@@ -287,7 +287,7 @@ public class SlideViewActivity extends AppCompatActivity {
                         }
 
                     }
-                    StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().sTimeSlideImage);
+                    StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().timeSlideImage);
                    // Log.w(TAG, "2 Time to show  : " + PreferenceParams.getParameters().sTimeSlideImage+" : "+PreferenceParams.getParameters().sVideoOrSlide );
                 };
             StopSlideShow();
