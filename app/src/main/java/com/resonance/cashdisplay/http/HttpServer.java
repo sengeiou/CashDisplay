@@ -301,6 +301,7 @@ public class HttpServer {
                 prefValues.mask = (String) jsonObject.get("stat_mask");
                 prefValues.gateWay = (String) jsonObject.get("stat_gate");
                 prefValues.dns = (String) jsonObject.get("stat_dns");
+                boolean prevDHCP = prefValues.dhcp;             // save to compare below with new value
                 prefValues.dhcp = (boolean) jsonObject.get("dhcp");
 
                 prefValues.transferProtocol = jsonObject.get("protocol").toString();
@@ -319,7 +320,8 @@ public class HttpServer {
 
                 PreferenceParams.setParameters(prefValues);
 
-                MainActivity.ethernetSettings.applyEthernetSettings();  //контроль измененмя сетевых настроек
+                if (!(prevDHCP && prefValues.dhcp))   // if was DHCP and become DHCP - don't apply network settings
+                    MainActivity.ethernetSettings.applyEthernetSettings();  //контроль измененмя сетевых настроек
 
                 //сигнал на изменение настройки UART
                 Intent intent = new Intent(UART_CHANGE_SETTINGS);

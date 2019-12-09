@@ -553,13 +553,12 @@ public class MainActivity extends Activity {
                             imageSdCardError.setVisibility(View.INVISIBLE);
                     });
 
+                    String stat = ethernetSettings.getCurrentStatus();
                     if (EthernetSettings.isConnected()) {
                         if (!loadMediaAtStartSystem && preferenceParams.downloadAtStart) {
                             loadMediaAtStartSystem = true;
                             uploadMedia.upload();
                         }
-
-                        String stat = ethernetSettings.getCurrentStatus();
                         String networkInterfaceIpAddress = EthernetSettings.getNetworkInterfaceIpAddress();
                         productInfo.setStatusConnection(((stat.length() == 0) ? "IP : " + networkInterfaceIpAddress : stat));
                         productInfo.setStatusConnection2(((stat.length() == 0) ? "IP : " + networkInterfaceIpAddress : stat));
@@ -567,10 +566,9 @@ public class MainActivity extends Activity {
                         if (!ip.equals(networkInterfaceIpAddress)) {
                             ip = networkInterfaceIpAddress;
                             Log.d(TAG, "Подключение LAN : " + ip);
-                            Crashlytics.setString("ip_address", networkInterfaceIpAddress);
+                            Crashlytics.setString("ip_address", ip);
                         }
                     } else {
-                        String stat = ethernetSettings.getCurrentStatus();
                         productInfo.setStatusConnection(((stat.length() == 0) ? "підключення LAN відсутнє" : stat));
                         productInfo.setStatusConnection2(((stat.length() == 0) ? "підключення LAN відсутнє" : stat));
                         Log.d(TAG, "Подключение LAN отсутствует");
@@ -591,7 +589,7 @@ public class MainActivity extends Activity {
     //событие об установке прав SU
     private Modify_SU_Preferences.SetupRootCallback mCallbackRootIsSet = new Modify_SU_Preferences.SetupRootCallback() {
         @Override
-        public void onSetupRoot(final int result) {
+        public void onSetupRoot(int result) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -611,13 +609,13 @@ public class MainActivity extends Activity {
                     if (result == 1) {
                         if (BuildConfig.BUILD_TYPE.equals("release")) {
                             if (sizeScreen.x != 1920) //только для 10"
-                                Modify_SU_Preferences.setSystemUIEnabled(preferenceParams.showNavigationBar);//спрячем строку навигации
+                                Modify_SU_Preferences.setSystemUIEnabled(preferenceParams.showNavigationBar); //спрячем строку навигации
                         } else
-                            Modify_SU_Preferences.setSystemUIEnabled(true);//покажем строку навигации
+                            Modify_SU_Preferences.setSystemUIEnabled(true); //покажем строку навигации
 
                         Log.w(TAG, "административные права получены");
                         productInfo.setStatusConnection("ініціалізація системи ");
-                        ethernetSettings.applyEthernetSettings();//применение параметров
+                        ethernetSettings.applyEthernetSettings(); //применение параметров
                     } else {
                         Log.w(TAG, "ОШИБКА, нет административных прав:" + result);
                         setVisibleContext(CONTEXT_CONNECT, 0);
@@ -643,5 +641,3 @@ public class MainActivity extends Activity {
         }
     };
 }
-
-// TODO: 23.10.2019 По ftp протоколу видео файлы могут "ломаться" (видео проигрывается, но картинка искажена)

@@ -90,28 +90,17 @@ public class EthernetSettings {
         //Получим настройки программы
         PreferencesValues preferencesValues = PreferenceParams.getParameters();
 
-
-
-        com.resonance.cashdisplay.Log.d("1234", PreferenceParams.getParameters().dhcp + " DHCP");
-        com.resonance.cashdisplay.Log.d("1234", PreferenceParams.getParameters().ip + " IP");
-        com.resonance.cashdisplay.Log.d("1234", PreferenceParams.getParameters().mask + " Mask");
-        com.resonance.cashdisplay.Log.d("1234", PreferenceParams.getParameters().gateWay + " Gateway");
-        com.resonance.cashdisplay.Log.d("1234", PreferenceParams.getParameters().dns + " DNS");
-
-
         Log.d(TAG, "get connected mode DHCP: " + preferencesValues.dhcp);
         if (preferencesValues.dhcp) {
-            if (!isConnected())
-                start_DHCP();
+            startDHCP();
         } else {
-            IP_Settings ip_settings = get_IP_MASK_GW();
+            IP_Settings ipSettings = get_IP_MASK_GW();
 
-            Log.d(TAG, "STATIC ip: " + ip_settings.getIp() + " nm: " + ip_settings.getNetmask() + " gw:" + ip_settings.getGateway());
+            Log.d(TAG, "STATIC ip: " + ipSettings.getIp() + " nm: " + ipSettings.getNetmask() + " gw:" + ipSettings.getGateway());
 
-            if ((!ip_settings.getIp().contains(preferencesValues.ip)) ||
-                    (!ip_settings.getNetmask().contains(preferencesValues.mask)) ||
-                    (!ip_settings.getGateway().contains(preferencesValues.gateWay))) {
-
+            if (!ipSettings.getIp().contains(preferencesValues.ip)
+                    || !ipSettings.getNetmask().contains(preferencesValues.mask)
+                    || !ipSettings.getGateway().contains(preferencesValues.gateWay)) {
                 set_IP_MASK_GW(preferencesValues.ip, preferencesValues.mask, preferencesValues.gateWay);
             }
         }
@@ -266,7 +255,7 @@ public class EthernetSettings {
     }
 
     /**
-     * проверка наличия подключения LAN
+     * Проверка наличия подключения LAN
      *
      * @return
      */
@@ -290,7 +279,7 @@ public class EthernetSettings {
      */
 
     public interface SetupLanCallback {
-        void onSetupLAN(final int result);
+        void onSetupLAN(int result);
     }
 
     private static EthernetSettings.SetupLanCallback setupLanCallback;
@@ -311,48 +300,36 @@ public class EthernetSettings {
         final String CMD_SET_IP_MASK = "ifconfig eth0 " + ip + " netmask " + mask + " up";
         final String CMD_SET_GW = "route add default gw " + gw + " dev eth0";
 
-        Thread thread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    currentStatus = "встановлення статичної адреси...";
-
-                    Modify_SU_Preferences.executeCmd(CMD_SET_IP_MASK, 500);
-                    if (gw.length() > 0) {
-                        Modify_SU_Preferences.executeCmd(CMD_DELETE_ALL_GW, 500);
-                        Modify_SU_Preferences.executeCmd(CMD_SET_GW, 500);
-                    }
-                    currentStatus = "";
-
-                } catch (Exception e) {
-                    e.printStackTrace();
+        new Thread(() -> {
+            try {
+                currentStatus = "встановлення статичної адреси...";
+                Modify_SU_Preferences.executeCmd(CMD_SET_IP_MASK, 500);
+                if (gw.length() > 0) {
+                    Modify_SU_Preferences.executeCmd(CMD_DELETE_ALL_GW, 500);
+                    Modify_SU_Preferences.executeCmd(CMD_SET_GW, 500);
                 }
+                currentStatus = "";
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
-        thread.start();
+        }).start();
     }
 
     /**
      * Поток установки DHCP
      */
-    public synchronized void start_DHCP() {
-        Thread thread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    currentStatus = "DHCP отримання адреси ...";
-                    Modify_SU_Preferences.executeCmd(CMD_ETH_DOWN, 0);//500
-                    Modify_SU_Preferences.executeCmd(CMD_DHCP_START, 0);//3000
-                    Modify_SU_Preferences.executeCmd(CMD_ETH_UP, 0);//5000
-                    currentStatus = "";
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+    public synchronized void startDHCP() {
+        new Thread(() -> {
+            try {
+                currentStatus = "DHCP отримання адреси ...";
+                Modify_SU_Preferences.executeCmd(CMD_ETH_DOWN, 0);   //500
+                Modify_SU_Preferences.executeCmd(CMD_DHCP_START, 0); //3000
+                Modify_SU_Preferences.executeCmd(CMD_ETH_UP, 0);     //5000
+                currentStatus = "";
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
-        thread.start();
+        }).start();
     }
 
     /**
@@ -362,15 +339,15 @@ public class EthernetSettings {
      */
     public static synchronized IP_Settings get_IP_MASK_GW() {
         IP_Settings settings = new IP_Settings();
-        String TmpStr = Modify_SU_Preferences.executeCmd(CMD_GET_IP_MASK, 3000);
+        String tmpStr = Modify_SU_Preferences.executeCmd(CMD_GET_IP_MASK, 3000);
 
-        if (TmpStr.contains("eth0: ip")) {
-            int indexStart = TmpStr.indexOf("eth0: ip", 0) + "eth0: ip".length();
-            int indexStop = TmpStr.indexOf("mask", indexStart);
-            settings.setIp(TmpStr.substring(indexStart, indexStop));
-            indexStart = TmpStr.indexOf("mask", 0) + "mask".length();
-            indexStop = TmpStr.indexOf("flags", indexStart);
-            settings.setNetmask(TmpStr.substring(indexStart, indexStop));
+        if (tmpStr.contains("eth0: ip")) {
+            int indexStart = tmpStr.indexOf("eth0: ip", 0) + "eth0: ip".length();
+            int indexStop = tmpStr.indexOf("mask", indexStart);
+            settings.setIp(tmpStr.substring(indexStart, indexStop));
+            indexStart = tmpStr.indexOf("mask", 0) + "mask".length();
+            indexStop = tmpStr.indexOf("flags", indexStart);
+            settings.setNetmask(tmpStr.substring(indexStart, indexStop));
         }
         settings.setGateway(get_GW());
         return settings;
@@ -382,12 +359,12 @@ public class EthernetSettings {
      * @return
      */
     private static synchronized String get_GW() {
-        String TmpStr = Modify_SU_Preferences.executeCmd(CMD_GET_GW, 1000);
+        String tmpStr = Modify_SU_Preferences.executeCmd(CMD_GET_GW, 1000);
         String result = "";
-        if (TmpStr.contains("default via")) {
-            int indexStart = TmpStr.indexOf("default via", 0) + "default via".length();
-            int indexStop = TmpStr.indexOf("dev eth0", indexStart);
-            result = TmpStr.substring(indexStart, indexStop);
+        if (tmpStr.contains("default via")) {
+            int indexStart = tmpStr.indexOf("default via", 0) + "default via".length();
+            int indexStop = tmpStr.indexOf("dev eth0", indexStart);
+            result = tmpStr.substring(indexStart, indexStop);
 
         }
         return result;

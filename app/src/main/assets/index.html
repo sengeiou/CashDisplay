@@ -166,8 +166,8 @@
                     <label>Шлюз:</label>
                     <input type="text" class="form-control" id="stat_gate">
 
-                    <label>DNS:</label>
-                    <input type="text" class="form-control" id="stat_dns">
+                    <label style="display: none">DNS:</label>
+                    <input type="text" class="form-control" id="stat_dns" style="display: none">
                   </div>
                 </div>
               </div>	
@@ -376,6 +376,7 @@
       $("#stat").click(function () {
         $(".ip_adress").show();
       });
+
       $("#dynam").click(function () {
         $(".ip_adress").hide();
       });
@@ -401,34 +402,34 @@
 
 	$("#stat_adress").focusout(function() {
       if (validate_ip(document.getElementById("stat_adress").value) === false) {
-          alert("Невiрний формат IP адреси!");
-		  $("#stat_adress").val(def_stat_adress);
-		  document.getElementById("stat_adress").style.color ="Black"
-	    }
+        alert("Невiрний формат IP адреси!");
+	    $("#stat_adress").val(def_stat_adress);
+	    document.getElementById("stat_adress").style.color ="Black"
+	  }
     });
 	
 	$("#stat_mask").focusout(function() {
       if (validate_ip(document.getElementById("stat_mask").value) === false) {
-          alert("Невiрний формат маски!");
-		  $("#stat_mask").val(def_stat_mask);
-		  document.getElementById("stat_mask").style.color ="Black"
-	    }
+        alert("Невiрний формат маски!");
+	    $("#stat_mask").val(def_stat_mask);
+	    document.getElementById("stat_mask").style.color ="Black"
+	  }
     });
 	
 	$("#stat_gate").focusout(function() {
       if (validate_ip(document.getElementById("stat_gate").value) === false) {
-          alert("Невiрний формат адреси шлюзу!");
-		  $("#stat_gate").val(def_stat_gate);
-		  document.getElementById("stat_gate").style.color ="Black"
-	    }
+        alert("Невiрний формат адреси шлюзу!");
+	    $("#stat_gate").val(def_stat_gate);
+	    document.getElementById("stat_gate").style.color ="Black"
+	  }
     });
 	
 	$("#stat_dns").focusout(function() {
       if (validate_ip(document.getElementById("stat_dns").value) === false) {
-          alert("Невiрний формат адреси DNS сервера!");
-		  $("#stat_dns").val(def_stat_dns);
-		  document.getElementById("stat_dns").style.color ="Black"
-	    }
+        alert("Невiрний формат адреси DNS сервера!");
+	    $("#stat_dns").val(def_stat_dns);
+	    document.getElementById("stat_dns").style.color ="Black"
+	  }
     });
 	
     $("#stat_adress").keyup(function() {
@@ -497,18 +498,18 @@
           last_status = myArr.status;
           switch (myArr.status) {
             case 0: //Idle
-              document.getElementById("status").innerHTML = "пiдключено ";
+              document.getElementById("status").innerHTML = "Пiдключено ";
               console.log("OK status");
               passed = true;
               break;
             case 1: //Load files
               document.getElementById("status").innerHTML = myArr.CurStatusMsg;
-              console.log("Load status:"+myArr.CurStatusMsg);
+              console.log("Load status:" + myArr.CurStatusMsg);
               passed = true;
               break;
             case 2: //Save params
               document.getElementById("status").innerHTML = myArr.CurStatusMsg;
-              console.log("Load status:"+myArr.CurStatusMsg);
+              console.log("Load status:" + myArr.CurStatusMsg);
               passed = true;
               break;
             default:
@@ -665,8 +666,7 @@
       httpRequest.onreadystatechange = function (data) {
         if (
           httpRequest.readyState === XMLHttpRequest.DONE &&
-          httpRequest.status === 200
-        ) {
+          httpRequest.status === 200) {
           //Отправка данных успешна
           console.log("Exec OK");
         } else {
@@ -683,7 +683,7 @@
 	
     document.querySelector("#btn_apply").addEventListener("click", function (e) {
     
-	console.log("Sending... ");
+	  console.log("Sending... ");
       //проверка на корректный IP
       if (document.getElementById("option_static").checked === true ) {
         if (validate_ip(document.getElementById("stat_adress").value) === false) {
@@ -704,28 +704,38 @@
         }
       }
 
-      //контроль изменения IP, MASK, GW
-      if ((def_stat_adress != document.getElementById("stat_adress").value)
-	     || (def_stat_mask != document.getElementById("stat_mask").value)
-		 || (def_stat_gate != document.getElementById("stat_gate").value)
-		 || (def_stat_dns != document.getElementById("stat_dns").value)
-		 || (def_option_dynamic != document.getElementById("option_dynamic").checked)) {
-		   console.log("option_dynamic: " + document.getElementById("option_dynamic").checked + "   def_option_dynamic:" + def_option_dynamic);
-           console.log(" stat_adress: " + document.getElementById("stat_adress").value + "   def_stat_adress:" + def_stat_adress);
-           console.log(" stat_mask: " + document.getElementById("stat_mask").value + "   def_stat_mask:" + def_stat_mask);
-           console.log(" stat_gate: " + document.getElementById("stat_gate").value + "   def_stat_gate:" + def_stat_gate);
-           console.log(" stat_dns: " + document.getElementById("stat_dns").value + "   def_stat_dns:" + def_stat_dns);
-
-           //предупреждение об изменении IP, MASK,GW
-           if (confirm("Ви змінили налаштування підключення, зв'язок буде втрачено, продовжити?")) {
-             //сохраним для анализа при записи настроек
-             def_stat_adress = document.getElementById("stat_adress").value;
-             def_stat_mask = document.getElementById("stat_mask").value;
-             def_stat_gate = document.getElementById("stat_gate").value;
-             def_stat_dns = document.getElementById("stat_dns").value;
-             def_option_dynamic = document.getElementById("option_dynamic").value;
-           } else
-             return;
+      // if DHCP was switch ON
+      if ((document.getElementById("option_dynamic").checked === true)
+	      && (def_option_dynamic != document.getElementById("option_dynamic").checked)) {
+	    console.log("option_dynamic: " + document.getElementById("option_dynamic").checked + "   def_option_dynamic:" + def_option_dynamic);
+	    // предупреждение об изменении DHCP value
+        if (confirm("Ви змінили налаштування підключення, зв'язок буде втрачено, продовжити?")) {
+          // сохраним для анализа при записи настроек
+          def_option_dynamic = document.getElementById("option_dynamic").checked;
+        } else
+          return;
+	  // контроль изменения IP, MASK, GW (actual only for static LAN settings)
+	  } else if ((document.getElementById("option_dynamic").checked === false)
+	      && ((def_option_dynamic != document.getElementById("option_dynamic").checked)
+		  || (def_stat_adress != document.getElementById("stat_adress").value)
+	      || (def_stat_mask != document.getElementById("stat_mask").value)
+	  	  || (def_stat_gate != document.getElementById("stat_gate").value)
+		  || (def_stat_dns != document.getElementById("stat_dns").value))) {
+		console.log("option_dynamic: " + document.getElementById("option_dynamic").checked + "   def_option_dynamic:" + def_option_dynamic);
+        console.log(" stat_adress: " + document.getElementById("stat_adress").value + "   def_stat_adress:" + def_stat_adress);
+        console.log(" stat_mask: " + document.getElementById("stat_mask").value + "   def_stat_mask:" + def_stat_mask);
+        console.log(" stat_gate: " + document.getElementById("stat_gate").value + "   def_stat_gate:" + def_stat_gate);
+        console.log(" stat_dns: " + document.getElementById("stat_dns").value + "   def_stat_dns:" + def_stat_dns);
+        // предупреждение об изменении IP, MASK,GW
+        if (confirm("Ви змінили налаштування підключення, зв'язок буде втрачено, продовжити?")) {
+          // сохраним для анализа при записи настроек
+          def_option_dynamic = document.getElementById("option_dynamic").checked;
+          def_stat_adress = document.getElementById("stat_adress").value;
+          def_stat_mask = document.getElementById("stat_mask").value;
+          def_stat_gate = document.getElementById("stat_gate").value;
+          def_stat_dns = document.getElementById("stat_dns").value;
+        } else
+          return;
       }
 
       let httpRequest = new XMLHttpRequest();
@@ -783,10 +793,8 @@
      document.querySelector("#btn_remote_update").addEventListener("click", function (e) {
       console.log("Click btn_remote_update");
       let httpRequest_u = new XMLHttpRequest();
-      httpRequest_u.onreadystatechange = function (data)
-      {
-        if (httpRequest_u.readyState === XMLHttpRequest.DONE && httpRequest_u.status === 200 )
-        {
+      httpRequest_u.onreadystatechange = function (data) {
+        if (httpRequest_u.readyState === XMLHttpRequest.DONE && httpRequest_u.status === 200 ) {
           console.log("btn_remote_update OK");//Отправка данных успешна
         } else {
           console.log("btn_remote_update Send ERROR! status:" + httpRequest_u.status+" state:" + httpRequest_u.readyState);
@@ -826,7 +834,6 @@
       httpRequest_u.open("POST", "/start_reboot");
       httpRequest_u.send();
     });
-
 
 
     /*************************************************************************/
