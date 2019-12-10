@@ -127,8 +127,6 @@ public class EthernetSettings {
     public synchronized void setTempStatic() {
         tempStatic = true;
         PreferencesValues prefValues = PreferenceParams.getParameters();
-        Log.d("4567", "setTempStatic starts");
-        Log.d("4567", "tempStatic = " + tempStatic);
         new Thread(() -> {
             for (int i = 0; i < tempStatAddresses.length; i++) {
                 if (tempStatic) {
@@ -138,7 +136,6 @@ public class EthernetSettings {
 
                     set_IP_MASK_GW(prefValues.ip, prefValues.mask, prefValues.gateway);
                     PreferenceParams.setParameters(prefValues);
-                    Log.d("4567", "tempStatic IP = " + tempStatAddresses[i].getIp());
                     try {
                         Thread.sleep(10000);
                     } catch (InterruptedException e) {

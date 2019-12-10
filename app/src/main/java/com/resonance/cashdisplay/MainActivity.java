@@ -556,14 +556,12 @@ public class MainActivity extends Activity {
                     });
 
                     String stat = ethernetSettings.getCurrentStatus();
-                    Log.d("4567", "EthernetSettings.isConnected() " + EthernetSettings.isConnected());
                     if (EthernetSettings.isConnected()) {
                         if (!loadMediaAtStartSystem && preferenceParams.downloadAtStart) {
                             loadMediaAtStartSystem = true;
                             uploadMedia.upload();
                         }
                         String networkInterfaceIpAddress = EthernetSettings.getNetworkInterfaceIpAddress();
-                        Log.d("4567", "networkInterfaceIpAddress " + networkInterfaceIpAddress);
                         productInfo.setStatusConnection(((stat.length() == 0) ? "IP : " + networkInterfaceIpAddress : stat));
                         productInfo.setStatusConnection2(((stat.length() == 0) ? "IP : " + networkInterfaceIpAddress : stat));
 
@@ -642,15 +640,14 @@ public class MainActivity extends Activity {
                 new CheckConnectionEth().start(); //проверка и установка сети
                 httpServer = new HttpServer(context);
 
+                // next block starts set static addresses if DHCP broken (device connected to static LAN)
                 if (PreferenceParams.getParameters().dhcp)
                     new Thread(() -> {
-                        Log.d("4567", "DHCP true thread starts");
                         try {
                             Thread.sleep(TIME_CHECK_DHCP_ENABLE);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        Log.d("4567", "IP address " + EthernetSettings.getNetworkInterfaceIpAddress());
                         if (EthernetSettings.getNetworkInterfaceIpAddress() == null)
                             ethernetSettings.setTempStatic();
                     }).start();

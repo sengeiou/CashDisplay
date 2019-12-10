@@ -118,9 +118,7 @@ public class HttpServer {
     private final HttpServerRequestCallback loginCallback = new HttpServerRequestCallback() {
         @Override
         public void onRequest(final AsyncHttpServerRequest request, final AsyncHttpServerResponse response) {
-            EthernetSettings.tempStatic = false;
-            Log.d("4567", request.getHeaders().get("Host"));
-            Log.d("4567", "tempStatic = " + EthernetSettings.tempStatic);
+            EthernetSettings.tempStatic = false;        // to stop set new static addresses after first login (in DHCP mode)
 
             if (!shouldPass(request, response)) {
                 return;
