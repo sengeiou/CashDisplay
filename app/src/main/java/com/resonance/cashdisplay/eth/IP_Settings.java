@@ -2,13 +2,20 @@ package com.resonance.cashdisplay.eth;
 
 public class IP_Settings {
 
-    private String ip, netmask, dns, gateway;
+    private String ip, netmask, gateway, dns;
 
     public IP_Settings() {
         ip = "";
         netmask = "";
         gateway = "";
         dns = "";
+    }
+
+    public IP_Settings(String ip, String netmask, String gateway, String dns) {
+        this();
+        this.ip = ip;
+        this.netmask = netmask;
+        this.gateway = gateway;
     }
 
     public void setIp(String ipAddress) {

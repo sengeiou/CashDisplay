@@ -53,7 +53,7 @@ public class PreferenceParams {
 
         params.ip = sharedPreferences.getString("sIP", "192.168.1.200");
         params.mask = sharedPreferences.getString("sMask", "255.255.255.0");
-        params.gateWay = sharedPreferences.getString("sGW", "192.168.1.1");
+        params.gateway = sharedPreferences.getString("sGW", "192.168.1.1");
         params.dns = sharedPreferences.getString("sDNS", "8.8.8.8");
         params.dhcp = sharedPreferences.getBoolean("sDHCP", true);
         params.transferProtocol = sharedPreferences.getString("sProtocol", DEF_PROTOCOL[SMB1]);
@@ -100,7 +100,7 @@ public class PreferenceParams {
 
         sharedPreferences.edit().putString("sMask", parameters.mask).apply();
 
-        sharedPreferences.edit().putString("sGW", parameters.gateWay).apply();
+        sharedPreferences.edit().putString("sGW", parameters.gateway).apply();
         sharedPreferences.edit().putString("sDNS", parameters.dns).apply();
         sharedPreferences.edit().putBoolean("sDHCP", parameters.dhcp).apply();
         assert (parameters.transferProtocol != DEF_PROTOCOL[SMB1] && parameters.transferProtocol != DEF_PROTOCOL[SMB2] && parameters.transferProtocol != DEF_PROTOCOL[FTP]);

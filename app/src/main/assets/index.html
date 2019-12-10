@@ -740,7 +740,7 @@
 
       let httpRequest = new XMLHttpRequest();
       httpRequest.onreadystatechange = function (data) {
-        if (httpRequest.readyState === XMLHttpRequest.DONE 
+        if (httpRequest.readyState === XMLHttpRequest.DONE
 		    && httpRequest.status === 200) {
           //Отправка данных успешна
           console.log("Send OK");
@@ -779,7 +779,7 @@
         option_video_slide:  document.getElementById("option_video_play").checked,
 
         def_background_img: document.getElementById("id_background_img").value,
-       // font_name:$("#font-select").val(),   // get value by Оберіть шрифт
+       // font_name:$("#font-select").val(),        // get value by Оберіть шрифт
         protocol:$("#protocol_select").val(),
         uart_select:$("#uart_select").val()
       };

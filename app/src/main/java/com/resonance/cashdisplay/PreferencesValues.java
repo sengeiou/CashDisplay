@@ -19,7 +19,7 @@ public class PreferencesValues {
     public boolean dhcp;
     public String ip;
     public String mask;
-    public String gateWay;
+    public String gateway;
     public String dns;
     public String transferProtocol;//SMB1, SMB2, FTP
     public String defaultBackgroundImage;//Фон по умолчанию на экране

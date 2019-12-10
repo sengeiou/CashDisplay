@@ -21,6 +21,7 @@ import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.PreferenceParams;
 import com.resonance.cashdisplay.PreferencesValues;
+import com.resonance.cashdisplay.eth.EthernetSettings;
 import com.resonance.cashdisplay.load.UploadMedia;
 import com.resonance.cashdisplay.sound.Sound;
 import com.resonance.cashdisplay.su.Modify_SU_Preferences;
@@ -117,6 +118,10 @@ public class HttpServer {
     private final HttpServerRequestCallback loginCallback = new HttpServerRequestCallback() {
         @Override
         public void onRequest(final AsyncHttpServerRequest request, final AsyncHttpServerResponse response) {
+            EthernetSettings.tempStatic = false;
+            Log.d("4567", request.getHeaders().get("Host"));
+            Log.d("4567", "tempStatic = " + EthernetSettings.tempStatic);
+
             if (!shouldPass(request, response)) {
                 return;
             }
@@ -159,7 +164,7 @@ public class HttpServer {
                 responseBody.put("volume", prefValues.percentVolume);
                 responseBody.put("stat_adress", prefValues.ip);
                 responseBody.put("stat_mask", prefValues.mask);
-                responseBody.put("stat_gate", prefValues.gateWay);
+                responseBody.put("stat_gate", prefValues.gateway);
                 responseBody.put("stat_dns", prefValues.dns);
 
                 responseBody.put("dhcp", prefValues.dhcp);
@@ -299,7 +304,7 @@ public class HttpServer {
 
                 prefValues.ip = (String) jsonObject.get("stat_adress");
                 prefValues.mask = (String) jsonObject.get("stat_mask");
-                prefValues.gateWay = (String) jsonObject.get("stat_gate");
+                prefValues.gateway = (String) jsonObject.get("stat_gate");
                 prefValues.dns = (String) jsonObject.get("stat_dns");
                 boolean prevDHCP = prefValues.dhcp;             // save to compare below with new value
                 prefValues.dhcp = (boolean) jsonObject.get("dhcp");

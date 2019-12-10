@@ -39,6 +39,18 @@ public class EthernetSettings {
     public static final String ETH_CONN_MODE_DHCP = "dhcp";
     public static final String ETH_CONN_MODE_MANUAL = "manual";
 
+    private IP_Settings[] tempStatAddresses = {
+            (new IP_Settings("192.168.1.200", "255.255.255.0", "192.168.1.1", "8.8.8.8")),
+            (new IP_Settings("192.168.0.200", "255.255.255.0", "192.168.0.1", "8.8.8.8")),
+            (new IP_Settings("192.168.2.200", "255.255.255.0", "192.168.2.1", "8.8.8.8")),
+            (new IP_Settings("192.168.88.200", "255.255.255.0", "192.168.88.1", "8.8.8.8")),
+            (new IP_Settings("10.1.1.200", "255.0.0.0", "10.0.0.1", "8.8.8.8")),
+            (new IP_Settings("172.16.1.200", "255.240.0.0", "172.16.0.1", "8.8.8.8")),
+            (new IP_Settings("192.168.1.200", "255.255.0.0", "192.168.0.1", "8.8.8.8")),
+            (new IP_Settings("169.254.1.200", "255.255.0.0", "169.254.0.1", "8.8.8.8"))};
+    public static boolean tempStatic = false;  // mode specifies that static address must be set temporary (if DHCP couldn't be received)
+    public static final int TIME_CHECK_DHCP_ENABLE = 20000;
+
     /**
      * Setting bit 0 indicates reseting of IPv4 addresses required
      */
@@ -83,7 +95,7 @@ public class EthernetSettings {
     }
 
     /**
-     * устанавливает настройки ethernet
+     * устанавливает настройки Ethernet
      */
     public synchronized void applyEthernetSettings() {
 
@@ -100,12 +112,41 @@ public class EthernetSettings {
 
             if (!ipSettings.getIp().contains(preferencesValues.ip)
                     || !ipSettings.getNetmask().contains(preferencesValues.mask)
-                    || !ipSettings.getGateway().contains(preferencesValues.gateWay)) {
-                set_IP_MASK_GW(preferencesValues.ip, preferencesValues.mask, preferencesValues.gateWay);
+                    || !ipSettings.getGateway().contains(preferencesValues.gateway)) {
+                set_IP_MASK_GW(preferencesValues.ip, preferencesValues.mask, preferencesValues.gateway);
             }
         }
         currentStatus = "";
         setupLanCallback.onSetupLAN(1);
+    }
+
+    /**
+     * If DHCP don't used in connected LAN, we set static IP parameters for indicator temporary.
+     * Temporary static parameters are actual till the reboot and don't saved to preferences.
+     */
+    public synchronized void setTempStatic() {
+        tempStatic = true;
+        PreferencesValues prefValues = PreferenceParams.getParameters();
+        Log.d("4567", "setTempStatic starts");
+        Log.d("4567", "tempStatic = " + tempStatic);
+        new Thread(() -> {
+            for (int i = 0; i < tempStatAddresses.length; i++) {
+                if (tempStatic) {
+                    prefValues.ip = tempStatAddresses[i].getIp();
+                    prefValues.mask = tempStatAddresses[i].getNetmask();
+                    prefValues.gateway = tempStatAddresses[i].getGateway();
+
+                    set_IP_MASK_GW(prefValues.ip, prefValues.mask, prefValues.gateway);
+                    PreferenceParams.setParameters(prefValues);
+                    Log.d("4567", "tempStatic IP = " + tempStatAddresses[i].getIp());
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
     }
 
     /**
@@ -303,12 +344,15 @@ public class EthernetSettings {
         new Thread(() -> {
             try {
                 currentStatus = "встановлення статичної адреси...";
+                Modify_SU_Preferences.executeCmd(CMD_ETH_DOWN, 500);
                 Modify_SU_Preferences.executeCmd(CMD_SET_IP_MASK, 500);
                 if (gw.length() > 0) {
                     Modify_SU_Preferences.executeCmd(CMD_DELETE_ALL_GW, 500);
                     Modify_SU_Preferences.executeCmd(CMD_SET_GW, 500);
                 }
                 currentStatus = "";
+                if (tempStatic)
+                    currentStatus = "статична адреса (тимчасово): " + ip;
             } catch (Exception e) {
                 e.printStackTrace();
             }
