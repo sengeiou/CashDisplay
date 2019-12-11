@@ -1,0 +1,136 @@
+package com.resonance.cashdisplay;
+
+import android.content.SharedPreferences;
+
+/**
+ * Created by Святослав on 11.05.2016.
+ */
+public class PrefWorker {
+
+    private static final String SERIALIZER_KEY = "ce.serilizer";    // not change already, users has settings with this name
+    public static int SMB1 = 0;
+    public static int SMB2 = 1;
+    public static int FTP = 2;
+
+    public static int VIDEO = 0;
+    public static int SLIDE = 1;
+
+    public static final int MIN_VIDEO_TIMEOUT = 10;
+    public static final int MIN_SLIDE_TIME_SHOW = 1;
+    public static final String[] DEF_PROTOCOL = new String[]{"SMB1", "SMB2", "FTP"};
+    public static final String[] DEF_UARTS = new String[]{"EKKR", "PC"};
+
+    // product list look will be choose using specified code
+    public static final int LOOK_BASKET = 0;            // shop in Kharkov
+    public static final int LOOK_DMART = 1;             //  shop in Dnepr
+    public static final int[] PRODUCT_LIST_LOOK = {LOOK_BASKET, LOOK_DMART};
+    private static int productListLookCode = PRODUCT_LIST_LOOK[0];  // default and initial value
+    private static final String PRODUCT_LIST_BACK_IMAGE_PREFIX = "custom_product_list_";
+
+    public PrefWorker() {
+        // sharedPreferences = MainActivity.mContext.getSharedPreferences(SERIALIZER_KEY, MainActivity.mContext.MODE_PRIVATE);
+    }
+
+    public synchronized static PrefValues getParameters() {
+        SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences(SERIALIZER_KEY, MainActivity.context.MODE_PRIVATE);
+        PrefValues prefValues = new PrefValues();
+
+        prefValues.uartName = sharedPreferences.getString("sUartName", DEF_UARTS[0]);
+        prefValues.smbHost = sharedPreferences.getString("sSmbHost", "server");
+        prefValues.smbImg = sharedPreferences.getString("sSmbImg", "/indi10/Img/");
+        prefValues.smbVideo = sharedPreferences.getString("sSmbVideo", "/indi10/Video/");
+        prefValues.smbSlide = sharedPreferences.getString("sSmbSlide", "/indi10/Slide/");
+        prefValues.user = sharedPreferences.getString("sUser", "indi10");
+        prefValues.passw = sharedPreferences.getString("sPassw", "20671");
+        prefValues.checkEnableVideo = sharedPreferences.getBoolean("sCheckEnableVideo", false);
+        prefValues.videoTimeout = sharedPreferences.getLong("svideoTimeout", 20);
+        prefValues.admin = sharedPreferences.getString("sAdmin", "admin");
+        prefValues.adminPassw = sharedPreferences.getString("sAdminPassw", "admin");
+        prefValues.downloadAtStart = sharedPreferences.getBoolean("sDownloadAtStart", false);
+        prefValues.percentVolume = sharedPreferences.getInt("sPercentVolume", 50);
+
+        prefValues.ip = sharedPreferences.getString("sIP", "192.168.1.200");
+        prefValues.mask = sharedPreferences.getString("sMask", "255.255.255.0");
+        prefValues.gateway = sharedPreferences.getString("sGW", "192.168.1.1");
+        prefValues.dns = sharedPreferences.getString("sDNS", "8.8.8.8");
+        prefValues.dhcp = sharedPreferences.getBoolean("sDHCP", true);
+        prefValues.transferProtocol = sharedPreferences.getString("sProtocol", DEF_PROTOCOL[SMB1]);
+        prefValues.defaultBackgroundImage = sharedPreferences.getString("sDefaultBackGroundImage", "default_background_picture.png");
+        prefValues.showNavigationBar = sharedPreferences.getBoolean("sShowNavigationBar", false);
+        prefValues.timeSlideImage = sharedPreferences.getInt("sTimeSlideImage", 10);
+        prefValues.videoOrSlide = sharedPreferences.getInt("sVideoOrSlide", VIDEO);
+
+        prefValues.backgroundShoppingList = sharedPreferences.getString("background_shopping_list", "default_background_picture.png");
+        prefValues.backgroundCashNotWork = sharedPreferences.getString("background_cash_not_work", "default_background_picture.png");
+        prefValues.backgroundThanks = sharedPreferences.getString("background_thanks", "default_background_picture.png");
+
+        prefValues.pathToScreenImg = sharedPreferences.getString("sPathToScreenImg", "/indi10/ScreenImg/");
+
+        prefValues.productListLookCode = sharedPreferences.getInt("productListLookCode", PRODUCT_LIST_LOOK[0]);
+
+        return prefValues;
+    }
+
+    public synchronized static void setParameters(PrefValues prefValues) {
+        SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences(SERIALIZER_KEY, MainActivity.context.MODE_PRIVATE);
+
+        sharedPreferences.edit().putString("sUartName", prefValues.uartName).apply();
+        sharedPreferences.edit().putString("sSmbHost", prefValues.smbHost).apply();
+        sharedPreferences.edit().putString("sSmbImg", prefValues.smbImg).apply();
+        sharedPreferences.edit().putString("sSmbVideo", prefValues.smbVideo).apply();
+        sharedPreferences.edit().putString("sSmbSlide", prefValues.smbSlide).apply();
+
+        sharedPreferences.edit().putString("sUser", prefValues.user).apply();
+        sharedPreferences.edit().putString("sPassw", prefValues.passw).apply();
+        sharedPreferences.edit().putBoolean("sCheckEnableVideo", prefValues.checkEnableVideo).apply();
+
+        if (prefValues.videoTimeout < MIN_VIDEO_TIMEOUT)
+            prefValues.videoTimeout = MIN_VIDEO_TIMEOUT;
+        sharedPreferences.edit().putLong("svideoTimeout", prefValues.videoTimeout).apply();
+
+        sharedPreferences.edit().putString("sAdmin", prefValues.admin).apply();
+
+        sharedPreferences.edit().putString("sAdminPassw", prefValues.adminPassw).apply();
+        sharedPreferences.edit().putBoolean("sDownloadAtStart", prefValues.downloadAtStart).apply();
+        sharedPreferences.edit().putInt("sPercentVolume", prefValues.percentVolume).apply();
+
+        sharedPreferences.edit().putString("sIP", prefValues.ip).apply();
+
+        sharedPreferences.edit().putString("sMask", prefValues.mask).apply();
+
+        sharedPreferences.edit().putString("sGW", prefValues.gateway).apply();
+        sharedPreferences.edit().putString("sDNS", prefValues.dns).apply();
+        sharedPreferences.edit().putBoolean("sDHCP", prefValues.dhcp).apply();
+        assert (prefValues.transferProtocol != DEF_PROTOCOL[SMB1] && prefValues.transferProtocol != DEF_PROTOCOL[SMB2] && prefValues.transferProtocol != DEF_PROTOCOL[FTP]);
+        sharedPreferences.edit().putString("sProtocol", prefValues.transferProtocol).apply();
+        sharedPreferences.edit().putString("sDefaultBackGroundImage", prefValues.defaultBackgroundImage).apply();
+        sharedPreferences.edit().putBoolean("sShowNavigationBar", prefValues.showNavigationBar).apply();
+
+        if (prefValues.timeSlideImage < MIN_SLIDE_TIME_SHOW)
+            prefValues.timeSlideImage = MIN_SLIDE_TIME_SHOW;
+
+        sharedPreferences.edit().putInt("sTimeSlideImage", prefValues.timeSlideImage).apply();
+
+        sharedPreferences.edit().putInt("sVideoOrSlide", prefValues.videoOrSlide).apply();
+
+        sharedPreferences.edit().putString("background_shopping_list", prefValues.backgroundShoppingList).apply();
+        sharedPreferences.edit().putString("background_cash_not_work", prefValues.backgroundCashNotWork).apply();
+        sharedPreferences.edit().putString("background_thanks", prefValues.backgroundThanks).apply();
+
+        sharedPreferences.edit().putString("sPathToScreenImg", prefValues.pathToScreenImg).apply();
+
+        // determine from background image for product list if we have to set custom look or default
+        productListLookCode = PRODUCT_LIST_LOOK[0];
+        if (prefValues.backgroundShoppingList.matches(PRODUCT_LIST_BACK_IMAGE_PREFIX + "\\d+.*")) {
+            String strLookCode = prefValues.backgroundShoppingList.replaceAll("\\D+", "");
+            int lookCode = Integer.valueOf(strLookCode);
+            for (int authLookCode : PRODUCT_LIST_LOOK) {
+                if (lookCode == authLookCode) {
+                    productListLookCode = lookCode;
+                    break;
+                }
+            }
+        }
+        sharedPreferences.edit().putInt("productListLookCode", productListLookCode).apply();
+    }
+}

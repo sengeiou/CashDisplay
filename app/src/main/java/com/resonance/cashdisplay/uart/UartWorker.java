@@ -9,14 +9,14 @@ import android.os.Handler;
 import com.crashlytics.android.Crashlytics;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
-import com.resonance.cashdisplay.PreferenceParams;
+import com.resonance.cashdisplay.PrefWorker;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.resonance.cashdisplay.PreferenceParams.DEF_UARTS;
+import static com.resonance.cashdisplay.PrefWorker.DEF_UARTS;
 
 /**
  * Класс обработчик данных от USART
@@ -181,7 +181,7 @@ public class UartWorker {
             Log.d(TAG, "BroadcastReceiver [uartChangeSettings]");
 
             if (intent.getAction().equals(UART_CHANGE_SETTINGS)) {
-                String newConnection = getCoreNameUart(PreferenceParams.getParameters().uartName);
+                String newConnection = getCoreNameUart(PrefWorker.getParameters().uartName);
                 if (!newConnection.equals(SERIAL_PORT)) {
                     closeSerialPort();
                     SERIAL_PORT = newConnection;

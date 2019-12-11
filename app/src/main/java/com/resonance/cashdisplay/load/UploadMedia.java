@@ -11,8 +11,8 @@ import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.FileOperation;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
-import com.resonance.cashdisplay.PreferenceParams;
-import com.resonance.cashdisplay.PreferencesValues;
+import com.resonance.cashdisplay.PrefValues;
+import com.resonance.cashdisplay.PrefWorker;
 import com.resonance.cashdisplay.eth.EthernetSettings;
 import com.resonance.cashdisplay.slide_show.VideoSlideService;
 
@@ -25,10 +25,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
-import static com.resonance.cashdisplay.PreferenceParams.DEF_PROTOCOL;
-import static com.resonance.cashdisplay.PreferenceParams.FTP;
-import static com.resonance.cashdisplay.PreferenceParams.SMB1;
-import static com.resonance.cashdisplay.PreferenceParams.SMB2;
+import static com.resonance.cashdisplay.PrefWorker.DEF_PROTOCOL;
+import static com.resonance.cashdisplay.PrefWorker.FTP;
+import static com.resonance.cashdisplay.PrefWorker.SMB1;
+import static com.resonance.cashdisplay.PrefWorker.SMB2;
 
 /**
  * Класс управления загрузкой изображений товаров, видео, слайдов
@@ -41,7 +41,7 @@ public class UploadMedia {
     private static final String DATE_FORMAT = "yyyy-MM-dd HH-mm-ss";
     private static final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 
-    public static File mLogFile;
+    public static File logFile;
 
     public static final int UPLOAD_RESULT_SUCCESSFULL = 0;
     public static final int UPLOAD_RESULT_NOT_FREE_MEMORY = 1;
@@ -192,31 +192,31 @@ public class UploadMedia {
         } else
             Log.w(TAG, "Dir:" + ExtSDSource.getExternalSdCardPath() + "/LOST.DIR" + " - not exist");
 
-        PreferencesValues prefValues = PreferenceParams.getParameters();
+        PrefValues prefValues = PrefWorker.getParameters();
 
         initLogFile();//инициализация лог файла для отправки на удаленный сервер
 
-        ShareParam ParseImg = ParseSmbjFolders(prefValues.smbImg);
-        ShareParam ParseVideo = ParseSmbjFolders(prefValues.smbVideo);
-        ShareParam ParseSlide = ParseSmbjFolders(prefValues.smbSlide);
-        ShareParam ParseScreen = ParseSmbjFolders(prefValues.pathToScreenImg);
+        ShareParam parseImg = parseSmbjFolders(prefValues.smbImg);
+        ShareParam parseVideo = parseSmbjFolders(prefValues.smbVideo);
+        ShareParam parseSlide = parseSmbjFolders(prefValues.smbSlide);
+        ShareParam parseScreen = parseSmbjFolders(prefValues.pathToScreenImg);
 
-        if (!ParseImg.result) {
+        if (!parseImg.result) {
             Log.d(TAG, "Ошибка разбора параметров пути:" + prefValues.smbImg);
             MainActivity.httpServer.sendQueWebStatus("Неправильно вказанi параметри до ресурсу зображень : [" + prefValues.smbImg + "]", true);
             return;
         }
-        if (!ParseVideo.result) {
+        if (!parseVideo.result) {
             Log.d(TAG, "Ошибка разбора параметров пути :" + prefValues.smbVideo);
             MainActivity.httpServer.sendQueWebStatus("Неправильно вказанi параметри до ресурсу вiдео : [" + prefValues.smbVideo + "]", true);
             return;
         }
-        if (!ParseSlide.result) {
+        if (!parseSlide.result) {
             Log.d(TAG, "Ошибка разбора параметров пути :" + prefValues.smbSlide);
             MainActivity.httpServer.sendQueWebStatus("Неправильно вказанi параметри до ресурсу слайдiв : [" + prefValues.smbSlide + "]", true);
             return;
         }
-        if (!ParseScreen.result) {
+        if (!parseScreen.result) {
             Log.d(TAG, "Ошибка разбора параметров пути :" + prefValues.pathToScreenImg);
             MainActivity.httpServer.sendQueWebStatus("Неправильно вказанi параметри до ресурсу фонових зображень : [" + prefValues.pathToScreenImg + "]", true);
             return;
@@ -232,29 +232,29 @@ public class UploadMedia {
 
         //изображения для товаров
         imgParam.clear();
-        imgParam.put("shareImg", ParseImg.share);
-        imgParam.put("folderImg", ParseImg.folder);
+        imgParam.put("shareImg", parseImg.share);
+        imgParam.put("folderImg", parseImg.folder);
         imgParam.put("DestinationImg", destinationDirs[IMAGE]);
         imgParam.put("extensionArrayImg", new String[]{"*.png", "*.jpg"});
 
         //видео
         videoParam.clear();
-        videoParam.put("shareVideo", ParseVideo.share);
-        videoParam.put("folderVideo", ParseVideo.folder);
+        videoParam.put("shareVideo", parseVideo.share);
+        videoParam.put("folderVideo", parseVideo.folder);
         videoParam.put("DestinationVideo", destinationDirs[VIDEO]);
         videoParam.put("extensionArrayVideo", new String[]{"*.avi", "*.mp4"});
 
         //изображения для слайдов
         slideParam.clear();
-        slideParam.put("shareSlide", ParseSlide.share);
-        slideParam.put("folderSlide", ParseSlide.folder);
+        slideParam.put("shareSlide", parseSlide.share);
+        slideParam.put("folderSlide", parseSlide.folder);
         slideParam.put("DestinationSlide", destinationDirs[SLIDE]);
         slideParam.put("extensionArraySlide", new String[]{"*.png", "*.jpg"});
 
         //фоновые изображения экранов
         screenImgParam.clear();
-        screenImgParam.put("shareScreenImg", ParseScreen.share);
-        screenImgParam.put("folderScreenImg", ParseScreen.folder);
+        screenImgParam.put("shareScreenImg", parseScreen.share);
+        screenImgParam.put("folderScreenImg", parseScreen.folder);
         screenImgParam.put("DestinationScreenImg", destinationDirs[SCREEN]);
         screenImgParam.put("extensionArrayScreenImg", new String[]{"*.png", "*.jpg"});
 
@@ -277,14 +277,14 @@ public class UploadMedia {
      * @param params
      * @return ShareParam
      */
-    public ShareParam ParseSmbjFolders(String params) {
+    public ShareParam parseSmbjFolders(String params) {
         ShareParam shareParam = new ShareParam();
         shareParam.result = false;
         if (params.startsWith("/")) {
-            int SlashEndShare = params.indexOf("/", 1);
-            if (SlashEndShare >= 0) {
-                shareParam.share = params.substring(1, SlashEndShare);
-                shareParam.folder = params.substring(SlashEndShare + 1);
+            int slashEndShare = params.indexOf("/", 1);
+            if (slashEndShare >= 0) {
+                shareParam.share = params.substring(1, slashEndShare);
+                shareParam.folder = params.substring(slashEndShare + 1);
                 shareParam.result = true;
 
             }
@@ -369,17 +369,17 @@ public class UploadMedia {
         c = Calendar.getInstance();
         c.setTime(currentDate);
 
-        mLogFile = new File(Environment.getExternalStorageDirectory(), "Upload " + EthernetSettings.getNetworkInterfaceIpAddress() + " " + dateFormat.format(c.getTime()) + ".log");
+        logFile = new File(Environment.getExternalStorageDirectory(), "Upload " + EthernetSettings.getNetworkInterfaceIpAddress() + " " + dateFormat.format(c.getTime()) + ".log");
 
         //удалим существующий файл
-        if (mLogFile.exists()) {
-            mLogFile.delete();
+        if (logFile.exists()) {
+            logFile.delete();
 
         }
         //создадим новый файл
-        if (!mLogFile.exists()) {
+        if (!logFile.exists()) {
             try {
-                mLogFile.createNewFile();
+                logFile.createNewFile();
             } catch (final IOException e) {
                 e.printStackTrace();
             }
@@ -392,13 +392,13 @@ public class UploadMedia {
      * @param text
      */
     public static synchronized void appendToUploadLog(String text) {
-        if (!mLogFile.exists())
+        if (!logFile.exists())
             initLogFile();
 
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
         try {
-            final FileWriter fileOut = new FileWriter(mLogFile, true);
+            final FileWriter fileOut = new FileWriter(logFile, true);
             fileOut.append(sdf.format(new Date()) + " : " + text + NEW_LINE);
             fileOut.close();
         } catch (final IOException e) {
@@ -411,8 +411,8 @@ public class UploadMedia {
      */
     public static synchronized void deleteUploadLog() {
         //удалим существующий файл
-        if (mLogFile.exists()) {
-            mLogFile.delete();
+        if (logFile.exists()) {
+            logFile.delete();
         }
     }
 

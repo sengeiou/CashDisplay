@@ -44,7 +44,11 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" id="pills-update-tab" data-toggle="pill" href="#pills-update" role="tab"
-                aria-controls="pills-profile" aria-selected="false">Оновлення</a>
+                aria-controls="pills-update" aria-selected="false">Оновлення</a>
+            </li>
+			<li class="nav-item" id="pills-log-tab-li" style="display: none">
+              <a class="nav-link" id="pills-log-tab" data-toggle="pill" href="#pills-log" role="tab"
+                aria-controls="pills-log" aria-selected="false">Лог-файли індикатора</a>
             </li>
           </ul>
 
@@ -273,6 +277,12 @@
               </div>
             </div>
 			
+			<div class="tab-pane fade" id="pills-log" role="tabpanel" aria-labelledby="pills-log-tab">
+              <h5>Лог-файли роботи iндикатора</h5>
+			  <hr>
+			  
+            </div>
+			
 			<hr>
 			
           </div>
@@ -362,6 +372,13 @@
       return true;
     }
 
+	$('html').keydown(function(eventObject) {         // catch key events
+	  if (event.ctrlKey && event.altKey && event.shiftKey && event.keyCode == 76) {
+	    alert('Доступно завантаження лог-файлiв роботи iндикатора');
+		$("#pills-log-tab-li").show();
+	  }
+	});
+	
     (function () {
       $("#video").click(function () {
         $("#timeSlideImageLabel").hide();

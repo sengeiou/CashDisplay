@@ -8,8 +8,8 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.resonance.cashdisplay.PreferenceParams;
-import com.resonance.cashdisplay.PreferencesValues;
+import com.resonance.cashdisplay.PrefValues;
+import com.resonance.cashdisplay.PrefWorker;
 import com.resonance.cashdisplay.su.Modify_SU_Preferences;
 
 import java.lang.reflect.InvocationTargetException;
@@ -72,20 +72,20 @@ public class EthernetSettings {
     public synchronized void applyEthernetSettings() {
 
         //Получим настройки программы
-        PreferencesValues preferencesValues = PreferenceParams.getParameters();
+        PrefValues prefValues = PrefWorker.getParameters();
 
-        Log.d(TAG, "get connected mode DHCP: " + preferencesValues.dhcp);
-        if (preferencesValues.dhcp) {
+        Log.d(TAG, "get connected mode DHCP: " + prefValues.dhcp);
+        if (prefValues.dhcp) {
             startDHCP();
         } else {
             IP_Settings ipSettings = get_IP_MASK_GW();
 
             Log.d(TAG, "STATIC ip: " + ipSettings.getIp() + " nm: " + ipSettings.getNetmask() + " gw:" + ipSettings.getGateway());
 
-            if (!ipSettings.getIp().contains(preferencesValues.ip)
-                    || !ipSettings.getNetmask().contains(preferencesValues.mask)
-                    || !ipSettings.getGateway().contains(preferencesValues.gateway)) {
-                set_IP_MASK_GW(preferencesValues.ip, preferencesValues.mask, preferencesValues.gateway);
+            if (!ipSettings.getIp().contains(prefValues.ip)
+                    || !ipSettings.getNetmask().contains(prefValues.mask)
+                    || !ipSettings.getGateway().contains(prefValues.gateway)) {
+                set_IP_MASK_GW(prefValues.ip, prefValues.mask, prefValues.gateway);
             }
         }
         currentStatus = "";
@@ -98,7 +98,7 @@ public class EthernetSettings {
      */
     public synchronized void setTempStatic() {
         tempStatic = true;
-        PreferencesValues prefValues = PreferenceParams.getParameters();
+        PrefValues prefValues = PrefWorker.getParameters();
         new Thread(() -> {
             for (int i = 0; i < tempStatAddresses.length; i++) {
                 if (tempStatic) {
@@ -107,7 +107,7 @@ public class EthernetSettings {
                     prefValues.gateway = tempStatAddresses[i].getGateway();
 
                     set_IP_MASK_GW(prefValues.ip, prefValues.mask, prefValues.gateway);
-                    PreferenceParams.setParameters(prefValues);
+                    PrefWorker.setParameters(prefValues);
                     try {
                         Thread.sleep(10000);
                     } catch (InterruptedException e) {

@@ -70,7 +70,7 @@ public class MainActivity extends Activity {
     public static final int MSG_FROM_EKKR = 41;           // for emulation of 2x20 display
     public static final int MSG_ADD_PRODUCT_DEBUG = 1234;
 
-    private PreferencesValues preferenceParams;       //настройки
+    private PrefValues prefValues;       //настройки
     private static UartWorker uartWorker;                   //обработчик UART
     public static HttpServer httpServer = null;             //http сервер
     private CommandParser cmdParser;                        //класс обработки команд и данных
@@ -135,7 +135,7 @@ public class MainActivity extends Activity {
         Crashlytics.setString("screen_size", "x:" + sizeScreen.x + ", y:" + sizeScreen.y);
 
         //Получим настройки системы
-        preferenceParams = PreferenceParams.getParameters();
+        prefValues = PrefWorker.getParameters();
 
         //Стартуем активити с биндингом полей
         viewModel = new ViewModel();
@@ -143,7 +143,7 @@ public class MainActivity extends Activity {
         binding.setViewmodel(viewModel);
 
         sound = new Sound(this);
-        sound.setVolume(preferenceParams.percentVolume);
+        sound.setVolume(prefValues.percentVolume);
 
         su_preferences = new Modify_SU_Preferences(this);
         su_preferences.setSetupRootCallback(mCallbackRootIsSet);
@@ -173,7 +173,7 @@ public class MainActivity extends Activity {
 
         //UART
         uartWorker = new UartWorker(uartHandler);
-        if (uartWorker.openSerialPort(UartWorker.getCoreNameUart(preferenceParams.uartName), 0, 0) == 0) {
+        if (uartWorker.openSerialPort(UartWorker.getCoreNameUart(prefValues.uartName), 0, 0) == 0) {
             viewModel.setStatusConnection("інтерфейс RS232 ініціалізованo");
         } else {
             Log.e(TAG, "ERROR Open Port");
@@ -243,7 +243,7 @@ public class MainActivity extends Activity {
         //установка фона экрана "Список покупок"
         Bitmap bitmap;
         Drawable drawable;
-        String uriBackgroundShoppingList = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PreferenceParams.getParameters().backgroundShoppingList.length() > 0) ? PreferenceParams.getParameters().backgroundShoppingList : "noimg");
+        String uriBackgroundShoppingList = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PrefWorker.getParameters().backgroundShoppingList.length() > 0) ? PrefWorker.getParameters().backgroundShoppingList : "noimg");
         File fileImg = new File(uriBackgroundShoppingList);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
@@ -255,7 +255,7 @@ public class MainActivity extends Activity {
         relativeLayout[CONTEXT_PRODUCT_LIST].invalidate();
 
         //Фонове зображення экрану "Каса не працює"
-        String uriBackgroundCashNotWork = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PreferenceParams.getParameters().backgroundCashNotWork.length() > 0) ? PreferenceParams.getParameters().backgroundCashNotWork : "noimg");
+        String uriBackgroundCashNotWork = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PrefWorker.getParameters().backgroundCashNotWork.length() > 0) ? PrefWorker.getParameters().backgroundCashNotWork : "noimg");
         fileImg = new File(uriBackgroundCashNotWork);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
@@ -276,7 +276,7 @@ public class MainActivity extends Activity {
         relativeLayout[CONTEXT_CONNECT].invalidate();
 
         //Фонове зображення экрану "Дякуємо за покупку"
-        String uriBackgroundThanks = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PreferenceParams.getParameters().backgroundThanks.length() > 0) ? PreferenceParams.getParameters().backgroundThanks : "noimg");
+        String uriBackgroundThanks = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PrefWorker.getParameters().backgroundThanks.length() > 0) ? PrefWorker.getParameters().backgroundThanks : "noimg");
         fileImg = new File(uriBackgroundThanks);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
@@ -295,7 +295,7 @@ public class MainActivity extends Activity {
      * This changes the look of product list for different client's flavours.
      */
     private void setProductListLook() {
-        int lookCode = PreferenceParams.getParameters().productListLookCode;
+        int lookCode = PrefWorker.getParameters().productListLookCode;
 
         int resource;
         switch (lookCode) {
@@ -525,7 +525,7 @@ public class MainActivity extends Activity {
             if (sound != null) {
                 sound.setVolume(80);
                 sound.playSound(Sound.START_VOICE);
-                sound.setVolume(preferenceParams.percentVolume);
+                sound.setVolume(prefValues.percentVolume);
             }
 
             try {
@@ -556,7 +556,7 @@ public class MainActivity extends Activity {
 
                     String stat = ethernetSettings.getCurrentStatus();
                     if (EthernetSettings.isConnected()) {
-                        if (!loadMediaAtStartSystem && preferenceParams.downloadAtStart) {
+                        if (!loadMediaAtStartSystem && prefValues.downloadAtStart) {
                             loadMediaAtStartSystem = true;
                             uploadMedia.upload();
                         }
@@ -610,7 +610,7 @@ public class MainActivity extends Activity {
                     if (result == 1) {
                         if (BuildConfig.BUILD_TYPE.equals("release")) {
                             if (sizeScreen.x != 1920) //только для 10"
-                                Modify_SU_Preferences.setSystemUIEnabled(preferenceParams.showNavigationBar); //спрячем строку навигации
+                                Modify_SU_Preferences.setSystemUIEnabled(prefValues.showNavigationBar); //спрячем строку навигации
                         } else
                             Modify_SU_Preferences.setSystemUIEnabled(true); //покажем строку навигации
 
@@ -640,7 +640,7 @@ public class MainActivity extends Activity {
                 httpServer = new HttpServer(context);
 
                 // next block starts set static addresses if DHCP broken (device connected to static LAN)
-                if (PreferenceParams.getParameters().dhcp)
+                if (PrefWorker.getParameters().dhcp)
                     new Thread(() -> {
                         try {
                             Thread.sleep(TIME_CHECK_DHCP_ENABLE);

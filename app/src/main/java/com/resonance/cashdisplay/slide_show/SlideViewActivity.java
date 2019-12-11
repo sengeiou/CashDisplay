@@ -20,7 +20,7 @@ import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.FileOperation;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
-import com.resonance.cashdisplay.PreferenceParams;
+import com.resonance.cashdisplay.PrefWorker;
 import com.resonance.cashdisplay.R;
 
 import java.io.File;
@@ -253,9 +253,9 @@ public class SlideViewActivity extends AppCompatActivity {
         public void run() {
             bShowSlide = true;
 
-                long StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().timeSlideImage);
+                long StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getParameters().timeSlideImage);
            // Log.w(TAG, "Time to show  : " + PreferenceParams.getParameters().sTimeSlideImage+" : "+PreferenceParams.getParameters().sVideoOrSlide );
-                while (bShowSlide && (PreferenceParams.getParameters().videoOrSlide==PreferenceParams.SLIDE)) {
+                while (bShowSlide && (PrefWorker.getParameters().videoOrSlide==PrefWorker.SLIDE)) {
 
                     if (recyclerView != null) {
 
@@ -287,7 +287,7 @@ public class SlideViewActivity extends AppCompatActivity {
                         }
 
                     }
-                    StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PreferenceParams.getParameters().timeSlideImage);
+                    StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getParameters().timeSlideImage);
                    // Log.w(TAG, "2 Time to show  : " + PreferenceParams.getParameters().sTimeSlideImage+" : "+PreferenceParams.getParameters().sVideoOrSlide );
                 };
             StopSlideShow();

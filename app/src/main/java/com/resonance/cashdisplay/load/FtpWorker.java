@@ -37,13 +37,11 @@ public class FtpWorker {
     public final String TAG = "FtpWorker";
     private static FTPClient mFtpClient;
 
-    private static Context mContext;
-
+    private Context mContext;
 
     public FtpWorker(Context context) {
         this.mContext = context;
     }
-
 
 //ftp.rasla.ru
 

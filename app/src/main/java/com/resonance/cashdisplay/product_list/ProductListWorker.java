@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
-import com.resonance.cashdisplay.PreferencesValues;
+import com.resonance.cashdisplay.PrefValues;
 import com.resonance.cashdisplay.R;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class ProductListWorker {
     }
 
     /**
-     * @param lookCode // value of {@link PreferencesValues#productListLookCode}
+     * @param lookCode // value of {@link PrefValues#productListLookCode}
      */
     public AdapterProductList createAdapterProductList(int lookCode) {
         int resource;

@@ -19,8 +19,8 @@ import com.resonance.cashdisplay.BuildConfig;
 import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
-import com.resonance.cashdisplay.PreferenceParams;
-import com.resonance.cashdisplay.PreferencesValues;
+import com.resonance.cashdisplay.PrefValues;
+import com.resonance.cashdisplay.PrefWorker;
 import com.resonance.cashdisplay.eth.EthernetSettings;
 import com.resonance.cashdisplay.load.UploadMedia;
 import com.resonance.cashdisplay.sound.Sound;
@@ -143,8 +143,8 @@ public class HttpServer {
 
             try {
                 JSONObject responseBody = new JSONObject();
-                PreferenceParams prefParams = new PreferenceParams();
-                PreferencesValues prefValues = prefParams.getParameters();
+                PrefWorker prefWorker = new PrefWorker();
+                PrefValues prefValues = prefWorker.getParameters();
 
                 responseBody.put("uart_select", prefValues.uartName);
                 responseBody.put("host_img", prefValues.smbImg);
@@ -171,7 +171,7 @@ public class HttpServer {
                 responseBody.put("def_background_img", prefValues.defaultBackgroundImage);
 
                 responseBody.put("time_slide_image", prefValues.timeSlideImage);
-                responseBody.put("option_video_slide", (prefValues.videoOrSlide == PreferenceParams.VIDEO ? true : false));
+                responseBody.put("option_video_slide", (prefValues.videoOrSlide == PrefWorker.VIDEO ? true : false));
 
                 responseBody.put("image_screen_shoppinglist", prefValues.backgroundShoppingList);
                 responseBody.put("image_screen_cash_not_work", prefValues.backgroundCashNotWork);
@@ -223,7 +223,6 @@ public class HttpServer {
         @Override
         public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
 
-            AsyncHttpRequestBody requestBody = asyncHttpServerRequest.getBody();
             asyncHttpServerResponse.code(200);
             Log.d(TAG, "** /upload_files");
             iCurStatus = STAT_LOAD_FILES;
@@ -236,7 +235,6 @@ public class HttpServer {
         @Override
         public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
 
-            AsyncHttpRequestBody requestBody = asyncHttpServerRequest.getBody();
             asyncHttpServerResponse.code(200);
             Log.d(TAG, "** /start_remote_update");
             iCurStatus = STAT_LOAD_FIRMWARE;
@@ -249,7 +247,6 @@ public class HttpServer {
         @Override
         public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
 
-            AsyncHttpRequestBody requestBody = asyncHttpServerRequest.getBody();
             asyncHttpServerResponse.code(200);
             iCurStatus = STAT_IDLE;
             UploadMedia.resetMediaPlay();
@@ -273,7 +270,7 @@ public class HttpServer {
             iCurStatus = STAT_SAVE;
             iCurStatusMsg = "Збереження налаштуваннь ";
 
-            PreferencesValues prefValues = PreferenceParams.getParameters();
+            PrefValues prefValues = PrefWorker.getParameters();
             try {
                 JSONObject jsonObject = new JSONObject(requestBody.toString());
                 Log.d(TAG, "Save settings received from client: " + jsonObject.toString());
@@ -312,8 +309,8 @@ public class HttpServer {
 
                 String tmpTimeSlideImg = jsonObject.get("time_slide_image").toString();
                 prefValues.timeSlideImage = Integer.parseInt(tmpTimeSlideImg.length() > 0 ? tmpTimeSlideImg : "10");
-                String tmpvideo_slide = jsonObject.get("option_video_slide").toString();
-                prefValues.videoOrSlide = (tmpvideo_slide.equals("true") ? PreferenceParams.VIDEO : PreferenceParams.SLIDE);
+                String tmpVideoSlide = jsonObject.get("option_video_slide").toString();
+                prefValues.videoOrSlide = (tmpVideoSlide.equals("true") ? PrefWorker.VIDEO : PrefWorker.SLIDE);
 
                 prefValues.backgroundShoppingList = (String) jsonObject.get("image_screen_shoppinglist");
                 prefValues.backgroundCashNotWork = (String) jsonObject.get("image_screen_cash_not_work");
@@ -321,7 +318,7 @@ public class HttpServer {
 
                 prefValues.pathToScreenImg = (String) jsonObject.get("host_screen_img");
 
-                PreferenceParams.setParameters(prefValues);
+                PrefWorker.setParameters(prefValues);
 
                 if (!(prevDHCP && prefValues.dhcp))   // if was DHCP and become DHCP - don't apply network settings
                     MainActivity.ethernetSettings.applyEthernetSettings();  //контроль измененмя сетевых настроек

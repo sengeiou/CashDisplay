@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.MainActivity;
-import com.resonance.cashdisplay.PreferenceParams;
-import com.resonance.cashdisplay.PreferencesValues;
+import com.resonance.cashdisplay.PrefValues;
+import com.resonance.cashdisplay.PrefWorker;
 import com.resonance.cashdisplay.R;
 import com.resonance.cashdisplay.load.UploadMedia;
 import com.resonance.cashdisplay.utils.ImageUtils;
@@ -106,7 +106,7 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
                 return ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
             } else {
                 //покажем изображение по-умолчанию
-                PreferencesValues prefValues = PreferenceParams.getParameters();
+                PrefValues prefValues = PrefWorker.getParameters();
                 filepath = ExtSDSource.getExternalSdCardPath() + UploadMedia.IMG_SCREEN + ((prefValues.defaultBackgroundImage.length() > 0) ? prefValues.defaultBackgroundImage : "noimg");
                 fileImg = new File(filepath);
 

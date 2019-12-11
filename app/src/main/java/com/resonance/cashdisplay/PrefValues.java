@@ -1,6 +1,6 @@
 package com.resonance.cashdisplay;
 
-public class PreferencesValues {
+public class PrefValues {
 
     public String uartName;
     public String smbHost;
@@ -27,10 +27,8 @@ public class PreferencesValues {
     public int timeSlideImage;
     public int videoOrSlide;
     public String backgroundShoppingList;
-    public boolean highlightItem;
     public String backgroundCashNotWork;
     public String backgroundThanks;
-    public String imageLogo;
 
     public int productListLookCode;
 }
