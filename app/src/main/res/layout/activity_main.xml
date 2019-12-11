@@ -2,12 +2,10 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-
         <variable
-            name="productinfo"
-            type="com.resonance.cashdisplay.ProductInfo" />
+            name="viewmodel"
+            type="com.resonance.cashdisplay.ViewModel" />
     </data>
-
 
     <RelativeLayout
 
@@ -23,21 +21,20 @@
 
         <!--Слой подключения-->
         <RelativeLayout
-            android:id="@+id/idLayoutConnect"
+            android:id="@+id/layout_connect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/resonance_splash_green"
             android:visibility="invisible">
 
             <ImageView
-                android:id="@+id/imageSdCardError"
+                android:id="@+id/imageview_sdcard_error"
                 android:layout_width="96dp"
                 android:layout_height="89dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_gravity="left"
-
                 android:layout_marginLeft="50dp"
                 android:layout_marginTop="50dp"
                 android:src="@drawable/sd_card_absent"
@@ -58,7 +55,6 @@
                 android:visibility="gone" />
 
             <LinearLayout
-                android:id="@+id/linearLayout3"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
@@ -80,7 +76,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
                         android:gravity="start|center"
-                        android:text="@{productinfo.line1}"
+                        android:text="@{viewmodel.line1}"
                         android:textColor="@color/grey500"
                         android:textSize="@dimen/text_size_large"
                         android:textStyle="normal"
@@ -92,7 +88,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
                         android:gravity="start|center"
-                        android:text="@{productinfo.line2}"
+                        android:text="@{viewmodel.line2}"
                         android:textColor="@color/grey500"
                         android:textSize="@dimen/text_size_large"
                         android:textStyle="normal"
@@ -114,7 +110,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tvVersion"
+                        android:id="@+id/textview_version"
                         android:layout_width="wrap_content"
                         android:layout_height="25dp"
                         android:layout_gravity="bottom|right"
@@ -124,7 +120,7 @@
                         android:textSize="@dimen/text_size_medium" />
 
                     <TextView
-                        android:id="@+id/tvConnectStatus"
+                        android:id="@+id/textview_connect_status"
                         android:layout_width="wrap_content"
                         android:layout_height="25dp"
                         android:layout_gravity="bottom|right"
@@ -132,7 +128,7 @@
                         android:gravity="right"
                         android:shadowColor="#ead4d4"
                         android:singleLine="true"
-                        android:text="@{productinfo.statusConnection}"
+                        android:text="@{viewmodel.statusConnection}"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/grey500"
                         android:textColorHighlight="#f9f2f2"
@@ -187,7 +183,7 @@
 
         <!--Слой Дякую-->
         <RelativeLayout
-            android:id="@+id/idLayoutThanks"
+            android:id="@+id/layout_thanks"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="invisible" />
@@ -226,7 +222,6 @@
                     android:scrollbars="vertical"
                     android:text="..."
                     android:textSize="14dp" />
-
             </ScrollView>
 
         </RelativeLayout>

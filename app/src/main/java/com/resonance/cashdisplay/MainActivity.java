@@ -77,7 +77,7 @@ public class MainActivity extends Activity {
     private VideoSlideService videoSlideService;            //класс управления медиа
     private Sound sound;                                    //звук
     private ProductListWorker productListWorker;      //обслуживание списка товаров
-    private ProductInfo productInfo;
+    private ViewModel viewModel;
     public static EthernetSettings ethernetSettings = null; //Настройка сети
     public static UploadMedia uploadMedia;
     public static UpdateFirmware updateFirmware = null;     //обновление ПО
@@ -138,9 +138,9 @@ public class MainActivity extends Activity {
         preferenceParams = PreferenceParams.getParameters();
 
         //Стартуем активити с биндингом полей
+        viewModel = new ViewModel();
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        productInfo = new ProductInfo(this);
-        binding.setProductinfo(productInfo);
+        binding.setViewmodel(viewModel);
 
         sound = new Sound(this);
         sound.setVolume(preferenceParams.percentVolume);
@@ -155,30 +155,29 @@ public class MainActivity extends Activity {
         uploadMedia = new UploadMedia(this);
 
         //обработчик команд и данных
-        String uriImgSource = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_URI;
-        cmdParser = new CommandParser(productInfo, messageHandler, MainActivity.this, uriImgSource);
+        cmdParser = new CommandParser(viewModel, messageHandler, MainActivity.this);
 
         //слой для вывода информации по товару
-        relativeLayout = new RelativeLayout[]{(RelativeLayout) findViewById(R.id.idLayoutConnect),
-                (RelativeLayout) findViewById(R.id.idLayoutThanks),
+        relativeLayout = new RelativeLayout[]{(RelativeLayout) findViewById(R.id.layout_connect),
+                (RelativeLayout) findViewById(R.id.layout_thanks),
                 (RelativeLayout) findViewById(R.id.layout_product_list)
         };
 
-        imageSdCardError = (ImageView) findViewById(R.id.imageSdCardError);
+        imageSdCardError = (ImageView) findViewById(R.id.imageview_sdcard_error);
         imageSdCardError.setVisibility(View.INVISIBLE);
 
-        tvVersion = (TextView) findViewById(R.id.tvVersion);
+        tvVersion = (TextView) findViewById(R.id.textview_version);
         tvVersion.setText("build :" + BuildConfig.VERSION_CODE);
-        productInfo.setStatusConnection("ініціалізація системи");
-        productInfo.setStatusConnection2("");
+        viewModel.setStatusConnection("ініціалізація системи");
+        viewModel.setStatusConnection2("");
 
         //UART
         uartWorker = new UartWorker(uartHandler);
         if (uartWorker.openSerialPort(UartWorker.getCoreNameUart(preferenceParams.uartName), 0, 0) == 0) {
-            productInfo.setStatusConnection("інтерфейс RS232 ініціалізованo");
+            viewModel.setStatusConnection("інтерфейс RS232 ініціалізованo");
         } else {
             Log.e(TAG, "ERROR Open Port");
-            productInfo.setStatusConnection("ПОМИЛКА інтерфейсу RS232");
+            viewModel.setStatusConnection("ПОМИЛКА інтерфейсу RS232");
         }
 
         updateFirmware = new UpdateFirmware(this);
@@ -537,7 +536,7 @@ public class MainActivity extends Activity {
             String ip = "";
             boolean loadMediaAtStartSystem = false;
 
-            productInfo.setStatusConnection(ethernetSettings.getCurrentStatus());
+            viewModel.setStatusConnection(ethernetSettings.getCurrentStatus());
 
             while (!isInterrupted()) {
                 try {
@@ -547,8 +546,8 @@ public class MainActivity extends Activity {
                             imageSdCardError.setVisibility(View.VISIBLE);
                             sound.setVolume(80);
                             sound.playSound(Sound.WARNING_VOICE);
-                            productInfo.setStatusConnection("*** Вiдсутнiй SD носiй ***");
-                            productInfo.setStatusConnection2("*** Вiдсутнiй SD носiй ***");
+                            viewModel.setStatusConnection("*** Вiдсутнiй SD носiй ***");
+                            viewModel.setStatusConnection2("*** Вiдсутнiй SD носiй ***");
                             uartWorker.closeSerialPort();
                             Log.w(TAG, "SD-card is absent");
                         } else
@@ -562,8 +561,8 @@ public class MainActivity extends Activity {
                             uploadMedia.upload();
                         }
                         String networkInterfaceIpAddress = EthernetSettings.getNetworkInterfaceIpAddress();
-                        productInfo.setStatusConnection(((stat.length() == 0) ? "IP : " + networkInterfaceIpAddress : stat));
-                        productInfo.setStatusConnection2(((stat.length() == 0) ? "IP : " + networkInterfaceIpAddress : stat));
+                        viewModel.setStatusConnection(((stat.length() == 0) ? "IP : " + networkInterfaceIpAddress : stat));
+                        viewModel.setStatusConnection2(((stat.length() == 0) ? "IP : " + networkInterfaceIpAddress : stat));
 
                         if (!ip.equals(networkInterfaceIpAddress)) {
                             ip = networkInterfaceIpAddress;
@@ -571,8 +570,8 @@ public class MainActivity extends Activity {
                             Crashlytics.setString("ip_address", ip);
                         }
                     } else {
-                        productInfo.setStatusConnection(((stat.length() == 0) ? "підключення LAN відсутнє" : stat));
-                        productInfo.setStatusConnection2(((stat.length() == 0) ? "підключення LAN відсутнє" : stat));
+                        viewModel.setStatusConnection(((stat.length() == 0) ? "підключення LAN відсутнє" : stat));
+                        viewModel.setStatusConnection2(((stat.length() == 0) ? "підключення LAN відсутнє" : stat));
                         Log.d(TAG, "Подключение LAN отсутствует");
                         ip = "";
                     }
@@ -602,8 +601,8 @@ public class MainActivity extends Activity {
                         imageSdCardError.setVisibility(View.VISIBLE);
                         sound.setVolume(80);
                         sound.playSound(Sound.WARNING_VOICE);
-                        productInfo.setStatusConnection("*** Вiдсутнiй SD носiй ***");
-                        productInfo.setStatusConnection2("*** Вiдсутнiй SD носiй ***");
+                        viewModel.setStatusConnection("*** Вiдсутнiй SD носiй ***");
+                        viewModel.setStatusConnection2("*** Вiдсутнiй SD носiй ***");
                         uartWorker.closeSerialPort();
                         Log.w(TAG, "SD-card is absent");
                     }
@@ -616,12 +615,12 @@ public class MainActivity extends Activity {
                             Modify_SU_Preferences.setSystemUIEnabled(true); //покажем строку навигации
 
                         Log.w(TAG, "административные права получены");
-                        productInfo.setStatusConnection("ініціалізація системи ");
+                        viewModel.setStatusConnection("ініціалізація системи ");
                         ethernetSettings.applyEthernetSettings(); //применение параметров
                     } else {
                         Log.w(TAG, "ОШИБКА, нет административных прав:" + result);
                         setVisibleContext(CONTEXT_CONNECT, 0);
-                        productInfo.setStatusConnection("ПОМИЛКА, не були надані адміністративні права, " + "IP : " + EthernetSettings.getNetworkInterfaceIpAddress());
+                        viewModel.setStatusConnection("ПОМИЛКА, не були надані адміністративні права, " + "IP : " + EthernetSettings.getNetworkInterfaceIpAddress());
                         imageSdCardError.setImageResource(R.drawable.warning);
                         imageSdCardError.setVisibility(View.VISIBLE);
                     }

@@ -36,9 +36,6 @@ public class EthernetSettings {
     public static final String ETH_IFNAME = "eth_ifname";
     public static final String ETH_KEEP = "eth_always_on";
 
-    public static final String ETH_CONN_MODE_DHCP = "dhcp";
-    public static final String ETH_CONN_MODE_MANUAL = "manual";
-
     private IP_Settings[] tempStatAddresses = {
             (new IP_Settings("192.168.1.200", "255.255.255.0", "192.168.1.1", "8.8.8.8")),
             (new IP_Settings("192.168.0.200", "255.255.255.0", "192.168.0.1", "8.8.8.8")),
@@ -50,31 +47,6 @@ public class EthernetSettings {
             (new IP_Settings("169.254.1.200", "255.255.0.0", "169.254.0.1", "8.8.8.8"))};
     public static boolean tempStatic = false;  // mode specifies that static address must be set temporary (if DHCP couldn't be received)
     public static final int TIME_CHECK_DHCP_ENABLE = 20000;
-
-    /**
-     * Setting bit 0 indicates reseting of IPv4 addresses required
-     */
-    public static final int RESET_IPV4_ADDRESSES = 0x01;
-    /**
-     * Setting bit 1 indicates reseting of IPv4 addresses required
-     */
-    public static final int RESET_IPV6_ADDRESSES = 0x02;
-    /**
-     * Reset all addresses
-     */
-    public static final int RESET_ALL_ADDRESSES = RESET_IPV4_ADDRESSES | RESET_IPV6_ADDRESSES;
-    public static final int EVENT_DHCP_START = 0;
-    public static final int EVENT_IF_CONFIG_SUCCEEDED = 1;
-    public static final int EVENT_IF_CONFIG_FAILED = 2;
-    public static final int EVENT_HW_CONNECTED = 3;
-    public static final int EVENT_HW_DISCONNECTED = 4;
-    public static final int EVENT_HW_PHYCONNECTED = 5;
-    public static final int EVENT_HW_PHYDISCONNECTED = 6;
-
-    public static final int EVENT_HW_CHANGED = 7;
-    public static final String ETH_STATE_CHANGED_ACTION =
-            "android.net.ethernet.ETH_STATE_CHANGED";
-    public static final String EXTRA_ETH_STATE = "eth_state";
 
     //private static final String CMD_ROOT = "busybox whoami";
     private static final String CMD_GET_IP_MASK = "ifconfig eth0";
@@ -349,7 +321,7 @@ public class EthernetSettings {
                 }
                 currentStatus = "";
                 if (tempStatic)
-                    currentStatus = "статична адреса (тимчасово): " + ip;
+                    currentStatus = "(тимчасово) IP: " + ip;
             } catch (Exception e) {
                 e.printStackTrace();
             }

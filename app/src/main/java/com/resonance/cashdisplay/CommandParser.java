@@ -41,7 +41,7 @@ public class CommandParser {
 
     private final int LEN_EXT_BUFFER = 1024 * 4;
 
-    private ProductInfo productInfo;
+    private ViewModel viewModel;
     private static Boolean extHeadFound = false;
     private byte[] extBuf;
     private int indexExtBuf = 0;
@@ -49,23 +49,19 @@ public class CommandParser {
 
     private Display2x20Emulator display2x20Emulator;
 
-    private String uriImgSource;
-
     private Context mContext;
 
     /**
      * Парсер данных с UART
      *
-     * @param productInfo привязка к экранным объектам
-     * @param handler     хандлер для передачи нанных в главное активити
+     * @param viewModel привязка к экранным объектам
+     * @param handler    хандлер для передачи нанных в главное активити
      * @param context
-     * @param uriImg      путь к хранилищу изображений товаров
      */
-    public CommandParser(ProductInfo productInfo, Handler handler, Context context, String uriImg) {
-        this.uriImgSource = uriImg;
+    public CommandParser(ViewModel viewModel, Handler handler, Context context) {
         this.mHandler = handler;
         this.mContext = context;
-        this.productInfo = productInfo;
+        this.viewModel = viewModel;
         this.display2x20Emulator = new Display2x20Emulator();
         extBuf = new byte[LEN_EXT_BUFFER];
     }
@@ -235,8 +231,8 @@ public class CommandParser {
         private byte[] buffer = new byte[20];
 
         public Display2x20Emulator() {
-            productInfo.setLine1("");
-            productInfo.setLine2("");
+            viewModel.setLine1("");
+            viewModel.setLine2("");
         }
 
         private void startNewLine(int number) {
@@ -257,9 +253,9 @@ public class CommandParser {
         private void sendToDisplay() {
             String data = new String(buffer, 0, bufferCursor, ENCODING_CHARSET);
             if (lineNumber == 1)
-                productInfo.setLine1(data);
+                viewModel.setLine1(data);
             if (lineNumber == 2)
-                productInfo.setLine2(data);
+                viewModel.setLine2(data);
         }
     }
 }
