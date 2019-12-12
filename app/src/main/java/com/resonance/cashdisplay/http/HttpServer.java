@@ -99,6 +99,7 @@ public class HttpServer {
         Log.w(TAG, "[!] Server created");
 
         mServer.get("/", loginCallback);
+        mServer.get("/get-log-names", getLogNamesCallback);
         mServer.get("/getsettings", getSettingsCallback);
         mServer.get("/getstatus", getStatusCallback);
         mServer.post("/upload_files", uploadFilesCallback);
@@ -128,6 +129,32 @@ public class HttpServer {
             Log.d(TAG, "** loginCallback: \"" + requestPath + "\"" + ", path: \"" + responsePath + "\"");
             response.getHeaders().set("Content-Type", ContentTypes.getInstance().getContentType(responsePath));
             response.send(HtmlHelper.loadFileAsString(responsePath));   // sends all *.html file as string
+        }
+    };
+
+    private final HttpServerRequestCallback getLogNamesCallback = new HttpServerRequestCallback() {
+        @Override
+        public void onRequest(final AsyncHttpServerRequest request, final AsyncHttpServerResponse response) {
+            if (!shouldPass(request, response)) {
+                return;
+            }
+
+            Log.d(TAG, "** /get-log-names: \"" + request.getPath() + "\"");
+            try {
+                JSONObject responseBody = new JSONObject();
+                responseBody.put("0", "CashDisplay_2019-12-11.log");
+                responseBody.put("1", "CashDisplay_2019-12-12.log");
+
+                Log.d(TAG, "Server responses settings (JSON string): " + responseBody.toString());
+                response.setContentType("json");
+                response.send(responseBody);
+
+                System.gc();
+            } catch (JSONException e) {
+                Log.e(TAG, e.getMessage());
+                Crashlytics.logException(e);
+            }
+
         }
     };
 
@@ -179,9 +206,10 @@ public class HttpServer {
 
                 Log.d(TAG, "Server responses settings (JSON string): " + responseBody.toString());
                 response.send(responseBody.toString());
+
                 System.gc();
             } catch (JSONException e) {
-                Log.e(TAG, "JSONException:" + e.getMessage());
+                Log.e(TAG, e.getMessage());
                 Crashlytics.logException(e);
             }
         }
@@ -212,7 +240,7 @@ public class HttpServer {
                     iCurStatus = STAT_IDLE;
                 }
             } catch (JSONException e) {
-                Log.e(TAG, "JSONException:" + e.getMessage());
+                Log.e(TAG, e.getMessage());
                 Crashlytics.logException(e);
             }
         }

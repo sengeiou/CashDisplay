@@ -96,7 +96,7 @@ public class SmbjWorker {
         callback_onEndDownload = cback;
     }
 
-    private void setVentEndDownload(int status) {
+    private void setEventEndDownload(int status) {
         callback_onEndDownload.onSmbjEndDownload(status);
     }
 
@@ -321,7 +321,7 @@ public class SmbjWorker {
                     changeStatus("Помилка сервера SMB", true);
                     break;
             }
-            setVentEndDownload(result);
+            setEventEndDownload(result);
 
         }
     }

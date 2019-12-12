@@ -58,7 +58,7 @@ public class SmbWorker {
         callback_onSmbStatus = cback;
     }
 
-    private void ChangeStatus(String status, boolean delRemaininng) {
+    private void changeStatus(String status, boolean delRemaininng) {
         callback_onSmbStatus.onSmbStatus(status, delRemaininng);
     }
 
@@ -73,7 +73,7 @@ public class SmbWorker {
         callback_onEndSmbDownload = cback;
     }
 
-    private void setVentEndDownload(int status) {
+    private void setEventEndDownload(int status) {
         callback_onEndSmbDownload.onSmbEndDownload(status);
     }
 
@@ -246,26 +246,26 @@ public class SmbWorker {
                                     "<font color=\"blue\"><B>Вiдео:</B><br></font>[" + (resultVideo.hasError > 0 ? ExtendedError_video : "завантажено : <B>" + resultVideo.countFiles + "</B>, iснуючих : <B>" + resultVideo.countSkipped + "</B>, видалено : <B>" + resultVideo.countDeleted) + "</B>];  <br>" +
                                     "<font color=\"blue\"><B>Зображення товарiв:</B><br></font>[" + (resultImg.hasError > 0 ? ExtendedError_image : "завантажено : <B>" + resultImg.countFiles + "</B>, iснуючих : <B>" + resultImg.countSkipped + "</B>, видалено : <B>" + resultImg.countDeleted) + "</B>];  <br>" +
                                     "<font color=\"blue\"><B>Слайди:</B><br></font>[" + (resultSlide.hasError > 0 ? ExtendedError_slide : "завантажено : <B>" + resultSlide.countFiles + "</B>, iснуючих : <B>" + resultSlide.countSkipped + "</B>, видалено : <B>" + resultSlide.countDeleted) + "</B>];";
-                    ChangeStatus(status, true);
+                    changeStatus(status, true);
                     break;
                 case UPLOAD_RESULT_NOT_SUPPORT_PROTOCOL:
-                    ChangeStatus("Сервер не підтримує протокол ", true);
+                    changeStatus("Сервер не підтримує протокол ", true);
                     break;
                 case UPLOAD_RESULT_CONNECTION_ERROR:
-                    ChangeStatus("Неможливо пiдключитися до файлового сервера", true);
+                    changeStatus("Неможливо пiдключитися до файлового сервера", true);
                     break;
                 case UPLOAD_RESULT_BAD_ARGUMENTS:
-                    ChangeStatus("Невiрнi параметри пiдключення до файлового сервера", true);
+                    changeStatus("Невiрнi параметри пiдключення до файлового сервера", true);
                     break;
                 case UPLOAD_RESULT_NOT_FREE_MEMORY:
-                    ChangeStatus("недостатньо пам'яті на носії" + ExtSDSource.getAvailableMemory_SD(), true);
+                    changeStatus("недостатньо пам'яті на носії" + ExtSDSource.getAvailableMemory_SD(), true);
                     break;
                 case UPLOAD_RESULT_ERROR_SMB_SERVER:
-                    ChangeStatus("Помилка сервера SMB", true);
+                    changeStatus("Помилка сервера SMB", true);
                     break;
 
             }
-            setVentEndDownload(result);
+            setEventEndDownload(result);
 
         }
     }
@@ -274,24 +274,24 @@ public class SmbWorker {
         UploadResult result = new UploadResult();
         result.hasError = UPLOAD_RESULT_SUCCESSFULL;
 
-        String ConnectionStr = Host + (share.startsWith("/") ? "" : "/") + share + (source_folder.startsWith("/") ? "" : "/") + source_folder;
-        UploadMedia.appendToUploadLog("(SMB1) " + ConnectionStr);
-        ChangeStatus(mContext.getString(R.string.connect_to_server) + ": " + ConnectionStr, true);
-        SmbFile smb = ConnectToSource(ConnectionStr, User, Passw, false);
+        String connectionStr = Host + (share.startsWith("/") ? "" : "/") + share + (source_folder.startsWith("/") ? "" : "/") + source_folder;
+        UploadMedia.appendToUploadLog("(SMB1) " + connectionStr);
+        changeStatus(mContext.getString(R.string.connect_to_server) + ": " + connectionStr, true);
+        SmbFile smb = connectToSource(connectionStr, User, Passw, false);
 
         if (smb == null) {
 
-            Log.d(TAG, "Соединение c " + ConnectionStr + " - не удалось");
-            ChangeStatus("підключення до сервера не вдалося:" + ConnectionStr, true);
+            Log.d(TAG, "Соединение c " + connectionStr + " - не удалось");
+            changeStatus("підключення до сервера не вдалося:" + connectionStr, true);
             result.hasError = UPLOAD_RESULT_CONNECTION_ERROR;
         } else {
-            Log.d(TAG, "Соединение c " + ConnectionStr);
-            result = DownloadFromShareFolder(smb, destination_folder, extension_files);
+            Log.d(TAG, "Соединение c " + connectionStr);
+            result = downloadFromShareFolder(smb, destination_folder, extension_files);
         }
         return result;
     }
 
-    private SmbFile ConnectToSource(String url, String Usr, String Passw, boolean create) {
+    private SmbFile connectToSource(String url, String Usr, String Passw, boolean create) {
         String URL = url;
         NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication("", Usr, Passw);
 
@@ -329,19 +329,18 @@ public class SmbWorker {
         } catch (SmbException e) {
             Log.e(TAG, "SmbException:" + e.getMessage() + " " + e);
             if (e.getMessage().toString().contains("Logon failure"))
-                ChangeStatus("невiрнi параметри аутентифiкацii", true);
+                changeStatus("невiрнi параметри аутентифiкацii", true);
             else if (e.getMessage().toString().contains("Access is denied"))
-                ChangeStatus("У доступі відмовлено :" + URL, true);
+                changeStatus("У доступі відмовлено :" + URL, true);
             else if (e.getMessage().toString().contains("UnknownHostException"))
-                ChangeStatus("не знайдено ресурс :" + URL, true);
+                changeStatus("не знайдено ресурс :" + URL, true);
             else {
-
-                ChangeStatus("Не вдалося підключення до сервера: " + URL, false);
+                changeStatus("Не вдалося підключення до сервера: " + URL, false);
             }
             return null;
         } catch (MalformedURLException e) {
             Log.e(TAG, "MalformedURLException:" + e.getMessage());
-            ChangeStatus("Не вдалося підключення до сервера", false);
+            changeStatus("Не вдалося підключення до сервера", false);
             return null;
         } catch (IOException e) {
             Log.e(TAG, "IOException:" + e.getMessage());
@@ -349,8 +348,8 @@ public class SmbWorker {
         return f;
     }
 
-    private UploadResult DownloadFromShareFolder(SmbFile smb, String DestinationFolder, String[] extensionFile) {
-        String[] FilesAlreadyExists = null;//список файлов уже существующих
+    private UploadResult downloadFromShareFolder(SmbFile smb, String DestinationFolder, String[] extensionFile) {
+        String[] filesAlreadyExists = null;//список файлов уже существующих
         UploadResult dr = new UploadResult();
         dr.hasError = UPLOAD_RESULT_SUCCESSFULL;
         dr.countFiles = 0;
@@ -360,13 +359,13 @@ public class SmbWorker {
         //получим список файлов уже существующих
         File dirSou = new File(DestinationFolder);
         if (dirSou.isDirectory()) {
-            FilesAlreadyExists = dirSou.list();
+            filesAlreadyExists = dirSou.list();
         }
-        ChangeStatus("отримання списку файлів...", true);
+        changeStatus("отримання списку файлів...", true);
 
         try {
             SmbFile[] arr_smb_files = smb.listFiles();
-            ChangeStatus("файлiв..." + arr_smb_files.length, false);
+            changeStatus("файлiв..." + arr_smb_files.length, false);
             UploadMedia.appendToUploadLog("*** Файлов на обработку :" + arr_smb_files.length + " ***");
 
             for (int i = 0; i < arr_smb_files.length; i++) {
@@ -377,7 +376,7 @@ public class SmbWorker {
                     UploadMedia.appendToUploadLog("Файл :" + arr_smb_files[i].getPath() + " - пропущен");
                     dr.countSkipped++;
                     if (dr.countSkipped % 10 == 0)
-                        ChangeStatus("пропущено..." + arr_smb_files[i].getPath(), true);
+                        changeStatus("пропущено..." + arr_smb_files[i].getPath(), true);
                     continue;
                 }
 
@@ -418,13 +417,13 @@ public class SmbWorker {
                     if (update_progress++ > 50) {
                         update_progress = 0;
                         UploadMedia.resetMediaPlay();//остановка демонстрации видео/слайдов
-                        ChangeStatus("Завантаження  " + arr_smb_files[i].getName() + " - " + (int) ((100 * totalRead) / arr_smb_files[i].length()) + " %,  загалом " + (int) ((100 * i) / arr_smb_files.length) + " %", true);
+                        changeStatus("Завантаження  " + arr_smb_files[i].getName() + " - " + (int) ((100 * totalRead) / arr_smb_files[i].length()) + " %,  загалом " + (int) ((100 * i) / arr_smb_files.length) + " %", true);
                     }
                 }
                 long t = System.currentTimeMillis() - t0;
 
                 Log.d(TAG, totalRead + " bytes transfered in " + (t / 1000) + " seconds at " + ((totalRead / 1000) / Math.max(1, (t / 1000))) + "Kbytes/sec");
-                ChangeStatus("Завантаження  " + (int) ((100 * i) / arr_smb_files.length) + " %", true);
+                changeStatus("Завантаження  " + (int) ((100 * i) / arr_smb_files.length) + " %", true);
 
                 in.close();
                 out.close();
@@ -444,24 +443,24 @@ public class SmbWorker {
             //удалим неиспользуемые файлы
             //if (dr.CountFiles>0)
             {
-                if (FilesAlreadyExists != null) {
+                if (filesAlreadyExists != null) {
 
-                    for (int i = 0; i < FilesAlreadyExists.length; i++) {
+                    for (int i = 0; i < filesAlreadyExists.length; i++) {
                         boolean forDelete = true;
                         for (int y = 0; y < arr_smb_files.length; y++) {
-                            if (arr_smb_files[y].getName().equals(FilesAlreadyExists[i])) {
+                            if (arr_smb_files[y].getName().equals(filesAlreadyExists[i])) {
                                 forDelete = false;
                                 break;
                             }
                         }
                         if (forDelete) {
-                            Log.w(TAG, "To delete: " + FilesAlreadyExists[i]);
+                            Log.w(TAG, "To delete: " + filesAlreadyExists[i]);
 
-                            FileOperation.deleteFile(dirSou.getCanonicalPath() + "/" + FilesAlreadyExists[i]);
-                            UploadMedia.appendToUploadLog("Удален : " + FilesAlreadyExists[i]);
+                            FileOperation.deleteFile(dirSou.getCanonicalPath() + "/" + filesAlreadyExists[i]);
+                            UploadMedia.appendToUploadLog("Удален : " + filesAlreadyExists[i]);
                             dr.countDeleted++;
                             if (dr.countDeleted % 10 == 0)
-                                ChangeStatus("Видалення..." + FilesAlreadyExists[i], true);
+                                changeStatus("Видалення..." + filesAlreadyExists[i], true);
                             //new File(DirSou, FilesAlreadyExists[i]).delete();
 
                         }
@@ -472,17 +471,17 @@ public class SmbWorker {
             Log.e(TAG, "SmbException:" + e.getMessage() + " " + e);
             // showToast("ОШИБКА ЗАГРУЗКИ :\n"+e.getMessage());
 
-            ChangeStatus("ПОМИЛКА ЗАВАНТАЖЕННЯ :" + e.getMessage(), false);
+            changeStatus("ПОМИЛКА ЗАВАНТАЖЕННЯ :" + e.getMessage(), false);
             dr.hasError = UPLOAD_RESULT_ERROR_SMB_SERVER;
         } catch (IOException e) {
             Log.e(TAG, "IOException:" + e.getMessage());
 
-            ChangeStatus("ПОМИЛКА ЗАВАНТАЖЕННЯ :" + e.getMessage(), false);
+            changeStatus("ПОМИЛКА ЗАВАНТАЖЕННЯ :" + e.getMessage(), false);
             dr.hasError = UPLOAD_RESULT_IO_ERROR;
         } catch (Exception e) {
             Log.e(TAG, "Exception:" + e.getMessage());
 
-            ChangeStatus("ПОМИЛКА ЗАВАНТАЖЕННЯ :" + e.getMessage(), false);
+            changeStatus("ПОМИЛКА ЗАВАНТАЖЕННЯ :" + e.getMessage(), false);
             dr.hasError = UPLOAD_RESULT_IO_ERROR;
         }
         return dr;
@@ -497,10 +496,10 @@ public class SmbWorker {
         try {
 
             //проверим наличие и создадим директорию
-            SmbFile remoteDir = ConnectToSource(remote_destination_path, User, Passw, true);//
+            SmbFile remoteDir = connectToSource(remote_destination_path, User, Passw, true);//
 
             //проверим наличие и создадим файл
-            SmbFile remoteFile = ConnectToSource(remote_destination_path + localFile.getName(), User, Passw, true);
+            SmbFile remoteFile = connectToSource(remote_destination_path + localFile.getName(), User, Passw, true);
 
             in = new BufferedInputStream(new FileInputStream(localFile));
             out = new BufferedOutputStream(new SmbFileOutputStream(remoteFile));

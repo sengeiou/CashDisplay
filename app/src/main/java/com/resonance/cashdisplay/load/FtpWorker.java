@@ -66,29 +66,29 @@ public class FtpWorker {
             resultVideo.hasError = 0;
             resultSlide.hasError = 0;
 
-            HashMap<String, Object> au_hashMap = params[0];
-            HashMap<String, Object> img_hashMap = params[1];
-            HashMap<String, Object> video_hashMap = params[2];
-            HashMap<String, Object> slide_hashMap = params[3];
+            HashMap<String, Object> auHashMap = params[0];
+            HashMap<String, Object> imgHashMap = params[1];
+            HashMap<String, Object> videoHashMap = params[2];
+            HashMap<String, Object> slideHashMap = params[3];
 
-            String User = (String) au_hashMap.get("User");
-            String Passw = (String) au_hashMap.get("Passw");
-            String Host = (String) au_hashMap.get("Host");
+            String user = (String) auHashMap.get("User");
+            String passw = (String) auHashMap.get("Passw");
+            String host = (String) auHashMap.get("Host");
 
-            String shareImg = (String) img_hashMap.get("shareImg");
-            String folderImg = (String) img_hashMap.get("folderImg");
-            String DestinationImg = (String) img_hashMap.get("DestinationImg");
-            String[] extensionImg = (String[]) img_hashMap.get("extensionArrayImg");
+            String shareImg = (String) imgHashMap.get("shareImg");
+            String folderImg = (String) imgHashMap.get("folderImg");
+            String destinationImg = (String) imgHashMap.get("DestinationImg");
+            String[] extensionImg = (String[]) imgHashMap.get("extensionArrayImg");
 
-            String shareVideo = (String) video_hashMap.get("shareVideo");
-            String folderVideo = (String) video_hashMap.get("folderVideo");
-            String DestinationVideo = (String) video_hashMap.get("DestinationVideo");
-            String[] extensionVideo = (String[]) video_hashMap.get("extensionArrayVideo");
+            String shareVideo = (String) videoHashMap.get("shareVideo");
+            String folderVideo = (String) videoHashMap.get("folderVideo");
+            String destinationVideo = (String) videoHashMap.get("DestinationVideo");
+            String[] extensionVideo = (String[]) videoHashMap.get("extensionArrayVideo");
 
-            String shareSlide = (String) slide_hashMap.get("shareSlide");
-            String folderSlide = (String) slide_hashMap.get("folderSlide");
-            String DestinationSlide = (String) slide_hashMap.get("DestinationSlide");
-            String[] extensionSlide = (String[]) slide_hashMap.get("extensionArraySlide");
+            String shareSlide = (String) slideHashMap.get("shareSlide");
+            String folderSlide = (String) slideHashMap.get("folderSlide");
+            String destinationSlide = (String) slideHashMap.get("DestinationSlide");
+            String[] extensionSlide = (String[]) slideHashMap.get("extensionArraySlide");
 
             int error = 0;
             //int TotalFilesToDownload = 0;
@@ -96,28 +96,28 @@ public class FtpWorker {
             // String[] FilesAlreadyExists = null;//список файлов уже существующих
             Log.d(TAG, "FtpTask... ");
 
-            if ((User.length() == 0) && (Passw.length() == 0)) {
-                User = "anonymous";
-                Passw = "";
+            if ((user.length() == 0) && (passw.length() == 0)) {
+                user = "anonymous";
+                passw = "";
             }
 
             Log.d(TAG, "FtpTask... ");
-            changeStatus(mContext.getString(R.string.connect_to_server) + ": " + Host, true);
+            changeStatus(mContext.getString(R.string.connect_to_server) + ": " + host, true);
             try {
-                Log.d(TAG, "Connect to " + Host + ".");
+                Log.d(TAG, "Connect to " + host + ".");
                 mFtpClient = new FTPClient();
                 mFtpClient.setConnectTimeout(10 * 1000);
                 mFtpClient.setControlEncoding("UTF-8");
                 mFtpClient.setBufferSize(1024 * 1024);
 
                 // Log.d(TAG, "FTP buffer size:  " + mFtpClient.getBufferSize());
-                mFtpClient.connect(InetAddress.getByName(Host));
-                boolean status = mFtpClient.login(User, Passw);
+                mFtpClient.connect(InetAddress.getByName(host));
+                boolean status = mFtpClient.login(user, passw);
 
                 // mFtpClient.changeWorkingDirectory("/SymbolDirectory");
                 Log.d(TAG, "FTPConnected " + String.valueOf(status));
                 if (!status) {
-                    changeStatus("підключення до сервера :" + Host + " - не вдалося", true);
+                    changeStatus("підключення до сервера :" + host + " - не вдалося", true);
                     return UPLOAD_RESULT_CONNECTION_ERROR;
                 }
 
@@ -128,9 +128,9 @@ public class FtpWorker {
                     mFtpClient.setFileType(FTPClient.LOCAL_FILE_TYPE);
                     mFtpClient.enterLocalPassiveMode();
 
-                    resultImg = download_Routine(DestinationImg, shareImg, folderImg, extensionImg);
-                    resultVideo = download_Routine(DestinationVideo, shareVideo, folderVideo, extensionVideo);
-                    resultSlide = download_Routine(DestinationSlide, shareSlide, folderSlide, extensionSlide);
+                    resultImg = downloadRoutine(destinationImg, shareImg, folderImg, extensionImg);
+                    resultVideo = downloadRoutine(destinationVideo, shareVideo, folderVideo, extensionVideo);
+                    resultSlide = downloadRoutine(destinationSlide, shareSlide, folderSlide, extensionSlide);
                 }
             } catch (SocketException e) {
                 Log.e(TAG, "SocketException " + e);
@@ -199,8 +199,7 @@ public class FtpWorker {
                     changeStatus("недостатньо пам'яті на носії" + ExtSDSource.getAvailableMemory_SD(), true);
                     break;
             }
-            set_eventEndDownload(result);
-
+            setEventEndDownload(result);
         }
     }
 
@@ -230,13 +229,13 @@ public class FtpWorker {
         callback_onEndDownload = cback;
     }
 
-    private void set_eventEndDownload(int status) {
+    private void setEventEndDownload(int status) {
         callback_onEndDownload.onFtpEndDownload(status);
     }
 
     /***************************************************************************************************************/
 
-    private UploadResult download_Routine(String DestinationDir, String share, String folder, String[] extension) {
+    private UploadResult downloadRoutine(String DestinationDir, String share, String folder, String[] extension) {
 
         UploadResult down_result = new UploadResult();
         String[] FilesAlreadyExists = null;//список файлов уже существующих
