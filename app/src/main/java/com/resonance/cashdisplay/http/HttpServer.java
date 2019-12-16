@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Base64;
 
@@ -29,6 +30,12 @@ import com.resonance.cashdisplay.su.Modify_SU_Preferences;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static com.resonance.cashdisplay.Log.LOG_FILE_PREFIX;
 import static com.resonance.cashdisplay.uart.UartWorker.UART_CHANGE_SETTINGS;
 
 public class HttpServer {
@@ -36,7 +43,7 @@ public class HttpServer {
     public static String HTTP_HALT_EVENT = "http_halt_event";
     private AsyncHttpServer mServer = null;
     private AsyncServer mAsyncServer = null;//new AsyncServer();
-    private HttpConfig httpСonfig = null;
+    private HttpConfig httpConfig = null;
     private static final String TAG = "HttpServer";
     private final int STAT_IDLE = 0;
     private final int STAT_LOAD_FILES = 1;
@@ -53,7 +60,6 @@ public class HttpServer {
     public HttpServer(Context context) {
         mContext = context;
 
-        createServerAsync();
         new Thread(() -> {
             try {
                 createServerAsync();
@@ -91,7 +97,7 @@ public class HttpServer {
         if (mServer != null) {
             return;
         }
-        httpСonfig = HttpConfig.get();
+        httpConfig = HttpConfig.get();
 
         mServer = new AsyncHttpServer();
         mServer.setContext(mContext);
@@ -100,6 +106,7 @@ public class HttpServer {
 
         mServer.get("/", loginCallback);
         mServer.get("/get-log-names", getLogNamesCallback);
+        mServer.get("/get-log.*", getLogCallback);
         mServer.get("/getsettings", getSettingsCallback);
         mServer.get("/getstatus", getStatusCallback);
         mServer.post("/upload_files", uploadFilesCallback);
@@ -113,7 +120,7 @@ public class HttpServer {
                 Crashlytics.logException(ex);
             }
         });
-        mServer.listen(mAsyncServer, httpСonfig.port);
+        mServer.listen(mAsyncServer, httpConfig.port);
     }
 
     private final HttpServerRequestCallback loginCallback = new HttpServerRequestCallback() {
@@ -128,33 +135,64 @@ public class HttpServer {
             String responsePath = (TextUtils.equals("/", requestPath)) ? "index.html" : requestPath;
             Log.d(TAG, "** loginCallback: \"" + requestPath + "\"" + ", path: \"" + responsePath + "\"");
             response.getHeaders().set("Content-Type", ContentTypes.getInstance().getContentType(responsePath));
-            response.send(HtmlHelper.loadFileAsString(responsePath));   // sends all *.html file as string
+            response.send(HtmlHelper.loadFileAsString(responsePath));   // sends *.html file as string
         }
     };
 
     private final HttpServerRequestCallback getLogNamesCallback = new HttpServerRequestCallback() {
         @Override
         public void onRequest(final AsyncHttpServerRequest request, final AsyncHttpServerResponse response) {
-            if (!shouldPass(request, response)) {
-                return;
-            }
-
             Log.d(TAG, "** /get-log-names: \"" + request.getPath() + "\"");
-            try {
-                JSONObject responseBody = new JSONObject();
-                responseBody.put("0", "CashDisplay_2019-12-11.log");
-                responseBody.put("1", "CashDisplay_2019-12-12.log");
 
-                Log.d(TAG, "Server responses settings (JSON string): " + responseBody.toString());
-                response.setContentType("json");
-                response.send(responseBody);
+            File folder = Environment.getExternalStorageDirectory();
+            List<String> result = new ArrayList<>();
 
-                System.gc();
-            } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
-                Crashlytics.logException(e);
+            search(LOG_FILE_PREFIX + ".*\\.log", folder, result);
+            Collections.sort(result);
+            Collections.reverse(result);
+
+            StringBuilder responseBodyBuilder = new StringBuilder();
+            for (String fileName : result) {
+                responseBodyBuilder.append("<a class=\"log-link\" href=\"");
+                responseBodyBuilder.append(fileName);
+                responseBodyBuilder.append("\">");
+                responseBodyBuilder.append(fileName + "</a><br>");
             }
 
+            String responseBody = responseBodyBuilder.toString();
+
+            response.send(responseBody);
+
+            System.gc();
+        }
+    };
+
+    public static void search(String pattern, File folder, List<String> result) {
+        for (File f : folder.listFiles()) {
+
+            if (f.isDirectory()) {
+                search(pattern, f, result);
+            }
+
+            if (f.isFile()) {
+                if (f.getName().matches(pattern)) {
+                    result.add(f.getName());
+                    Log.d(TAG, f.getName() + " ");
+                }
+            }
+        }
+    }
+
+    private final HttpServerRequestCallback getLogCallback = new HttpServerRequestCallback() {
+        @Override
+        public void onRequest(final AsyncHttpServerRequest request, final AsyncHttpServerResponse response) {
+            String requestedFileName = request.getPath().replace("/get-log_", "");
+
+            File logFile = new File(Environment.getExternalStorageDirectory(), requestedFileName);
+            String responsePath = logFile.getPath();
+            Log.d(TAG, "Server responses log file path: " + responsePath);
+            response.getHeaders().set("Content-Type", ContentTypes.getInstance().getContentType(responsePath));
+            response.send(HtmlHelper.loadFileAsString(responsePath));   // sends *.log file as string
         }
     };
 
@@ -221,7 +259,7 @@ public class HttpServer {
             if (!shouldPass(request, response)) {
                 return;
             }
-            Log.d(TAG, "** /getStatus:" + request.getPath() + "\"");
+//            Log.d(TAG, "** /getStatus:" + request.getPath() + "\"");
             try {
                 JSONObject responseBody = new JSONObject();
 
@@ -230,7 +268,7 @@ public class HttpServer {
                 responseBody.put("lab_current_ver", BuildConfig.VERSION_CODE);
                 responseBody.put("sdcard_state", "<font color=\"blue\"><B>пам`ятi вiльно " + ExtSDSource.getAvailableMemory_SD() + "</B></font> ");
 
-                Log.d(TAG, "Server responses status (JSON string): " + responseBody.toString());
+//                Log.d(TAG, "Server responses status (JSON string): " + responseBody.toString());
 
                 response.send(responseBody.toString());
                 System.gc();
@@ -388,7 +426,7 @@ public class HttpServer {
     }
 
     private boolean isAuthenticated(AsyncHttpServerRequest req) {
-        boolean isAuth = !httpСonfig.useAuth;
+        boolean isAuth = !httpConfig.useAuth;
         String authHeader = req.getHeaders().get("Authorization");
 
         if (!isAuth && !TextUtils.isEmpty(authHeader)) {
@@ -398,7 +436,7 @@ public class HttpServer {
 
             switch (authData.length) {
                 case 1:                                                     // only login was typed
-                    if (httpСonfig.userNameTestMode.equals(authData[0])) {  // tester name
+                    if (httpConfig.userNameTestMode.equals(authData[0])) {  // tester name
                         if (req.getPath().equals("/")) {       // only if request is from loginCallback)
                             MainActivity.testMode = true;
                             Intent intent = new Intent(MainActivity.CHANGE_SETTINGS);
@@ -406,11 +444,11 @@ public class HttpServer {
                         }
                         return true;
                     }
-                    return httpСonfig.userName.equals(authData[0])
-                            && httpСonfig.password.equals("");
+                    return httpConfig.userName.equals(authData[0])
+                            && httpConfig.password.equals("");
                 case 2:                                             // login and password were typed
-                    return httpСonfig.userName.equals(authData[0])
-                            && httpСonfig.password.equals(authData[1]);
+                    return httpConfig.userName.equals(authData[0])
+                            && httpConfig.password.equals(authData[1]);
                 default:                    // nor login nor password were typed (or typed mess data)
                     return false;
             }

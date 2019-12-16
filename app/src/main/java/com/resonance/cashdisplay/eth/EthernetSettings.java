@@ -313,7 +313,6 @@ public class EthernetSettings {
         new Thread(() -> {
             try {
                 currentStatus = "встановлення статичної адреси...";
-                Modify_SU_Preferences.executeCmd(CMD_ETH_DOWN, 500);
                 Modify_SU_Preferences.executeCmd(CMD_SET_IP_MASK, 500);
                 if (gw.length() > 0) {
                     Modify_SU_Preferences.executeCmd(CMD_DELETE_ALL_GW, 500);

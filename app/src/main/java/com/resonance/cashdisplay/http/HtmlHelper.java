@@ -9,6 +9,7 @@ import com.resonance.cashdisplay.MainActivity;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
+import java.io.FileReader;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +21,7 @@ public class HtmlHelper {
 
     private static final String TAG = "HtmlHelper";
 
-    public static String urlDecode(final String s) {
+    public static String urlDecode(String s) {
         String decoded;
         try {
             decoded = URLDecoder.decode(s, "UTF-8");
@@ -31,7 +32,7 @@ public class HtmlHelper {
         return decoded;
     }
 
-    public static String urlEncode(final String s) {
+    public static String urlEncode(String s) {
         String encoded;
         try {
             encoded = URLEncoder.encode(s, "UTF-8");
@@ -69,7 +70,7 @@ public class HtmlHelper {
     }
 
     @Nullable
-    private static InputStream loadPathInternal(final String path) {
+    private static InputStream loadPathInternal(String path) {
         try {
             return MainActivity.context.getAssets().open(path);
         } catch (Exception exc) {
@@ -81,12 +82,28 @@ public class HtmlHelper {
     @NonNull
     private static String loadFileAsStringInternal(String path) {
         try {
-            Log.i(TAG, "Try to load  file from asset:" + path);
-            return loadFromAssets(path);
+            if (path.contains("storage"))
+                return loadFileFromStorage(path);
+            else
+                return loadFromAssets(path);
         } catch (Exception exc) {
             Log.e(TAG, "loadPathAsStringInternal", exc);
         }
         return "";
+    }
+
+    @NonNull
+    private static String loadFileFromStorage(String path) {
+        StringBuilder contentBuilder = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            String sCurrentLine;
+            while ((sCurrentLine = br.readLine()) != null) {
+                contentBuilder.append(sCurrentLine).append("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return contentBuilder.toString();
     }
 
     private static String loadFromAssets(String path) throws Exception {

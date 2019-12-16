@@ -13,6 +13,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class Log {
+    public static final String LOG_FILE_PREFIX = "CashDisplay_";
+
     private static final String NEW_LINE = System.getProperty("line.separator");
     private static boolean mLogcatAppender = true;
     private static final File mLogFile;
@@ -30,7 +32,7 @@ public class Log {
         Date currentDatePlusOne = c.getTime();
 
         System.out.println(dateFormat.format(currentDatePlusOne));
-        File oldLogFile = new File(Environment.getExternalStorageDirectory(), "CashDisplay_" + dateFormat.format(currentDatePlusOne) + ".log");
+        File oldLogFile = new File(Environment.getExternalStorageDirectory(), LOG_FILE_PREFIX + dateFormat.format(currentDatePlusOne) + ".log");
         if (oldLogFile.exists()) {
             oldLogFile.delete();
         }
@@ -39,7 +41,7 @@ public class Log {
         c.setTime(currentDate);
         currentDatePlusOne = c.getTime();
 
-        mLogFile = new File(Environment.getExternalStorageDirectory(), "CashDisplay_" + dateFormat.format(currentDatePlusOne) + ".log");
+        mLogFile = new File(Environment.getExternalStorageDirectory(), LOG_FILE_PREFIX + dateFormat.format(currentDatePlusOne) + ".log");
 
         if (!mLogFile.exists()) {
             try {

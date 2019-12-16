@@ -285,8 +285,7 @@
               <h5>Лог-файли роботи iндикатора</h5>
 			  <hr>
 			  <div id="log_div">
-			    <a class="log-link" href="/">CashDisplay_2019-12-12.log</a>
-			    <br>
+			    <!-- Here links to log files will be inserted dinamycally --> 
               </div>
             </div>
 			
@@ -386,15 +385,31 @@
 	$('html').keydown(function(eventObject) {         // catch key events
 	  if (event.ctrlKey && event.altKey && event.shiftKey && event.keyCode == 76) {
 	    alert('Надано доступ до лог-файлiв iндикатора');
-	
-		$("<a class=\"log-link\" href=\"URL3\">Link 3</a><br>").appendTo("#log_div");
-//		$("#log_div" ).html( "<a class=\"log-link\" href=\"URL7\">Link 7</a><br>");
 		$("#pills-log-tab-li").show();
 	  }
 	});
 	
 	$("#log_div").on( "click", "a", function() {
-      alert($(this).attr("href"));
+	  let fileName = $(this).attr("href");
+	  let httpRequestLogFile = new XMLHttpRequest();
+      httpRequestLogFile.responseType = "blob";
+      httpRequestLogFile.onreadystatechange = function (data) {
+        if (httpRequestLogFile.readyState === XMLHttpRequest.DONE 
+	        && httpRequestLogFile.status === 200) {
+    	  // The actual download
+          let blob = new Blob([httpRequestLogFile.response], { type: 'text/plain' });
+          let link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          console.log("Got log file: " + fileName);
+	    }
+	  };
+      httpRequestLogFile.open("GET", "/get-log_" + fileName);
+      httpRequestLogFile.send();
+	  
 	  return false;
     });
 
@@ -697,17 +712,16 @@
       httpRequest.open("GET", "/getsettings");
       httpRequest.send();
 	  
+	  // get log-files names
 	  let httpRequestLogNames = new XMLHttpRequest();
-	  httpRequestLogNames.responseType = "json";
       httpRequestLogNames.onreadystatechange = function (data) {
-        if (httpRequest.readyState === XMLHttpRequest.DONE 
-		    && httpRequest.status === 200) {
-          //Установить значения полей согласно текущим настройкам
+        if (httpRequestLogNames.readyState === XMLHttpRequest.DONE 
+		    && httpRequestLogNames.status === 200) {
           console.log("Got log-names");
-          console.log(httpRequest.responseText);
-       //   let myArr = JSON.parse(httpRequest);
+          console.log(httpRequestLogNames.responseText);
+		  $("#log_div" ).html(httpRequestLogNames.responseText);
 	    }
-	  });
+	  };
 	  httpRequestLogNames.open("GET", "/get-log-names");
       httpRequestLogNames.send();
     });
