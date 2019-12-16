@@ -42,15 +42,11 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" id="pills-indicator-tab" data-toggle="pill" href="#pills-indicator" role="tab"
-                aria-controls="pills-indicator" aria-selected="false">Налаштування індикатора</a>
-            </li>
-            <li class="nav-item" style="display: none">
-              <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab"
-                aria-controls="pills-profile" aria-selected="false">Аутентифікація</a>
+                aria-controls="pills-indicator" aria-selected="false">Налаштування</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" id="pills-update-tab" data-toggle="pill" href="#pills-update" role="tab"
-                aria-controls="pills-update" aria-selected="false">Оновлення</a>
+              <a class="nav-link" id="pills-service-tab" data-toggle="pill" href="#pills-service" role="tab"
+                aria-controls="pills-service" aria-selected="false">Сервiс</a>
             </li>
 			<li class="nav-item" id="pills-log-tab-li" style="display: none">
               <a class="nav-link" id="pills-log-tab" data-toggle="pill" href="#pills-log" role="tab"
@@ -147,40 +143,6 @@
 			  
 			  <br>
 			  <hr>
-				
-			  <div class="form-group">
-				<h5>Параметри мережі</h5>
-				<hr>
-                <div style="margin-top: 5px;">
-                  <span>IP адреса:</span>
-				  <br>
-                  <div class="btn-group btn-group-toggle " style="margin-top: 5px;" data-toggle="buttons">
-                    <label class="btn btn-secondary active" id="stat">
-                      <input type="radio" name="radio_adress" id="option_static" autocomplete="off" > Статична
-                    </label>
-                    <label class="btn btn-secondary" id="dynam">
-                      <input type="radio" name="radio_adress" id="option_dynamic" autocomplete="off" checked> Динамiчна
-                    </label>
-                  </div>
-				  <br>
-				  <p>
-                </div>
-                <div class="form-group" id="ip_adress">
-                  <label>IP:</label>
-                  <input type="text" class="form-control" id="stat_adress">
-
-                  <label>Маска:</label>
-                  <input type="text" class="form-control" id="stat_mask">
-
-                  <label>Шлюз:</label>
-                  <input type="text" class="form-control" id="stat_gate">
-
-                  <label style="display: none">DNS:</label>
-                  <input type="text" class="form-control" id="stat_dns" style="display: none">
-                </div>
-              </div>	
-
-			  <hr>
 			
 			  <div class="form-group">
 			    <h5>Відтворення мультимедіа</h5>
@@ -250,35 +212,73 @@
               </div>
 
             </div>
-			
-			
-            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" style="display: none">
-              <div class="form-group">
-                <label>Адміністратор:</label>
+
+
+            <div class="tab-pane fade" id="pills-service" role="tabpanel" aria-labelledby="pills-service-tab">
+			  
+			  <div class="form-group">
+				<h5>Параметри мережі</h5>
+				<hr>
+                <div style="margin-top: 5px;">
+                  <span>IP адреса:</span>
+				  <br>
+                  <div class="btn-group btn-group-toggle " style="margin-top: 5px;" data-toggle="buttons">
+                    <label class="btn btn-secondary active" id="stat">
+                      <input type="radio" name="radio_adress" id="option_static" autocomplete="off" > Статична
+                    </label>
+                    <label class="btn btn-secondary" id="dynam">
+                      <input type="radio" name="radio_adress" id="option_dynamic" autocomplete="off" checked> Динамiчна
+                    </label>
+                  </div>
+				  <br>
+				  <p>
+                </div>
+                <div class="form-group" id="ip_adress">
+                  <label>IP:</label>
+                  <input type="text" class="form-control" id="stat_adress">
+
+                  <label>Маска:</label>
+                  <input type="text" class="form-control" id="stat_mask">
+
+                  <label>Шлюз:</label>
+                  <input type="text" class="form-control" id="stat_gate">
+
+                  <label style="display: none">DNS:</label>
+                  <input type="text" class="form-control" id="stat_dns" style="display: none">
+                </div>
+              </div>
+			  
+			  <hr>
+			  
+			  <div class="form-group">
+			    <h5>Данi для авторизації</h5>
+				<hr>
+                <label>Логiн:</label>
                 <input type="text" class="form-control" id="admin_user">
 
                 <label>Пароль:</label>
                 <input type="password" class="form-control" id="admin_pass">
               </div>
-              
-              <!-- <button type="button" class="btn btn-primary" id="btn_save_admin_data"  name="send">Застосувати</button> -->
-            </div>
-
-            <div class="tab-pane fade" id="pills-update" role="tabpanel" aria-labelledby="pills-update-tab">
-			  <h5>Оновлення ПЗ</h5>
-			  <hr>
-              <label id="lab_current_ver">Поточна версія:</label>
-              <div>
-                <!--p>Укажіть файл оновлення
-                </p-->
-                <!--input type="file" id="upfile" name="upfile" accept=".apk"/-->
-                <!-- <button type="button" id="#1" name="send" class="btn btn-secondary">Отправить</button> -->
-                <div style="margin-bottom:10px">
-                    <button type="button" id="btn_remote_update" class="btn btn-success">Оновлення ПЗ</button>
-                    <!--button type="button" id="#2" class="btn btn-primary">Локальне оновлення</button-->
-                    <button type="button" style="margin-left:150px" id="btn_reboot" class="btn btn-light">Перезавантажити систему</button>
+			  
+		      <hr>			  
+			  
+			  <div class="form-group">
+			    <h5>Оновлення ПЗ</h5>
+			    <hr>
+                <label id="lab_current_ver">Поточна версія:</label>
+                <div>
+                  <!--p>Укажіть файл оновлення
+                  </p-->
+                  <!--input type="file" id="upfile" name="upfile" accept=".apk"/-->
+                  <!-- <button type="button" id="#1" name="send" class="btn btn-secondary">Отправить</button> -->
+                  <div style="margin-bottom:10px">
+                      <button type="button" id="btn_remote_update" class="btn btn-success">Оновлення ПЗ</button>
+                      <!--button type="button" id="#2" class="btn btn-primary">Локальне оновлення</button-->
+                      <button type="button" style="margin-left:150px" id="btn_reboot" class="btn btn-light">Перезавантажити систему</button>
+                  </div>
                 </div>
-              </div>
+			  </div>
+			  
             </div>
 			
 			<div class="tab-pane fade" id="pills-log" role="tabpanel" aria-labelledby="pills-log-tab">
@@ -715,7 +715,7 @@
 	  // get log-files names
 	  let httpRequestLogNames = new XMLHttpRequest();
       httpRequestLogNames.onreadystatechange = function (data) {
-        if (httpRequestLogNames.readyState === XMLHttpRequest.DONE 
+        if (httpRequestLogNames.readyState === XMLHttpRequest.DONE
 		    && httpRequestLogNames.status === 200) {
           console.log("Got log-names");
           console.log(httpRequestLogNames.responseText);
@@ -866,12 +866,7 @@
           console.log("btn_remote_update Send ERROR! status:" + httpRequest_u.status+" state:" + httpRequest_u.readyState);
         }
       };
-      let jsonData = {
-        admin_user: document.getElementById("admin_user").value,
-        admin_pass: document.getElementById("admin_pass").value
-      };
       httpRequest_u.open("POST", "/start_remote_update");
-     // httpRequest_u.send(JSON.stringify(jsonData));
       httpRequest_u.send();
       document.getElementById("status").innerHTML = "Запит на оновлення відправлено...";
     });

@@ -106,7 +106,7 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
                 return ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
             } else {
                 //покажем изображение по-умолчанию
-                PrefValues prefValues = PrefWorker.getParameters();
+                PrefValues prefValues = PrefWorker.getValues();
                 filepath = ExtSDSource.getExternalSdCardPath() + UploadMedia.IMG_SCREEN + ((prefValues.defaultBackgroundImage.length() > 0) ? prefValues.defaultBackgroundImage : "noimg");
                 fileImg = new File(filepath);
 

@@ -72,7 +72,7 @@ public class EthernetSettings {
     public synchronized void applyEthernetSettings() {
 
         //Получим настройки программы
-        PrefValues prefValues = PrefWorker.getParameters();
+        PrefValues prefValues = PrefWorker.getValues();
 
         Log.d(TAG, "get connected mode DHCP: " + prefValues.dhcp);
         if (prefValues.dhcp) {
@@ -98,7 +98,7 @@ public class EthernetSettings {
      */
     public synchronized void setTempStatic() {
         tempStatic = true;
-        PrefValues prefValues = PrefWorker.getParameters();
+        PrefValues prefValues = PrefWorker.getValues();
         new Thread(() -> {
             for (int i = 0; i < tempStatAddresses.length; i++) {
                 if (tempStatic) {
@@ -107,7 +107,7 @@ public class EthernetSettings {
                     prefValues.gateway = tempStatAddresses[i].getGateway();
 
                     set_IP_MASK_GW(prefValues.ip, prefValues.mask, prefValues.gateway);
-                    PrefWorker.setParameters(prefValues);
+                    PrefWorker.setValues(prefValues);
                     try {
                         Thread.sleep(10000);
                     } catch (InterruptedException e) {

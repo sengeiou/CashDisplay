@@ -135,7 +135,7 @@ public class MainActivity extends Activity {
         Crashlytics.setString("screen_size", "x:" + sizeScreen.x + ", y:" + sizeScreen.y);
 
         //Получим настройки системы
-        prefValues = PrefWorker.getParameters();
+        prefValues = PrefWorker.getValues();
 
         //Стартуем активити с биндингом полей
         viewModel = new ViewModel();
@@ -243,7 +243,7 @@ public class MainActivity extends Activity {
         //установка фона экрана "Список покупок"
         Bitmap bitmap;
         Drawable drawable;
-        String uriBackgroundShoppingList = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PrefWorker.getParameters().backgroundShoppingList.length() > 0) ? PrefWorker.getParameters().backgroundShoppingList : "noimg");
+        String uriBackgroundShoppingList = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundShoppingList.length() > 0) ? PrefWorker.getValues().backgroundShoppingList : "noimg");
         File fileImg = new File(uriBackgroundShoppingList);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
@@ -255,7 +255,7 @@ public class MainActivity extends Activity {
         relativeLayout[CONTEXT_PRODUCT_LIST].invalidate();
 
         //Фонове зображення экрану "Каса не працює"
-        String uriBackgroundCashNotWork = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PrefWorker.getParameters().backgroundCashNotWork.length() > 0) ? PrefWorker.getParameters().backgroundCashNotWork : "noimg");
+        String uriBackgroundCashNotWork = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundCashNotWork.length() > 0) ? PrefWorker.getValues().backgroundCashNotWork : "noimg");
         fileImg = new File(uriBackgroundCashNotWork);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
@@ -276,7 +276,7 @@ public class MainActivity extends Activity {
         relativeLayout[CONTEXT_CONNECT].invalidate();
 
         //Фонове зображення экрану "Дякуємо за покупку"
-        String uriBackgroundThanks = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PrefWorker.getParameters().backgroundThanks.length() > 0) ? PrefWorker.getParameters().backgroundThanks : "noimg");
+        String uriBackgroundThanks = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundThanks.length() > 0) ? PrefWorker.getValues().backgroundThanks : "noimg");
         fileImg = new File(uriBackgroundThanks);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
@@ -295,7 +295,7 @@ public class MainActivity extends Activity {
      * This changes the look of product list for different client's flavours.
      */
     private void setProductListLook() {
-        int lookCode = PrefWorker.getParameters().productListLookCode;
+        int lookCode = PrefWorker.getValues().productListLookCode;
 
         int resource;
         switch (lookCode) {
@@ -640,7 +640,7 @@ public class MainActivity extends Activity {
                 httpServer = new HttpServer(context);
 
                 // next block starts set static addresses if DHCP broken (device connected to static LAN)
-                if (PrefWorker.getParameters().dhcp)
+                if (PrefWorker.getValues().dhcp)
                     new Thread(() -> {
                         try {
                             Thread.sleep(TIME_CHECK_DHCP_ENABLE);

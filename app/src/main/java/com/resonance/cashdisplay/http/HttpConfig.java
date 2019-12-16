@@ -11,6 +11,9 @@ public class HttpConfig {
 
     public String userNameTestMode = "otk";
 
+    public String superUser = "OOPS!!! LOOKS LIKE I FORGOT MY LOGIN FOREVER (((";
+    public String superPassword = "AND PASSWORD I FORGOT TOO...";
+
     private transient static HttpConfig instance;
 
     private HttpConfig() { }
@@ -23,8 +26,9 @@ public class HttpConfig {
         return instance;
     }
 
-    public HttpConfig save() {
-        return this;
+    public void setAuthData(String userName, String password) {
+        this.userName = userName;
+        this.password = password;
     }
 }
 

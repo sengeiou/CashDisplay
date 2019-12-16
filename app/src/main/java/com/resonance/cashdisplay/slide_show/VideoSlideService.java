@@ -60,7 +60,7 @@ public class VideoSlideService {
         public void onReceive(Context context, Intent intent) {
 
             if (intent.getAction().equals(VIDEO_SLIDE_CHANGE_SETTINGS)) {
-                if (PrefWorker.getParameters().checkEnableVideo) {
+                if (PrefWorker.getValues().checkEnableVideo) {
                 }
             } else if (intent.getAction().equals(VIDEO_SLIDE_RESET_TIME)) {
                 bResetTimeToPlay = true;
@@ -90,8 +90,8 @@ public class VideoSlideService {
             @Override
             public void run() {
                 // Log.d(TAG, "WatchVideoSlide start");
-                int currentSourceForPlay = PrefWorker.getParameters().videoOrSlide;
-                long stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getParameters().videoTimeout);
+                int currentSourceForPlay = PrefWorker.getValues().videoOrSlide;
+                long stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().videoTimeout);
 
                 while (bEnableMediaPlay) {
 
@@ -100,11 +100,11 @@ public class VideoSlideService {
                         Log.d(TAG, "#######2 ");
                         bNowPlay = false;
                         bResetTimeToPlay = false;
-                        stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getParameters().videoTimeout);
+                        stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().videoTimeout);
                         continue;
                     }
 
-                    if (!PrefWorker.getParameters().checkEnableVideo) {
+                    if (!PrefWorker.getValues().checkEnableVideo) {
                         if (bNowPlay) {
                             finishSlideAndVideoPlay();
                             bNowPlay = false;
@@ -116,7 +116,7 @@ public class VideoSlideService {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getParameters().videoTimeout);
+                        stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().videoTimeout);
                         continue;
                     }
 
@@ -132,7 +132,7 @@ public class VideoSlideService {
                             bResetTimeToPlay = false;
                             Log.d(TAG, "bResetTimeToPlay ");
                             finishSlideAndVideoPlay();
-                            stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getParameters().videoTimeout);
+                            stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().videoTimeout);
                         }
                         if (!bEnableMediaPlay) {
                             bResetTimeToPlay = false;
@@ -140,9 +140,9 @@ public class VideoSlideService {
                             finishSlideAndVideoPlay();
                             break;
                         }
-                        if (PrefWorker.getParameters().videoOrSlide != currentSourceForPlay) {
+                        if (PrefWorker.getValues().videoOrSlide != currentSourceForPlay) {
                             //  Log.d(TAG, "----#3,2");
-                            stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getParameters().videoTimeout);
+                            stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().videoTimeout);
                             // Log.d(TAG, "#######1 ");
                             finishSlideAndVideoPlay();
                             bResetTimeToPlay = false;
@@ -152,15 +152,15 @@ public class VideoSlideService {
                         // Log.d(TAG, "----#4");
                     }
                     //Log.d(TAG, "----#4,1");
-                    if (!PrefWorker.getParameters().checkEnableVideo || !bEnableMediaPlay) {
-                        stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getParameters().videoTimeout);
+                    if (!PrefWorker.getValues().checkEnableVideo || !bEnableMediaPlay) {
+                        stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().videoTimeout);
                         continue;
                     }
                     //Log.d(TAG, "----#5");
                     if (!bNowPlay) {
                         //  Log.d(TAG, "----#6");
                         //  Log.d(TAG, "воспроизведение видео");
-                        if (PrefWorker.getParameters().videoOrSlide == PrefWorker.VIDEO) {
+                        if (PrefWorker.getValues().videoOrSlide == PrefWorker.VIDEO) {
                             currentSourceForPlay = PrefWorker.VIDEO;
                             //старт Видео
                             Handler handler = new Handler(Looper.getMainLooper());
@@ -192,18 +192,18 @@ public class VideoSlideService {
                         }
                     } else {
                         // Log.d(TAG, "----#8");
-                        if (PrefWorker.getParameters().videoOrSlide != currentSourceForPlay) {
+                        if (PrefWorker.getValues().videoOrSlide != currentSourceForPlay) {
                             //   Log.d(TAG, "----#9");
                             currentSourceForPlay = -1;
                             bNowPlay = false;
                             Log.d(TAG, "*** остановлено текущее проигрывание");
                             finishSlideAndVideoPlay();
                             //bResetTimeToPlay=false;
-                            stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getParameters().videoTimeout);
+                            stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().videoTimeout);
                             continue;
                         }
                     }
-                    stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getParameters().videoTimeout);
+                    stopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().videoTimeout);
                 }
             }
         });

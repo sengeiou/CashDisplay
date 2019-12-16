@@ -192,7 +192,7 @@ public class UploadMedia {
         } else
             Log.w(TAG, "Dir:" + ExtSDSource.getExternalSdCardPath() + "/LOST.DIR" + " - not exist");
 
-        PrefValues prefValues = PrefWorker.getParameters();
+        PrefValues prefValues = PrefWorker.getValues();
 
         initLogFile();//инициализация лог файла для отправки на удаленный сервер
 

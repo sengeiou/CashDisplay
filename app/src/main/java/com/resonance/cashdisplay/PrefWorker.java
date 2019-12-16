@@ -31,7 +31,7 @@ public class PrefWorker {
         // sharedPreferences = MainActivity.mContext.getSharedPreferences(SERIALIZER_KEY, MainActivity.mContext.MODE_PRIVATE);
     }
 
-    public synchronized static PrefValues getParameters() {
+    public synchronized static PrefValues getValues() {
         SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences(SERIALIZER_KEY, MainActivity.context.MODE_PRIVATE);
         PrefValues prefValues = new PrefValues();
 
@@ -71,7 +71,7 @@ public class PrefWorker {
         return prefValues;
     }
 
-    public synchronized static void setParameters(PrefValues prefValues) {
+    public synchronized static void setValues(PrefValues prefValues) {
         SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences(SERIALIZER_KEY, MainActivity.context.MODE_PRIVATE);
 
         sharedPreferences.edit().putString("sUartName", prefValues.uartName).apply();

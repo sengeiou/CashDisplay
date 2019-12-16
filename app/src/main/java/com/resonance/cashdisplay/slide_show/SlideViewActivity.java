@@ -253,9 +253,9 @@ public class SlideViewActivity extends AppCompatActivity {
         public void run() {
             bShowSlide = true;
 
-                long StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getParameters().timeSlideImage);
-           // Log.w(TAG, "Time to show  : " + PreferenceParams.getParameters().sTimeSlideImage+" : "+PreferenceParams.getParameters().sVideoOrSlide );
-                while (bShowSlide && (PrefWorker.getParameters().videoOrSlide==PrefWorker.SLIDE)) {
+                long StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().timeSlideImage);
+           // Log.w(TAG, "Time to show  : " + PreferenceParams.getValues().sTimeSlideImage+" : "+PreferenceParams.getValues().sVideoOrSlide );
+                while (bShowSlide && (PrefWorker.getValues().videoOrSlide==PrefWorker.SLIDE)) {
 
                     if (recyclerView != null) {
 
@@ -287,8 +287,8 @@ public class SlideViewActivity extends AppCompatActivity {
                         }
 
                     }
-                    StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getParameters().timeSlideImage);
-                   // Log.w(TAG, "2 Time to show  : " + PreferenceParams.getParameters().sTimeSlideImage+" : "+PreferenceParams.getParameters().sVideoOrSlide );
+                    StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().timeSlideImage);
+                   // Log.w(TAG, "2 Time to show  : " + PreferenceParams.getValues().sTimeSlideImage+" : "+PreferenceParams.getValues().sVideoOrSlide );
                 };
             StopSlideShow();
             }
