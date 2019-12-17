@@ -45,8 +45,12 @@ public class FtpWorker {
 
 //ftp.rasla.ru
 
-    public void doDownload(HashMap<String, Object> au_hashMap, HashMap<String, Object> img_hashMap, HashMap<String, Object> video_hashMap, HashMap<String, Object> slide_hashMap) {
-        new FtpTask().execute(au_hashMap, img_hashMap, video_hashMap, slide_hashMap);
+    public void doDownload(HashMap<String, Object> auHashMap,
+                           HashMap<String, Object> imgHashMap,
+                           HashMap<String, Object> videoHashMap,
+                           HashMap<String, Object> slideHashMap,
+                           HashMap<String, Object> screenImgHashMap) {
+        new FtpTask().execute(auHashMap, imgHashMap, videoHashMap, slideHashMap, screenImgHashMap);
     }
 
     private class FtpTask extends AsyncTask<HashMap<String, Object>, Void, Integer> {
@@ -54,6 +58,7 @@ public class FtpWorker {
         UploadResult resultImg = new UploadResult();
         UploadResult resultVideo = new UploadResult();
         UploadResult resultSlide = new UploadResult();
+        UploadResult resultScreenImg = new UploadResult();
 
         protected void onPreExecute() {
             super.onPreExecute();
@@ -62,14 +67,11 @@ public class FtpWorker {
         @Override
         protected Integer doInBackground(HashMap<String, Object>... params) {
 
-            resultImg.hasError = 0;
-            resultVideo.hasError = 0;
-            resultSlide.hasError = 0;
-
             HashMap<String, Object> auHashMap = params[0];
             HashMap<String, Object> imgHashMap = params[1];
             HashMap<String, Object> videoHashMap = params[2];
             HashMap<String, Object> slideHashMap = params[3];
+            HashMap<String, Object> screenImgHashMap = params[4];
 
             String user = (String) auHashMap.get("User");
             String passw = (String) auHashMap.get("Passw");
@@ -90,7 +92,12 @@ public class FtpWorker {
             String destinationSlide = (String) slideHashMap.get("DestinationSlide");
             String[] extensionSlide = (String[]) slideHashMap.get("extensionArraySlide");
 
-            int error = 0;
+            String shareScreenImg = (String) screenImgHashMap.get("shareScreenImg");
+            String folderScreenImg = (String) screenImgHashMap.get("folderScreenImg");
+            String destinationScreenImg = (String) screenImgHashMap.get("DestinationScreenImg");
+            String[] extensionScreenImg = (String[]) screenImgHashMap.get("extensionArrayScreenImg");
+
+            int result = 0;
             //int TotalFilesToDownload = 0;
 
             // String[] FilesAlreadyExists = null;//список файлов уже существующих
@@ -106,13 +113,13 @@ public class FtpWorker {
             try {
                 Log.d(TAG, "Connect to " + host + ".");
                 mFtpClient = new FTPClient();
-                mFtpClient.setConnectTimeout(10 * 1000);
-                mFtpClient.setControlEncoding("UTF-8");
-                mFtpClient.setBufferSize(1024 * 1024);
-
-                // Log.d(TAG, "FTP buffer size:  " + mFtpClient.getBufferSize());
                 mFtpClient.connect(InetAddress.getByName(host));
                 boolean status = mFtpClient.login(user, passw);
+                mFtpClient.setControlEncoding("UTF-8");
+                mFtpClient.setConnectTimeout(10 * 1000);
+                mFtpClient.setBufferSize(1024 * 1024);
+                mFtpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+                mFtpClient.enterLocalPassiveMode();
 
                 // mFtpClient.changeWorkingDirectory("/SymbolDirectory");
                 Log.d(TAG, "FTPConnected " + String.valueOf(status));
@@ -123,26 +130,23 @@ public class FtpWorker {
 
                 int replyCode = mFtpClient.getReplyCode();
                 Log.d(TAG, "FTP replyCode: " + replyCode);
-
                 if (FTPReply.isPositiveCompletion(replyCode)) {
-                    mFtpClient.setFileType(FTPClient.LOCAL_FILE_TYPE);
-                    mFtpClient.enterLocalPassiveMode();
-
                     resultImg = downloadRoutine(destinationImg, shareImg, folderImg, extensionImg);
                     resultVideo = downloadRoutine(destinationVideo, shareVideo, folderVideo, extensionVideo);
                     resultSlide = downloadRoutine(destinationSlide, shareSlide, folderSlide, extensionSlide);
+                    resultScreenImg = downloadRoutine(destinationScreenImg, shareScreenImg, folderScreenImg, extensionScreenImg);
                 }
             } catch (SocketException e) {
                 Log.e(TAG, "SocketException " + e);
-                error = UPLOAD_RESULT_CONNECTION_ERROR;
+                result = UPLOAD_RESULT_CONNECTION_ERROR;
                 e.printStackTrace();
             } catch (UnknownHostException e) {
                 Log.e(TAG, "UnknownHostException " + e);
-                error = UPLOAD_RESULT_CONNECTION_ERROR;
+                result = UPLOAD_RESULT_CONNECTION_ERROR;
                 e.printStackTrace();
             } catch (IOException e) {
                 Log.e(TAG, "IOException " + e);
-                error = UPLOAD_RESULT_IO_ERROR;
+                result = UPLOAD_RESULT_IO_ERROR;
                 e.printStackTrace();
             } finally {
                 try {
@@ -155,7 +159,7 @@ public class FtpWorker {
                     e.printStackTrace();
                 }
             }
-            return error;
+            return result;
         }
 
         @Override
@@ -163,28 +167,32 @@ public class FtpWorker {
             super.onPostExecute(result);
             Log.d(TAG, "FTPTask result : " + result);
 
-            String ExtendedError_image = "помилки";
-            String ExtendedError_slide = "помилки";
-            String ExtendedError_video = "помилки";
+            String extendedErrorImage = "помилки";
+            String extendedErrorSlide = "помилки";
+            String extendedErrorVideo = "помилки";
+            String extendedErrorScreenImg = "помилки";
 
             if (resultImg.hasError == UPLOAD_RESULT_NOT_FREE_MEMORY)
-                ExtendedError_image = "недостатньо пам'ятi";
+                extendedErrorImage = "недостатньо пам'ятi";
 
             if (resultVideo.hasError == UPLOAD_RESULT_NOT_FREE_MEMORY)
-                ExtendedError_video = "недостатньо пам'ятi";
+                extendedErrorVideo = "недостатньо пам'ятi";
 
             if (resultSlide.hasError == UPLOAD_RESULT_NOT_FREE_MEMORY)
-                ExtendedError_slide = "недостатньо пам'ятi";
+                extendedErrorSlide = "недостатньо пам'ятi";
+
+            if (resultScreenImg.hasError == UPLOAD_RESULT_NOT_FREE_MEMORY)
+                extendedErrorScreenImg = "недостатньо пам'ятi";
 
             switch (result) {
-
-
                 case UPLOAD_RESULT_SUCCESSFULL:
                 case UPLOAD_RESULT_SHARE_CONNECTION_ERROR:
-                    changeStatus("Вiдео[" + (resultVideo.hasError > 0 ? ExtendedError_video : "завантажено : " + resultVideo.countFiles + ", iснуючих : " + resultVideo.countSkipped + ", видалено : " + resultVideo.countDeleted) + "]; \n " +
-                            "Зображення[" + (resultImg.hasError > 0 ? ExtendedError_image : "завантажено : " + resultImg.countFiles + ", iснуючих : " + resultImg.countSkipped + ", видалено : " + resultImg.countDeleted) + "]; \n " +
-                            "Слайди[" + (resultSlide.hasError > 0 ? ExtendedError_slide : "завантажено : " + resultSlide.countFiles + ", iснуючих : " + resultSlide.countSkipped + ", видалено : " + resultSlide.countDeleted) + "]", true);
-
+                    String status =
+                            "<font color=\"blue\"><B>Фоновi (допомiжнi) зображення:</B><br></font>[" + (resultScreenImg.hasError > 0 ? extendedErrorScreenImg : "завантажено : <B>" + resultScreenImg.countFiles + "</B>, iснуючих : <B>" + resultScreenImg.countSkipped + "</B>, видалено : <B>" + resultScreenImg.countDeleted) + "</B>];  <br>" +
+                                    "<font color=\"blue\"><B>Вiдео:</B><br></font>[" + (resultVideo.hasError > 0 ? extendedErrorVideo : "завантажено : <B>" + resultVideo.countFiles + "</B>, iснуючих : <B>" + resultVideo.countSkipped + "</B>, видалено : <B>" + resultVideo.countDeleted) + "</B>];  <br>" +
+                                    "<font color=\"blue\"><B>Зображення товарiв:</B><br></font>[" + (resultImg.hasError > 0 ? extendedErrorImage : "завантажено : <B>" + resultImg.countFiles + "</B>, iснуючих : <B>" + resultImg.countSkipped + "</B>, видалено : <B>" + resultImg.countDeleted) + "</B>];  <br>" +
+                                    "<font color=\"blue\"><B>Слайди:</B><br></font>[" + (resultSlide.hasError > 0 ? extendedErrorSlide : "завантажено : <B>" + resultSlide.countFiles + "</B>, iснуючих : <B>" + resultSlide.countSkipped + "</B>, видалено : <B>" + resultSlide.countDeleted) + "</B>];";
+                    changeStatus(status, true);
                     break;
                 case UPLOAD_RESULT_NOT_SUPPORT_PROTOCOL:
                     changeStatus("FTP Сервер не підтримує протокол ", true);
@@ -204,136 +212,135 @@ public class FtpWorker {
     }
 
     /**** колбэк статуса выполнения загрузки *********************/
-    public interface FTP_StatusCallback {
-        void onFtpStatus(String status, boolean delRemaininng);
+    public interface FtpStatusCallback {
+        void onFtpStatusChanged(String status, boolean delRemaining);
     }
 
-    private static FTP_StatusCallback callback_onFtpStatus;
+    private static FtpStatusCallback ftpStatusCallback;
 
-    public void onChangeStatusCallBack(FTP_StatusCallback cback) {
-        callback_onFtpStatus = cback;
+    public void setFtpStatusCallback(FtpStatusCallback cback) {
+        ftpStatusCallback = cback;
     }
 
-    private void changeStatus(String status, boolean delRemaininng) {
-        callback_onFtpStatus.onFtpStatus(status, delRemaininng);
+    private void changeStatus(String status, boolean delRemaining) {
+        ftpStatusCallback.onFtpStatusChanged(status, delRemaining);
     }
 
     /**** колбэк окончания загрузки *********************/
-    public interface FTP_EndDownloadCallback {
+    public interface FtpEndDownloadCallback {
         void onFtpEndDownload(int status);
     }
 
-    private static FTP_EndDownloadCallback callback_onEndDownload;
+    private static FtpEndDownloadCallback ftpEndDownloadCallback;
 
-    public void onEndDownloadCallBack(FTP_EndDownloadCallback cback) {
-        callback_onEndDownload = cback;
+    public void setEndDownloadCallback(FtpEndDownloadCallback cback) {
+        ftpEndDownloadCallback = cback;
     }
 
     private void setEventEndDownload(int status) {
-        callback_onEndDownload.onFtpEndDownload(status);
+        ftpEndDownloadCallback.onFtpEndDownload(status);
     }
 
     /***************************************************************************************************************/
 
-    private UploadResult downloadRoutine(String DestinationDir, String share, String folder, String[] extension) {
+    private UploadResult downloadRoutine(String destinationDir, String share, String folder, String[] extension) {
 
-        UploadResult down_result = new UploadResult();
-        String[] FilesAlreadyExists = null;//список файлов уже существующих
+        UploadResult downResult = new UploadResult();
+        String[] filesAlreadyExists = null;//список файлов уже существующих
 
         //получим список файлов уже существующих
-        File DirSou = new File(DestinationDir);
-        if (DirSou.isDirectory()) {
-            FilesAlreadyExists = DirSou.list();
+        File dirSou = new File(destinationDir);
+        if (dirSou.isDirectory()) {
+            filesAlreadyExists = dirSou.list();
         }
 
         Log.d(TAG, "Take list Slide files: " + share + "/" + folder);
         changeStatus("отримання списку файлів..." + share + "/" + folder, true);
-        down_result.countFiles = 0;
-        down_result.countSkipped = 0;
-        down_result.countDeleted = 0;
+        downResult.countFiles = 0;
+        downResult.countSkipped = 0;
+        downResult.countDeleted = 0;
 
-        FTPFile[] mFileArray = null;
+        FTPFile[] fileArray = null;
         try {
-            mFileArray = mFtpClient.listFiles(share + "/" + folder);
+            fileArray = mFtpClient.listFiles(share + "/" + folder);
         } catch (IOException e) {
             Log.e(TAG, "IOException " + e);
             e.printStackTrace();
         }
-        if (mFileArray == null) {
-            down_result.hasError = UPLOAD_RESULT_IO_ERROR;
-            down_result.countFiles = 0;
-            return down_result;
+        if (fileArray == null) {
+            downResult.hasError = UPLOAD_RESULT_IO_ERROR;
+            downResult.countFiles = 0;
+            return downResult;
         }
 
-        int TotalFilesToDownload = mFileArray.length;
+        int totalFilesToDownload = fileArray.length;
 
-        changeStatus("файлiв..." + TotalFilesToDownload, false);
+        changeStatus("файлiв..." + totalFilesToDownload, false);
 
-        Log.i(TAG, "Size:" + String.valueOf(TotalFilesToDownload));
-        for (int i = 0; i < TotalFilesToDownload; i++) {
+        Log.i(TAG, "Size:" + String.valueOf(totalFilesToDownload));
+        for (int i = 0; i < totalFilesToDownload; i++) {
             UploadMedia.resetMediaPlay();//остановка демонстрации видео/слайдов
             // Log.d(TAG, "File:"+mFileArray[i].getName()+"  "+mFileArray[i].isDirectory());
-            if (mFileArray[i].isDirectory()) continue;
+            if (fileArray[i].isDirectory()) continue;
 
-            if (ExtSDSource.getAvailableMemory(MainActivity.context, ExtSDSource.DEFAULT_SD) < mFileArray[i].getSize()) {
+            if (ExtSDSource.getAvailableMemory(MainActivity.context, ExtSDSource.DEFAULT_SD) < fileArray[i].getSize()) {
                 Log.e(TAG, "Not free memory");
-                down_result.hasError = UPLOAD_RESULT_NOT_FREE_MEMORY;
+                downResult.hasError = UPLOAD_RESULT_NOT_FREE_MEMORY;
                 break;
             }
 
-            if (UploadMedia.ifAlreadyExistFile(DestinationDir, mFileArray[i].getName(), mFileArray[i].getSize())) {
-                Log.d(TAG, "Ftp skip file: " + mFileArray[i].getName());
-                down_result.countSkipped++;
+            if (UploadMedia.ifAlreadyExistFile(destinationDir, fileArray[i].getName(), fileArray[i].getSize())) {
+                Log.d(TAG, "Ftp skip file: " + fileArray[i].getName());
+                downResult.countSkipped++;
                 continue;
             }
             //фильтр по расширению файла
             boolean isValidExtension = false;
             for (int a = 0; a < extension.length; a++) {
-                if (mFileArray[i].toString().endsWith(extension[a].substring(2))) {
+                if (fileArray[i].toString().endsWith(extension[a].substring(2))) {
                     isValidExtension = true;
                     break;
                 }
             }
             if (!isValidExtension) {
-                Log.d(TAG, "Ftp skip file: " + mFileArray[i].getName());
+                Log.d(TAG, "Ftp skip file: " + fileArray[i].getName());
                 continue;
             }
 
+            File localFile = new File(destinationDir + fileArray[i].getName());
 
-            File localFile = new File(DestinationDir + mFileArray[i].getName());
-
-            String statusStr = "Завантаження  " + (i + 1) + " з " + TotalFilesToDownload + " ";
+            String statusStr = "Завантаження  " + (i + 1) + " з " + totalFilesToDownload + " ";
             changeStatus(statusStr, false);
 
-            if (downloadFtpFile(mFtpClient, share + "/" + folder + mFileArray[i].getName(), localFile, mFileArray[i].getSize(), statusStr))
-                down_result.countFiles++;
+            if (downloadFtpFile(mFtpClient, share + "/" + folder + fileArray[i].getName(), localFile, fileArray[i].getSize(), statusStr))
+                downResult.countFiles++;
         }
 
-        changeStatus("Завантажено : " + down_result.countFiles, true);
+        changeStatus("Завантажено : " + downResult.countFiles, true);
         //удаление файлов
         // if (resultSlide.CountFiles > 0)
         {
             //удалим неиспользуемые файлы
-            if (FilesAlreadyExists != null) {
+            if (filesAlreadyExists != null) {
 
-                for (int i = 0; i < FilesAlreadyExists.length; i++) {
+                for (int i = 0; i < filesAlreadyExists.length; i++) {
                     boolean forDelete = true;
-                    for (int y = 0; y < TotalFilesToDownload; y++) {
-                        if (mFileArray[y].getName().equals(FilesAlreadyExists[i])) {
+                    for (int y = 0; y < totalFilesToDownload; y++) {
+                        if (fileArray[y].getName().equals(filesAlreadyExists[i])) {
                             forDelete = false;
                             break;
                         }
                     }
                     if (forDelete) {
-                        Log.w(TAG, "To delete: " + FilesAlreadyExists[i]);
-                        new File(DirSou, FilesAlreadyExists[i]).delete();
-                        down_result.countDeleted++;
+                        Log.w(TAG, "To delete: " + filesAlreadyExists[i]);
+                        new File(dirSou, filesAlreadyExists[i]).delete();
+                        downResult.countDeleted++;
                     }
                 }
             }
         }
 
-        return down_result;
+        return downResult;
     }
 
 
@@ -355,26 +362,16 @@ public class FtpWorker {
         OutputStream outputStream = null;
 
         try {
-
-          /*  outputStream = new BufferedOutputStream(new FileOutputStream( downloadFile));
-            ftpClient.setFileType(FTPClient.ASCII_FILE_TYPE);
-            //ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-
-            result = ftpClient.retrieveFile(remoteFilePath, outputStream);
-            Log.d(TAG, "Load ftp file check point 4 ");
-*/
-
             int progress = 0;
 
             outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
             InputStream inputStream = ftpClient.retrieveFileStream(remoteFilePath);
 
-            byte[] bytesArray = new byte[1024 * 500];//1024
+            byte[] bytesArray = new byte[1024 * 500]; //1024
             int bytesRead = -1;
             long totalBytes = 0;
             while ((bytesRead = inputStream.read(bytesArray)) > 0) {
                 outputStream.write(bytesArray, 0, bytesRead);
-                //Log.d(TAG, ">"+bytesRead);
 
                 totalBytes += bytesRead;
 
@@ -382,13 +379,9 @@ public class FtpWorker {
                     progress = 0;
                     changeStatus(status + " " + (int) ((100 * totalBytes) / sizefile) + "%", true);
                 }
-
             }
-
             result = true;
             ftpClient.completePendingCommand();
-
-
         } catch (Exception ex) {
             Log.e(TAG, "Exception Load ftp file: " + ex);
             ex.printStackTrace();
@@ -422,6 +415,4 @@ public class FtpWorker {
             e.printStackTrace();
         }
     }
-
-
 }

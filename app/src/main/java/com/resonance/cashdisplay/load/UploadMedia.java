@@ -34,7 +34,6 @@ import static com.resonance.cashdisplay.PrefWorker.SMB2;
  * Класс управления загрузкой изображений товаров, видео, слайдов
  */
 public class UploadMedia {
-    private static final FileOperation FileOperation = new FileOperation();
     public final String TAG = "UploadMedia";
 
     private static final String NEW_LINE = System.getProperty("line.separator");
@@ -94,25 +93,44 @@ public class UploadMedia {
         screenImgParam = new HashMap<>();
 
         //Инициализация всех возможных вариантов загрузки
-        smbjWorker = new SmbjWorker(context);
-        smbjWorker.onChangeStatusCallBack(smbjStatusCallback);
-        smbjWorker.onEndDownloadCallBack(smbjEndDownloadCallback);
-
         smbWorker = new SmbWorker(context);
-        smbWorker.onChangeSmbStatusCallBack(smbStatusCallback);
-        smbWorker.onEndDownloadCallBack(smbEndDownloadCallback);
+        smbWorker.setSmbStatusCallBack(smbStatusCallback);
+        smbWorker.setEndDownloadCallback(smbEndDownloadCallback);
+
+        smbjWorker = new SmbjWorker(context);
+        smbjWorker.setSmbjStatusCallBack(smbjStatusCallback);
+        smbjWorker.setEndDownloadCallBack(smbjEndDownloadCallback);
 
         ftpWorker = new FtpWorker(context);
-        ftpWorker.onChangeStatusCallBack(ftpStatusCallback);
-        ftpWorker.onEndDownloadCallBack(ftpEndDownloadCallback);
+        ftpWorker.setFtpStatusCallback(ftpStatusCallback);
+        ftpWorker.setEndDownloadCallback(ftpEndDownloadCallback);
     }
+
+    /**
+     * Коллбэк обновления статуса загрузки SMB1  на WEB консоли
+     */
+    private SmbWorker.SmbStatusCallback smbStatusCallback = new SmbWorker.SmbStatusCallback() {
+        @Override
+        public void onSmbStatusChanged(String msg, boolean delRemaininng) {
+            MainActivity.httpServer.sendQueWebStatus(msg, delRemaininng);
+        }
+    };
+    /**
+     * Коллбэк окончания загрузки SMB1
+     */
+    private SmbWorker.SmbEndDownloadCallback smbEndDownloadCallback = new SmbWorker.SmbEndDownloadCallback() {
+        @Override
+        public void onSmbEndDownload(int msg) {
+            uploadThreadStarted = false;  //флаг активации загрузки файлов
+        }
+    };
 
     /**
      * Коллбэк обновления статуса загрузки SMB2  на WEB консоли
      */
-    private SmbjWorker.SMBJ_StatusCallback smbjStatusCallback = new SmbjWorker.SMBJ_StatusCallback() {
+    private SmbjWorker.SmbjStatusCallback smbjStatusCallback = new SmbjWorker.SmbjStatusCallback() {
         @Override
-        public void onSmbjStatus(final String msg, final boolean delRemaininng) {
+        public void onSmbjStatusChanged(String msg, boolean delRemaininng) {
             MainActivity.httpServer.sendQueWebStatus(msg, delRemaininng);
         }
     };
@@ -120,38 +138,21 @@ public class UploadMedia {
     /**
      * Коллбэк окончания загрузки SMB2
      */
-    private SmbjWorker.SMBJ_EndDownloadCallback smbjEndDownloadCallback = new SmbjWorker.SMBJ_EndDownloadCallback() {
+    private SmbjWorker.SmbjEndDownloadCallback smbjEndDownloadCallback = new SmbjWorker.SmbjEndDownloadCallback() {
         @Override
-        public void onSmbjEndDownload(final int msg) {
+        public void onSmbjEndDownload(int msg) {
             uploadThreadStarted = false;//флаг активации загрузки файлов
         }
     };
-    /**
-     * Коллбэк обновления статуса загрузки SMB1  на WEB консоли
-     */
-    private SmbWorker.SMB_StatusCallback smbStatusCallback = new SmbWorker.SMB_StatusCallback() {
-        @Override
-        public void onSmbStatus(final String msg, final boolean delRemaininng) {
-            MainActivity.httpServer.sendQueWebStatus(msg, delRemaininng);
-        }
-    };
-    /**
-     * Коллбэк окончания загрузки SMB1
-     */
-    private SmbWorker.SMB_EndDownloadCallback smbEndDownloadCallback = new SmbWorker.SMB_EndDownloadCallback() {
-        @Override
-        public void onSmbEndDownload(final int msg) {
-            uploadThreadStarted = false;//флаг активации загрузки файлов
-        }
-    };
+
 /*******************************************************************************/
     /**
      * Коллбэк обновления статуса загрузки FTP на WEB консоли
      */
 
-    private FtpWorker.FTP_StatusCallback ftpStatusCallback = new FtpWorker.FTP_StatusCallback() {
+    private FtpWorker.FtpStatusCallback ftpStatusCallback = new FtpWorker.FtpStatusCallback() {
         @Override
-        public void onFtpStatus(final String msg, final boolean delRemaininng) {
+        public void onFtpStatusChanged(String msg, boolean delRemaininng) {
             MainActivity.httpServer.sendQueWebStatus(msg, delRemaininng);
         }
     };
@@ -159,10 +160,10 @@ public class UploadMedia {
     /**
      * Коллбэк окончания загрузки FTP
      */
-    private FtpWorker.FTP_EndDownloadCallback ftpEndDownloadCallback = new FtpWorker.FTP_EndDownloadCallback() {
+    private FtpWorker.FtpEndDownloadCallback ftpEndDownloadCallback = new FtpWorker.FtpEndDownloadCallback() {
         @Override
-        public void onFtpEndDownload(final int msg) {
-            uploadThreadStarted = false;//флаг активации загрузки файлов
+        public void onFtpEndDownload(int msg) {
+            uploadThreadStarted = false; //флаг активации загрузки файлов
         }
     };
 
@@ -264,10 +265,9 @@ public class UploadMedia {
         } else if (prefValues.transferProtocol.equals(DEF_PROTOCOL[SMB1])) {
             uploadThreadStarted = true;
             smbWorker.doDownload(authParam, imgParam, videoParam, slideParam, screenImgParam);
-
         } else if (prefValues.transferProtocol.equals(DEF_PROTOCOL[FTP])) {
             uploadThreadStarted = true;
-            ftpWorker.doDownload(authParam, imgParam, videoParam, slideParam);
+            ftpWorker.doDownload(authParam, imgParam, videoParam, slideParam, screenImgParam);
         }
     }
 
@@ -286,7 +286,6 @@ public class UploadMedia {
                 shareParam.share = params.substring(1, slashEndShare);
                 shareParam.folder = params.substring(slashEndShare + 1);
                 shareParam.result = true;
-
             }
         }
         return shareParam;
@@ -336,7 +335,6 @@ public class UploadMedia {
      * @param urlDest  путь к папке с файлами
      * @param fileName имя файла
      * @param sizeFile размер файла
-     * @return
      */
     public static boolean ifAlreadyExistFile(String urlDest, String fileName, long sizeFile) {
         boolean result = false;
@@ -374,7 +372,6 @@ public class UploadMedia {
         //удалим существующий файл
         if (logFile.exists()) {
             logFile.delete();
-
         }
         //создадим новый файл
         if (!logFile.exists()) {

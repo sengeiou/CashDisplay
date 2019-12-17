@@ -471,6 +471,6 @@ public class HttpServer {
     public synchronized void sendQueWebStatus(String strMsg, boolean clearQueue) {
         iCurStatus = STAT_LOAD_FILES;
         iCurStatusMsg = strMsg;
-        Log.w(TAG, "Smb_messageQueue.take: " + iCurStatusMsg + "\"");
+        Log.w(TAG, "webMessageQueue.take: " + iCurStatusMsg + "\"");
     }
 }

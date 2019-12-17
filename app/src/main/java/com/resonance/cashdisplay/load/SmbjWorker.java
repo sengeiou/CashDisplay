@@ -71,35 +71,34 @@ public class SmbjWorker {
     }
 
     /**** колбэк статуса выполнения загрузки *********************/
-    public interface SMBJ_StatusCallback {
-        void onSmbjStatus(String status, boolean delRemaininng);
+    public interface SmbjStatusCallback {
+        void onSmbjStatusChanged(String status, boolean delRemaininng);
     }
 
-    private static SMBJ_StatusCallback callback_onSmbjStatus;
+    private static SmbjStatusCallback smbjStatusCallback;
 
-    public void onChangeStatusCallBack(SMBJ_StatusCallback cback) {
-        callback_onSmbjStatus = cback;
+    public void setSmbjStatusCallBack(SmbjStatusCallback cback) {
+        smbjStatusCallback = cback;
     }
 
     private void changeStatus(String status, boolean delRemaininng) {
-        callback_onSmbjStatus.onSmbjStatus(status, delRemaininng);
+        smbjStatusCallback.onSmbjStatusChanged(status, delRemaininng);
     }
 
     /**** колбэк окончания загрузки *********************/
-    public interface SMBJ_EndDownloadCallback {
+    public interface SmbjEndDownloadCallback {
         void onSmbjEndDownload(int status);
     }
 
-    private static SMBJ_EndDownloadCallback callback_onEndDownload;
+    private static SmbjEndDownloadCallback smbjEndDownloadCallback;
 
-    public void onEndDownloadCallBack(SMBJ_EndDownloadCallback cback) {
-        callback_onEndDownload = cback;
+    public void setEndDownloadCallBack(SmbjEndDownloadCallback cback) {
+        smbjEndDownloadCallback = cback;
     }
 
     private void setEventEndDownload(int status) {
-        callback_onEndDownload.onSmbjEndDownload(status);
+        smbjEndDownloadCallback.onSmbjEndDownload(status);
     }
-
 
     public void doDownload(HashMap<String, Object> auHashMap,
                            HashMap<String, Object> imgHashMap,
@@ -112,11 +111,10 @@ public class SmbjWorker {
 
     private class SmbjTask extends AsyncTask<HashMap<String, Object>, Void, Integer> {
 
+        UploadResult resultScreenImg = new UploadResult();
         UploadResult resultImg = new UploadResult();
         UploadResult resultVideo = new UploadResult();
         UploadResult resultSlide = new UploadResult();
-        UploadResult resultScreenImg = new UploadResult();
-
 
         protected void onPreExecute() {
             super.onPreExecute();
@@ -155,28 +153,6 @@ public class SmbjWorker {
             String destinationScreenImg = (String) screenImgHashMap.get("DestinationScreenImg");
             String[] extensionScreenImg = (String[]) screenImgHashMap.get("extensionArrayScreenImg");
 
-
-            resultImg.hasError = UPLOAD_RESULT_SUCCESSFULL;
-            resultImg.countFiles = 0;
-            resultImg.countSkipped = 0;
-            resultImg.countDeleted = 0;
-
-            resultVideo.hasError = UPLOAD_RESULT_SUCCESSFULL;
-            resultVideo.countFiles = 0;
-            resultVideo.countSkipped = 0;
-            resultVideo.countDeleted = 0;
-
-            resultSlide.hasError = UPLOAD_RESULT_SUCCESSFULL;
-            resultSlide.countFiles = 0;
-            resultSlide.countSkipped = 0;
-            resultSlide.countDeleted = 0;
-
-            resultScreenImg.hasError = UPLOAD_RESULT_SUCCESSFULL;
-            resultScreenImg.countFiles = 0;
-            resultScreenImg.countSkipped = 0;
-            resultScreenImg.countDeleted = 0;
-
-
             Log.d(TAG, "SmbjTask... ");
 
             SmbConfig config = SmbConfig.builder()
@@ -202,19 +178,17 @@ public class SmbjWorker {
                 session = connection.authenticate(authenticationContext);
                 Log.d(TAG, "Smbj connect successfull");
 
-
                 changeStatus(mContext.getString(R.string.get_data_ScreenFiles), false);
-                resultScreenImg = HandlerFiles(session, shareScreenImg, folderScreenImg, destinationScreenImg, extensionScreenImg);
+                resultScreenImg = handleFiles(session, shareScreenImg, folderScreenImg, destinationScreenImg, extensionScreenImg);
 
                 changeStatus(mContext.getString(R.string.get_data_Img), false);
-                resultImg = HandlerFiles(session, shareImg, folderImg, destinationImg, extensionImg);
+                resultImg = handleFiles(session, shareImg, folderImg, destinationImg, extensionImg);
 
                 changeStatus(mContext.getString(R.string.get_data_Video), false);
-                resultVideo = HandlerFiles(session, shareVideo, folderVideo, destinationVideo, extensionVideo);
+                resultVideo = handleFiles(session, shareVideo, folderVideo, destinationVideo, extensionVideo);
 
                 changeStatus(mContext.getString(R.string.get_data_Slide), false);
-                resultSlide = HandlerFiles(session, shareSlide, folderSlide, destinationSlide, extensionSlide);
-
+                resultSlide = handleFiles(session, shareSlide, folderSlide, destinationSlide, extensionSlide);
 
             } catch (Exception e) {
                 Log.e(TAG, "Smbj Exception: " + e);
@@ -225,9 +199,7 @@ public class SmbjWorker {
                 } else if ((e.getMessage().contains("IllegalArgumentException")) || (e.getMessage().contains("Cannot require message signing when authenticating"))) {
                     error = UPLOAD_RESULT_BAD_ARGUMENTS;
                 }
-
             } finally {
-
                 try {
                     //выгрузим на сервер лог загрузки
                     DiskShare share = (DiskShare) session.connectShare(shareScreenImg);
@@ -237,15 +209,15 @@ public class SmbjWorker {
                             if (!share.folderExists(log_dir)) {
                                 share.mkdir(log_dir);
                             }
-                            String remote_log_file = log_dir + "/" + UploadMedia.logFile.getName();
-                            if (!share.fileExists(remote_log_file)) {
+                            String remoteLogFile = log_dir + "/" + UploadMedia.logFile.getName();
+                            if (!share.fileExists(remoteLogFile)) {
 
-                                com.hierynomus.smbj.share.File file = share.openFile(remote_log_file, EnumSet.of(AccessMask.GENERIC_ALL), null, SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_CREATE, null);
+                                com.hierynomus.smbj.share.File file = share.openFile(remoteLogFile, EnumSet.of(AccessMask.GENERIC_ALL), null, SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_CREATE, null);
                                 file.close();
                                 // Log.d(TAG, "LOG >>"+share.fileExists(remote_log_file));
                             }
 
-                            SmbFiles.copy(UploadMedia.logFile, share, remote_log_file, true);
+                            SmbFiles.copy(UploadMedia.logFile, share, remoteLogFile, true);
                         } catch (IOException e) {
                             Log.e(TAG, "Smb IOException: " + e);
                         }
@@ -298,7 +270,7 @@ public class SmbjWorker {
                 case UPLOAD_RESULT_SUCCESSFULL:
                 case UPLOAD_RESULT_SHARE_CONNECTION_ERROR:
                     String status =
-                            "<font color=\"blue\"><B>Фоновi зображення:</B><br></font>[" + (resultScreenImg.hasError > 0 ? extendedErrorScreenImg : "завантажено : <B>" + resultScreenImg.countFiles + "</B>, iснуючих : <B>" + resultScreenImg.countSkipped + "</B>, видалено : <B>" + resultScreenImg.countDeleted) + "</B>];  <br>" +
+                            "<font color=\"blue\"><B>Фоновi (допомiжнi) зображення:</B><br></font>[" + (resultScreenImg.hasError > 0 ? extendedErrorScreenImg : "завантажено : <B>" + resultScreenImg.countFiles + "</B>, iснуючих : <B>" + resultScreenImg.countSkipped + "</B>, видалено : <B>" + resultScreenImg.countDeleted) + "</B>];  <br>" +
                                     "<font color=\"blue\"><B>Вiдео:</B><br></font>[" + (resultVideo.hasError > 0 ? extendedErrorVideo : "завантажено : <B>" + resultVideo.countFiles + "</B>, iснуючих : <B>" + resultVideo.countSkipped + "</B>, видалено : <B>" + resultVideo.countDeleted) + "</B>];  <br>" +
                                     "<font color=\"blue\"><B>Зображення товарiв:</B><br></font>[" + (resultImg.hasError > 0 ? extendedErrorImage : "завантажено : <B>" + resultImg.countFiles + "</B>, iснуючих : <B>" + resultImg.countSkipped + "</B>, видалено : <B>" + resultImg.countDeleted) + "</B>];  <br>" +
                                     "<font color=\"blue\"><B>Слайди:</B><br></font>[" + (resultSlide.hasError > 0 ? extendedErrorSlide : "завантажено : <B>" + resultSlide.countFiles + "</B>, iснуючих : <B>" + resultSlide.countSkipped + "</B>, видалено : <B>" + resultSlide.countDeleted) + "</B>];";
@@ -322,7 +294,6 @@ public class SmbjWorker {
                     break;
             }
             setEventEndDownload(result);
-
         }
     }
 
@@ -332,7 +303,7 @@ public class SmbjWorker {
     // Загрузка файлов
     // Удаление ненужных файлов
     //
-    private UploadResult HandlerFiles(Session session, String share_folder, String source_folder, String destination_folder, String[] extension_files) {
+    private UploadResult handleFiles(Session session, String share_folder, String source_folder, String destination_folder, String[] extension_files) {
 
         UploadResult downloadResult = new UploadResult();
         downloadResult.hasError = UPLOAD_RESULT_SUCCESSFULL;
@@ -355,9 +326,9 @@ public class SmbjWorker {
             if (share.isConnected()) {
 
                 for (int i = 0; i < extension_files.length; i++) {
-                    UploadResult tmpresultImg = DownloadFromShareFolder(share, source_folder, extension_files[i], destination_folder);
-                    downloadResult.countFiles += tmpresultImg.countFiles;
-                    downloadResult.hasError = tmpresultImg.hasError;
+                    UploadResult tmpResultImg = DownloadFromShareFolder(share, source_folder, extension_files[i], destination_folder);
+                    downloadResult.countFiles += tmpResultImg.countFiles;
+                    downloadResult.hasError = tmpResultImg.hasError;
                     Log.d(TAG, "IMG Загружено:  " + downloadResult.countFiles + " ext:" + extension_files[i]);
                 }
                 share.close();
@@ -453,7 +424,6 @@ public class SmbjWorker {
                 dr.hasError = UPLOAD_RESULT_IO_ERROR;
             } finally {
                 try {
-
                     remoteSmbjFile.close();
                     if (bos != null) {
                         bos.flush();

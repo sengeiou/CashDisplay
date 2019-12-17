@@ -35,38 +35,44 @@ public class PrefWorker {
         SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences(SERIALIZER_KEY, MainActivity.context.MODE_PRIVATE);
         PrefValues prefValues = new PrefValues();
 
-        prefValues.uartName = sharedPreferences.getString("sUartName", DEF_UARTS[0]);
         prefValues.smbHost = sharedPreferences.getString("sSmbHost", "server");
+        prefValues.user = sharedPreferences.getString("sUser", "indi10");
+        prefValues.passw = sharedPreferences.getString("sPassw", "20671");
+        prefValues.transferProtocol = sharedPreferences.getString("sProtocol", DEF_PROTOCOL[SMB1]);
+
+        prefValues.pathToScreenImg = sharedPreferences.getString("sPathToScreenImg", "/indi10/ScreenImg/");
         prefValues.smbImg = sharedPreferences.getString("sSmbImg", "/indi10/Img/");
         prefValues.smbVideo = sharedPreferences.getString("sSmbVideo", "/indi10/Video/");
         prefValues.smbSlide = sharedPreferences.getString("sSmbSlide", "/indi10/Slide/");
-        prefValues.user = sharedPreferences.getString("sUser", "indi10");
-        prefValues.passw = sharedPreferences.getString("sPassw", "20671");
-        prefValues.checkEnableVideo = sharedPreferences.getBoolean("sCheckEnableVideo", false);
-        prefValues.videoTimeout = sharedPreferences.getLong("svideoTimeout", 20);
-        prefValues.admin = sharedPreferences.getString("sAdmin", "admin");
-        prefValues.adminPassw = sharedPreferences.getString("sAdminPassw", "admin");
+
         prefValues.downloadAtStart = sharedPreferences.getBoolean("sDownloadAtStart", false);
-        prefValues.percentVolume = sharedPreferences.getInt("sPercentVolume", 50);
 
-        prefValues.ip = sharedPreferences.getString("sIP", "192.168.1.200");
-        prefValues.mask = sharedPreferences.getString("sMask", "255.255.255.0");
-        prefValues.gateway = sharedPreferences.getString("sGW", "192.168.1.1");
-        prefValues.dns = sharedPreferences.getString("sDNS", "8.8.8.8");
-        prefValues.dhcp = sharedPreferences.getBoolean("sDHCP", true);
-        prefValues.transferProtocol = sharedPreferences.getString("sProtocol", DEF_PROTOCOL[SMB1]);
-        prefValues.defaultBackgroundImage = sharedPreferences.getString("sDefaultBackGroundImage", "default_background_picture.png");
-        prefValues.showNavigationBar = sharedPreferences.getBoolean("sShowNavigationBar", false);
-        prefValues.timeSlideImage = sharedPreferences.getInt("sTimeSlideImage", 10);
+        prefValues.uartName = sharedPreferences.getString("sUartName", DEF_UARTS[0]);
+
+        prefValues.checkEnableVideo = sharedPreferences.getBoolean("sCheckEnableVideo", false);
         prefValues.videoOrSlide = sharedPreferences.getInt("sVideoOrSlide", VIDEO);
+        prefValues.percentVolume = sharedPreferences.getInt("sPercentVolume", 50);
+        prefValues.videoTimeout = sharedPreferences.getLong("svideoTimeout", 20);
+        prefValues.timeSlideImage = sharedPreferences.getInt("sTimeSlideImage", 10);
 
+        prefValues.defaultBackgroundImage = sharedPreferences.getString("sDefaultBackGroundImage", "default_background_picture.png");
         prefValues.backgroundShoppingList = sharedPreferences.getString("background_shopping_list", "default_background_picture.png");
         prefValues.backgroundCashNotWork = sharedPreferences.getString("background_cash_not_work", "default_background_picture.png");
         prefValues.backgroundThanks = sharedPreferences.getString("background_thanks", "default_background_picture.png");
 
-        prefValues.pathToScreenImg = sharedPreferences.getString("sPathToScreenImg", "/indi10/ScreenImg/");
+        prefValues.dhcp = sharedPreferences.getBoolean("sDHCP", true);
+        prefValues.ip = sharedPreferences.getString("sIP", "192.168.1.200");
+        prefValues.mask = sharedPreferences.getString("sMask", "255.255.255.0");
+        prefValues.gateway = sharedPreferences.getString("sGW", "192.168.1.1");
+        prefValues.dns = sharedPreferences.getString("sDNS", "8.8.8.8");
+
+        prefValues.admin = sharedPreferences.getString("sAdmin", "admin");
+        prefValues.adminPassw = sharedPreferences.getString("sAdminPassw", "admin");
 
         prefValues.productListLookCode = sharedPreferences.getInt("productListLookCode", PRODUCT_LIST_LOOK[0]);
+
+        prefValues.showNavigationBar = sharedPreferences.getBoolean("sShowNavigationBar", false);
+
 
         return prefValues;
     }
@@ -74,50 +80,45 @@ public class PrefWorker {
     public synchronized static void setValues(PrefValues prefValues) {
         SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences(SERIALIZER_KEY, MainActivity.context.MODE_PRIVATE);
 
-        sharedPreferences.edit().putString("sUartName", prefValues.uartName).apply();
         sharedPreferences.edit().putString("sSmbHost", prefValues.smbHost).apply();
+        sharedPreferences.edit().putString("sUser", prefValues.user).apply();
+        sharedPreferences.edit().putString("sPassw", prefValues.passw).apply();
+        sharedPreferences.edit().putString("sProtocol", prefValues.transferProtocol).apply();
+
+        sharedPreferences.edit().putString("sPathToScreenImg", prefValues.pathToScreenImg).apply();
         sharedPreferences.edit().putString("sSmbImg", prefValues.smbImg).apply();
         sharedPreferences.edit().putString("sSmbVideo", prefValues.smbVideo).apply();
         sharedPreferences.edit().putString("sSmbSlide", prefValues.smbSlide).apply();
 
-        sharedPreferences.edit().putString("sUser", prefValues.user).apply();
-        sharedPreferences.edit().putString("sPassw", prefValues.passw).apply();
-        sharedPreferences.edit().putBoolean("sCheckEnableVideo", prefValues.checkEnableVideo).apply();
-
-        if (prefValues.videoTimeout < MIN_VIDEO_TIMEOUT)
-            prefValues.videoTimeout = MIN_VIDEO_TIMEOUT;
-        sharedPreferences.edit().putLong("svideoTimeout", prefValues.videoTimeout).apply();
-
-        sharedPreferences.edit().putString("sAdmin", prefValues.admin).apply();
-
-        sharedPreferences.edit().putString("sAdminPassw", prefValues.adminPassw).apply();
         sharedPreferences.edit().putBoolean("sDownloadAtStart", prefValues.downloadAtStart).apply();
+
+        sharedPreferences.edit().putString("sUartName", prefValues.uartName).apply();
+
+        sharedPreferences.edit().putBoolean("sCheckEnableVideo", prefValues.checkEnableVideo).apply();
+        sharedPreferences.edit().putInt("sVideoOrSlide", prefValues.videoOrSlide).apply();
         sharedPreferences.edit().putInt("sPercentVolume", prefValues.percentVolume).apply();
-
-        sharedPreferences.edit().putString("sIP", prefValues.ip).apply();
-
-        sharedPreferences.edit().putString("sMask", prefValues.mask).apply();
-
-        sharedPreferences.edit().putString("sGW", prefValues.gateway).apply();
-        sharedPreferences.edit().putString("sDNS", prefValues.dns).apply();
-        sharedPreferences.edit().putBoolean("sDHCP", prefValues.dhcp).apply();
-        assert (prefValues.transferProtocol != DEF_PROTOCOL[SMB1] && prefValues.transferProtocol != DEF_PROTOCOL[SMB2] && prefValues.transferProtocol != DEF_PROTOCOL[FTP]);
-        sharedPreferences.edit().putString("sProtocol", prefValues.transferProtocol).apply();
-        sharedPreferences.edit().putString("sDefaultBackGroundImage", prefValues.defaultBackgroundImage).apply();
-        sharedPreferences.edit().putBoolean("sShowNavigationBar", prefValues.showNavigationBar).apply();
-
-        if (prefValues.timeSlideImage < MIN_SLIDE_TIME_SHOW)
+        if (prefValues.videoTimeout < MIN_VIDEO_TIMEOUT) {
+            prefValues.videoTimeout = MIN_VIDEO_TIMEOUT;
+        }
+        sharedPreferences.edit().putLong("svideoTimeout", prefValues.videoTimeout).apply();
+        if (prefValues.timeSlideImage < MIN_SLIDE_TIME_SHOW) {
             prefValues.timeSlideImage = MIN_SLIDE_TIME_SHOW;
-
+        }
         sharedPreferences.edit().putInt("sTimeSlideImage", prefValues.timeSlideImage).apply();
 
-        sharedPreferences.edit().putInt("sVideoOrSlide", prefValues.videoOrSlide).apply();
-
+        sharedPreferences.edit().putString("sDefaultBackGroundImage", prefValues.defaultBackgroundImage).apply();
         sharedPreferences.edit().putString("background_shopping_list", prefValues.backgroundShoppingList).apply();
         sharedPreferences.edit().putString("background_cash_not_work", prefValues.backgroundCashNotWork).apply();
         sharedPreferences.edit().putString("background_thanks", prefValues.backgroundThanks).apply();
 
-        sharedPreferences.edit().putString("sPathToScreenImg", prefValues.pathToScreenImg).apply();
+        sharedPreferences.edit().putBoolean("sDHCP", prefValues.dhcp).apply();
+        sharedPreferences.edit().putString("sIP", prefValues.ip).apply();
+        sharedPreferences.edit().putString("sMask", prefValues.mask).apply();
+        sharedPreferences.edit().putString("sGW", prefValues.gateway).apply();
+        sharedPreferences.edit().putString("sDNS", prefValues.dns).apply();
+
+        sharedPreferences.edit().putString("sAdmin", prefValues.admin).apply();
+        sharedPreferences.edit().putString("sAdminPassw", prefValues.adminPassw).apply();
 
         // determine from background image for product list if we have to set custom look or default
         productListLookCode = PRODUCT_LIST_LOOK[0];
@@ -132,5 +133,7 @@ public class PrefWorker {
             }
         }
         sharedPreferences.edit().putInt("productListLookCode", productListLookCode).apply();
+
+        sharedPreferences.edit().putBoolean("sShowNavigationBar", prefValues.showNavigationBar).apply();
     }
 }
