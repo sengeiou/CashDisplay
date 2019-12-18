@@ -83,7 +83,6 @@ public class SmbWorker {
                            HashMap<String, Object> videoHashMap,
                            HashMap<String, Object> slideHashMap,
                            HashMap<String, Object> screenImgHashMap) {
-        //Log.d(TAG, "SMB2 doDownload, Host:"+Host+",User:"+User+", Passw:"+Passw+",shareName:"+shareName+", shareFolder:"+shareFolder+",DestinationFolder:"+DestinationFolder);
         new SmbTask().execute(auHashMap, imgHashMap, videoHashMap, slideHashMap, screenImgHashMap);
     }
 
@@ -103,62 +102,61 @@ public class SmbWorker {
         @Override
         protected Integer doInBackground(HashMap<String, Object>... params) {
 
-            int error = 0;
-            String ConnectionStr = "";
             HashMap<String, Object> auHashMap = params[0];
             HashMap<String, Object> imgHashMap = params[1];
             HashMap<String, Object> videoHashMap = params[2];
             HashMap<String, Object> slideHashMap = params[3];
             HashMap<String, Object> screenImgHashMap = params[4];
 
-            String user = (String) auHashMap.get("User");
-            String password = (String) auHashMap.get("Passw");
-            String host = (String) auHashMap.get("Host");
+            String user = (String) auHashMap.get("user");
+            String password = (String) auHashMap.get("passw");
+            String host = (String) auHashMap.get("host");
 
             String shareImg = (String) imgHashMap.get("shareImg");
             String folderImg = (String) imgHashMap.get("folderImg");
-            String destinationImg = (String) imgHashMap.get("DestinationImg");
-            String[] extensionImg = (String[]) imgHashMap.get("extensionArrayImg");
+            String destImg = (String) imgHashMap.get("destImg");
+            String[] extImg = (String[]) imgHashMap.get("extArrayImg");
 
             String shareVideo = (String) videoHashMap.get("shareVideo");
             String folderVideo = (String) videoHashMap.get("folderVideo");
-            String destinationVideo = (String) videoHashMap.get("DestinationVideo");
-            String[] extensionVideo = (String[]) videoHashMap.get("extensionArrayVideo");
+            String destVideo = (String) videoHashMap.get("destVideo");
+            String[] extVideo = (String[]) videoHashMap.get("extArrayVideo");
 
             String shareSlide = (String) slideHashMap.get("shareSlide");
             String folderSlide = (String) slideHashMap.get("folderSlide");
-            String destinationSlide = (String) slideHashMap.get("DestinationSlide");
-            String[] extensionSlide = (String[]) slideHashMap.get("extensionArraySlide");
+            String destSlide = (String) slideHashMap.get("destSlide");
+            String[] extSlide = (String[]) slideHashMap.get("extArraySlide");
 
             String shareScreenImg = (String) screenImgHashMap.get("shareScreenImg");
             String folderScreenImg = (String) screenImgHashMap.get("folderScreenImg");
-            String destinationScreenImg = (String) screenImgHashMap.get("DestinationScreenImg");
-            String[] extensionScreenImg = (String[]) screenImgHashMap.get("extensionArrayScreenImg");
+            String destScreenImg = (String) screenImgHashMap.get("destScreenImg");
+            String[] extScreenImg = (String[]) screenImgHashMap.get("extArrayScreenImg");
 
+            int result = 0;
+            String connectionStr = "";
             Log.d(TAG, "SmbTask... ");
 
             try {
-                //download IMG
-                resultImg = handleFiles(user, password, host, shareImg, folderImg, destinationImg, extensionImg);
-                //download Video
-                resultVideo = handleFiles(user, password, host, shareVideo, folderVideo, destinationVideo, extensionVideo);
-                //download Slides
-                resultSlide = handleFiles(user, password, host, shareSlide, folderSlide, destinationSlide, extensionSlide);
-                //download Screen images
-                resultScreenImg = handleFiles(user, password, host, shareScreenImg, folderScreenImg, destinationScreenImg, extensionScreenImg);
+                // download IMG
+                resultImg = handleFiles(user, password, host, shareImg, folderImg, destImg, extImg);
+                // download Video
+                resultVideo = handleFiles(user, password, host, shareVideo, folderVideo, destVideo, extVideo);
+                // download Slides
+                resultSlide = handleFiles(user, password, host, shareSlide, folderSlide, destSlide, extSlide);
+                // download Screen images
+                resultScreenImg = handleFiles(user, password, host, shareScreenImg, folderScreenImg, destScreenImg, extScreenImg);
 
               /*  ConnectionStr = Host + (shareImg.startsWith("/") ? "" : "/") + shareImg + (folderImg.startsWith("/") ? "" : "/") + folderImg;
                 ChangeStatus(mContext.getString(R.string.connect_to_server) + ": " + ConnectionStr, true);
                 SmbFile smb = ConnectToSource(ConnectionStr, User, Passw);
                 if (smb == null) {
-
                     Log.d(TAG, "Соединение c " + ConnectionStr + " - не удалось");
                     ChangeStatus("підключення до сервера не вдалося:" + ConnectionStr, true);
                     error = DOWNLOAD_RESULT_CONNECTION_ERROR;
                     resultImg.HasError =  DOWNLOAD_RESULT_CONNECTION_ERROR;
                 } else {
                     Log.d(TAG, "Соединение c " + ConnectionStr);
-                    resultImg = DownloadFromShareFolder(smb, DestinationImg, extensionImg);
+                    resultImg = DownloadFromShareFolder(smb, destImg, extImg);
                 }
 
                     //download Video
@@ -173,7 +171,7 @@ public class SmbWorker {
                         error = DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR;
                         resultVideo.HasError= DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR;
                     }else {
-                        resultVideo = DownloadFromShareFolder(smb, DestinationVideo, extensionVideo);
+                        resultVideo = DownloadFromShareFolder(smb, destVideo, extVideo);
                     }
 
                 //download Slides
@@ -186,36 +184,32 @@ public class SmbWorker {
                     ChangeStatus("Не вдалося підключення до сервера: " + ConnectionStr, false);
                     error = DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR;
                     resultSlide.HasError= DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR;
-                }else {
-
-                    resultSlide = DownloadFromShareFolder(smb, DestinationSlide, extensionSlide);
+                } else {
+                    resultSlide = DownloadFromShareFolder(smb, destSlide, extSlide);
                 }
                 */
             } catch (Exception e) {
                 Log.e(TAG, "Smb Exception: " + e);
 
-                error = UPLOAD_RESULT_ERROR_SMB_SERVER;
+                result = UPLOAD_RESULT_ERROR_SMB_SERVER;
                 if (e.getMessage().contains("Could not connect") || e.getMessage().contains("failed to connect")) {
-                    error = UPLOAD_RESULT_CONNECTION_ERROR;
-
+                    result = UPLOAD_RESULT_CONNECTION_ERROR;
                 }
                 if (e.getMessage().contains("IllegalArgumentException")) {
-                    error = UPLOAD_RESULT_BAD_ARGUMENTS;
+                    result = UPLOAD_RESULT_BAD_ARGUMENTS;
                 }
             } finally {
-
                 try {
                     //выгрузим на сервер лог загрузки
                     String connStr = host + (shareScreenImg.startsWith("/") ? "" : "/") + shareScreenImg + "/LOG/";//(folderScreenImg.startsWith("/") ? "" : "/") + folderScreenImg;
-                    uplopadToSmb(user, password, connStr, UploadMedia.logFile);
+                    uploadToSmb(user, password, connStr, UploadMedia.logFile);
                 } catch (Exception e) {
                     Log.e(TAG, "Smb Exception: " + e);
                 }
                 //удалим лог, предназначеный для передачи на сервер
                 UploadMedia.deleteUploadLog();
-
             }
-            return error;
+            return result;
         }
 
         @Override
@@ -243,9 +237,8 @@ public class SmbWorker {
             switch (result) {
                 case UPLOAD_RESULT_SUCCESSFULL:
                 case UPLOAD_RESULT_SHARE_CONNECTION_ERROR:
-
                     String status =
-                            "<font color=\"blue\"><B>Фоновi (допомiжнi) зображення:</B><br></font>[" + (resultScreenImg.hasError > 0 ? extendedErrorScreenImg : "завантажено : <B>" + resultScreenImg.countFiles + "</B>, iснуючих : <B>" + resultScreenImg.countSkipped + "</B>, видалено : <B>" + resultScreenImg.countDeleted) + "</B>];  <br>" +
+                            "<font color=\"blue\"><B>Фоновi та допомiжнi зображення:</B><br></font>[" + (resultScreenImg.hasError > 0 ? extendedErrorScreenImg : "завантажено : <B>" + resultScreenImg.countFiles + "</B>, iснуючих : <B>" + resultScreenImg.countSkipped + "</B>, видалено : <B>" + resultScreenImg.countDeleted) + "</B>];  <br>" +
                                     "<font color=\"blue\"><B>Вiдео:</B><br></font>[" + (resultVideo.hasError > 0 ? extendedErrorVideo : "завантажено : <B>" + resultVideo.countFiles + "</B>, iснуючих : <B>" + resultVideo.countSkipped + "</B>, видалено : <B>" + resultVideo.countDeleted) + "</B>];  <br>" +
                                     "<font color=\"blue\"><B>Зображення товарiв:</B><br></font>[" + (resultImg.hasError > 0 ? extendedErrorImage : "завантажено : <B>" + resultImg.countFiles + "</B>, iснуючих : <B>" + resultImg.countSkipped + "</B>, видалено : <B>" + resultImg.countDeleted) + "</B>];  <br>" +
                                     "<font color=\"blue\"><B>Слайди:</B><br></font>[" + (resultSlide.hasError > 0 ? extendedErrorSlide : "завантажено : <B>" + resultSlide.countFiles + "</B>, iснуючих : <B>" + resultSlide.countSkipped + "</B>, видалено : <B>" + resultSlide.countDeleted) + "</B>];";
@@ -266,20 +259,19 @@ public class SmbWorker {
                 case UPLOAD_RESULT_ERROR_SMB_SERVER:
                     changeStatus("Помилка сервера SMB", true);
                     break;
-
             }
             setEventEndDownload(result);
         }
     }
 
-    private UploadResult handleFiles(String User, String Passw, String Host, String share, String source_folder, String destFolder, String[] extFiles) {
+    private UploadResult handleFiles(String user, String passw, String host, String share, String sourceFolder, String destFolder, String[] extFiles) {
         UploadResult result = new UploadResult();
         result.hasError = UPLOAD_RESULT_SUCCESSFULL;
 
-        String connectionStr = Host + (share.startsWith("/") ? "" : "/") + share + (source_folder.startsWith("/") ? "" : "/") + source_folder;
+        String connectionStr = host + (share.startsWith("/") ? "" : "/") + share + (sourceFolder.startsWith("/") ? "" : "/") + sourceFolder;
         UploadMedia.appendToUploadLog("(SMB1) " + connectionStr);
         changeStatus(mContext.getString(R.string.connect_to_server) + ": " + connectionStr, true);
-        SmbFile smb = connectToSource(connectionStr, User, Passw, false);
+        SmbFile smb = connectToSource(connectionStr, user, passw, false);
 
         if (smb == null) {
 
@@ -293,14 +285,14 @@ public class SmbWorker {
         return result;
     }
 
-    private SmbFile connectToSource(String url, String Usr, String Passw, boolean create) {
+    private SmbFile connectToSource(String url, String usr, String passw, boolean create) {
         String URL = url;
-        NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication("", Usr, Passw);
+        NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication("", usr, passw);
 
         System.setProperty("jcifs.smb.client.responseTimeout", "2000"); // default: 30000 millisec.
         System.setProperty("jcifs.smb.client.soTimeout", "2000"); // default: 35000 millisec.
 
-        boolean anonymous = ((Usr.length() == 0 && Passw.length() == 0) ? true : false);
+        boolean anonymous = ((usr.length() == 0 && passw.length() == 0) ? true : false);
 
         SmbFile f = null;
 
@@ -341,7 +333,7 @@ public class SmbWorker {
         return f;
     }
 
-    private UploadResult downloadFromShareFolder(SmbFile smb, String DestinationFolder, String[] extensionFile) {
+    private UploadResult downloadFromShareFolder(SmbFile smb, String destFolder, String[] extensionFile) {
         String[] filesAlreadyExists = null;//список файлов уже существующих
         UploadResult dr = new UploadResult();
         dr.hasError = UPLOAD_RESULT_SUCCESSFULL;
@@ -350,7 +342,7 @@ public class SmbWorker {
         dr.countDeleted = 0;
 
         //получим список файлов уже существующих
-        File dirSou = new File(DestinationFolder);
+        File dirSou = new File(destFolder);
         if (dirSou.isDirectory()) {
             filesAlreadyExists = dirSou.list();
         }
@@ -364,7 +356,7 @@ public class SmbWorker {
             for (int i = 0; i < arrSmbFiles.length; i++) {
                 UploadMedia.resetMediaPlay();//остановка демонстрации видео/слайдов
                 //если файл существует, копировать не будем
-                if (UploadMedia.ifAlreadyExistFile(DestinationFolder, arrSmbFiles[i].getName(), arrSmbFiles[i].length())) {
+                if (UploadMedia.ifAlreadyExistFile(destFolder, arrSmbFiles[i].getName(), arrSmbFiles[i].length())) {
                     Log.d(TAG, "Smb file: " + arrSmbFiles[i].getPath() + "  - SKIPED");
                     UploadMedia.appendToUploadLog("Файл :" + arrSmbFiles[i].getPath() + " - пропущен");
                     dr.countSkipped++;
@@ -393,7 +385,7 @@ public class SmbWorker {
 
                 Log.d(TAG, "Download File [" + i + "] " + arrSmbFiles[i].getPath());
                 SmbFileInputStream in = new SmbFileInputStream(arrSmbFiles[i]);
-                FileOutputStream out = new FileOutputStream(DestinationFolder + arrSmbFiles[i].getName());
+                FileOutputStream out = new FileOutputStream(destFolder + arrSmbFiles[i].getName());
 
                 long t0 = System.currentTimeMillis();
 
@@ -425,11 +417,9 @@ public class SmbWorker {
 
                 UploadMedia.appendToUploadLog("Загружен : " + arrSmbFiles[i].getName() + ", размер : " + arrSmbFiles[i].length());
 
-                File destination = new File(DestinationFolder, arrSmbFiles[i].getName());
+                File destination = new File(destFolder, arrSmbFiles[i].getName());
                 if (!destination.exists())
                     Log.e(TAG, "File [" + destination + "] NOT CREATED");
-
-
             }
 
             //удалим неиспользуемые файлы
@@ -454,7 +444,6 @@ public class SmbWorker {
                             if (dr.countDeleted % 10 == 0)
                                 changeStatus("Видалення..." + filesAlreadyExists[i], true);
                             //new File(DirSou, FilesAlreadyExists[i]).delete();
-
                         }
                     }
                 }
@@ -479,17 +468,17 @@ public class SmbWorker {
         return dr;
     }
 
-    private boolean uplopadToSmb(String User, String Passw, String remote_destination_path, File localFile) {
+    private boolean uploadToSmb(String user, String passw, String remotedestPath, File localFile) {
 
         InputStream in = null;
         OutputStream out = null;
         boolean result = false;
         try {
-            //проверим наличие и создадим директорию
-            SmbFile remoteDir = connectToSource(remote_destination_path, User, Passw, true);//
+            // проверим наличие и создадим директорию
+            SmbFile remoteDir = connectToSource(remotedestPath, user, passw, true);
 
-            //проверим наличие и создадим файл
-            SmbFile remoteFile = connectToSource(remote_destination_path + localFile.getName(), User, Passw, true);
+            // проверим наличие и создадим файл
+            SmbFile remoteFile = connectToSource(remotedestPath + localFile.getName(), user, passw, true);
 
             in = new BufferedInputStream(new FileInputStream(localFile));
             out = new BufferedOutputStream(new SmbFileOutputStream(remoteFile));
@@ -502,7 +491,7 @@ public class SmbWorker {
             out.flush(); //The refresh buffer output stream
             result = true;
         } catch (Exception e) {
-            Log.e(TAG, "UplopadToSmb: " + e);
+            Log.e(TAG, "UploadToSmb: " + e);
         } finally {
             try {
                 if (out != null) {

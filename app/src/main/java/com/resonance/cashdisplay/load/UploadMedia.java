@@ -57,7 +57,7 @@ public class UploadMedia {
     public static final String SLIDE_URI = "/Documents/SLIDE/";
     public static final String IMG_SCREEN = "/Documents/SCREEN/";   // изображения экранов
 
-    private static boolean uploadThreadStarted = false;             // флаг активации загрузки файлов
+    private static boolean uploadStarted = false;             // флаг активации загрузки файлов
 
     public static String[] destinationDirs = null;
     public static final int IMAGE = 0;
@@ -66,8 +66,8 @@ public class UploadMedia {
     public static final int SCREEN = 3;
 
     private Context context;
-    private static SmbjWorker smbjWorker = null;
     private static SmbWorker smbWorker = null;
+    private static SmbjWorker smbjWorker = null;
     private static FtpWorker ftpWorker = null;
 
     private static HashMap<String, Object> authParam;
@@ -107,7 +107,7 @@ public class UploadMedia {
     }
 
     /**
-     * Коллбэк обновления статуса загрузки SMB1  на WEB консоли
+     * Коллбэк обновления статуса загрузки SMB1 на WEB консоли
      */
     private SmbWorker.SmbStatusCallback smbStatusCallback = new SmbWorker.SmbStatusCallback() {
         @Override
@@ -121,7 +121,7 @@ public class UploadMedia {
     private SmbWorker.SmbEndDownloadCallback smbEndDownloadCallback = new SmbWorker.SmbEndDownloadCallback() {
         @Override
         public void onSmbEndDownload(int msg) {
-            uploadThreadStarted = false;  //флаг активации загрузки файлов
+            uploadStarted = false;  //флаг активации загрузки файлов
         }
     };
 
@@ -141,7 +141,7 @@ public class UploadMedia {
     private SmbjWorker.SmbjEndDownloadCallback smbjEndDownloadCallback = new SmbjWorker.SmbjEndDownloadCallback() {
         @Override
         public void onSmbjEndDownload(int msg) {
-            uploadThreadStarted = false;//флаг активации загрузки файлов
+            uploadStarted = false;//флаг активации загрузки файлов
         }
     };
 
@@ -163,7 +163,7 @@ public class UploadMedia {
     private FtpWorker.FtpEndDownloadCallback ftpEndDownloadCallback = new FtpWorker.FtpEndDownloadCallback() {
         @Override
         public void onFtpEndDownload(int msg) {
-            uploadThreadStarted = false; //флаг активации загрузки файлов
+            uploadStarted = false; //флаг активации загрузки файлов
         }
     };
 
@@ -171,18 +171,12 @@ public class UploadMedia {
      * Инициация загрузки
      */
     public void upload() {
-        if (uploadThreadStarted)
+        if (uploadStarted)
             return;
         MainActivity.httpServer.sendQueWebStatus("Завантаження...", true);
 
-        eResult res = verifyDestinationDirs();
-        if (res == eResult.DIR_ERROR) {
-            MainActivity.httpServer.sendQueWebStatus("Помилка носiя SDCARD", true);
+        if (!checkDestinationDirs())
             return;
-        } else if (res == eResult.SD_CARD_ERROR) {
-            MainActivity.httpServer.sendQueWebStatus("Помилка носiя SDCARD", true);
-            return;
-        }
 
         //очистка хлама
         File lostDir = new File(ExtSDSource.getExternalSdCardPath() + "/LOST.DIR");
@@ -195,12 +189,12 @@ public class UploadMedia {
 
         PrefValues prefValues = PrefWorker.getValues();
 
-        initLogFile();//инициализация лог файла для отправки на удаленный сервер
+        initLogFile(); //инициализация лог файла для отправки на удаленный сервер
 
-        ShareParam parseImg = parseSmbjFolders(prefValues.smbImg);
-        ShareParam parseVideo = parseSmbjFolders(prefValues.smbVideo);
-        ShareParam parseSlide = parseSmbjFolders(prefValues.smbSlide);
-        ShareParam parseScreen = parseSmbjFolders(prefValues.pathToScreenImg);
+        ShareParam parseImg = parseFolderPath(prefValues.smbImg);
+        ShareParam parseVideo = parseFolderPath(prefValues.smbVideo);
+        ShareParam parseSlide = parseFolderPath(prefValues.smbSlide);
+        ShareParam parseScreen = parseFolderPath(prefValues.pathToScreenImg);
 
         if (!parseImg.result) {
             Log.d(TAG, "Ошибка разбора параметров пути:" + prefValues.smbImg);
@@ -227,46 +221,46 @@ public class UploadMedia {
 
         //параметры аутентификации
         authParam.clear();
-        authParam.put("User", prefValues.user);
-        authParam.put("Passw", prefValues.passw);
-        authParam.put("Host", prefValues.smbHost);
+        authParam.put("user", prefValues.user);
+        authParam.put("passw", prefValues.passw);
+        authParam.put("host", prefValues.smbHost);
 
         //изображения для товаров
         imgParam.clear();
         imgParam.put("shareImg", parseImg.share);
         imgParam.put("folderImg", parseImg.folder);
-        imgParam.put("DestinationImg", destinationDirs[IMAGE]);
-        imgParam.put("extensionArrayImg", new String[]{"*.png", "*.jpg"});
+        imgParam.put("destImg", destinationDirs[IMAGE]);
+        imgParam.put("extArrayImg", new String[]{"*.png", "*.jpg"});
 
         //видео
         videoParam.clear();
         videoParam.put("shareVideo", parseVideo.share);
         videoParam.put("folderVideo", parseVideo.folder);
-        videoParam.put("DestinationVideo", destinationDirs[VIDEO]);
-        videoParam.put("extensionArrayVideo", new String[]{"*.avi", "*.mp4"});
+        videoParam.put("destVideo", destinationDirs[VIDEO]);
+        videoParam.put("extArrayVideo", new String[]{"*.avi", "*.mp4"});
 
         //изображения для слайдов
         slideParam.clear();
         slideParam.put("shareSlide", parseSlide.share);
         slideParam.put("folderSlide", parseSlide.folder);
-        slideParam.put("DestinationSlide", destinationDirs[SLIDE]);
-        slideParam.put("extensionArraySlide", new String[]{"*.png", "*.jpg"});
+        slideParam.put("destSlide", destinationDirs[SLIDE]);
+        slideParam.put("extArraySlide", new String[]{"*.png", "*.jpg"});
 
         //фоновые изображения экранов
         screenImgParam.clear();
         screenImgParam.put("shareScreenImg", parseScreen.share);
         screenImgParam.put("folderScreenImg", parseScreen.folder);
-        screenImgParam.put("DestinationScreenImg", destinationDirs[SCREEN]);
-        screenImgParam.put("extensionArrayScreenImg", new String[]{"*.png", "*.jpg"});
+        screenImgParam.put("destScreenImg", destinationDirs[SCREEN]);
+        screenImgParam.put("extArrayScreenImg", new String[]{"*.png", "*.jpg"});
 
-        if (prefValues.transferProtocol.equals(DEF_PROTOCOL[SMB2])) {
-            uploadThreadStarted = true;
-            smbjWorker.doDownload(authParam, imgParam, videoParam, slideParam, screenImgParam);
-        } else if (prefValues.transferProtocol.equals(DEF_PROTOCOL[SMB1])) {
-            uploadThreadStarted = true;
+        if (prefValues.transferProtocol.equals(DEF_PROTOCOL[SMB1])) {
+            uploadStarted = true;
             smbWorker.doDownload(authParam, imgParam, videoParam, slideParam, screenImgParam);
+        } else if (prefValues.transferProtocol.equals(DEF_PROTOCOL[SMB2])) {
+            uploadStarted = true;
+            smbjWorker.doDownload(authParam, imgParam, videoParam, slideParam, screenImgParam);
         } else if (prefValues.transferProtocol.equals(DEF_PROTOCOL[FTP])) {
-            uploadThreadStarted = true;
+            uploadStarted = true;
             ftpWorker.doDownload(authParam, imgParam, videoParam, slideParam, screenImgParam);
         }
     }
@@ -277,7 +271,7 @@ public class UploadMedia {
      * @param params
      * @return ShareParam
      */
-    public ShareParam parseSmbjFolders(String params) {
+    public ShareParam parseFolderPath(String params) {
         ShareParam shareParam = new ShareParam();
         shareParam.result = false;
         if (params.startsWith("/")) {
@@ -292,36 +286,40 @@ public class UploadMedia {
     }
 
     /**
-     * проверка наличия директорий для хранения данных, создание при необходимости
+     * Проверка наличия директорий для хранения данных, создание при необходимости.
      *
-     * @return
+     * @return true - if everything is successful,
+     * false - if problems with destination folders (doesn't exist or couldn't be created)
      */
-    private eResult verifyDestinationDirs() {
+    private boolean checkDestinationDirs() {
 
-        Log.d("SSS", "SD CARD isMounted:" + ExtSDSource.isMounted(context) + ", isReadOnly :" + ExtSDSource.isReadOnly());
+        Log.d(TAG, "SD CARD isMounted:" + ExtSDSource.isMounted(context) + ", isReadOnly :" + ExtSDSource.isReadOnly());
 
-        destinationDirs = new String[]{ExtSDSource.getExternalSdCardPath() + IMG_URI, ExtSDSource.getExternalSdCardPath() + VIDEO_URI, ExtSDSource.getExternalSdCardPath() + SLIDE_URI, ExtSDSource.getExternalSdCardPath() + IMG_SCREEN};
+        destinationDirs = new String[]{ExtSDSource.getExternalSdCardPath() + IMG_URI,
+                ExtSDSource.getExternalSdCardPath() + VIDEO_URI,
+                ExtSDSource.getExternalSdCardPath() + SLIDE_URI,
+                ExtSDSource.getExternalSdCardPath() + IMG_SCREEN};
 
         if (!ExtSDSource.isMounted(context)) {
-            showToast("ОТСУТСТВУЕТ SD карта");
+            showToast("Вiдсутнiй SD носiй");
             MainActivity.httpServer.sendQueWebStatus("Вiдсутнiй SD носiй", true);
-            return eResult.SD_CARD_ERROR;
+            return false;
         }
 
         for (int i = 0; i < destinationDirs.length; i++) {
             //Проверка директории
             File dir = new File(destinationDirs[i]);
             if (!dir.exists()) {
-                Log.d("SSS", "CREATE IMAGE DIR:" + destinationDirs);
+                Log.d(TAG, "Create directory:" + destinationDirs);
                 dir.mkdirs();
             }
             if (!dir.exists() || !dir.isDirectory()) {
-                showToast("Ошибка создания хранилиша для данных");
+                showToast("Помилка створення директорії для зберігання даних");
                 MainActivity.httpServer.sendQueWebStatus("Помилка створення директорії для зберігання даних", true);
-                return eResult.DIR_ERROR;
+                return false;
             }
         }
-        return eResult.OK;
+        return true;
     }
 
     private void showToast(String message) {
@@ -363,8 +361,6 @@ public class UploadMedia {
         Date currentDate = new Date();
         // convert date to calendar
         Calendar c = Calendar.getInstance();
-        c.setTime(currentDate);
-        c = Calendar.getInstance();
         c.setTime(currentDate);
 
         logFile = new File(Environment.getExternalStorageDirectory(), "Upload " + EthernetSettings.getNetworkInterfaceIpAddress() + " " + dateFormat.format(c.getTime()) + ".log");
