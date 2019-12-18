@@ -393,14 +393,14 @@ public class SmbWorker {
                 long totalRead = 0;
                 int readBytes = 0;
                 long t1 = t0;
-                int update_progress = 0;
+                int updateProgress = 0;
                 while ((readBytes = in.read(b)) > 0) {
 
                     // Log.d(TAG, "read bytes:" + totalRead);
                     out.write(b, 0, readBytes);
                     totalRead += readBytes;
-                    if (update_progress++ > 50) {
-                        update_progress = 0;
+                    if (updateProgress++ > 50) {
+                        updateProgress = 0;
                         UploadMedia.resetMediaPlay();//остановка демонстрации видео/слайдов
                         changeStatus("Завантаження  " + arrSmbFiles[i].getName() + " - " + (int) ((100 * totalRead) / arrSmbFiles[i].length()) + " %,  загалом " + (int) ((100 * i) / arrSmbFiles.length) + " %", true);
                     }
@@ -415,11 +415,11 @@ public class SmbWorker {
 
                 dr.countFiles++;
 
-                UploadMedia.appendToUploadLog("Загружен : " + arrSmbFiles[i].getName() + ", размер : " + arrSmbFiles[i].length());
-
                 File destination = new File(destFolder, arrSmbFiles[i].getName());
                 if (!destination.exists())
                     Log.e(TAG, "File [" + destination + "] NOT CREATED");
+                else
+                    UploadMedia.appendToUploadLog("Загружен : " + arrSmbFiles[i].getName() + ", размер : " + arrSmbFiles[i].length());
             }
 
             //удалим неиспользуемые файлы

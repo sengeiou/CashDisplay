@@ -76,12 +76,6 @@ public class UploadMedia {
     private static HashMap<String, Object> slideParam;
     private static HashMap<String, Object> screenImgParam;
 
-    enum eResult {
-        OK,
-        DIR_ERROR,
-        SD_CARD_ERROR
-    }
-
     public UploadMedia(Context context) {
 
         this.context = context;

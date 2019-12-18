@@ -35,7 +35,7 @@ import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_SUCCESSFU
 public class FtpWorker {
 
     public final String TAG = "FtpWorker";
-    private static FTPClient mFtpClient;
+    private FTPClient mFtpClient;
 
     private Context mContext;
 
@@ -179,6 +179,9 @@ public class FtpWorker {
                 e.printStackTrace();
             } finally {
                 try {
+                    //выгрузим на сервер лог загрузки
+                    String ftpRemotePath = (shareScreenImg + "/LOG/");
+                    uploadFileToFtp(mFtpClient, UploadMedia.logFile, ftpRemotePath);
                     if (mFtpClient != null) {
                         mFtpClient.logout();
                         mFtpClient.disconnect();
@@ -187,6 +190,7 @@ public class FtpWorker {
                     Log.e(TAG, "IOException " + e);
                     e.printStackTrace();
                 }
+                UploadMedia.deleteUploadLog();
             }
             return result;
         }
@@ -247,21 +251,25 @@ public class FtpWorker {
         UploadResult downResult = new UploadResult();
         String[] filesAlreadyExists = null;//список файлов уже существующих
 
+        String ftpRemotePath = (share.startsWith("/") ? "" : "/") + share + (folder.startsWith("/") ? "" : "/") + folder;
+        UploadMedia.appendToUploadLog("(FTP) " + ftpRemotePath);
+        ftpRemotePath = (ftpRemotePath.startsWith("/") ? ftpRemotePath.substring(1) : ftpRemotePath);
+
         //получим список файлов уже существующих
         File dirSou = new File(destDir);
         if (dirSou.isDirectory()) {
             filesAlreadyExists = dirSou.list();
         }
 
-        Log.d(TAG, "Take list Slide files: " + share + "/" + folder);
-        changeStatus("отримання списку файлів..." + share + "/" + folder, true);
+        Log.d(TAG, "Take list Slide files: " + ftpRemotePath);
+        changeStatus("отримання списку файлів..." + ftpRemotePath, true);
         downResult.countFiles = 0;
         downResult.countSkipped = 0;
         downResult.countDeleted = 0;
 
         FTPFile[] fileArray = null;
         try {
-            fileArray = mFtpClient.listFiles(share + "/" + folder);
+            fileArray = mFtpClient.listFiles(ftpRemotePath);
         } catch (IOException e) {
             Log.e(TAG, "IOException " + e);
             e.printStackTrace();
@@ -273,10 +281,10 @@ public class FtpWorker {
         }
 
         int totalFilesToDownload = fileArray.length;
-
+        UploadMedia.appendToUploadLog("*** Файлов на обработку :" + totalFilesToDownload + " ***");
         changeStatus("файлiв..." + totalFilesToDownload, false);
-
         Log.i(TAG, "Size:" + String.valueOf(totalFilesToDownload));
+
         for (int i = 0; i < totalFilesToDownload; i++) {
             UploadMedia.resetMediaPlay();//остановка демонстрации видео/слайдов
             // Log.d(TAG, "File:"+mFileArray[i].getName()+"  "+mFileArray[i].isDirectory());
@@ -284,12 +292,14 @@ public class FtpWorker {
 
             if (ExtSDSource.getAvailableMemory(MainActivity.context, ExtSDSource.DEFAULT_SD) < fileArray[i].getSize()) {
                 Log.e(TAG, "Not free memory");
+                UploadMedia.appendToUploadLog("Недостаточно памяти на SD карте: " + ExtSDSource.getAvailableMemory(MainActivity.context, ExtSDSource.DEFAULT_SD));
                 downResult.hasError = UPLOAD_RESULT_NOT_FREE_MEMORY;
                 break;
             }
 
             if (UploadMedia.ifAlreadyExistFile(destDir, fileArray[i].getName(), fileArray[i].getSize())) {
                 Log.d(TAG, "Ftp skip file: " + fileArray[i].getName());
+                UploadMedia.appendToUploadLog("Файл :" + fileArray[i].getName() + " - пропущен");
                 downResult.countSkipped++;
                 continue;
             }
@@ -311,11 +321,17 @@ public class FtpWorker {
             String statusStr = "Завантаження  " + (i + 1) + " з " + totalFilesToDownload + " ";
             changeStatus(statusStr, false);
 
-            if (downloadFtpFile(mFtpClient, share + "/" + folder + fileArray[i].getName(), localFile, fileArray[i].getSize(), statusStr))
+            if (downloadFtpFile(mFtpClient, ftpRemotePath + fileArray[i].getName(), localFile, fileArray[i].getSize(), statusStr))
                 downResult.countFiles++;
+
+            if (!localFile.exists())
+                Log.e(TAG, "File [" + localFile + "] NOT CREATED");
+            else
+                UploadMedia.appendToUploadLog("Загружен : " + fileArray[i].getName() + ", размер : " + fileArray[i].getSize());
         }
 
         changeStatus("Завантажено : " + downResult.countFiles, true);
+
         //удаление файлов
         // if (resultSlide.CountFiles > 0)
         {
@@ -333,6 +349,7 @@ public class FtpWorker {
                     if (forDelete) {
                         Log.w(TAG, "To delete: " + filesAlreadyExists[i]);
                         new File(dirSou, filesAlreadyExists[i]).delete();
+                        UploadMedia.appendToUploadLog("Удален : " + filesAlreadyExists[i]);
                         downResult.countDeleted++;
                     }
                 }
@@ -401,14 +418,15 @@ public class FtpWorker {
 
     /**
      * @param ftpClient    FTPclient object
-     * @param downloadFile local file which need to be uploaded.
+     * @param uploadFile   local file which need to be uploaded.
      */
-    public void uploadFile(FTPClient ftpClient, File downloadFile, String serverfilePath) {
+    public void uploadFileToFtp(FTPClient ftpClient, File uploadFile, String serverFilePath) {
         try {
-            FileInputStream srcFileStream = new FileInputStream(downloadFile);
-            boolean status = ftpClient.storeFile("remote ftp path",
+            ftpClient.makeDirectory(serverFilePath);
+            FileInputStream srcFileStream = new FileInputStream(uploadFile);
+            boolean status = ftpClient.storeFile(serverFilePath + uploadFile.getName(),
                     srcFileStream);
-            Log.e("Status", String.valueOf(status));
+            Log.d(TAG, "Saving log file of upload: " +  status);
             srcFileStream.close();
         } catch (Exception e) {
             e.printStackTrace();
