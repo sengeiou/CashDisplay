@@ -57,7 +57,7 @@ public class UploadMedia {
     public static final String SLIDE_URI = "/Documents/SLIDE/";
     public static final String IMG_SCREEN = "/Documents/SCREEN/";   // изображения экранов
 
-    private static boolean uploadStarted = false;             // флаг активации загрузки файлов
+    private static boolean uploadTaskStarted = false;             // флаг активации загрузки файлов
 
     public static String[] destinationDirs = null;
     public static final int IMAGE = 0;
@@ -115,7 +115,7 @@ public class UploadMedia {
     private SmbWorker.SmbEndDownloadCallback smbEndDownloadCallback = new SmbWorker.SmbEndDownloadCallback() {
         @Override
         public void onSmbEndDownload(int msg) {
-            uploadStarted = false;  //флаг активации загрузки файлов
+            uploadTaskStarted = false;  //флаг активации загрузки файлов
         }
     };
 
@@ -135,7 +135,7 @@ public class UploadMedia {
     private SmbjWorker.SmbjEndDownloadCallback smbjEndDownloadCallback = new SmbjWorker.SmbjEndDownloadCallback() {
         @Override
         public void onSmbjEndDownload(int msg) {
-            uploadStarted = false;//флаг активации загрузки файлов
+            uploadTaskStarted = false;//флаг активации загрузки файлов
         }
     };
 
@@ -157,7 +157,7 @@ public class UploadMedia {
     private FtpWorker.FtpEndDownloadCallback ftpEndDownloadCallback = new FtpWorker.FtpEndDownloadCallback() {
         @Override
         public void onFtpEndDownload(int msg) {
-            uploadStarted = false; //флаг активации загрузки файлов
+            uploadTaskStarted = false; //флаг активации загрузки файлов
         }
     };
 
@@ -165,7 +165,7 @@ public class UploadMedia {
      * Инициация загрузки
      */
     public void upload() {
-        if (uploadStarted)
+        if (uploadTaskStarted)
             return;
         MainActivity.httpServer.sendQueWebStatus("Завантаження...", true);
 
@@ -248,13 +248,13 @@ public class UploadMedia {
         screenImgParam.put("extArrayScreenImg", new String[]{"*.png", "*.jpg"});
 
         if (prefValues.transferProtocol.equals(DEF_PROTOCOL[SMB1])) {
-            uploadStarted = true;
+            uploadTaskStarted = true;
             smbWorker.doDownload(authParam, imgParam, videoParam, slideParam, screenImgParam);
         } else if (prefValues.transferProtocol.equals(DEF_PROTOCOL[SMB2])) {
-            uploadStarted = true;
+            uploadTaskStarted = true;
             smbjWorker.doDownload(authParam, imgParam, videoParam, slideParam, screenImgParam);
         } else if (prefValues.transferProtocol.equals(DEF_PROTOCOL[FTP])) {
-            uploadStarted = true;
+            uploadTaskStarted = true;
             ftpWorker.doDownload(authParam, imgParam, videoParam, slideParam, screenImgParam);
         }
     }

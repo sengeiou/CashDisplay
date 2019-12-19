@@ -168,7 +168,7 @@ public class SmbjWorker {
             // DiskShare share = null;
 
             try {
-                changeStatus(mContext.getString(R.string.connect_to_server) + " :" + host, true);
+                changeStatus(mContext.getString(R.string.connect_to_server) + ": " + host, true);
                 SMBClient client = new SMBClient(config);
 
                 Log.d(TAG, "Smbj, try connection : " + host + " User:" + user + ", Passw:" + passw);
@@ -212,10 +212,10 @@ public class SmbjWorker {
                             if (!share.fileExists(remoteLogFile)) {
                                 com.hierynomus.smbj.share.File file = share.openFile(remoteLogFile, EnumSet.of(AccessMask.GENERIC_ALL), null, SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_CREATE, null);
                                 file.close();
-                                // Log.d(TAG, "LOG >>"+share.fileExists(remote_log_file));
                             }
 
                             SmbFiles.copy(UploadMedia.logFile, share, remoteLogFile, true);
+                            UploadMedia.deleteUploadLog();
                         } catch (IOException e) {
                             Log.e(TAG, "Smb IOException: " + e);
                         }
@@ -224,8 +224,6 @@ public class SmbjWorker {
                 } catch (Exception e) {
                     Log.e(TAG, "Smb Exception(2): " + e);
                 }
-                //удалим лог, предназначеный для передачи на сервер
-                UploadMedia.deleteUploadLog();
 
                 if (session != null) {
                     session = null;
@@ -268,10 +266,10 @@ public class SmbjWorker {
                 case UPLOAD_RESULT_SUCCESSFULL:
                 case UPLOAD_RESULT_SHARE_CONNECTION_ERROR:
                     String status =
-                            "<font color=\"blue\"><B>Фоновi та допомiжнi зображення:</B><br></font>[" + (resultScreenImg.hasError > 0 ? extendedErrorScreenImg : "завантажено : <B>" + resultScreenImg.countFiles + "</B>, iснуючих : <B>" + resultScreenImg.countSkipped + "</B>, видалено : <B>" + resultScreenImg.countDeleted) + "</B>];  <br>" +
-                                    "<font color=\"blue\"><B>Вiдео:</B><br></font>[" + (resultVideo.hasError > 0 ? extendedErrorVideo : "завантажено : <B>" + resultVideo.countFiles + "</B>, iснуючих : <B>" + resultVideo.countSkipped + "</B>, видалено : <B>" + resultVideo.countDeleted) + "</B>];  <br>" +
-                                    "<font color=\"blue\"><B>Зображення товарiв:</B><br></font>[" + (resultImg.hasError > 0 ? extendedErrorImage : "завантажено : <B>" + resultImg.countFiles + "</B>, iснуючих : <B>" + resultImg.countSkipped + "</B>, видалено : <B>" + resultImg.countDeleted) + "</B>];  <br>" +
-                                    "<font color=\"blue\"><B>Слайди:</B><br></font>[" + (resultSlide.hasError > 0 ? extendedErrorSlide : "завантажено : <B>" + resultSlide.countFiles + "</B>, iснуючих : <B>" + resultSlide.countSkipped + "</B>, видалено : <B>" + resultSlide.countDeleted) + "</B>];";
+                            "<font color=\"blue\"><B>Фоновi та допомiжнi зображення:</B><br></font>[" + (resultScreenImg.hasError > 0 ? extendedErrorScreenImg : ("завантажено : <B>" + resultScreenImg.countFiles + "</B>, iснуючих : <B>" + resultScreenImg.countSkipped + "</B>, видалено : <B>" + resultScreenImg.countDeleted) + "</B>];  <br>") +
+                                    "<font color=\"blue\"><B>Зображення товарiв:</B><br></font>[" + (resultImg.hasError > 0 ? extendedErrorImage : ("завантажено : <B>" + resultImg.countFiles + "</B>, iснуючих : <B>" + resultImg.countSkipped + "</B>, видалено : <B>" + resultImg.countDeleted) + "</B>];  <br>") +
+                                    "<font color=\"blue\"><B>Вiдео:</B><br></font>[" + (resultVideo.hasError > 0 ? extendedErrorVideo : ("завантажено : <B>" + resultVideo.countFiles + "</B>, iснуючих : <B>" + resultVideo.countSkipped + "</B>, видалено : <B>" + resultVideo.countDeleted) + "</B>];  <br>") +
+                                    "<font color=\"blue\"><B>Слайди:</B><br></font>[" + (resultSlide.hasError > 0 ? extendedErrorSlide : ("завантажено : <B>" + resultSlide.countFiles + "</B>, iснуючих : <B>" + resultSlide.countSkipped + "</B>, видалено : <B>" + resultSlide.countDeleted) + "</B>];");
                     changeStatus(status, true);
                     break;
                 case UPLOAD_RESULT_NOT_SUPPORT_PROTOCOL:
@@ -304,11 +302,11 @@ public class SmbjWorker {
     private UploadResult handleFiles(Session session, String shareFolder, String sourceFolder, String destFolder, String[] extensionFiles) {
 
         UploadResult uploadResult = new UploadResult();
-        uploadResult.hasError = UPLOAD_RESULT_SUCCESSFULL;
-        uploadResult.countFiles = 0;
-        uploadResult.countSkipped = 0;
-        uploadResult.countDeleted = 0;
         int divider = 0;
+
+        String connectionStr = shareFolder + (sourceFolder.startsWith("/") ? "" : "/") + sourceFolder;
+        UploadMedia.appendToUploadLog("\n(SMB2) " + connectionStr);
+        changeStatus(mContext.getString(R.string.connect_to_server) + ": " + connectionStr, true);
 
         // получим список файлов уже существующих
         listFilesAlreadyExists = null;
@@ -323,15 +321,26 @@ public class SmbjWorker {
             DiskShare share = (DiskShare) session.connectShare(shareFolder);
             if (share.isConnected()) {
 
+                changeStatus("Отримання списку файлів...", false);
+                UploadMedia.resetMediaPlay(); //остановка демонстрации видео/слайдов
                 for (int i = 0; i < extensionFiles.length; i++) {
-                    UploadResult tmpResultImg = downloadFromShareFolder(share, sourceFolder, extensionFiles[i], destFolder);
-                    uploadResult.countFiles += tmpResultImg.countFiles;
-                    uploadResult.hasError = tmpResultImg.hasError;
-                    Log.d(TAG, "IMG Загружено:  " + uploadResult.countFiles + " ext:" + extensionFiles[i]);
+                  UploadResult tmpUploadResult =   downloadFromShareFolder(share, sourceFolder, extensionFiles[i], destFolder);
+                    uploadResult.countFiles += tmpUploadResult.countFiles;
+                    uploadResult.countSkipped += tmpUploadResult.countSkipped;
+                    uploadResult.countDeleted += tmpUploadResult.countDeleted;
+                    if (tmpUploadResult.hasError > UPLOAD_RESULT_SUCCESSFULL)
+                        uploadResult.hasError = tmpUploadResult.hasError;
+                    Log.d(TAG, "Загружено: " + uploadResult.countFiles + " ext:" + extensionFiles[i]);
                 }
+                UploadMedia.appendToUploadLog("Обработано файлов: " + uploadResult.countFiles);
+                Log.d(TAG, uploadResult.countFiles + " 1 uploadResult.countFiles");
+                Log.d(TAG, uploadResult.countSkipped + " 1 uploadResult.countSkipped");
+                Log.d(TAG, uploadResult.countDeleted + " 1 uploadResult.countDeleted");
+                Log.d(TAG, uploadResult.hasError + " 1 uploadResult.hasError");
+
                 share.close();
             } else {
-                changeStatus("неможливо пiдключитися до " + shareFolder, false);
+                changeStatus("Неможливо пiдключитися до " + shareFolder, false);
                 uploadResult.hasError = UPLOAD_RESULT_SHARE_CONNECTION_ERROR;
             }
         } catch (Exception e) {
@@ -344,31 +353,30 @@ public class SmbjWorker {
         changeStatus("Видалення файлiв - " + listFilesAlreadyExists.size(), false);
         for (int i = 0; i < listFilesAlreadyExists.size(); i++) {
             new File(destFolder, listFilesAlreadyExists.get(i)).delete();
-            UploadMedia.appendToUploadLog("Удален : " + listFilesAlreadyExists.get(i));
+            UploadMedia.appendToUploadLog("Удален: " + listFilesAlreadyExists.get(i));
             uploadResult.countDeleted++;
             if ((divider++) >= 50)
                 changeStatus("Видалення файлiв - " + uploadResult.countDeleted + " iз " + listFilesAlreadyExists.size(), false);
         }
+
+        Log.d(TAG, uploadResult.countFiles + " 2 uploadResult.countFiles");
+        Log.d(TAG, uploadResult.countSkipped + " 2 uploadResult.countSkipped");
+        Log.d(TAG, uploadResult.countDeleted + " 2 uploadResult.countDeleted");
+        Log.d(TAG, uploadResult.hasError + " 2 uploadResult.hasError");
+
         return uploadResult;
     }
 
-    private UploadResult downloadFromShareFolder(DiskShare share, String shareSourceFolder, String file_search_pattern, String destFolder) {
+    private UploadResult downloadFromShareFolder(DiskShare share, String shareSourceFolder, String fileSearchPattern, String destFolder) {
         UploadResult dr = new UploadResult();
-        dr.hasError = 0;
-        dr.countFiles = 0;
-        dr.countSkipped = 0;
+
         int divider = 0;
 
-        changeStatus("отримання списку файлів...", false);
-        UploadMedia.appendToUploadLog("(SMB2) Получение списка файлов..." + shareSourceFolder);
-        UploadMedia.resetMediaPlay();//остановка демонстрации видео/слайдов
-
-        for (FileIdBothDirectoryInformation f : share.list(shareSourceFolder, file_search_pattern)) {
+        for (FileIdBothDirectoryInformation f : share.list(shareSourceFolder, fileSearchPattern)) {
             divider++;
 
             com.hierynomus.smbj.share.File remoteSmbjFile = share.openFile(shareSourceFolder + f.getFileName(), EnumSet.of(AccessMask.GENERIC_READ), null, SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null);
             long size = remoteSmbjFile.getFileInformation().getStandardInformation().getEndOfFile();
-
 
             // определяем файлы, которые после окончания загрузки будут удалены из каталога
             if (listFilesAlreadyExists.contains(f.getFileName()))
@@ -383,10 +391,13 @@ public class SmbjWorker {
 
             if (UploadMedia.ifAlreadyExistFile(destFolder, f.getFileName(), size)) {
                 Log.d(TAG, "Smbj skip file: " + shareSourceFolder + f.getFileName());
+                UploadMedia.appendToUploadLog("Перезаписан: " + f.getFileName());
 
-                if (dr.countSkipped % 10 == 0)
-                    changeStatus("Пропущено :" + f.getFileName(), true);
+                if (dr.countSkipped % 10 == 0) {
+                    changeStatus("Перезаписан: " + f.getFileName(), true);
+                }
                 dr.countSkipped++;
+
                 continue;
             }
 
@@ -410,7 +421,7 @@ public class SmbjWorker {
                 while ((length = is.read(buffer)) != -1) {
                     bos.write(buffer, 0, length);
                 }
-                UploadMedia.appendToUploadLog("загружен : " + shareSourceFolder + f.getFileName() + " размер: " + size);
+                UploadMedia.appendToUploadLog("Загружен: " + f.getFileName() + " размер: " + size);
 
             } catch (FileNotFoundException e) {
                 Log.e(TAG, "Smbj FileNotFoundException :" + e);
@@ -441,10 +452,11 @@ public class SmbjWorker {
 
             if ((divider++) >= 10) {
                 UploadMedia.resetMediaPlay(); // остановка демонстрации видео/слайдов
-                changeStatus("Завантаження: [" + file_search_pattern + "] " + dr.countFiles, true);
+                changeStatus("Завантаження: [" + fileSearchPattern + "] " + dr.countFiles, true);
                 divider = 0;
             }
         }
+
         return dr;
     }
 }

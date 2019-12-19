@@ -133,7 +133,7 @@ public class SmbWorker {
             String[] extScreenImg = (String[]) screenImgHashMap.get("extArrayScreenImg");
 
             int result = 0;
-            String connectionStr = "";
+
             Log.d(TAG, "SmbTask... ");
 
             try {
@@ -146,48 +146,6 @@ public class SmbWorker {
                 // download Screen images
                 resultScreenImg = handleFiles(user, password, host, shareScreenImg, folderScreenImg, destScreenImg, extScreenImg);
 
-              /*  ConnectionStr = Host + (shareImg.startsWith("/") ? "" : "/") + shareImg + (folderImg.startsWith("/") ? "" : "/") + folderImg;
-                ChangeStatus(mContext.getString(R.string.connect_to_server) + ": " + ConnectionStr, true);
-                SmbFile smb = ConnectToSource(ConnectionStr, User, Passw);
-                if (smb == null) {
-                    Log.d(TAG, "Соединение c " + ConnectionStr + " - не удалось");
-                    ChangeStatus("підключення до сервера не вдалося:" + ConnectionStr, true);
-                    error = DOWNLOAD_RESULT_CONNECTION_ERROR;
-                    resultImg.HasError =  DOWNLOAD_RESULT_CONNECTION_ERROR;
-                } else {
-                    Log.d(TAG, "Соединение c " + ConnectionStr);
-                    resultImg = DownloadFromShareFolder(smb, destImg, extImg);
-                }
-
-                    //download Video
-                    ConnectionStr = Host + (shareVideo.startsWith("/") ? "" : "/") + shareVideo + (folderVideo.startsWith("/") ? "" : "/") + folderVideo;
-                    ChangeStatus(mContext.getString(R.string.connect_to_server) + ": " + ConnectionStr, true);
-                    smb = ConnectToSource(ConnectionStr, User, Passw);
-                    Log.d(TAG, "Соединение c " + ConnectionStr);
-                    if (smb == null)
-                    {
-                        Log.d(TAG, "Соединение c " + ConnectionStr + " - не удалось");
-                        ChangeStatus("Не вдалося підключення до сервера: " + ConnectionStr, false);
-                        error = DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR;
-                        resultVideo.HasError= DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR;
-                    }else {
-                        resultVideo = DownloadFromShareFolder(smb, destVideo, extVideo);
-                    }
-
-                //download Slides
-                ConnectionStr = Host + (shareSlide.startsWith("/") ? "" : "/") + shareSlide + (folderSlide.startsWith("/") ? "" : "/") + folderSlide;
-                ChangeStatus(mContext.getString(R.string.connect_to_server) + ": " + ConnectionStr, true);
-                smb = ConnectToSource(ConnectionStr, User, Passw);
-                Log.d(TAG, "Соединение c " + ConnectionStr);
-                if (smb == null) {
-                    Log.d(TAG, "Соединение c " + ConnectionStr + " - не удалось");
-                    ChangeStatus("Не вдалося підключення до сервера: " + ConnectionStr, false);
-                    error = DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR;
-                    resultSlide.HasError= DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR;
-                } else {
-                    resultSlide = DownloadFromShareFolder(smb, destSlide, extSlide);
-                }
-                */
             } catch (Exception e) {
                 Log.e(TAG, "Smb Exception: " + e);
 
@@ -203,11 +161,10 @@ public class SmbWorker {
                     //выгрузим на сервер лог загрузки
                     String connStr = host + (shareScreenImg.startsWith("/") ? "" : "/") + shareScreenImg + "/LOG/";//(folderScreenImg.startsWith("/") ? "" : "/") + folderScreenImg;
                     uploadToSmb(user, password, connStr, UploadMedia.logFile);
+                    UploadMedia.deleteUploadLog();
                 } catch (Exception e) {
                     Log.e(TAG, "Smb Exception: " + e);
                 }
-                //удалим лог, предназначеный для передачи на сервер
-                UploadMedia.deleteUploadLog();
             }
             return result;
         }
@@ -238,10 +195,10 @@ public class SmbWorker {
                 case UPLOAD_RESULT_SUCCESSFULL:
                 case UPLOAD_RESULT_SHARE_CONNECTION_ERROR:
                     String status =
-                            "<font color=\"blue\"><B>Фоновi та допомiжнi зображення:</B><br></font>[" + (resultScreenImg.hasError > 0 ? extendedErrorScreenImg : "завантажено : <B>" + resultScreenImg.countFiles + "</B>, iснуючих : <B>" + resultScreenImg.countSkipped + "</B>, видалено : <B>" + resultScreenImg.countDeleted) + "</B>];  <br>" +
-                                    "<font color=\"blue\"><B>Вiдео:</B><br></font>[" + (resultVideo.hasError > 0 ? extendedErrorVideo : "завантажено : <B>" + resultVideo.countFiles + "</B>, iснуючих : <B>" + resultVideo.countSkipped + "</B>, видалено : <B>" + resultVideo.countDeleted) + "</B>];  <br>" +
-                                    "<font color=\"blue\"><B>Зображення товарiв:</B><br></font>[" + (resultImg.hasError > 0 ? extendedErrorImage : "завантажено : <B>" + resultImg.countFiles + "</B>, iснуючих : <B>" + resultImg.countSkipped + "</B>, видалено : <B>" + resultImg.countDeleted) + "</B>];  <br>" +
-                                    "<font color=\"blue\"><B>Слайди:</B><br></font>[" + (resultSlide.hasError > 0 ? extendedErrorSlide : "завантажено : <B>" + resultSlide.countFiles + "</B>, iснуючих : <B>" + resultSlide.countSkipped + "</B>, видалено : <B>" + resultSlide.countDeleted) + "</B>];";
+                            "<font color=\"blue\"><B>Фоновi та допомiжнi зображення:</B><br></font>[" + (resultScreenImg.hasError > 0 ? extendedErrorScreenImg : ("завантажено : <B>" + resultScreenImg.countFiles + "</B>, iснуючих : <B>" + resultScreenImg.countSkipped + "</B>, видалено : <B>" + resultScreenImg.countDeleted) + "</B>];  <br>") +
+                                    "<font color=\"blue\"><B>Зображення товарiв:</B><br></font>[" + (resultImg.hasError > 0 ? extendedErrorImage : ("завантажено : <B>" + resultImg.countFiles + "</B>, iснуючих : <B>" + resultImg.countSkipped + "</B>, видалено : <B>" + resultImg.countDeleted) + "</B>];  <br>") +
+                                    "<font color=\"blue\"><B>Вiдео:</B><br></font>[" + (resultVideo.hasError > 0 ? extendedErrorVideo : ("завантажено : <B>" + resultVideo.countFiles + "</B>, iснуючих : <B>" + resultVideo.countSkipped + "</B>, видалено : <B>" + resultVideo.countDeleted) + "</B>];  <br>") +
+                                    "<font color=\"blue\"><B>Слайди:</B><br></font>[" + (resultSlide.hasError > 0 ? extendedErrorSlide : ("завантажено : <B>" + resultSlide.countFiles + "</B>, iснуючих : <B>" + resultSlide.countSkipped + "</B>, видалено : <B>" + resultSlide.countDeleted) + "</B>];");
                     changeStatus(status, true);
                     break;
                 case UPLOAD_RESULT_NOT_SUPPORT_PROTOCOL:
@@ -266,15 +223,14 @@ public class SmbWorker {
 
     private UploadResult handleFiles(String user, String passw, String host, String share, String sourceFolder, String destFolder, String[] extFiles) {
         UploadResult result = new UploadResult();
-        result.hasError = UPLOAD_RESULT_SUCCESSFULL;
 
         String connectionStr = host + (share.startsWith("/") ? "" : "/") + share + (sourceFolder.startsWith("/") ? "" : "/") + sourceFolder;
-        UploadMedia.appendToUploadLog("(SMB1) " + connectionStr);
+        UploadMedia.appendToUploadLog("\n(SMB1) " + connectionStr);
         changeStatus(mContext.getString(R.string.connect_to_server) + ": " + connectionStr, true);
+
         SmbFile smb = connectToSource(connectionStr, user, passw, false);
 
         if (smb == null) {
-
             Log.d(TAG, "Соединение c " + connectionStr + " - не удалось");
             changeStatus("підключення до сервера не вдалося:" + connectionStr, true);
             result.hasError = UPLOAD_RESULT_CONNECTION_ERROR;
@@ -351,14 +307,14 @@ public class SmbWorker {
         try {
             SmbFile[] arrSmbFiles = smb.listFiles();
             changeStatus("файлiв..." + arrSmbFiles.length, false);
-            UploadMedia.appendToUploadLog("*** Файлов на обработку :" + arrSmbFiles.length + " ***");
+            UploadMedia.appendToUploadLog("*** Файлов для загрузки :" + arrSmbFiles.length + " ***");
 
             for (int i = 0; i < arrSmbFiles.length; i++) {
                 UploadMedia.resetMediaPlay();//остановка демонстрации видео/слайдов
                 //если файл существует, копировать не будем
                 if (UploadMedia.ifAlreadyExistFile(destFolder, arrSmbFiles[i].getName(), arrSmbFiles[i].length())) {
                     Log.d(TAG, "Smb file: " + arrSmbFiles[i].getPath() + "  - SKIPED");
-                    UploadMedia.appendToUploadLog("Файл :" + arrSmbFiles[i].getPath() + " - пропущен");
+                    UploadMedia.appendToUploadLog("Перезаписан: " + arrSmbFiles[i].getPath());
                     dr.countSkipped++;
                     if (dr.countSkipped % 10 == 0)
                         changeStatus("пропущено..." + arrSmbFiles[i].getPath(), true);
@@ -419,7 +375,7 @@ public class SmbWorker {
                 if (!destination.exists())
                     Log.e(TAG, "File [" + destination + "] NOT CREATED");
                 else
-                    UploadMedia.appendToUploadLog("Загружен : " + arrSmbFiles[i].getName() + ", размер : " + arrSmbFiles[i].length());
+                    UploadMedia.appendToUploadLog("Загружен:    " + arrSmbFiles[i].getName() + ", размер : " + arrSmbFiles[i].length());
             }
 
             //удалим неиспользуемые файлы
@@ -439,7 +395,7 @@ public class SmbWorker {
                             Log.w(TAG, "To delete: " + filesAlreadyExists[i]);
 
                             FileOperation.deleteFile(dirSou.getCanonicalPath() + "/" + filesAlreadyExists[i]);
-                            UploadMedia.appendToUploadLog("Удален : " + filesAlreadyExists[i]);
+                            UploadMedia.appendToUploadLog("Удалён:      " + filesAlreadyExists[i]);
                             dr.countDeleted++;
                             if (dr.countDeleted % 10 == 0)
                                 changeStatus("Видалення..." + filesAlreadyExists[i], true);
