@@ -137,14 +137,14 @@ public class SmbWorker {
             Log.d(TAG, "SmbTask... ");
 
             try {
+                // download Screen images
+                resultScreenImg = handleFiles(user, password, host, shareScreenImg, folderScreenImg, destScreenImg, extScreenImg);
                 // download IMG
                 resultImg = handleFiles(user, password, host, shareImg, folderImg, destImg, extImg);
                 // download Video
                 resultVideo = handleFiles(user, password, host, shareVideo, folderVideo, destVideo, extVideo);
                 // download Slides
                 resultSlide = handleFiles(user, password, host, shareSlide, folderSlide, destSlide, extSlide);
-                // download Screen images
-                resultScreenImg = handleFiles(user, password, host, shareScreenImg, folderScreenImg, destScreenImg, extScreenImg);
 
             } catch (Exception e) {
                 Log.e(TAG, "Smb Exception: " + e);
@@ -270,11 +270,11 @@ public class SmbWorker {
         } catch (SmbException e) {
             Log.e(TAG, "SmbException:" + e.getMessage() + " " + e);
             if (e.getMessage().toString().contains("Logon failure"))
-                changeStatus("невiрнi параметри аутентифiкацii", true);
+                changeStatus("Невiрнi параметри аутентифiкацii", true);
             else if (e.getMessage().toString().contains("Access is denied"))
                 changeStatus("У доступі відмовлено :" + URL, true);
             else if (e.getMessage().toString().contains("UnknownHostException"))
-                changeStatus("не знайдено ресурс :" + URL, true);
+                changeStatus("Не знайдено ресурс :" + URL, true);
             else {
                 changeStatus("Не вдалося підключення до сервера: " + URL, false);
             }
@@ -314,7 +314,7 @@ public class SmbWorker {
                 //если файл существует, копировать не будем
                 if (UploadMedia.ifAlreadyExistFile(destFolder, arrSmbFiles[i].getName(), arrSmbFiles[i].length())) {
                     Log.d(TAG, "Smb file: " + arrSmbFiles[i].getPath() + "  - SKIPED");
-                    UploadMedia.appendToUploadLog("Перезаписан: " + arrSmbFiles[i].getPath());
+                    UploadMedia.appendToUploadLog("Перезаписан: " + arrSmbFiles[i].getName());
                     dr.countSkipped++;
                     if (dr.countSkipped % 10 == 0)
                         changeStatus("пропущено..." + arrSmbFiles[i].getPath(), true);

@@ -659,7 +659,7 @@ console.log("*Init option_video_play: "+document.getElementById("option_video_pl
       };
       httpRequest.open("POST", "/download_files");
       httpRequest.send(JSON.stringify(jsonData));
-       document.getElementById("status").innerHTML = "очікування на завантаження...";
+       document.getElementById("status").innerHTML = "Очікування на завантаження...";
     });
 
     document.querySelector("#btn_apply").addEventListener("click", function (e) {
@@ -762,7 +762,7 @@ console.log("option_dynamic: "+document.getElementById("option_dynamic").checked
 
       httpRequest.open("POST", "/setsettings");
       httpRequest.send(JSON.stringify(jsonData));
-       document.getElementById("status").innerHTML = "очікування на збереження...";
+       document.getElementById("status").innerHTML = "Очікування на збереження...";
     });
 
      document.querySelector("#btn_remote_update").addEventListener("click", function (e) {
@@ -810,7 +810,7 @@ console.log("option_dynamic: "+document.getElementById("option_dynamic").checked
       };
       httpRequest.open("POST", "/set_admin_settings");
       httpRequest.send(JSON.stringify(jsonData));
-      document.getElementById("status").innerHTML = "очікування на збереження...";
+      document.getElementById("status").innerHTML = "Очікування на збереження...";
     });*/
 
 /********************************************************************************************/

@@ -54,9 +54,6 @@ public class SmbjWorker {
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
-    //35.233.122.204
-    //admin
-    //>zC_+{kdC-Adbe&
 
     public final String TAG = "SmbjWorker";
     private static final String NEW_LINE = System.getProperty("line.separator");
@@ -177,16 +174,16 @@ public class SmbjWorker {
                 session = connection.authenticate(authenticationContext);
                 Log.d(TAG, "Smbj connect successfull");
 
-                changeStatus(mContext.getString(R.string.get_data_ScreenFiles), false);
+                changeStatus(mContext.getString(R.string.get_data_screenFiles), false);
                 resultScreenImg = handleFiles(session, shareScreenImg, folderScreenImg, destScreenImg, extScreenImg);
 
-                changeStatus(mContext.getString(R.string.get_data_Img), false);
+                changeStatus(mContext.getString(R.string.get_data_img), false);
                 resultImg = handleFiles(session, shareImg, folderImg, destImg, extImg);
 
-                changeStatus(mContext.getString(R.string.get_data_Video), false);
+                changeStatus(mContext.getString(R.string.get_data_video), false);
                 resultVideo = handleFiles(session, shareVideo, folderVideo, destVideo, extVideo);
 
-                changeStatus(mContext.getString(R.string.get_data_Slide), false);
+                changeStatus(mContext.getString(R.string.get_data_slide), false);
                 resultSlide = handleFiles(session, shareSlide, folderSlide, destSlide, extSlide);
 
             } catch (Exception e) {
@@ -332,12 +329,7 @@ public class SmbjWorker {
                         uploadResult.hasError = tmpUploadResult.hasError;
                     Log.d(TAG, "Загружено: " + uploadResult.countFiles + " ext:" + extensionFiles[i]);
                 }
-                UploadMedia.appendToUploadLog("Обработано файлов: " + uploadResult.countFiles);
-                Log.d(TAG, uploadResult.countFiles + " 1 uploadResult.countFiles");
-                Log.d(TAG, uploadResult.countSkipped + " 1 uploadResult.countSkipped");
-                Log.d(TAG, uploadResult.countDeleted + " 1 uploadResult.countDeleted");
-                Log.d(TAG, uploadResult.hasError + " 1 uploadResult.hasError");
-
+                UploadMedia.appendToUploadLog("Получено с сервера: " + (uploadResult.countFiles + uploadResult.countSkipped));
                 share.close();
             } else {
                 changeStatus("Неможливо пiдключитися до " + shareFolder, false);
@@ -358,11 +350,6 @@ public class SmbjWorker {
             if ((divider++) >= 50)
                 changeStatus("Видалення файлiв - " + uploadResult.countDeleted + " iз " + listFilesAlreadyExists.size(), false);
         }
-
-        Log.d(TAG, uploadResult.countFiles + " 2 uploadResult.countFiles");
-        Log.d(TAG, uploadResult.countSkipped + " 2 uploadResult.countSkipped");
-        Log.d(TAG, uploadResult.countDeleted + " 2 uploadResult.countDeleted");
-        Log.d(TAG, uploadResult.hasError + " 2 uploadResult.hasError");
 
         return uploadResult;
     }

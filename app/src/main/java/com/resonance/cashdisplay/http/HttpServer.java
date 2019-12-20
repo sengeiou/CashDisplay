@@ -42,7 +42,7 @@ public class HttpServer {
 
     public static String HTTP_HALT_EVENT = "http_halt_event";
     private AsyncHttpServer mServer = null;
-    private AsyncServer mAsyncServer = null;//new AsyncServer();
+    private AsyncServer mAsyncServer = null; //new AsyncServer();
     private HttpConfig httpConfig = null;
     private static final String TAG = "HttpServer";
     private final int STAT_IDLE = 0;
@@ -266,7 +266,7 @@ public class HttpServer {
             if (!shouldPass(request, response)) {
                 return;
             }
-//            Log.d(TAG, "** /getStatus:" + request.getPath() + "\"");
+
             try {
                 JSONObject responseBody = new JSONObject();
 
@@ -274,8 +274,6 @@ public class HttpServer {
                 responseBody.put("CurStatusMsg", iCurStatusMsg);
                 responseBody.put("lab_current_ver", BuildConfig.VERSION_CODE);
                 responseBody.put("sdcard_state", "<font color=\"blue\"><B>пам`ятi вiльно " + ExtSDSource.getAvailableMemory_SD() + "</B></font> ");
-
-//                Log.d(TAG, "Server responses status (JSON string): " + responseBody.toString());
 
                 response.send(responseBody.toString());
                 System.gc();
@@ -297,6 +295,8 @@ public class HttpServer {
         public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
 
             asyncHttpServerResponse.code(200);
+            asyncHttpServerResponse.send("");
+
             Log.d(TAG, "** /upload_files");
             iCurStatus = STAT_LOAD_FILES;
             MainActivity.uploadMedia.upload();
@@ -339,6 +339,8 @@ public class HttpServer {
 
             AsyncHttpRequestBody requestBody = asyncHttpServerRequest.getBody();
             asyncHttpServerResponse.code(200);
+            asyncHttpServerResponse.send("");
+
             Log.d(TAG, "** /setsettings" + requestBody);
             iCurStatus = STAT_SAVE;
             iCurStatusMsg = "Збереження налаштуваннь ";

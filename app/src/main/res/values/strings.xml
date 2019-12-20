@@ -9,12 +9,12 @@
 
     <string name="resonance">"Copyright ЧАО \"Резонанс\" http://www.ekka.com.ua/"</string>
 
-    <string name="connect_to_server">Підключення до сервера</string>
-    <string name="get_data_Img">перевірка файлiв зображень</string>
-    <string name="get_data_Video">перевірка вiдео файлiв</string>
-    <string name="get_data_Slide">перевірка слайд-файлiв</string>
-    <string name="get_data_ScreenFiles">перевірка файлiв фонових зображень</string>
-    <string name="try_connect_to_source">перевiрка вмісту файлового ресурсу</string>
+    <string name="connect_to_server">Підключення до сервера...</string>
+    <string name="get_data_img">Перевірка файлiв зображень...</string>
+    <string name="get_data_video">Перевірка вiдео файлiв...</string>
+    <string name="get_data_slide">Перевірка слайд-файлiв...</string>
+    <string name="get_data_screenFiles">Перевірка файлiв фонових зображень...</string>
+    <string name="try_connect_to_source">Перевiрка вмісту файлового ресурсу...</string>
 
     <string-array name="entriesSpeed">
         <item>9600</item>

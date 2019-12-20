@@ -536,15 +536,15 @@
 
 /***************************************************************************************/
     function poll_status() {
-      console.log("Poll status");
+      console.log("Poll status, raw_request_counter = " + raw_request_counter);
       let httpRequest = new XMLHttpRequest();
       let passed = false;
 
       httpRequest.onreadystatechange = function (data) {
-        if (httpRequest.readyState === XMLHttpRequest.DONE 
+        if (httpRequest.readyState === XMLHttpRequest.DONE
 		    && httpRequest.status === 200) {
           raw_request_counter = 0; // сброс счетчика необработанных запросов
-          document.getElementById("status").style.color = "Black"
+          document.getElementById("status").style.color = "Black";
           let myArr = JSON.parse(httpRequest.responseText);
           console.log(httpRequest.responseText);
           // if (last_status != myArr.status) {
@@ -744,7 +744,7 @@
       };
       httpRequest.open("POST", "/upload_files");
       httpRequest.send(JSON.stringify(jsonData));
-      document.getElementById("status").innerHTML = "очікування на завантаження...";
+      document.getElementById("status").innerHTML = "Очікування на завантаження...";
     });
 	
     document.querySelector("#btn_apply").addEventListener("click", function (e) {
@@ -849,11 +849,10 @@
         protocol:$("#protocol_select").val(),
         uart_select:$("#uart_select").val()
       };
-      console.log("*Save option_video_play: " + document.getElementById("option_video_play").checked);
 
       httpRequest.open("POST", "/setsettings");
       httpRequest.send(JSON.stringify(jsonData));
-      document.getElementById("status").innerHTML = "очікування на збереження...";
+      document.getElementById("status").innerHTML = "Очікування на збереження...";
     });
 
      document.querySelector("#btn_remote_update").addEventListener("click", function (e) {
@@ -918,7 +917,7 @@
       };
       httpRequest.open("POST", "/set_admin_settings");
       httpRequest.send(JSON.stringify(jsonData));
-      document.getElementById("status").innerHTML = "очікування на збереження...";
+      document.getElementById("status").innerHTML = "Очікування на збереження...";
     });*/
 
 /********************************************************************************************/

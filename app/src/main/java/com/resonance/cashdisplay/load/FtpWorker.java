@@ -153,10 +153,10 @@ public class FtpWorker {
                 int replyCode = mFtpClient.getReplyCode();
                 Log.d(TAG, "FTP replyCode: " + replyCode);
                 if (FTPReply.isPositiveCompletion(replyCode)) {
-                    resultImg = downloadFiles(destDirImg, shareServerImg, shareDirImg, extImg);
-                    resultVideo = downloadFiles(destDirVideo, shareServerVideo, shareDirVideo, extVideo);
-                    resultSlide = downloadFiles(destDirSlide, shareServerSlide, shareDirSlide, extSlide);
-                    resultScreenImg = downloadFiles(destDirScreenImg, shareServerScreenImg, shareDirScreenImg, extScreenImg);
+                    resultImg = handleFiles(destDirImg, shareServerImg, shareDirImg, extImg);
+                    resultVideo = handleFiles(destDirVideo, shareServerVideo, shareDirVideo, extVideo);
+                    resultSlide = handleFiles(destDirSlide, shareServerSlide, shareDirSlide, extSlide);
+                    resultScreenImg = handleFiles(destDirScreenImg, shareServerScreenImg, shareDirScreenImg, extScreenImg);
                 }
 
                 //выгрузим на сервер лог загрузки
@@ -240,7 +240,7 @@ public class FtpWorker {
 
     /***************************************************************************************************************/
 
-    private UploadResult downloadFiles(String destDirPath, String share, String shareDir, String[] extArray) {
+    private UploadResult handleFiles(String destDirPath, String share, String shareDir, String[] extArray) {
 
         UploadResult result = new UploadResult();
 
