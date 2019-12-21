@@ -9,12 +9,13 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.FileOperation;
@@ -26,10 +27,6 @@ import com.resonance.cashdisplay.load.UploadMedia;
 import java.io.File;
 
 import static com.resonance.cashdisplay.slide_show.SlideViewActivity.FINISH_ALERT;
-
-//import android.util.Log;
-//import com.resonance.FileOperation;
-
 
 public class VideoActivity extends AppCompatActivity {
 

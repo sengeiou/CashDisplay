@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.AnimationDrawable;
@@ -33,6 +32,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import androidx.databinding.DataBindingUtil;
 
 import com.crashlytics.android.Crashlytics;
 import com.resonance.cashdisplay.databinding.ActivityMainBinding;
@@ -125,6 +126,8 @@ public class MainActivity extends Activity {
         getWindow().setAttributes(attributes);
 
         context = this;
+
+        int i = 5/0;
 
         //Получим настройки экрана
         Display display = this.getWindowManager().getDefaultDisplay();

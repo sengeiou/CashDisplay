@@ -1,7 +1,7 @@
 package com.resonance.cashdisplay;
 
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
 
 /**
  * Created by Святослав on 06.05.2016.
