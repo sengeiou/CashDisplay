@@ -127,8 +127,6 @@ public class MainActivity extends Activity {
 
         context = this;
 
-        int i = 5/0;
-
         //Получим настройки экрана
         Display display = this.getWindowManager().getDefaultDisplay();
         sizeScreen = new Point();
@@ -345,7 +343,7 @@ public class MainActivity extends Activity {
                         // Enter Fade duration is part of duration in xml (starts when xml frame starts, but no longer then xml duration)
                         // Exit Fade is added to duration in xml (xml plays, then this fade starts with next xml item - intersection).
 //                    animDrawable.setEnterFadeDuration(0);    // duration of item in xml has priority (if in xml 0, fade in = 0; if in xml 100, fade in = 100)
-                        animDrawable.setExitFadeDuration(1200);  // this duration plays always (if in xml 400, then 400 + fade out)
+                        animDrawable.setExitFadeDuration(1000);  // this duration plays always (if in xml 400, then 400 + fade out)
                         animDrawable.start();
                     } catch (NullPointerException e) {
                         e.printStackTrace();
@@ -542,6 +540,7 @@ public class MainActivity extends Activity {
             viewModel.setStatusConnection(ethernetSettings.getCurrentStatus());
 
             while (!isInterrupted()) {
+
                 try {
                     // not the best place, but good for SD card absence detection
                     runOnUiThread(() -> {
