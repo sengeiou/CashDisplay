@@ -22,9 +22,11 @@ public class PrefWorker {
 
     // product list look will be choose using specified code
     public static final int LOOK_BASKET = 0;            // shop in Kharkov
-    public static final int LOOK_DMART = 1;             //  shop in Dnepr
-    public static final int[] PRODUCT_LIST_LOOK = {LOOK_BASKET, LOOK_DMART};
-    private static int productListLookCode = PRODUCT_LIST_LOOK[0];  // default and initial value
+    public static final int LOOK_DMART = 1;             // shop in Dnepr
+    public static final int LOOK_SUBWAY = 2;            // Kiev subway
+    public static final int[] PRODUCT_LIST_LOOK = {LOOK_BASKET, LOOK_DMART, LOOK_SUBWAY};
+    // in early versions look code was determined from image name prefix
+    @Deprecated
     private static final String PRODUCT_LIST_BACK_IMAGE_PREFIX = "custom_product_list_";
 
     public PrefWorker() {
@@ -59,6 +61,7 @@ public class PrefWorker {
         prefValues.backgroundShoppingList = sharedPreferences.getString("background_shopping_list", "default_background_picture.png");
         prefValues.backgroundCashNotWork = sharedPreferences.getString("background_cash_not_work", "default_background_picture.png");
         prefValues.backgroundThanks = sharedPreferences.getString("background_thanks", "default_background_picture.png");
+        prefValues.productListLookCode = sharedPreferences.getInt("productListLookCode", PRODUCT_LIST_LOOK[0]);
 
         prefValues.dhcp = sharedPreferences.getBoolean("sDHCP", true);
         prefValues.ip = sharedPreferences.getString("sIP", "192.168.1.200");
@@ -69,10 +72,7 @@ public class PrefWorker {
         prefValues.admin = sharedPreferences.getString("sAdmin", "admin");
         prefValues.adminPassw = sharedPreferences.getString("sAdminPassw", "admin");
 
-        prefValues.productListLookCode = sharedPreferences.getInt("productListLookCode", PRODUCT_LIST_LOOK[0]);
-
         prefValues.showNavigationBar = sharedPreferences.getBoolean("sShowNavigationBar", false);
-
 
         return prefValues;
     }
@@ -110,6 +110,7 @@ public class PrefWorker {
         sharedPreferences.edit().putString("background_shopping_list", prefValues.backgroundShoppingList).apply();
         sharedPreferences.edit().putString("background_cash_not_work", prefValues.backgroundCashNotWork).apply();
         sharedPreferences.edit().putString("background_thanks", prefValues.backgroundThanks).apply();
+        sharedPreferences.edit().putInt("productListLookCode", prefValues.productListLookCode).apply();
 
         sharedPreferences.edit().putBoolean("sDHCP", prefValues.dhcp).apply();
         sharedPreferences.edit().putString("sIP", prefValues.ip).apply();
@@ -120,20 +121,13 @@ public class PrefWorker {
         sharedPreferences.edit().putString("sAdmin", prefValues.admin).apply();
         sharedPreferences.edit().putString("sAdminPassw", prefValues.adminPassw).apply();
 
-        // determine from background image for product list if we have to set custom look or default
-        productListLookCode = PRODUCT_LIST_LOOK[0];
-        if (prefValues.backgroundShoppingList.matches(PRODUCT_LIST_BACK_IMAGE_PREFIX + "\\d+.*")) {
-            String strLookCode = prefValues.backgroundShoppingList.replaceAll("\\D+", "");
-            int lookCode = Integer.valueOf(strLookCode);
-            for (int authLookCode : PRODUCT_LIST_LOOK) {
-                if (lookCode == authLookCode) {
-                    productListLookCode = lookCode;
-                    break;
-                }
-            }
-        }
-        sharedPreferences.edit().putInt("productListLookCode", productListLookCode).apply();
-
         sharedPreferences.edit().putBoolean("sShowNavigationBar", prefValues.showNavigationBar).apply();
+
+        // dummy only for look 1 (Dmart) to keep backward compability
+        String strLookCode = prefValues.backgroundShoppingList.replaceAll("\\D+", "");
+        if (prefValues.backgroundShoppingList.matches(PRODUCT_LIST_BACK_IMAGE_PREFIX + "\\d+.*")
+                && (Integer.valueOf(strLookCode) == LOOK_DMART)) {
+            sharedPreferences.edit().putInt("productListLookCode", PRODUCT_LIST_LOOK[LOOK_DMART]).apply();
+        }
     }
 }

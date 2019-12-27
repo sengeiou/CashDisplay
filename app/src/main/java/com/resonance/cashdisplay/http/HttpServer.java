@@ -237,6 +237,7 @@ public class HttpServer {
                 responseBody.put("image_screen_shoppinglist", prefValues.backgroundShoppingList);
                 responseBody.put("image_screen_cash_not_work", prefValues.backgroundCashNotWork);
                 responseBody.put("image_screen_thanks", prefValues.backgroundThanks);
+                responseBody.put("product_list_look_code", prefValues.productListLookCode);
 
                 responseBody.put("dhcp", prefValues.dhcp);
                 responseBody.put("stat_adress", prefValues.ip);
@@ -387,6 +388,7 @@ public class HttpServer {
                 prefValues.backgroundShoppingList = (String) jsonObject.get("image_screen_shoppinglist");
                 prefValues.backgroundCashNotWork = (String) jsonObject.get("image_screen_cash_not_work");
                 prefValues.backgroundThanks = (String) jsonObject.get("image_screen_thanks");
+                prefValues.productListLookCode = Integer.parseInt((String) jsonObject.get("product_list_look_code"));
 
                 boolean prevDHCP = prefValues.dhcp;             // save to compare below with new value
                 prefValues.ip = (String) jsonObject.get("stat_adress");

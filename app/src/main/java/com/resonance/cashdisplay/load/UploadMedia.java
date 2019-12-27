@@ -183,7 +183,7 @@ public class UploadMedia {
 
         PrefValues prefValues = PrefWorker.getValues();
 
-        initLogFile(); //инициализация лог файла для отправки на удаленный сервер
+        initLogFile(); // инициализация лог файла для отправки на удаленный сервер
 
         ShareParam parseImg = parseFolderPath(prefValues.smbImg);
         ShareParam parseVideo = parseFolderPath(prefValues.smbVideo);
@@ -301,7 +301,7 @@ public class UploadMedia {
         }
 
         for (int i = 0; i < destinationDirs.length; i++) {
-            //Проверка директории
+            // Проверка директории
             File dir = new File(destinationDirs[i]);
             if (!dir.exists()) {
                 Log.d(TAG, "Create directory:" + destinationDirs);
