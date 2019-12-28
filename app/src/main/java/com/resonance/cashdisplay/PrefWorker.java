@@ -17,8 +17,8 @@ public class PrefWorker {
 
     public static final int MIN_VIDEO_TIMEOUT = 10;
     public static final int MIN_SLIDE_TIME_SHOW = 1;
-    public static final String[] DEF_PROTOCOL = new String[]{"SMB1", "SMB2", "FTP"};
-    public static final String[] DEF_UARTS = new String[]{"EKKR", "PC"};
+    public static final String[] DEF_PROTOCOL = {"SMB1", "SMB2", "FTP"};
+    public static final String[] DEF_UARTS = {"EKKR", "PC"};
 
     // product list look will be choose using specified code
     public static final int LOOK_BASKET = 0;            // shop in Kharkov

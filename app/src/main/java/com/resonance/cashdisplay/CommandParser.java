@@ -55,7 +55,7 @@ public class CommandParser {
      * Парсер данных с UART
      *
      * @param viewModel привязка к экранным объектам
-     * @param handler    хандлер для передачи нанных в главное активити
+     * @param handler   хандлер для передачи нанных в главное активити
      * @param context
      */
     public CommandParser(ViewModel viewModel, Handler handler, Context context) {
@@ -91,19 +91,33 @@ public class CommandParser {
         }
 
         if (MainActivity.testMode) {
-            for (byte b : arr) {        // intended for data from EKKR basically (parse data for 2x20 display)
-                switch (b) {
-                    case 0x0B:
+            for (int i = 0; i < cnt; i++) {        // parse data for 2x20 display
+                switch (arr[i]) {
+                    case 0x0B:          // for data from EKKR (byte not appears from ResPOS)
+                        display2x20Emulator.isEkkrData = true;
                         if (display2x20Emulator.lineDetectCounter == 3)     // 1-st line
                             display2x20Emulator.startNewLine(1);
                         display2x20Emulator.lineDetectCounter++;
                         break;
-                    case 0x0A:
+                    case 0x0A:          // for data from EKKR
                         if (display2x20Emulator.lineDetectCounter == 3)     // 2-nd line
                             display2x20Emulator.startNewLine(2);
                         break;
+                    case 0x0C:          // for data from ResPOS Terminal (byte not appears from EKKR)
+                        if (!display2x20Emulator.isEkkrData)
+                            display2x20Emulator.startNewLine(1);
+                        break;
                     default:
-                        display2x20Emulator.addToLineBuffer(b);
+                        if (!display2x20Emulator.isEkkrData)
+                            display2x20Emulator.byteInLineCounter++;
+
+                        display2x20Emulator.addToLineBuffer(arr[i]);
+
+                        if (!display2x20Emulator.isEkkrData
+                                && display2x20Emulator.byteInLineCounter == 0)
+                            if (display2x20Emulator.lineNumber == 1)
+                                display2x20Emulator.startNewLine(2);
+                            else display2x20Emulator.startNewLine(1);
                         break;
                 }
             }
@@ -227,6 +241,8 @@ public class CommandParser {
         private int charInLineAmount = 20;
         private int lineNumber;
         private int lineDetectCounter = 0;
+        private int byteInLineCounter = 0;        // for ResPOS Terminal (not used for EKKR)
+        private boolean isEkkrData = false;
         private int bufferCursor = 0;
         private byte[] buffer = new byte[20];
 
@@ -247,6 +263,7 @@ public class CommandParser {
                 sendToDisplay();
                 bufferCursor = 0;
                 lineDetectCounter = 0;
+                byteInLineCounter = 0;
             }
         }
 
