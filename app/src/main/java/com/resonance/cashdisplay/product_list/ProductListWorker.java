@@ -61,6 +61,9 @@ public class ProductListWorker {
             case 1:
                 resource = R.layout.list_item_look_1;
                 break;
+            case 2:
+                resource = R.layout.list_item_look_2;
+                break;
             default:
                 resource = R.layout.list_item_look_0;
                 break;

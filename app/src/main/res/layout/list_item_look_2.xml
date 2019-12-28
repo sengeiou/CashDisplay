@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Look for Metro (Kiev subway) -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_item_background"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_height_look_2"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!--    dummy, for compability only, must be in another list_item_look_x.xml (visibility = gone) -->
+        <TextView
+            android:id="@+id/textview_discount"
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+        <!--    dummy, for compability only, must be in another list_item_look_x.xml (visibility = gone) -->
+        <TextView
+            android:id="@+id/textview_sum_without_discount"
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/textview_npp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"
+            android:gravity="center"
+            android:textColor="@color/list_item_text_look_2"
+            android:textSize="@dimen/list_item_text_look_2"
+            tools:text="№" />
+
+        <TextView
+            android:id="@+id/textview_product"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3.3"
+            android:ellipsize="end"
+            android:gravity="left|center_vertical"
+            android:maxLines="1"
+            android:paddingLeft="7dp"
+            android:textColor="@color/list_item_text_look_2"
+            android:textSize="@dimen/list_item_text_look_2"
+            tools:text="This is Tovar" />
+
+        <TextView
+            android:id="@+id/textview_count"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.8"
+            android:gravity="center"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:textColor="@color/list_item_text_look_2"
+            android:textSize="@dimen/list_item_text_look_2"
+            tools:text="10" />
+
+        <TextView
+            android:id="@+id/textview_price"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:textColor="@color/list_item_text_look_2"
+            android:textSize="@dimen/list_item_text_look_2"
+            tools:text="1000000.00" />
+
+        <!--        here will be value received from COM port, already with discount -->
+        <TextView
+            android:id="@+id/textview_sum"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:textColor="@color/list_item_text_look_2"
+            android:textSize="@dimen/list_item_text_look_2"
+            tools:text="1000000.00" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/list_item_divider_look_2" />
+
+    <ImageView
+        android:id="@+id/imageview_icon"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_launcher"
+        android:visibility="gone" />
+
+</LinearLayout>

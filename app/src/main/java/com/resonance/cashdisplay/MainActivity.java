@@ -306,6 +306,9 @@ public class MainActivity extends Activity {
             case 1:
                 resource = R.layout.layout_product_list_look_1;
                 break;
+            case 2:
+                resource = R.layout.layout_product_list_look_2;
+                break;
             default:
                 resource = R.layout.layout_product_list_look_0;
                 break;

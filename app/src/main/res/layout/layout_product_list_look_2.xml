@@ -1,28 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- Look for "Basket" shop (default)-->
+<!-- Look for Metro (Kiev subway) -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8413"
-        android:orientation="horizontal"
-        tools:background="@color/white">
+        android:orientation="horizontal">
 
+        <!--       dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
         <ImageView
             android:id="@+id/imageview_product"
             android:layout_width="400dp"
             android:layout_height="500dp"
-            android:layout_alignParentRight="true"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/noimagefound"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -33,7 +30,7 @@
                 android:id="@+id/list_header"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="5785"
+                android:layout_weight="5557"
                 android:gravity="end"
                 android:orientation="horizontal">
 
@@ -42,8 +39,8 @@
                     android:layout_height="30dp"
                     android:gravity="center_vertical|center_horizontal"
                     android:text="@string/number_sign"
-                    android:textColor="@color/list_header_text_look_0"
-                    android:textSize="@dimen/list_header_text_look_0" />
+                    android:textColor="@color/list_header_text_look_2"
+                    android:textSize="@dimen/list_header_text_look_2" />
 
                 <TextView
                     android:layout_width="40dp"
@@ -51,8 +48,8 @@
                     android:layout_weight="4"
                     android:gravity="center_vertical|center_horizontal"
                     android:text="@string/product_name"
-                    android:textColor="@color/list_header_text_look_0"
-                    android:textSize="@dimen/list_header_text_look_0" />
+                    android:textColor="@color/list_header_text_look_2"
+                    android:textSize="@dimen/list_header_text_look_2" />
 
                 <TextView
                     android:layout_width="30dp"
@@ -60,8 +57,8 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical|center_horizontal"
                     android:text="@string/amount"
-                    android:textColor="@color/list_header_text_look_0"
-                    android:textSize="@dimen/list_header_text_look_0" />
+                    android:textColor="@color/list_header_text_look_2"
+                    android:textSize="@dimen/list_header_text_look_2" />
 
                 <TextView
                     android:layout_width="30dp"
@@ -69,8 +66,8 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical|center_horizontal"
                     android:text="@string/price"
-                    android:textColor="@color/list_header_text_look_0"
-                    android:textSize="@dimen/list_header_text_look_0" />
+                    android:textColor="@color/list_header_text_look_2"
+                    android:textSize="@dimen/list_header_text_look_2" />
 
                 <TextView
                     android:layout_width="30dp"
@@ -78,8 +75,8 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical|center_horizontal"
                     android:text="@string/sum"
-                    android:textColor="@color/list_header_text_look_0"
-                    android:textSize="@dimen/list_header_text_look_0" />
+                    android:textColor="@color/list_header_text_look_2"
+                    android:textSize="@dimen/list_header_text_look_2" />
 
             </LinearLayout>
 
@@ -87,18 +84,16 @@
                 android:id="@+id/imageview_list_header_underline"
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:background="@color/list_item_divider_look_0"
-                android:visibility="gone" />
+                android:background="@color/list_item_divider_look_2" />
 
             <ListView
                 android:id="@+id/listview_products"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="94215"
+                android:layout_weight="94443"
                 android:choiceMode="singleChoice"
                 android:clickable="true"
-                tools:listitem="@layout/list_item_look_0"
-                tools:background="@color/white"/>
+                tools:listitem="@layout/list_item_look_2" />
 
         </LinearLayout>
     </LinearLayout>
@@ -136,8 +131,8 @@
             android:text="@string/total_products"
             android:textAlignment="viewEnd"
             android:textColor="@color/white"
-            android:textSize="30sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textSize="@dimen/total_text_look_2"/>
 
         <TextView
             android:id="@+id/textview_total_count"
@@ -148,7 +143,7 @@
             android:text="999"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="36sp"
+            android:textSize="@dimen/total_text_num_look_2"
             android:textStyle="bold" />
 
         <TextView
@@ -161,7 +156,7 @@
             android:text="@string/to_pay_colon"
             android:textAlignment="viewEnd"
             android:textColor="@color/white"
-            android:textSize="30sp"
+            android:textSize="@dimen/total_text_look_2"
             android:textStyle="bold" />
 
         <TextView
@@ -174,7 +169,7 @@
             android:text="9999.99"
             android:textAlignment="viewEnd"
             android:textColor="@color/white"
-            android:textSize="36sp"
+            android:textSize="@dimen/total_text_num_look_2"
             android:textStyle="bold" />
 
     </LinearLayout>
