@@ -3,9 +3,9 @@
 <!-- Look for "Basket" shop (default)-->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <LinearLayout
@@ -19,7 +19,6 @@
             android:id="@+id/imageview_product"
             android:layout_width="400dp"
             android:layout_height="500dp"
-            android:layout_alignParentRight="true"
             android:layout_gravity="center_vertical"
             android:src="@drawable/noimagefound"
             android:visibility="visible" />
@@ -34,49 +33,49 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="5785"
-                android:gravity="end"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="50dp"
-                    android:layout_height="30dp"
-                    android:gravity="center_vertical|center_horizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.4"
+                    android:gravity="center"
                     android:text="@string/number_sign"
                     android:textColor="@color/list_header_text_look_0"
                     android:textSize="@dimen/list_header_text_look_0" />
 
                 <TextView
-                    android:layout_width="40dp"
-                    android:layout_height="30dp"
-                    android:layout_weight="4"
-                    android:gravity="center_vertical|center_horizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3.3"
+                    android:gravity="center"
                     android:text="@string/product_name"
                     android:textColor="@color/list_header_text_look_0"
                     android:textSize="@dimen/list_header_text_look_0" />
 
                 <TextView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:gravity="center_vertical|center_horizontal"
+                    android:gravity="center"
                     android:text="@string/amount"
                     android:textColor="@color/list_header_text_look_0"
                     android:textSize="@dimen/list_header_text_look_0" />
 
                 <TextView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:gravity="center_vertical|center_horizontal"
+                    android:gravity="center"
                     android:text="@string/price"
                     android:textColor="@color/list_header_text_look_0"
                     android:textSize="@dimen/list_header_text_look_0" />
 
                 <TextView
-                    android:layout_width="30dp"
-                    android:layout_height="40dp"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:gravity="center_vertical|center_horizontal"
+                    android:gravity="center"
                     android:text="@string/sum"
                     android:textColor="@color/list_header_text_look_0"
                     android:textSize="@dimen/list_header_text_look_0" />
@@ -97,19 +96,18 @@
                 android:layout_weight="94215"
                 android:choiceMode="singleChoice"
                 android:clickable="true"
-                tools:listitem="@layout/list_item_look_0"
-                tools:background="@color/white"/>
+                tools:listitem="@layout/list_item_look_0" />
 
         </LinearLayout>
     </LinearLayout>
 
-    <!-- height must be 130px for 1280x800 screen (130/800 = 0.1625) -->
+    <!-- height designed to be 130px for 1280x800 screen -->
     <LinearLayout
         android:id="@+id/layout_total"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_alignParentBottom="true"
         android:layout_weight="1587"
+        android:gravity="center_vertical|end"
         android:orientation="horizontal">
 
         <!--    dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
@@ -130,52 +128,46 @@
             android:id="@+id/textview_total_products"
             android:layout_width="500px"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:gravity="clip_vertical"
+            android:gravity="center_vertical|end"
             android:text="@string/total_products"
-            android:textAlignment="viewEnd"
             android:textColor="@color/white"
-            android:textSize="30sp"
+            android:textSize="@dimen/total_text_look_0"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textview_total_count"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="999"
-            android:textAlignment="center"
+            android:gravity="center"
             android:textColor="@color/white"
-            android:textSize="36sp"
-            android:textStyle="bold" />
+            android:textSize="@dimen/total_text_num_look_0"
+            android:textStyle="bold"
+            tools:text="@string/tools_dummy_6_dot_3" />
 
         <TextView
             android:id="@+id/textview_to_pay"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:gravity="clip_vertical"
+            android:gravity="center_vertical|end"
             android:text="@string/to_pay_colon"
-            android:textAlignment="viewEnd"
             android:textColor="@color/white"
-            android:textSize="30sp"
+            android:textSize="@dimen/total_text_look_0"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textview_total_sum"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:paddingRight="10dp"
-            android:text="9999.99"
-            android:textAlignment="viewEnd"
+            android:gravity="center_vertical|end"
+            android:paddingEnd="10dp"
             android:textColor="@color/white"
-            android:textSize="36sp"
-            android:textStyle="bold" />
+            android:textSize="@dimen/total_text_num_look_0"
+            android:textStyle="bold"
+            tools:text="@string/tools_dummy_10_dot_2" />
 
     </LinearLayout>
 

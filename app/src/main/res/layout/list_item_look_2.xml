@@ -13,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/list_item_height_look_2"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        tools:background="#000000">
 
         <!--    dummy, for compability only, must be in another list_item_look_x.xml (visibility = gone) -->
         <TextView
@@ -36,32 +37,31 @@
             android:gravity="center"
             android:textColor="@color/list_item_text_look_2"
             android:textSize="@dimen/list_item_text_look_2"
-            tools:text="№" />
+            tools:text="00" />
 
         <TextView
             android:id="@+id/textview_product"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="3.3"
-            android:ellipsize="end"
-            android:gravity="left|center_vertical"
-            android:maxLines="1"
+            android:gravity="start|center_vertical"
             android:paddingLeft="7dp"
+            android:paddingEnd="3dp"
             android:textColor="@color/list_item_text_look_2"
             android:textSize="@dimen/list_item_text_look_2"
-            tools:text="This is Tovar" />
+            tools:text="Product" />
 
         <TextView
             android:id="@+id/textview_count"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.8"
+            android:layout_weight="1"
             android:gravity="center"
-            android:paddingLeft="3dp"
-            android:paddingRight="3dp"
+            android:paddingStart="3dp"
+            android:paddingEnd="3dp"
             android:textColor="@color/list_item_text_look_2"
             android:textSize="@dimen/list_item_text_look_2"
-            tools:text="10" />
+            tools:text="@string/tools_dummy_6_dot_3" />
 
         <TextView
             android:id="@+id/textview_price"
@@ -69,11 +69,11 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:paddingLeft="3dp"
-            android:paddingRight="3dp"
+            android:paddingStart="3dp"
+            android:paddingEnd="3dp"
             android:textColor="@color/list_item_text_look_2"
             android:textSize="@dimen/list_item_text_look_2"
-            tools:text="1000000.00" />
+            tools:text="@string/tools_dummy_8_dot_2" />
 
         <!--        here will be value received from COM port, already with discount -->
         <TextView
@@ -82,11 +82,11 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:paddingLeft="3dp"
-            android:paddingRight="3dp"
+            android:paddingStart="3dp"
+            android:paddingEnd="3dp"
             android:textColor="@color/list_item_text_look_2"
             android:textSize="@dimen/list_item_text_look_2"
-            tools:text="1000000.00" />
+            tools:text="@string/tools_dummy_8_dot_2" />
     </LinearLayout>
 
     <ImageView
