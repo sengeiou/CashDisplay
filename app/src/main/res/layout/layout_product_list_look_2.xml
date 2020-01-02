@@ -127,17 +127,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingStart="15dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingStart="15dp">
 
             <TextView
                 android:id="@+id/textview_card_balance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="bottom"
+
                 android:text="@string/card_balance"
                 android:textColor="@color/white"
-                android:textSize="30sp"
+                android:textSize="34sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -145,10 +146,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="top"
-                android:text="@string/tools_dummy_4"
+                android:text="100.00"
+                android:paddingEnd="7dp"
                 android:textColor="@color/white"
-                android:textSize="52sp"
-                android:textStyle="bold" />
+                android:textSize="54sp"
+                android:textStyle="bold"
+                tools:text="@string/tools_dummy_6_dot_2"/>
 
         </LinearLayout>
 
@@ -162,7 +165,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|end"
-            android:paddingEnd="15dp"
+            android:paddingEnd="25dp"
             android:text="@string/total_products"
             android:textColor="@color/white"
             android:textSize="@dimen/total_text_look_2"
@@ -185,7 +188,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|end"
-            android:paddingEnd="15dp"
+            android:paddingEnd="25dp"
             android:text="@string/to_pay_colon"
             android:textColor="@color/white"
             android:textSize="@dimen/total_text_look_2"
@@ -196,7 +199,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|end"
-            android:paddingEnd="15dp"
+            android:paddingEnd="25dp"
             android:paddingBottom="5dp"
             android:text="@string/tools_dummy_6_dot_2"
             android:textColor="@color/white"

@@ -333,27 +333,29 @@ public class MainActivity extends Activity {
         // item click listener we use ot highlight selected item
         listViewProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                new Handler().post(() -> {
-                    int totalItemCount = parent.getCount();
-                    if (totalItemCount == 0)
-                        return;
+//                new Handler().post(() -> {        // with handler may be small delay before highlighting
+                int totalItemCount = parent.getCount();
+                if (totalItemCount == 0)
+                    return;
 
-                    int positionViewPort = position - parent.getFirstVisiblePosition();
+                int positionViewPort = position - parent.getFirstVisiblePosition();
 
-                    try {
-                        View listItem = parent.getChildAt(positionViewPort);
-                        AnimationDrawable animDrawable = (AnimationDrawable) listItem.getBackground();
-                        // Enter Fade duration is part of duration in xml (starts when xml frame starts, but no longer then xml duration)
-                        // Exit Fade is added to duration in xml (xml plays, then this fade starts with next xml item - intersection).
+                try {
+                    View listItem = parent.getChildAt(positionViewPort);
+                    AnimationDrawable animDrawable = (AnimationDrawable) listItem.getBackground();
+                    // Enter Fade duration is part of duration in xml (starts when xml frame starts, but no longer then xml duration)
+                    // Exit Fade is added to duration in xml (xml plays, then this fade starts with next xml item - intersection).
 //                    animDrawable.setEnterFadeDuration(0);    // duration of item in xml has priority (if in xml 0, fade in = 0; if in xml 100, fade in = 100)
-                        animDrawable.setExitFadeDuration(1000);  // this duration plays always (if in xml 400, then 400 + fade out)
-                        animDrawable.start();
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
+                    animDrawable.setExitFadeDuration(1000);  // this duration plays always (if in xml 400, then 400 + fade out)
+                    animDrawable.start();
+                } catch (NullPointerException e) {      // if first time clicked item was not available yet
+                    new Handler().post(() -> {          // repeat click action with delay
+                        onItemClick(parent, view, position, id);
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+//                });
             }
         });
 

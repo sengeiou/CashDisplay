@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/list_item_background"
+    android:background="@drawable/list_item_background_grey"
     android:orientation="vertical">
 
     <LinearLayout
@@ -73,7 +73,7 @@
             android:paddingEnd="3dp"
             android:textColor="@color/list_item_text_look_2"
             android:textSize="@dimen/list_item_text_look_2"
-            tools:text="@string/tools_dummy_8_dot_2" />
+            tools:text="@string/tools_dummy_6_dot_2" />
 
         <!--        here will be value received from COM port, already with discount -->
         <TextView
@@ -86,7 +86,7 @@
             android:paddingEnd="3dp"
             android:textColor="@color/list_item_text_look_2"
             android:textSize="@dimen/list_item_text_look_2"
-            tools:text="@string/tools_dummy_8_dot_2" />
+            tools:text="@string/tools_dummy_6_dot_2" />
     </LinearLayout>
 
     <ImageView

@@ -11,11 +11,11 @@
     <dimen name="total_text_look_1">22dp</dimen>
     <dimen name="total_text_num_look_1">36dp</dimen>
 
-    <dimen name="list_header_text_look_2">22sp</dimen>
-    <dimen name="list_item_text_look_2">36sp</dimen>
+    <dimen name="list_header_text_look_2">24sp</dimen>
+    <dimen name="list_item_text_look_2">46sp</dimen>
     <dimen name="list_item_height_look_2">126dp</dimen>  <!-- clear height without list item divider -->
-    <dimen name="total_text_look_2">36dp</dimen>
-    <dimen name="total_text_num_look_2">60dp</dimen>
+    <dimen name="total_text_look_2">38dp</dimen>
+    <dimen name="total_text_num_look_2">64dp</dimen>
 
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">0dp</dimen>

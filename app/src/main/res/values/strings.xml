@@ -51,7 +51,7 @@
     <string name="to_pay_colon">До сплати:  </string>
     <string name="total">Разом</string>
 
-    <string name="card_balance">Баланс по картi</string>
+    <string name="card_balance">На картцi:</string>
 
     <string name="tools_dummy_4">1234</string>
     <string name="tools_dummy_6_dot_3">123.456</string>
