@@ -499,7 +499,7 @@
 	    alert('Надано доступ до вибору iнтерфейсу "Список покупок"');
 		$("#pills-settings-tab").click();
 		$("#product_list_look_code_div").show();
-		setTimeout(scrollToSmoothly, 300, 3000);	// 500ms, 3000 - argument (Y coordinates)
+		setTimeout(scrollToSmoothly, 300, 3000);	// 300ms, 3000 - argument (Y coordinates)
 	  }
 	});
 	
@@ -507,6 +507,8 @@
 	  if (event.ctrlKey && event.altKey && event.shiftKey && event.keyCode == 76) {		// ctrl+shift+alt+"L"
 	    alert('Надано доступ до лог-файлiв iндикатора');
 		$("#pills-log-tab-li").show();
+		$("#pills-log-tab").click();
+		setTimeout(scrollToSmoothly, 300, 0);	// 300ms, 0 - argument (Y coordinates)
 	  }
 	});
 	

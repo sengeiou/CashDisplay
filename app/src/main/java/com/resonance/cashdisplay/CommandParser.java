@@ -1,9 +1,6 @@
 package com.resonance.cashdisplay;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
@@ -12,12 +9,10 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import static com.resonance.cashdisplay.MainActivity.MSG_ADD_PRODUCT_DEBUG;
-import static com.resonance.cashdisplay.uart.UartWorker.UART_CHANGE_SETTINGS;
 
 /**
  * Created by Святослав on 19.04.2016.
  */
-
 
 /**
  * Класс обрабатывает данные приходящие с UART
@@ -68,18 +63,7 @@ public class CommandParser {
         this.viewModel = viewModel;
         this.display2x20Emulator = new Display2x20Emulator();
         extBuf = new byte[LEN_EXT_BUFFER];
-        mContext.registerReceiver(uartChangeSettings, new IntentFilter(UART_CHANGE_SETTINGS));
     }
-
-    /**
-     * Приемник сообщений об изменении параметров настройки COM порта
-     */
-    public BroadcastReceiver uartChangeSettings = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            display2x20Emulator = new Display2x20Emulator();
-        }
-    };
 
     public void parseInputStr(byte[] arr, int cnt) {
         for (int i = 0; i < cnt; i++) {
@@ -106,41 +90,48 @@ public class CommandParser {
         }
 
         if (MainActivity.testMode) {
-            if (display2x20Emulator.isEkkrData) {
-                for (int i = 0; i < cnt; i++) {        // parse data for 2x20 display
-                    switch (arr[i]) {
-                        case 0x0B:          // for data from EKKR (byte not appears from ResPOS)
-                            if (display2x20Emulator.lineDetectCounter == 3)     // 1-st line
-                                display2x20Emulator.startNewLine(1);
-                            display2x20Emulator.lineDetectCounter++;
-                            break;
-                        case 0x0A:          // for data from EKKR (byte not appears from ResPOS)
-                            if (display2x20Emulator.lineDetectCounter == 3)     // 2-nd line
-                                display2x20Emulator.startNewLine(2);
-                            break;
-                        default:
-                            display2x20Emulator.addToLineBuffer(arr[i]);
-                            break;
-                    }
-                }
-            } else if (!display2x20Emulator.isEkkrData) {
-                for (int i = 0; i < cnt; i++) {        // parse data for 2x20 display
-                    switch (arr[i]) {
-                        case 0x0C:          // for data from ResPOS Terminal (byte ALSO appears from EKKR)
+            for (int i = 0; i < cnt; i++) {        // parse data for 2x20 display (aimed for data from EKKR autonomic mode and ResPOS indicator test)
+                switch (arr[i]) {
+                    case 0x0B:                    // EKKR aimed (byte not appears from ResPOS)
+                        if (display2x20Emulator.lineDetectCounter == 3) {    // 1-st line
                             display2x20Emulator.startNewLine(1);
-                            break;
-                        default:
-                            display2x20Emulator.byteInLineCounter++;
+                            display2x20Emulator.isEkkrData = true;
+                        }
+                        display2x20Emulator.lineDetectCounter++;
+                        break;
+                    case 0x0A:                    // EKKR aimed (byte not appears from ResPOS)
+                        if (display2x20Emulator.lineDetectCounter == 3) {    // 2-nd line
+                            display2x20Emulator.startNewLine(2);
+                            display2x20Emulator.isEkkrData = true;
+                        }
+                        break;
+                    case 0x40:                    // ResPOS Terminal aimed
+                        if (!display2x20Emulator.isEkkrData && (arr[i + 1] != 0x1B)) {
                             display2x20Emulator.addToLineBuffer(arr[i]);
-                            if (display2x20Emulator.byteInLineCounter == 0)
+                            break;
+                        }
+                    case 0x1B:                    // ResPOS Terminal aimed
+                    case 0x52:                    // ResPOS Terminal aimed
+                        display2x20Emulator.resposDetectCounter++;
+                        break;
+                    case 0x0C:                    // ResPOS Terminal aimed (ALSO appears from EKKR)
+                        if (display2x20Emulator.resposDetectCounter == 4) {
+                            display2x20Emulator.startNewLine(1);
+                            display2x20Emulator.isEkkrData = false;
+                            display2x20Emulator.resposDetectCounter = 0;
+                            break;
+                        }
+                    default:
+                        display2x20Emulator.addToLineBuffer(arr[i]);
+
+                        if (!display2x20Emulator.isEkkrData)
+                            if (display2x20Emulator.bufferCursor == 0)
                                 if (display2x20Emulator.lineNumber == 1)
                                     display2x20Emulator.startNewLine(2);
                                 else display2x20Emulator.startNewLine(1);
-                            break;
-                    }
+                        break;
                 }
             }
-
         }
     }
 
@@ -150,10 +141,10 @@ public class CommandParser {
         if (buf.length >= 4) {
             formatCommand.command = new String(buf, 0, 4, ENCODING_CHARSET);//команда
         }
-        //перешлем на отображение на экран для отладки
+        // перешлем на отображение на экран для отладки
         sendToMain(MSG_ADD_PRODUCT_DEBUG, "[" + new String(buf, 0, lenBuf, ENCODING_CHARSET) + "]", 0, 0);
 
-        //Идентификация  протокола Ver 2
+        // Идентификация протокола Ver 2
         for (int i = 0; i < arrComands2.length; i++) {
             if (formatCommand.command.contains(arrComands2[i])) {
                 byte tmpBuf[] = Arrays.copyOfRange(buf, 0, lenBuf - 4);
@@ -255,22 +246,20 @@ public class CommandParser {
     }
 
     /**
-     * Class for display 2x20 emulation
+     * Class for display 2x20 emulation (primarily, for testing of UART, getting data from EKKR or from ResPOS)
      */
     private class Display2x20Emulator {
         private int charInLineAmount = 20;
         private int lineNumber;
         private int lineDetectCounter = 0;
-        private int byteInLineCounter = 0;        // for ResPOS Terminal (not used for EKKR)
-        private boolean isEkkrData = false;
+        private boolean isEkkrData = true;
+        private int resposDetectCounter = 0;
         private int bufferCursor = 0;
         private byte[] buffer = new byte[20];
 
         public Display2x20Emulator() {
             viewModel.setLine1("");
             viewModel.setLine2("");
-            if (PrefWorker.getValues().uartName.equals(PrefWorker.DEF_UARTS[0]))
-                isEkkrData = true;
         }
 
         private void startNewLine(int number) {
@@ -285,7 +274,6 @@ public class CommandParser {
                 sendToDisplay();
                 bufferCursor = 0;
                 lineDetectCounter = 0;
-                byteInLineCounter = 0;
             }
         }
 
