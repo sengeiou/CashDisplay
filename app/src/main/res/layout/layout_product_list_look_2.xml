@@ -134,8 +134,8 @@
                 android:id="@+id/textview_card_balance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="bottom"
-
+                android:gravity="center|bottom"
+                android:paddingStart="7dp"
                 android:text="@string/card_balance"
                 android:textColor="@color/white"
                 android:textSize="34sp"
@@ -145,13 +145,12 @@
                 android:id="@+id/textview_card_balance_sum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="top"
+                android:gravity="center|top"
                 android:text="100.00"
-                android:paddingEnd="7dp"
                 android:textColor="@color/white"
                 android:textSize="54sp"
                 android:textStyle="bold"
-                tools:text="@string/tools_dummy_6_dot_2"/>
+                tools:text="100.00"/>
 
         </LinearLayout>
 

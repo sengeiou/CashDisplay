@@ -65,10 +65,8 @@ public class MainActivity extends Activity {
     public static final int MSG_SET_TOVAR_PRODUCT_LIST = 35;
     public static final int MSG_DEL_TOVAR_PRODUCT_LIST = 36;
     public static final int MSG_CLEAR_PRODUCT_LIST = 37;
-    public static final int MSG_TOTAL_SUMM_PRODUCT_LIST = 38;
-    public static final int MSG_SET_SCREEN_NOT_WORK = 39;
-    public static final int MSG_SET_SCREEN_THANKS = 40;
-    public static final int MSG_FROM_EKKR = 41;           // for emulation of 2x20 display
+    public static final int MSG_SET_SCREEN_NOT_WORK = 38;
+    public static final int MSG_SET_SCREEN_THANKS = 39;
     public static final int MSG_ADD_PRODUCT_DEBUG = 1234;
 
     private PrefValues prefValues;       //настройки
@@ -461,9 +459,6 @@ public class MainActivity extends Activity {
                     setVisibleContext(CONTEXT_THANKS, msg.arg2);
                     setEnableMedia(true);
                     resetMediaTime();
-                    break;
-                case MSG_FROM_EKKR:
-                    Log.d(TAG, "MSG_FROM_EKKR");
                     break;
                 case MSG_ADD_PRODUCT_DEBUG:
                     productListWorker.addProductDebug((String) msg.obj);

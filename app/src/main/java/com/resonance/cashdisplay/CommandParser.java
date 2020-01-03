@@ -28,15 +28,13 @@ public class CommandParser {
 
     //экран "Список покупок"
     private final String CMD_ADDL = "ADDL"; // Добавить товар в список  // ADDL0;1247;0;1;700;700;sik sadochok;5047
-    private final String CMD_CLRL = "CLRL"; // Очистить список товаров
     private final String CMD_SETi = "SETi"; // Установить товар в указанной позиции списка
     private final String CMD_DELi = "DELi"; // Удалить товар из указанной позиции
-    private final String CMD_TOTL = "TOTL"; // Итоговая сумма по экрану "Список покупок"
+    private final String CMD_CLRL = "CLRL"; // Очистить список товаров
     private final String CMD_NWRK = "NWRK"; // Отобразить экран "Касса не работает"
     private final String CMD_THNK = "THNK"; // Отобразить экран "Спасибо за покупку"  THNK95E5
-    private final String CMD_UPDATE_SCREEN = "UPDT"; //Обновить экран
 
-    private final String[] arrComands2 = new String[]{CMD_ADDL, CMD_CLRL, CMD_SETi, CMD_DELi, CMD_TOTL, CMD_NWRK, CMD_THNK};
+    private final String[] arrComands2 = new String[]{CMD_ADDL, CMD_SETi, CMD_DELi, CMD_CLRL, CMD_NWRK, CMD_THNK};
 
     private final int LEN_EXT_BUFFER = 1024 * 4;
 
@@ -179,10 +177,6 @@ public class CommandParser {
                 sendToMain(MainActivity.MSG_ADD_TOVAR_PRODUCT_LIST, param, 0, 0);
                 Log.d(TAG, "CMD_ADDL :" + param);
                 break;
-            case CMD_CLRL:
-                sendToMain(MainActivity.MSG_CLEAR_PRODUCT_LIST, param, 0, 0);
-                Log.d(TAG, "CMD_CLRL :" + param);
-                break;
             case CMD_SETi:
                 sendToMain(MainActivity.MSG_SET_TOVAR_PRODUCT_LIST, param, 0, 0);
                 Log.d(TAG, "CMD_SETi :" + param);
@@ -191,9 +185,9 @@ public class CommandParser {
                 sendToMain(MainActivity.MSG_DEL_TOVAR_PRODUCT_LIST, param, 0, 0);
                 Log.d(TAG, "CMD_DELi :" + param);
                 break;
-            case CMD_TOTL:
-                sendToMain(MainActivity.MSG_TOTAL_SUMM_PRODUCT_LIST, param, 0, 0);
-                Log.d(TAG, "CMD_TOTL :" + param);
+            case CMD_CLRL:
+                sendToMain(MainActivity.MSG_CLEAR_PRODUCT_LIST, param, 0, 0);
+                Log.d(TAG, "CMD_CLRL :" + param);
                 break;
             case CMD_NWRK:
                 sendToMain(MainActivity.MSG_SET_SCREEN_NOT_WORK, param, 0, 0);
@@ -241,8 +235,6 @@ public class CommandParser {
     private class FormatCommand {
         private String command;
         private String params;
-        private int length;
-        private int crc16;
     }
 
     /**
