@@ -15,8 +15,6 @@ import com.resonance.cashdisplay.PrefWorker;
 
 import java.util.concurrent.TimeUnit;
 
-//import android.util.Log;
-
 public class VideoSlideService {
 
     private Thread threadWatch = null;

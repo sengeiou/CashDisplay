@@ -25,10 +25,6 @@ import java.net.URL;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
-//import android.util.Log;
-//import org.ini4j.Wini;
-
-
 public class UpdateFirmware {
 
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36";

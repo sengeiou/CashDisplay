@@ -14,8 +14,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-//import android.util.Log;
-
 /**
  * Created by Святослав on 25.04.2016.
  */
@@ -115,8 +113,14 @@ public class ExtSDSource {
                 File testWritable = new File(path, "test_" + timeStamp);
 
                 if (testWritable.mkdirs()) {
-                    testWritable.delete();
-
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        testWritable.delete();
+                    }).start();
                 } else {
                     path = null;
                 }

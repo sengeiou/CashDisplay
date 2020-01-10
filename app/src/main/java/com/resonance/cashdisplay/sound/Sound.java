@@ -10,8 +10,6 @@ import com.resonance.cashdisplay.MainActivity;
 
 import java.io.IOException;
 
-//import android.util.Log;
-
 
 /**
  * Проигрывание звука и установка громкости

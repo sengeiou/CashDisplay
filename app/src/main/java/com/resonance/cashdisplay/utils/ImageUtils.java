@@ -11,8 +11,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
-//import android.util.Log;
-
 public class ImageUtils {
 
     public enum RequestSizeOptions {

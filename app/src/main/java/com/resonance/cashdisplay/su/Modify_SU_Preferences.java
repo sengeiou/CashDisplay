@@ -24,9 +24,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//import android.util.Log;
-//import android.util.Log;
-
 public class Modify_SU_Preferences {
 
 

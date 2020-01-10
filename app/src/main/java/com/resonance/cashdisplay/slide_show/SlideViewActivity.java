@@ -31,10 +31,6 @@ import java.util.concurrent.TimeUnit;
 
 import static com.resonance.cashdisplay.load.UploadMedia.SLIDE_URI;
 
-//import android.util.Log;
-//import com.resonance.FileOperation;
-
-
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
