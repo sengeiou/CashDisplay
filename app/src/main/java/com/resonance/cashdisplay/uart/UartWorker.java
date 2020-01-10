@@ -160,6 +160,12 @@ public class UartWorker {
                     if (size > 0) {
                         if (mHandler != null)
                             mHandler.obtainMessage(ACTION_UART_READ, 1, size, buffer).sendToTarget();
+
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < size; i++) {
+                            sb.append(String.format("%02x ", buffer[i]));
+                        }
+                        Log.d(TAG, "Raw data, size = " + size + ": " + sb.toString());
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -103,13 +103,9 @@
                   
 				  <label>Пароль для авторизації на сервері:</label>
                   <input type="password" class="form-control" id="ftp_pass">
-                  <!--div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="enter_anon" disabled>
-                    <label class="custom-control-label" for="enter_anon">Анонімний вхід</label>
-                  </div-->
 				  
 				  <div class="form-group">
-                  <label>Тип протоколу для виконання завантаження:</label>
+                    <label>Тип протоколу для виконання завантаження:</label>
                     <select id="protocol_select" class="btn btn-light" style="border: 1px solid #CCC; background-color:#fff; width:100%; margin-bottom: 2%; float: left;">
                       <option>SMB1</option>
                       <option>SMB2</option>
@@ -146,21 +142,15 @@
 				
 				<div class="custom-control custom-checkbox">
 				  <input type="checkbox" class="custom-control-input" id="chk_download_at_start" name="chk_download_at_start">
-				  <label class="custom-control-label" for="chk_download_at_start">Синхронiзувати файли з сервером при увімкненні iндикатора</label>
+				  <label class="custom-control-label" for="chk_download_at_start">Синхронiзувати файли з сервером при старті</label>
 				</div> 
 						
 				<hr>
 				
-                <label>Ресурс зберігання файлів, SD CARD : </label>
+                <label>Ресурс зберігання файлів, SD CARD: </label>
                 <label id="id_lab_sdcard_state">...</label>
 
 			  </form>
-
-              <!-- <div id="status" style="font-weight: bold">
-                <div class="spinner-border" role="status">
-                  <span class="sr-only">Loading...</span>
-                </div>
-              </div> -->
             </div>
 
             <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">
@@ -203,28 +193,11 @@
 				    <label>Тайм-аут відтворення відео/слайдшоу (секунд):</label>
 			        <input type="number" class="form-control" id="timeout_video" data-toggle="tooltip" title="Тайм-аут, після закінчення якого, буде програватися відеоролик або показ слайдшоу">
 
-                    <label id="timeSlideImageLabel" style="display: none">Час показу одного зображення при відтворенні слайдшоу:</label>
-                    <input type="number" class = "form-control" id="timeSlideImageInput" style="display: none" data-toggle="tooltip" title="Час показу одного зображення при відтворенні слайдшоу">
+                    <label id="time_slide_image_label" style="display: none">Час показу одного зображення при відтворенні слайдшоу:</label>
+                    <input type="number" class = "form-control" id="time_slide_image_input" style="display: none" data-toggle="tooltip" title="Час показу одного зображення при відтворенні слайдшоу">
                   </div>
 			    </div>
 			  </div>
-			  
-			  <!--div class="form-group">
-                <label>Оберіть шрифт відображення рядків та його розмiр:</label>
-              
-                  <select id="font-select" class="btn btn-light" style="border: 1px solid #CCC; background-color:#fff; width:69%; margin-right: 2%; float: left;">
-
-                    <option>AnonymousPro-Regular</option>
-                    <option>Codenamecoderfree4fbold</option>
-                    <option>Cousine-Regular</option>
-                    <option>Matricha</option>
-                    <option>Monoid-a0-a1-a3-al-ad-aa</option>
-                    <option>Vinmonoprolight</option>
-                  </select>
-
-                <input type="number" class="form-control" id="id_font_size" data-toggle="tooltip" title="Розмiр тексту" style="width: 29%;
-                height: 2.3em;;">
-              </div-->
 			  
 		      <hr>				
 				
@@ -233,7 +206,7 @@
 				<hr>
 
                 <label>Зображення, що буде замінювати відсутній файл зображення товару:</label>
-                <input type="text" class="form-control" id="id_background_img" data-toggle="tooltip" title="" onchange="handleChange(this);">
+                <input type="text" class="form-control" id="id_background_img" data-toggle="tooltip" title="">
 
                 <label>Фонове зображення экрану "Список покупок":</label>
                 <input type="text" class="form-control" id="id_back_screen_shoppinglist" title="Вкажiть назву файлу зображення, що буде вiдображатись на екранi 'Список покупок'">
@@ -295,6 +268,7 @@
 			  <div class="form-group">
 			    <h5>Данi для авторизації</h5>
 				<hr>
+				
                 <label>Логiн:</label>
                 <input type="text" class="form-control" id="admin_user">
 
@@ -309,14 +283,9 @@
 			    <hr>
                 <label id="lab_current_ver">Поточна версія:</label>
                 <div>
-                  <!--p>Укажіть файл оновлення
-                  </p-->
-                  <!--input type="file" id="upfile" name="upfile" accept=".apk"/-->
-                  <!-- <button type="button" id="#1" name="send" class="btn btn-secondary">Отправить</button> -->
                   <div style="margin-bottom:10px">
-                      <button type="button" id="btn_remote_update" class="btn btn-success">Оновлення ПЗ</button>
-                      <!--button type="button" id="#2" class="btn btn-primary">Локальне оновлення</button-->
-                      <button type="button" style="margin-left:150px" id="btn_reboot" class="btn btn-light">Перезавантажити систему</button>
+                    <button type="button" id="btn_remote_update" class="btn btn-success">Оновлення ПЗ</button>
+                    <button type="button" style="margin-left:150px" id="btn_reboot" class="btn btn-light">Перезавантажити систему</button>
                   </div>
                 </div>
 			  </div>
@@ -330,20 +299,17 @@
 			    <!-- Here links to log files will be inserted dinamycally --> 
               </div>
             </div>
-			
-			<hr>
+
+			<hr>	
 			
           </div>
-		  		  
         </div>
-        
       </div>
-	  
-      <div class="col-md-2"></div>
-
+	  <div class="col-md-2"></div>
     </div>
+
     <div class="row">
-        <div class="col-md-2" ></div>
+      <div class="col-md-2" ></div>
     <div class="col-md-8" >
       <div style="max-width: 540px">
           <button type="button" class="btn btn-primary" id="btn_apply" name="send" style="text-align: center; margin-top: 2%">Застосувати налаштування</button>
@@ -504,7 +470,7 @@
 	});
 	
 	$('html').keydown(function(eventObject) {         // catch key events
-	  if (event.ctrlKey && event.altKey && event.shiftKey && event.keyCode == 76) {		// ctrl+shift+alt+"L"
+	  if (event.ctrlKey && event.altKey && event.shiftKey && event.keyCode == 76) {		    // ctrl+shift+alt+"L"
 	    alert('Надано доступ до лог-файлiв iндикатора');
 		$("#pills-log-tab-li").show();
 		$("#pills-log-tab").click();
@@ -540,13 +506,13 @@
 	
     (function () {
       $("#video").click(function () {
-        $("#timeSlideImageLabel").hide();
-        $("#timeSlideImageInput").hide();
+        $("#time_slide_image_label").hide();
+        $("#time_slide_image_input").hide();
       });
 
       $("#slide").click(function () {
-        $("#timeSlideImageLabel").show();
-        $("#timeSlideImageInput").show();
+        $("#time_slide_image_label").show();
+        $("#time_slide_image_input").show();
       });
 
       $("#stat").click(function () {
@@ -569,8 +535,8 @@
 	  }
     }
 
-    $(function(){
-      $(".dropdown-menu a").click(function(){
+    $(function() {
+      $(".dropdown-menu a").click(function() {
         $(".btn:first-child").text($(this).text());
         $(".btn:first-child").val($(this).text());
       });
@@ -612,9 +578,9 @@
       //проверка на корректный IP
       if (document.getElementById("option_static").checked === true ) {
         if (validate_ip(document.getElementById("stat_adress").value) === false) {
-           document.getElementById("stat_adress").style.color ="Red"
+          document.getElementById("stat_adress").style.color ="Red"
 	    } else {
-           document.getElementById("stat_adress").style.color ="Black"
+          document.getElementById("stat_adress").style.color ="Black"
         }
       }
     });
@@ -645,7 +611,7 @@
       //проверка на корректный DNS
       if (document.getElementById("option_static").checked === true ) {
         if (validate_ip(document.getElementById("stat_dns").value) === false) {
-           document.getElementById("stat_dns").style.color ="Red"
+          document.getElementById("stat_dns").style.color ="Red"
         } else {
           document.getElementById("stat_dns").style.color ="Black"
         }
@@ -674,7 +640,7 @@
           last_status = myArr.status;
           switch (myArr.status) {
             case 0: //Idle
-              document.getElementById("status").innerHTML = "Пiдключено ";
+              document.getElementById("status").innerHTML = "Пiдключено";
               console.log("OK status");
               passed = true;
               break;
@@ -690,21 +656,21 @@
               break;
             default:
               break;
-            }
-          //  }
+          }
+        //  }
           document.getElementById("id_lab_sdcard_state").innerHTML = myArr.sdcard_state;
         }
 
         if (!passed && (self.last_status == NO_CONNECTION)) {
           last_status = NO_CONNECTION;
-          document.getElementById("status").innerHTML = "помилка зв'язку";
-          document.getElementById("status").style.color = "Red"
+          document.getElementById("status").innerHTML = "Помилка зв'язку";
+          document.getElementById("status").style.color = "Red";
           console.log("Error get status");
         }
         if (!passed && (raw_request_counter > 5)) {
           raw_request_counter = 0;
-          document.getElementById("status").innerHTML = "втрачено зв'язок з пристроєм";
-          document.getElementById("status").style.color = "Red"
+          document.getElementById("status").innerHTML = "Втрачено зв'язок з пристроєм";
+          document.getElementById("status").style.color = "Red";
         }
       };
 
@@ -751,7 +717,7 @@
       document.getElementById("stat_gate").value = def_stat_gate;
       document.getElementById("stat_dns").value = def_stat_dns;
 
-      document.getElementById("status").innerHTML = "немає даних";
+      document.getElementById("status").innerHTML = "Немає даних";
       last_status = NO_DATA;
       poll_status();
 	  
@@ -796,7 +762,7 @@
           document.getElementById("stat_dns").value = myArr.stat_dns;
           document.getElementById("id_background_img").value = myArr.def_background_img;
 
-          document.getElementById("timeSlideImageInput").value = myArr.time_slide_image;
+          document.getElementById("time_slide_image_input").value = myArr.time_slide_image;
           document.getElementById("option_video_play").checked = myArr.option_video_slide;
           document.getElementById("option_slide_play").checked = !myArr.option_video_slide;
 
@@ -822,7 +788,7 @@
             $("#slide").click();
           }
 
-         // $("#font-select").val(myArr.font_name);
+          // $("#font-select").val(myArr.font_name);
           $("#protocol_select").val(myArr.protocol);
           $("#uart_select").val(myArr.uart_select);
 
@@ -855,9 +821,8 @@
       console.log("Sending");
       let httpRequest = new XMLHttpRequest();
       httpRequest.onreadystatechange = function (data) {
-        if (
-          httpRequest.readyState === XMLHttpRequest.DONE &&
-          httpRequest.status === 200) {
+        if (httpRequest.readyState === XMLHttpRequest.DONE 
+		    && httpRequest.status === 200) {
           //Отправка данных успешна
           console.log("Exec OK");
         } else {
@@ -917,7 +882,7 @@
         console.log(" stat_mask: " + document.getElementById("stat_mask").value + "   def_stat_mask:" + def_stat_mask);
         console.log(" stat_gate: " + document.getElementById("stat_gate").value + "   def_stat_gate:" + def_stat_gate);
         console.log(" stat_dns: " + document.getElementById("stat_dns").value + "   def_stat_dns:" + def_stat_dns);
-        // предупреждение об изменении IP, MASK,GW
+        // предупреждение об изменении IP, MASK, GW
         if (confirm("Ви змінили налаштування підключення, зв'язок буде втрачено, продовжити?")) {
           // сохраним для анализа при записи настроек
           def_option_dynamic = document.getElementById("option_dynamic").checked;
@@ -936,9 +901,10 @@
           //Отправка данных успешна
           console.log("Send OK");
         } else {
-          console.log("#1 Send ERROR!!! status:" + httpRequest.status+" state:" + httpRequest.readyState);
+          console.log("#1 Send ERROR!!! status:" + httpRequest.status + " state:" + httpRequest.readyState);
         }
       };
+	  
       let jsonData = {
         host: document.getElementById("host").value,
         host_img: document.getElementById("host_img").value,
@@ -951,7 +917,6 @@
         volume: document.getElementById("volume_video").value,
         enable_video: document.getElementById("ck_enable_video").checked,
         download_at_start:document.getElementById("chk_download_at_start").checked,
-      //  font_size: document.getElementById("id_font_size").value,
 
         image_screen_shoppinglist:document.getElementById("id_back_screen_shoppinglist").value,
         image_screen_cash_not_work:document.getElementById("id_back_screen_cash_not_work").value,
@@ -966,8 +931,7 @@
         admin_pass: document.getElementById("admin_pass").value,
         dhcp: document.getElementById("option_dynamic").checked,
 
-        time_slide_image: document.getElementById("timeSlideImageInput").value,
-
+        time_slide_image: document.getElementById("time_slide_image_input").value,
         option_video_slide:  document.getElementById("option_video_play").checked,
 
         def_background_img: document.getElementById("id_background_img").value,
@@ -981,14 +945,14 @@
       document.getElementById("status").innerHTML = "Очікування на збереження...";
     });
 
-     document.querySelector("#btn_remote_update").addEventListener("click", function (e) {
+    document.querySelector("#btn_remote_update").addEventListener("click", function (e) {
       console.log("Click btn_remote_update");
       let httpRequest_u = new XMLHttpRequest();
       httpRequest_u.onreadystatechange = function (data) {
         if (httpRequest_u.readyState === XMLHttpRequest.DONE && httpRequest_u.status === 200 ) {
           console.log("btn_remote_update OK");//Отправка данных успешна
         } else {
-          console.log("btn_remote_update Send ERROR! status:" + httpRequest_u.status+" state:" + httpRequest_u.readyState);
+          console.log("btn_remote_update Send ERROR! status:" + httpRequest_u.status + " state:" + httpRequest_u.readyState);
         }
       };
       httpRequest_u.open("POST", "/start_remote_update");
@@ -1003,7 +967,7 @@
       if (confirm("Буде негайно перервано роботу індикатора клієнта. " 
 	            + "Для коректної роботи індикатора у складі ResPos, необхідно виконати перезавантаження всієї системи. "
 				+ "Наполягаєте на продовженні?")) {
-         console.log("Click btn_reboot");
+        console.log("Click btn_reboot");
       } else 
         return;
 
@@ -1016,7 +980,7 @@
         }
       };
       last_status = NO_DATA;
-      document.getElementById("status").innerHTML = "перезавантаження...";
+      document.getElementById("status").innerHTML = "Перезавантаження...";
       httpRequest_u.open("POST", "/start_reboot");
       httpRequest_u.send();
     });
