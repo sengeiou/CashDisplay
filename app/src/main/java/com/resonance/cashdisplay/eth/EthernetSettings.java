@@ -8,8 +8,8 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.resonance.cashdisplay.PrefValues;
-import com.resonance.cashdisplay.PrefWorker;
+import com.resonance.cashdisplay.settings.PrefValues;
+import com.resonance.cashdisplay.settings.PrefWorker;
 import com.resonance.cashdisplay.su.Modify_SU_Preferences;
 
 import java.lang.reflect.InvocationTargetException;

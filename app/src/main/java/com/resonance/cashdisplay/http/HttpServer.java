@@ -20,10 +20,10 @@ import com.resonance.cashdisplay.BuildConfig;
 import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
-import com.resonance.cashdisplay.PrefValues;
-import com.resonance.cashdisplay.PrefWorker;
 import com.resonance.cashdisplay.eth.EthernetSettings;
 import com.resonance.cashdisplay.load.UploadMedia;
+import com.resonance.cashdisplay.settings.PrefValues;
+import com.resonance.cashdisplay.settings.PrefWorker;
 import com.resonance.cashdisplay.sound.Sound;
 import com.resonance.cashdisplay.su.Modify_SU_Preferences;
 

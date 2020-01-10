@@ -12,10 +12,10 @@ import android.widget.TextView;
 
 import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.MainActivity;
-import com.resonance.cashdisplay.PrefValues;
-import com.resonance.cashdisplay.PrefWorker;
 import com.resonance.cashdisplay.R;
 import com.resonance.cashdisplay.load.UploadMedia;
+import com.resonance.cashdisplay.settings.PrefValues;
+import com.resonance.cashdisplay.settings.PrefWorker;
 import com.resonance.cashdisplay.utils.ImageUtils;
 
 import java.io.File;

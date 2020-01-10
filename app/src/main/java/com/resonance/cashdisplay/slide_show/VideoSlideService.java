@@ -11,7 +11,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.resonance.cashdisplay.Log;
-import com.resonance.cashdisplay.PrefWorker;
+import com.resonance.cashdisplay.settings.PrefWorker;
 
 import java.util.concurrent.TimeUnit;
 

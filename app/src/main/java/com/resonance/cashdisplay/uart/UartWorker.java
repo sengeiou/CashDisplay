@@ -9,14 +9,14 @@ import android.os.Handler;
 import com.crashlytics.android.Crashlytics;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
-import com.resonance.cashdisplay.PrefWorker;
+import com.resonance.cashdisplay.settings.PrefWorker;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.resonance.cashdisplay.PrefWorker.DEF_UARTS;
+import static com.resonance.cashdisplay.settings.PrefWorker.DEF_UARTS;
 
 /**
  * Класс обработчик данных от USART

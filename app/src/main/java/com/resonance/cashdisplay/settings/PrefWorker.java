@@ -1,6 +1,8 @@
-package com.resonance.cashdisplay;
+package com.resonance.cashdisplay.settings;
 
 import android.content.SharedPreferences;
+
+import com.resonance.cashdisplay.MainActivity;
 
 /**
  * Created by Святослав on 11.05.2016.
@@ -72,8 +74,6 @@ public class PrefWorker {
         prefValues.admin = sharedPreferences.getString("sAdmin", "admin");
         prefValues.adminPassw = sharedPreferences.getString("sAdminPassw", "admin");
 
-        prefValues.showNavigationBar = sharedPreferences.getBoolean("sShowNavigationBar", false);
-
         return prefValues;
     }
 
@@ -120,8 +120,6 @@ public class PrefWorker {
 
         sharedPreferences.edit().putString("sAdmin", prefValues.admin).apply();
         sharedPreferences.edit().putString("sAdminPassw", prefValues.adminPassw).apply();
-
-        sharedPreferences.edit().putBoolean("sShowNavigationBar", prefValues.showNavigationBar).apply();
 
         // dummy only for look 1 (Dmart) to keep backward compability
         String strLookCode = prefValues.backgroundShoppingList.replaceAll("\\D+", "");

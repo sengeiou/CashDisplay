@@ -21,8 +21,8 @@ import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.FileOperation;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
-import com.resonance.cashdisplay.PrefWorker;
 import com.resonance.cashdisplay.R;
+import com.resonance.cashdisplay.settings.PrefWorker;
 
 import java.io.File;
 import java.util.ArrayList;

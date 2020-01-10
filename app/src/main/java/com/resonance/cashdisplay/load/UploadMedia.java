@@ -11,9 +11,9 @@ import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.FileOperation;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
-import com.resonance.cashdisplay.PrefValues;
-import com.resonance.cashdisplay.PrefWorker;
 import com.resonance.cashdisplay.eth.EthernetSettings;
+import com.resonance.cashdisplay.settings.PrefValues;
+import com.resonance.cashdisplay.settings.PrefWorker;
 import com.resonance.cashdisplay.slide_show.VideoSlideService;
 
 import java.io.File;
@@ -25,10 +25,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
-import static com.resonance.cashdisplay.PrefWorker.DEF_PROTOCOL;
-import static com.resonance.cashdisplay.PrefWorker.FTP;
-import static com.resonance.cashdisplay.PrefWorker.SMB1;
-import static com.resonance.cashdisplay.PrefWorker.SMB2;
+import static com.resonance.cashdisplay.settings.PrefWorker.DEF_PROTOCOL;
+import static com.resonance.cashdisplay.settings.PrefWorker.FTP;
+import static com.resonance.cashdisplay.settings.PrefWorker.SMB1;
+import static com.resonance.cashdisplay.settings.PrefWorker.SMB2;
 
 /**
  * Класс управления загрузкой изображений товаров, видео, слайдов

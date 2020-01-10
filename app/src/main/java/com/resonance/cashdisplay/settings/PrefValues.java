@@ -1,4 +1,4 @@
-package com.resonance.cashdisplay;
+package com.resonance.cashdisplay.settings;
 
 public class PrefValues {
 
@@ -23,7 +23,6 @@ public class PrefValues {
     public String dns;
     public String transferProtocol;//SMB1, SMB2, FTP
     public String defaultBackgroundImage;//Фон по умолчанию на экране
-    public boolean showNavigationBar;//показывать строку навигации
     public int timeSlideImage;
     public int videoOrSlide;
     public String backgroundShoppingList;

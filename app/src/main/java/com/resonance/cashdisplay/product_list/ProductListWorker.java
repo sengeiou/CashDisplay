@@ -13,8 +13,8 @@ import android.widget.Toast;
 
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
-import com.resonance.cashdisplay.PrefValues;
 import com.resonance.cashdisplay.R;
+import com.resonance.cashdisplay.settings.PrefValues;
 
 import java.util.ArrayList;
 import java.util.Locale;

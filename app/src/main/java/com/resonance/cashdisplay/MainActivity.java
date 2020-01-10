@@ -41,6 +41,8 @@ import com.resonance.cashdisplay.eth.EthernetSettings;
 import com.resonance.cashdisplay.http.HttpServer;
 import com.resonance.cashdisplay.load.UploadMedia;
 import com.resonance.cashdisplay.product_list.ProductListWorker;
+import com.resonance.cashdisplay.settings.PrefValues;
+import com.resonance.cashdisplay.settings.PrefWorker;
 import com.resonance.cashdisplay.slide_show.VideoSlideService;
 import com.resonance.cashdisplay.sound.Sound;
 import com.resonance.cashdisplay.su.Modify_SU_Preferences;
@@ -612,7 +614,7 @@ public class MainActivity extends Activity {
                     if (result == 1) {
                         if (BuildConfig.BUILD_TYPE.equals("release")) {
                             if (sizeScreen.x != 1920) //только для 10"
-                                Modify_SU_Preferences.setSystemUIEnabled(prefValues.showNavigationBar); //спрячем строку навигации
+                                Modify_SU_Preferences.setSystemUIEnabled(false); //спрячем строку навигации
                         } else
                             Modify_SU_Preferences.setSystemUIEnabled(true); //покажем строку навигации
 
