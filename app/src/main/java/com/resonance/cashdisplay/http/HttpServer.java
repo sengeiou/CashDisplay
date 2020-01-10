@@ -425,6 +425,8 @@ public class HttpServer {
     }
 
     private boolean shouldPass(AsyncHttpServerRequest req, AsyncHttpServerResponse res) {
+        if ((httpConfig.userName.equals("") && httpConfig.password.equals("")))
+            return true;
         if (isStopped) {
             Log.w(TAG, "Сервер остановлен!!! (method shouldPass, condition isStopped).");
             res.code(503);
