@@ -74,7 +74,6 @@ public class VideoSlideService {
             } else if (intent.getAction().equals(VIDEO_SLIDE_ENABLE)) {
                 Bundle mBundle = intent.getExtras();
                 bEnableMediaPlay = mBundle.getBoolean("enable_video_slide", true);
-                Log.d(TAG, "enable_video_slide: " + bEnableMediaPlay);
                 if (bEnableMediaPlay)
                     watchVideoSlide();
             }

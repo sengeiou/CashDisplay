@@ -186,7 +186,6 @@ public class ProductListWorker {
             if (highlightItem)
                 listViewProducts.performItemClick(listViewProducts, position, listViewProducts.getItemIdAtPosition(position));
         });
-        Log.d(TAG, "scrollToPosition: " + position);
     }
 
     private void setProductImage(int position, boolean animProductImage) {
@@ -214,8 +213,6 @@ public class ProductListWorker {
                 MainActivity.imageViewProduct.startAnimation(fadeOut);
             else
                 MainActivity.imageViewProduct.setImageBitmap(productImage);
-
-            Log.d(TAG, "selectedItem.getCode() " + selectedItem.getCode());
         } else
             MainActivity.imageViewProduct.setImageBitmap(null);
     }

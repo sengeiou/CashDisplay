@@ -432,31 +432,25 @@ public class MainActivity extends Activity {
             setEnableMedia(false);
             switch (msg.what) {
                 case MSG_ADD_TOVAR_PRODUCT_LIST:
-                    Log.d(TAG, "MSG_ADD_TOVAR_SHOPPING_LIST");
                     productListWorker.addProductToList((String) msg.obj);
                     setVisibleContext(CONTEXT_PRODUCT_LIST, msg.arg2);
                     break;
                 case MSG_SET_TOVAR_PRODUCT_LIST:
-                    Log.d(TAG, "MSG_SET_TOVAR_SHOPPING_LIST");
                     productListWorker.setProductToList((String) msg.obj);
                     setVisibleContext(CONTEXT_PRODUCT_LIST, msg.arg2);
                     break;
                 case MSG_DEL_TOVAR_PRODUCT_LIST:
-                    Log.d(TAG, "MSG_DEL_TOVAR_SHOPPING_LIST");
                     productListWorker.deleteProductFromList((String) msg.obj);
                     setVisibleContext(CONTEXT_PRODUCT_LIST, msg.arg2);
                     break;
                 case MSG_CLEAR_PRODUCT_LIST:
-                    Log.d(TAG, "MSG_CLEAR_SHOPPING_LIST");
                     productListWorker.clearProductList((String) msg.obj);
                     break;
                 case MSG_SET_SCREEN_NOT_WORK:
-                    Log.d(TAG, "MSG_SET_SCREEN_NOT_WORK");
                     productListWorker.clearProductList("MSG_SET_SCREEN_NOT_WORK");
                     setVisibleContext(CONTEXT_CONNECT, msg.arg2);
                     break;
                 case MSG_SET_SCREEN_THANKS:
-                    Log.d(TAG, "MSG_SET_SCREEN_THANKS");
                     productListWorker.clearProductList("MSG_SET_SCREEN_THANKS");
                     setVisibleContext(CONTEXT_THANKS, msg.arg2);
                     setEnableMedia(true);

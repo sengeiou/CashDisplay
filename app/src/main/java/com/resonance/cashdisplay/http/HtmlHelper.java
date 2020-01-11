@@ -94,7 +94,7 @@ public class HtmlHelper {
     }
 
     @NonNull
-    private static String loadFileFromStorage(String path) {
+    private static synchronized String loadFileFromStorage(String path) {
         StringBuilder contentBuilder = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String sCurrentLine;

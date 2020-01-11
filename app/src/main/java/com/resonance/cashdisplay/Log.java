@@ -11,37 +11,57 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Log {
     public static final String LOG_FILE_PREFIX = "CashDisplay_";
 
     private static final String NEW_LINE = System.getProperty("line.separator");
     private static boolean mLogcatAppender = true;
-    private static final File mLogFile;
+    private static File mLogFile;
 
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 
     static {
+        logFileProvider();
+
+        TimerTask dayTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                logFileProvider();
+            }
+        };
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 24);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 10);
+        Date date = calendar.getTime();
+
+        new Timer().scheduleAtFixedRate(dayTimerTask, date, 1000 * 60 * 60 * 24);
+    }
+
+    /**
+     * Saves 15 last log files including present day. Deletes 60 log files that comes before this 15 days.
+     */
+    private static void logFileProvider() {
         Date currentDate = new Date();
         Calendar c = Calendar.getInstance();
         c.setTime(currentDate);
+        c.add(Calendar.DATE, -14);
 
-        c.add(Calendar.DATE, -4);
-
-        Date currentDatePlusOne = c.getTime();
-
-        System.out.println(dateFormat.format(currentDatePlusOne));
-        File oldLogFile = new File(Environment.getExternalStorageDirectory(), LOG_FILE_PREFIX + dateFormat.format(currentDatePlusOne) + ".log");
-        if (oldLogFile.exists()) {
-            oldLogFile.delete();
+        for (int i = 1; i < 61; i++) {
+            c.add(Calendar.DATE, -1);
+            Date oldLogFileDate = c.getTime();
+            File oldLogFile = new File(Environment.getExternalStorageDirectory(), LOG_FILE_PREFIX + dateFormat.format(oldLogFileDate) + ".log");
+            if (oldLogFile.exists()) {
+                oldLogFile.delete();
+            }
         }
 
-        c = Calendar.getInstance();
-        c.setTime(currentDate);
-        currentDatePlusOne = c.getTime();
-
-        mLogFile = new File(Environment.getExternalStorageDirectory(), LOG_FILE_PREFIX + dateFormat.format(currentDatePlusOne) + ".log");
+        mLogFile = new File(Environment.getExternalStorageDirectory(), LOG_FILE_PREFIX + dateFormat.format(currentDate) + ".log");
 
         if (!mLogFile.exists()) {
             try {
@@ -89,7 +109,7 @@ public class Log {
     }
 
     private static synchronized void appendLog(String text) {
-        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
         try {
             final FileWriter fileOut = new FileWriter(mLogFile, true);
             fileOut.append(sdf.format(new Date()) + " : " + text + NEW_LINE);

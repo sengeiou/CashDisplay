@@ -195,6 +195,8 @@ public class HttpServer {
             Log.d(TAG, "Server responses log file path: " + responsePath);
             response.getHeaders().set("Content-Type", ContentTypes.getInstance().getContentType(responsePath));
             response.send(HtmlHelper.loadFileAsString(responsePath));   // sends *.log file as string
+
+            System.gc();
         }
     };
 
