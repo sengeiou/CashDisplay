@@ -493,6 +493,7 @@
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
+          blob = undefined;
           console.log("Got log file: " + fileName);
 	    }
 	  };

@@ -10,7 +10,6 @@ import com.resonance.cashdisplay.MainActivity;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
-import java.io.FileReader;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,28 +82,11 @@ public class HtmlHelper {
     @NonNull
     private static String loadFileAsStringInternal(String path) {
         try {
-            if (path.contains("storage"))
-                return loadFileFromStorage(path);
-            else
-                return loadFromAssets(path);
+            return loadFromAssets(path);
         } catch (Exception exc) {
             Log.e(TAG, "loadPathAsStringInternal", exc);
         }
         return "";
-    }
-
-    @NonNull
-    private static synchronized String loadFileFromStorage(String path) {
-        StringBuilder contentBuilder = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            String sCurrentLine;
-            while ((sCurrentLine = br.readLine()) != null) {
-                contentBuilder.append(sCurrentLine).append("\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return contentBuilder.toString();
     }
 
     private static String loadFromAssets(String path) throws Exception {

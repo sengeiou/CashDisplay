@@ -96,7 +96,7 @@ public class ProductListWorker {
             return;
         if (item.getIndexPosition() <= arrayProductList.size()) {
             arrayProductList.add(item.getIndexPosition(), item);
-            Log.d(TAG, "addProductToList: " + param);
+            Log.d("PLW", "add" + param.substring(0, 2));
             updateScreen(item.getIndexPosition(), true, true);
         } else {
             showToast("Невiрнi параметри при внесеннi товару, необхідно очистити чек!");
@@ -121,7 +121,7 @@ public class ProductListWorker {
                         || (presentItem.getSum() != item.getSum())
                         || (!presentItem.getCode().equals(item.getCode()))) {
                     arrayProductList.set(item.getIndexPosition(), item);
-                    Log.d(TAG, "setProductToList :" + param);
+                    Log.d("PLW", "set" + param.substring(0, 2));
                     updateScreen(item.getIndexPosition(), true, true);   // updates only changed position
                 }                                                               // !!! important for ResPOS
             } else {
@@ -143,7 +143,7 @@ public class ProductListWorker {
         if (arrayProductList.size() > 0) {
             if ((arrayProductList.size() - 1) >= indexPosition) {
                 arrayProductList.remove(indexPosition);
-                Log.d(TAG, "deleteProductFromList :" + indexPosition);
+                Log.d("PLW", "delete " + param.substring(0, 2));
             }
             updateScreen((arrayProductList.size() > 0) ? (arrayProductList.size() - 1) : 0, false, false);
         }
@@ -156,7 +156,7 @@ public class ProductListWorker {
      */
     public void clearProductList(String param) {
         arrayProductList.clear();
-        Log.d(TAG, "clearProductList: " + param);
+        Log.d("PLW", "clear");
         updateScreen(0, false, false);
     }
 

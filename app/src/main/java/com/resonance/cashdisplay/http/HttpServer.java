@@ -149,7 +149,7 @@ public class HttpServer {
             File folder = Environment.getExternalStorageDirectory();
             List<String> result = new ArrayList<>();
 
-            search(LOG_FILE_PREFIX + ".*\\.log", folder, result);
+            search(LOG_FILE_PREFIX + ".*\\.zip", folder, result);
             Collections.sort(result);
             Collections.reverse(result);
 
@@ -159,6 +159,7 @@ public class HttpServer {
                 responseBodyBuilder.append(fileName);
                 responseBodyBuilder.append("\">");
                 responseBodyBuilder.append(fileName + "</a><br>");
+                Log.d(TAG, fileName + " ");
             }
 
             String responseBody = responseBodyBuilder.toString();
@@ -179,7 +180,6 @@ public class HttpServer {
             if (f.isFile()) {
                 if (f.getName().matches(pattern)) {
                     result.add(f.getName());
-                    Log.d(TAG, f.getName() + " ");
                 }
             }
         }
@@ -192,9 +192,9 @@ public class HttpServer {
 
             File logFile = new File(Environment.getExternalStorageDirectory(), requestedFileName);
             String responsePath = logFile.getPath();
-            Log.d(TAG, "Server responses log file path: " + responsePath);
             response.getHeaders().set("Content-Type", ContentTypes.getInstance().getContentType(responsePath));
-            response.send(HtmlHelper.loadFileAsString(responsePath));   // sends *.log file as string
+            response.sendFile(logFile);
+            Log.d(TAG, "Server sends log file: " + responsePath);
 
             System.gc();
         }

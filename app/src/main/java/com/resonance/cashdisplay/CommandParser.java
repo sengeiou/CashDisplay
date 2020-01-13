@@ -175,27 +175,27 @@ public class CommandParser {
         switch (command) {
             case CMD_ADDL:
                 sendToMain(MainActivity.MSG_ADD_TOVAR_PRODUCT_LIST, param, 0, 0);
-                Log.d(TAG, "CMD_ADDL :" + param);
+                Log.d("CMD", "ADDL :" + param);
                 break;
             case CMD_SETi:
                 sendToMain(MainActivity.MSG_SET_TOVAR_PRODUCT_LIST, param, 0, 0);
-                Log.d(TAG, "CMD_SETi :" + param);
+                Log.d("CMD", "SETi :" + param);
                 break;
             case CMD_DELi:
                 sendToMain(MainActivity.MSG_DEL_TOVAR_PRODUCT_LIST, param, 0, 0);
-                Log.d(TAG, "CMD_DELi :" + param);
+                Log.d("CMD", "DELi :" + param);
                 break;
             case CMD_CLRL:
                 sendToMain(MainActivity.MSG_CLEAR_PRODUCT_LIST, param, 0, 0);
-                Log.d(TAG, "CMD_CLRL :" + param);
+                Log.d("CMD", "CLRL :" + param);
                 break;
             case CMD_NWRK:
                 sendToMain(MainActivity.MSG_SET_SCREEN_NOT_WORK, param, 0, 0);
-                Log.d(TAG, "CMD_NWRK :" + param);
+                Log.d("CMD", "NWRK :" + param);
                 break;
             case CMD_THNK:
                 sendToMain(MainActivity.MSG_SET_SCREEN_THANKS, param, 0, 0);
-                Log.d(TAG, "CMD_THNK :" + param);
+                Log.d("CMD", "THNK :" + param);
                 break;
             default:
                 break;
