@@ -109,6 +109,8 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        new Log();      // this object is needful to use synchronized methods with lock on it (not on static class)
+
         String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         Crashlytics.setUserIdentifier(androidId);
         Log.d(TAG, "androidId: " + androidId);

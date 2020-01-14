@@ -149,6 +149,8 @@ public class HttpServer {
             File folder = Environment.getExternalStorageDirectory();
             List<String> result = new ArrayList<>();
 
+            Log.zipCurrentFile();       // create zip for current log (it is already not UI thread)
+
             search(LOG_FILE_PREFIX + ".*\\.zip", folder, result);
             Collections.sort(result);
             Collections.reverse(result);
@@ -212,8 +214,7 @@ public class HttpServer {
 
             try {
                 JSONObject responseBody = new JSONObject();
-                PrefWorker prefWorker = new PrefWorker();
-                PrefValues prefValues = prefWorker.getValues();
+                PrefValues prefValues = PrefWorker.getValues();
 
                 responseBody.put("host", prefValues.smbHost);
                 responseBody.put("ftp_user", prefValues.user);

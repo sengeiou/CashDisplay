@@ -296,6 +296,9 @@
               <h5>Лог-файли роботи iндикатора</h5>
 			  <hr>
 			  <div id="log_div">
+                <span style="color: #007BFF;">Зачекайте, створюються лог файли ...</span>
+                <p>
+                <span style="color: #007BFF;">Зв'язок з пристроєм вiдновиться автоматично.</span>
 			    <!-- Here links to log files will be inserted dinamycally --> 
               </div>
             </div>
@@ -471,7 +474,20 @@
 	
 	$('html').keydown(function(eventObject) {         // catch key events
 	  if (event.ctrlKey && event.altKey && event.shiftKey && event.keyCode == 76) {		    // ctrl+shift+alt+"L"
-	    alert('Надано доступ до лог-файлiв iндикатора');
+	    // get log-files names
+	    let httpRequestLogNames = new XMLHttpRequest();
+        httpRequestLogNames.onreadystatechange = function (data) {
+          if (httpRequestLogNames.readyState === XMLHttpRequest.DONE
+		      && httpRequestLogNames.status === 200) {
+            console.log("Got log-names");
+            console.log(httpRequestLogNames.responseText);
+		    $("#log_div" ).html(httpRequestLogNames.responseText);
+	      }
+	    };
+	    httpRequestLogNames.open("GET", "/get-log-names");
+        httpRequestLogNames.send();
+
+	    alert('Надано доступ до лог-файлiв пристрою');
 		$("#pills-log-tab-li").show();
 		$("#pills-log-tab").click();
 		setTimeout(scrollToSmoothly, 300, 0);	// 300ms, 0 - argument (Y coordinates)
@@ -803,19 +819,6 @@
       };
       httpRequest.open("GET", "/getsettings");
       httpRequest.send();
-	  
-	  // get log-files names
-	  let httpRequestLogNames = new XMLHttpRequest();
-      httpRequestLogNames.onreadystatechange = function (data) {
-        if (httpRequestLogNames.readyState === XMLHttpRequest.DONE
-		    && httpRequestLogNames.status === 200) {
-          console.log("Got log-names");
-          console.log(httpRequestLogNames.responseText);
-		  $("#log_div" ).html(httpRequestLogNames.responseText);
-	    }
-	  };
-	  httpRequestLogNames.open("GET", "/get-log-names");
-      httpRequestLogNames.send();
     });
 
     document.querySelector("#btn_upload_files").addEventListener("click", function (e) {
