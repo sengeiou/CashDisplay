@@ -21,6 +21,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class Log {
+
     public static final String LOG_FILE_PREFIX = "CashDisplay_";
 
     private static final String NEW_LINE = System.getProperty("line.separator");
@@ -33,12 +34,14 @@ public class Log {
     private static final int DAYS_KEEP_ZIP = 14;
     private static final int DAYS_CLEAR_HISTORY = 90;       // clear logs (zips) per last days
 
-    public Log() {
+    static {
         logFileCreator();
+    }
 
+    public Log() {
         new Thread(() -> {
             try {
-                Thread.sleep(30000);    // need some time for app start (zipping loads CPU)
+                Thread.sleep(40000);    // need some time for app start (zipping loads CPU)
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -64,7 +67,7 @@ public class Log {
     /**
      * Creates new log file for current date, if it not exists yet.
      */
-    private synchronized Date logFileCreator() {
+    private static synchronized Date logFileCreator() {
         Date currentDate = new Date();
         mLogFile = new File(Environment.getExternalStorageDirectory(), LOG_FILE_PREFIX + dateFormat.format(currentDate) + ".log");
 

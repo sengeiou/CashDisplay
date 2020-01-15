@@ -82,10 +82,6 @@
               <a class="nav-link" id="pills-service-tab" data-toggle="pill" href="#pills-service" role="tab"
                 aria-controls="pills-service" aria-selected="false">Сервiс</a>
             </li>
-			<li class="nav-item" id="pills-log-tab-li" style="display: none">
-              <a class="nav-link" id="pills-log-tab" data-toggle="pill" href="#pills-log" role="tab"
-                aria-controls="pills-log" aria-selected="false">Лог-файли індикатора</a>
-            </li>
           </ul>
 
           <div class="tab-content" id="pills-tabContent" style="max-width: 540px;">
@@ -279,6 +275,20 @@
 		      <hr>			  
 			  
 			  <div class="form-group">
+                <h5>Лог-файли роботи пристрою</h5>
+			    <hr>
+				<div class="custom-control custom-checkbox">
+				  <input type="checkbox" class="custom-control-input" id="ck_show_logs" name="ck_show_logs">
+				  <label class="custom-control-label" for="ck_show_logs">Показати лог-файли</label>
+			    </div>
+			    <div id="div_log" style="display: none; margin-top:10px">
+			      <!-- Here links to log files will be inserted dinamycally --> 
+                </div>
+              </div>
+			  
+			  <hr>
+			  			  
+			  <div class="form-group">
 			    <h5>Оновлення ПЗ</h5>
 			    <hr>
                 <label id="lab_current_ver">Поточна версія:</label>
@@ -290,17 +300,6 @@
                 </div>
 			  </div>
 			  
-            </div>
-			
-			<div class="tab-pane fade" id="pills-log" role="tabpanel" aria-labelledby="pills-log-tab">
-              <h5>Лог-файли роботи iндикатора</h5>
-			  <hr>
-			  <div id="log_div">
-                <span style="color: #007BFF;">Зачекайте, створюються лог файли ...</span>
-                <p>
-                <span style="color: #007BFF;">Зв'язок з пристроєм вiдновиться автоматично.</span>
-			    <!-- Here links to log files will be inserted dinamycally --> 
-              </div>
             </div>
 
 			<hr>	
@@ -471,9 +470,19 @@
 		setTimeout(scrollToSmoothly, 300, 3000);	// 300ms, 3000 - argument (Y coordinates)
 	  }
 	});
+		
+/**************************************************************************************/		
+		
+	$("#ck_show_logs").click(ckShowLogs);	
 	
-	$('html').keydown(function(eventObject) {         // catch key events
-	  if (event.ctrlKey && event.altKey && event.shiftKey && event.keyCode == 76) {		    // ctrl+shift+alt+"L"
+	// checks specified checkbox and make appropriate changes
+    function ckShowLogs() {
+      if ($("#ck_show_logs").is(":checked")){
+		$("#div_log").show();
+		$("#div_log" ).html("<span style=\"color: green;\">Зачекайте, оновлюються лог-файли ...</span>"
+          + "<p>"
+          + "<span style=\"color: green;\">Зв'язок з пристроєм вiдновиться автоматично ...</span>");		
+		  
 	    // get log-files names
 	    let httpRequestLogNames = new XMLHttpRequest();
         httpRequestLogNames.onreadystatechange = function (data) {
@@ -481,20 +490,20 @@
 		      && httpRequestLogNames.status === 200) {
             console.log("Got log-names");
             console.log(httpRequestLogNames.responseText);
-		    $("#log_div" ).html(httpRequestLogNames.responseText);
+		    $("#div_log" ).html(httpRequestLogNames.responseText);
+			$("#ck_show_logs" ).prop("disabled", false);
 	      }
 	    };
 	    httpRequestLogNames.open("GET", "/get-log-names");
         httpRequestLogNames.send();
-
-	    alert('Надано доступ до лог-файлiв пристрою');
-		$("#pills-log-tab-li").show();
-		$("#pills-log-tab").click();
-		setTimeout(scrollToSmoothly, 300, 0);	// 300ms, 0 - argument (Y coordinates)
+		$("#ck_show_logs" ).prop("disabled", true);
+		
+	  } else {
+	    $("#div_log").hide();
 	  }
-	});
-	
-	$("#log_div").on( "click", "a", function() {
+    }
+		
+	$("#div_log").on( "click", "a", function() {
 	  let fileName = $(this).attr("href");
 	  let httpRequestLogFile = new XMLHttpRequest();
       httpRequestLogFile.responseType = "blob";
@@ -541,6 +550,7 @@
       });
 	  
 	  $("#ck_enable_video").click(ck_enableVideoHandler);
+
     })();
 
     // checks specified checkbox and make appropriate changes
