@@ -93,7 +93,6 @@ public class FtpWorker {
 
         @Override
         protected Integer doInBackground(HashMap<String, Object>... params) {
-
             Log.d(TAG, "FtpTask started...");
             int result = UPLOAD_RESULT_SUCCESSFULL;
 
@@ -276,7 +275,6 @@ public class FtpWorker {
         Log.d(TAG, "Size:" + totalFilesToDownload);
 
         for (int i = 0; i < totalFilesToDownload; i++) {
-
             UploadMedia.resetMediaPlay(); //остановка демонстрации видео/слайдов
 
             if (ftpFileArray[i].isDirectory()) continue;

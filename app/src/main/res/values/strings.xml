@@ -9,7 +9,7 @@
 
     <string name="resonance">"Copyright ЧАО \"Резонанс\" http://www.ekka.com.ua/"</string>
 
-    <string name="connect_to_server">Підключення до сервера...</string>
+    <string name="connect_to_server">Підключення до сервера</string>
     <string name="get_data_img">Перевірка файлiв зображень...</string>
     <string name="get_data_video">Перевірка вiдео файлiв...</string>
     <string name="get_data_slide">Перевірка слайд-файлiв...</string>

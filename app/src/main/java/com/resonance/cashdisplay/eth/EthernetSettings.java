@@ -6,8 +6,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.util.Log;
 
+import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.settings.PrefValues;
 import com.resonance.cashdisplay.settings.PrefWorker;
 import com.resonance.cashdisplay.su.Modify_SU_Preferences;
@@ -90,10 +90,10 @@ public class EthernetSettings {
     }
 
     /**
-     * If DHCP don't used in connected LAN, we set static IP parameters for indicator temporary.
-     * Temporary static parameters are actual till the reboot and don't saved to preferences.
+     * If DHCP don't used in connected LAN, we set static IP parameters temporary (till reboot).
+     * Static parameters are saved to preferences, but "dhcp" preference value is still "true".
      */
-    public synchronized void setTempStatic() {
+    public void setTempStatic() {
         tempStatic = true;
         PrefValues prefValues = PrefWorker.getValues();
         new Thread(() -> {
@@ -110,6 +110,8 @@ public class EthernetSettings {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    break;
                 }
             }
         }).start();
@@ -128,7 +130,7 @@ public class EthernetSettings {
             ethManagerClass = Class.forName("android.net.ethernet.EthernetManager");
 
         } catch (ClassNotFoundException e) {
-            Log.d(TAG, "CheckClass: " + e);
+            Log.e(TAG, "CheckClass: " + e);
             e.printStackTrace();
         }
 
@@ -284,7 +286,6 @@ public class EthernetSettings {
     /**
      * Коллбэк окончания настройки сети
      */
-
     public interface SetupLanCallback {
         void onSetupLAN(int result);
     }
