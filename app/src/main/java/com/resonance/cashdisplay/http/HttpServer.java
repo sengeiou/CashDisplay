@@ -151,7 +151,7 @@ public class HttpServer {
 
             Log.zipCurrentFile();       // create zip for current log (it is already not UI thread)
 
-            search(LOG_FILE_PREFIX + ".*\\.zip", folder, result);
+            searchFilesInDir(LOG_FILE_PREFIX + ".*\\.zip", folder, result);
             Collections.sort(result);
             Collections.reverse(result);
 
@@ -172,11 +172,11 @@ public class HttpServer {
         }
     };
 
-    public static void search(String pattern, File folder, List<String> result) {
+    public static void searchFilesInDir(String pattern, File folder, List<String> result) {
         for (File f : folder.listFiles()) {
 
             if (f.isDirectory()) {
-                search(pattern, f, result);
+                searchFilesInDir(pattern, f, result);
             }
 
             if (f.isFile()) {

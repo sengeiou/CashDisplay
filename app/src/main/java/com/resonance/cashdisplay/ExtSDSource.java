@@ -5,14 +5,12 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.os.storage.StorageManager;
 
+import androidx.core.content.ContextCompat;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Святослав on 25.04.2016.
@@ -98,42 +96,20 @@ public class ExtSDSource {
     }
 
     public static String getExternalSdCardPath() {
-        String path = null;
-
-        File sdCardFile = null;
-        List<String> sdCardPossiblePath = Arrays.asList("external_sd", "ext_sd", "external", "extSdCard", "storage/sdcard2", "storage/sdcard1");
-
-        for (String sdPath : sdCardPossiblePath) {
-            // File file = new File("/mnt/"+sdPath);
-            File file = new File("/" + sdPath);
-            if (file.isDirectory() && file.canWrite()) {
-                path = file.getAbsolutePath();
-
-                String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date());
-                File testWritable = new File(path, "test_" + timeStamp);
-
-                if (testWritable.mkdirs()) {
-                    new Thread(() -> {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        testWritable.delete();
-                    }).start();
-                } else {
-                    path = null;
+        String externalSdPath = null;
+        Boolean isSDPresent = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
+        if (isSDPresent) {
+            File[] storages = ContextCompat.getExternalFilesDirs(MainActivity.context, null);
+            for (File sdCardFile : storages) {
+                if (sdCardFile != null && !sdCardFile.toString().contains("emulated")) {
+                    externalSdPath = sdCardFile.getPath().replaceFirst("\\/Android.*", "");
                 }
             }
         }
+        if (externalSdPath == null)
+            externalSdPath = Environment.getExternalStorageDirectory().getAbsolutePath();
 
-        if (path != null) {
-            sdCardFile = new File(path);
-        } else {
-            sdCardFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
-        }
-
-        return sdCardFile.getAbsolutePath();
+        return externalSdPath;
     }
 
     private static String formatSize(long sz) {
