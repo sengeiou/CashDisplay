@@ -264,22 +264,22 @@ public class ProductListWorker {
                 }
                 switch (parNum) {
                     case 0:
-                        item.setIndexPosition(Integer.valueOf(param.substring(index, nextSeparator)));
+                        item.setIndexPosition(strToInt(param, index, nextSeparator));
                         break;
                     case 1:
                         item.setCode(param.substring(index, nextSeparator));
                         break;
                     case 2:
-                        item.setDivisible(Integer.valueOf(param.substring(index, nextSeparator)));
+                        item.setDivisible(strToInt(param, index, nextSeparator));
                         break;
                     case 3:
-                        item.setCount(Integer.valueOf(param.substring(index, nextSeparator)));
+                        item.setCount(strToInt(param, index, nextSeparator));
                         break;
                     case 4:
-                        item.setPrice(Long.valueOf(param.substring(index, nextSeparator)));
+                        item.setPrice(strToLong(param, index, nextSeparator));
                         break;
                     case 5:
-                        item.setSum(Long.valueOf(param.substring(index, nextSeparator)));
+                        item.setSum(strToLong(param, index, nextSeparator));
                         break;
                     case 6:
                         item.setName(param.substring(index, nextSeparator));
@@ -289,10 +289,34 @@ public class ProductListWorker {
                 }
                 index = nextSeparator + 1;
             }
+        } catch (IndexOutOfBoundsException e) {
+            Log.e(TAG, "ERROR parseData: " + e);
         } catch (Exception e) {
-            Log.e(TAG, "ERROR ParseData :" + e);
+            Log.e(TAG, "ERROR parseData: " + e);
         }
         return item;
+    }
+
+    private Integer strToInt(String str, int beginIndex, int endIndex) {
+        try {
+            return Integer.valueOf(str.substring(beginIndex, endIndex));
+        } catch (IndexOutOfBoundsException e) {
+            Log.e(TAG, "ERROR strToInt: " + e);
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "ERROR strToInt: " + e);
+        }
+        return 0;
+    }
+
+    private Long strToLong(String str, int beginIndex, int endIndex) {
+        try {
+            return Long.valueOf(str.substring(beginIndex, endIndex));
+        } catch (IndexOutOfBoundsException e) {
+            Log.e(TAG, "ERROR strToLong: " + e);
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "ERROR strToLong: " + e);
+        }
+        return 0L;
     }
 
     public void showToast(String message) {
