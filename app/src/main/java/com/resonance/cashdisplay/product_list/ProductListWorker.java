@@ -1,5 +1,6 @@
 package com.resonance.cashdisplay.product_list;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -9,17 +10,27 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.R;
 import com.resonance.cashdisplay.settings.PrefValues;
+import com.resonance.cashdisplay.settings.PrefWorker;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.resonance.cashdisplay.MainActivity.listViewProducts;
+import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_SUBWAY;
 
 /**
  * Класс обрабатывает экран "Список товаров"
@@ -38,6 +49,8 @@ public class ProductListWorker {
     private AdapterProductList adapterProductList;
     private ArrayList<ItemProductList> arrayProductList = new ArrayList<ItemProductList>();
 
+    public static Timer clockTimer;
+
     public ProductListWorker(Context context) {
         this.context = context;
 
@@ -45,6 +58,11 @@ public class ProductListWorker {
         fadeOut.setDuration(100);
         fadeIn = new AlphaAnimation(0, 1);
         fadeIn.setDuration(300);
+
+        if (clockTimer != null) {
+            clockTimer.cancel();
+            clockTimer = null;
+        }
 
         Log.d(TAG, "New ProductListWorker created.");
     }
@@ -74,6 +92,66 @@ public class ProductListWorker {
     }
 
     /**
+     * Called when product list screen becomes visible.
+     */
+    public void onProductListShow(@Nullable String args) {
+        switch (PrefWorker.getValues().productListLookCode) {
+            case LOOK_SUBWAY:
+                TextView textViewCardNumber = ((Activity) context).findViewById(R.id.textview_card_number);
+                if (args != null) {
+                    args = args.substring(0, args.indexOf(SYMBOL_SEPARATOR));
+                    Log.d("PLW", "card " + args);
+                    textViewCardNumber.setText(R.string.card_num);
+                    textViewCardNumber.append(args);
+                } else
+                    textViewCardNumber.setText(context.getString(R.string.card_num) + context.getString(R.string.card_mask));
+
+                if (clockTimer == null) {
+                    clockTimer = new Timer();
+                    TextView textViewDateTime = ((Activity) context).findViewById(R.id.textview_date_time);
+                    DateFormat dateFormat0 = new SimpleDateFormat("dd MMMM yyyy HH mm", new Locale("uk"));
+                    DateFormat dateFormat1 = new SimpleDateFormat("dd MMMM yyyy HH:mm", new Locale("uk"));
+                    Date date = new Date(System.currentTimeMillis());
+                    clockTimer.scheduleAtFixedRate(new TimerTask() {
+                        boolean trig = false;
+
+                        @Override
+                        public void run() {
+                            date.setTime(System.currentTimeMillis());
+                            if (trig) {
+                                textViewDateTime.post(() ->
+                                        textViewDateTime.setText(dateFormat0.format(date)));
+                            } else {
+                                textViewDateTime.post(() ->
+                                        textViewDateTime.setText(dateFormat1.format(date)));
+                            }
+                            trig = !trig;
+                        }
+                    }, 0, 500);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Called when product list screen becomes invisible.
+     */
+    public void onProductListHide() {
+        switch (PrefWorker.getValues().productListLookCode) {
+            case LOOK_SUBWAY:
+                if (clockTimer != null) {
+                    clockTimer.cancel();
+                    clockTimer = null;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
      * Добавлен вывод на экран отладочной информации
      */
     public void addProductDebug(String msg) {
@@ -88,15 +166,15 @@ public class ProductListWorker {
     /**
      * Добавляет товар в список
      *
-     * @param param строка "сырых" данных
+     * @param args строка "сырых" данных
      */
-    public void addProductToList(String param) {
-        ItemProductList item = parseData(param);
+    public void addProductToList(String args) {
+        ItemProductList item = parseData(args);
         if (item.getIndexPosition() < 0)
             return;
         if (item.getIndexPosition() <= arrayProductList.size()) {
             arrayProductList.add(item.getIndexPosition(), item);
-            Log.d("PLW", "add" + param.substring(0, 2));
+            Log.d("PLW", "add " + item.getIndexPosition());
             updateScreen(item.getIndexPosition(), true, true);
         } else {
             showToast("Невiрнi параметри при внесеннi товару, необхідно очистити чек!");
@@ -107,11 +185,11 @@ public class ProductListWorker {
     /**
      * Вставляет товар в указанную позицию списка
      *
-     * @param param строка "сырых" данных
+     * @param args строка "сырых" данных
      */
-    public void setProductToList(String param) {
+    public void setProductToList(String args) {
         if (arrayProductList.size() > 0) {
-            ItemProductList item = parseData(param);
+            ItemProductList item = parseData(args);
             if (item.getIndexPosition() < 0)
                 return;
 
@@ -121,40 +199,44 @@ public class ProductListWorker {
                         || (presentItem.getSum() != item.getSum())
                         || (!presentItem.getCode().equals(item.getCode()))) {
                     arrayProductList.set(item.getIndexPosition(), item);
-                    Log.d("PLW", "set" + param.substring(0, 2));
+                    Log.d("PLW", "set " + item.getIndexPosition());
                     updateScreen(item.getIndexPosition(), true, true);   // updates only changed position
                 }                                                               // !!! important for ResPOS
             } else {
-                addProductToList(param);
+                addProductToList(args);
             }
 
         } else {
-            addProductToList(param);
+            addProductToList(args);
         }
     }
 
     /**
      * Удаление товара в указанной позиции
      *
-     * @param param строка "сырых" данных
+     * @param args строка "сырых" данных
      */
-    public void deleteProductFromList(String param) {
-        int indexPosition = Integer.valueOf(param.substring(0, 2));  // 2
+    public void deleteProductFromList(String args) {
+        int indexPosition = Integer.MAX_VALUE;
+        try {
+            indexPosition = Integer.valueOf(args.substring(0, args.indexOf(SYMBOL_SEPARATOR)));  // 2
+        } catch (Exception e) {
+            Log.e(TAG, "ERROR parseData: " + e);
+        }
+
         if (arrayProductList.size() > 0) {
             if ((arrayProductList.size() - 1) >= indexPosition) {
                 arrayProductList.remove(indexPosition);
-                Log.d("PLW", "delete " + param.substring(0, 2));
+                Log.d("PLW", "delete " + indexPosition);
+                updateScreen((arrayProductList.size() > 0) ? (arrayProductList.size() - 1) : 0, false, false);
             }
-            updateScreen((arrayProductList.size() > 0) ? (arrayProductList.size() - 1) : 0, false, false);
         }
     }
 
     /**
      * Очистка списка товаров
-     *
-     * @param param строка "сырых" данных
      */
-    public void clearProductList(String param) {
+    public void clearProductList() {
         arrayProductList.clear();
         Log.d("PLW", "clear");
         updateScreen(0, false, false);
@@ -246,10 +328,10 @@ public class ProductListWorker {
     /**
      * Парсер данных с ResPos
      *
-     * @param param raw data from ADDL and SETi commands
+     * @param args raw data from ADDL and SETi commands
      * @return ItemProductList
      */
-    private ItemProductList parseData(String param) {
+    private ItemProductList parseData(String args) {
         ItemProductList item = new ItemProductList();
         try {
             int index = 0;
@@ -257,32 +339,32 @@ public class ProductListWorker {
             int parametersAmount = 7;
 
             for (int parNum = 0; parNum < parametersAmount; parNum++) {
-                nextSeparator = param.indexOf(SYMBOL_SEPARATOR, index);
+                nextSeparator = args.indexOf(SYMBOL_SEPARATOR, index);
                 if (nextSeparator < 0) {
                     item.setIndexPosition(-1);
                     return item;
                 }
                 switch (parNum) {
                     case 0:
-                        item.setIndexPosition(strToInt(param, index, nextSeparator));
+                        item.setIndexPosition(strToInt(args, index, nextSeparator));
                         break;
                     case 1:
-                        item.setCode(param.substring(index, nextSeparator));
+                        item.setCode(args.substring(index, nextSeparator));
                         break;
                     case 2:
-                        item.setDivisible(strToInt(param, index, nextSeparator));
+                        item.setDivisible(strToInt(args, index, nextSeparator));
                         break;
                     case 3:
-                        item.setCount(strToInt(param, index, nextSeparator));
+                        item.setCount(strToInt(args, index, nextSeparator));
                         break;
                     case 4:
-                        item.setPrice(strToLong(param, index, nextSeparator));
+                        item.setPrice(strToLong(args, index, nextSeparator));
                         break;
                     case 5:
-                        item.setSum(strToLong(param, index, nextSeparator));
+                        item.setSum(strToLong(args, index, nextSeparator));
                         break;
                     case 6:
-                        item.setName(param.substring(index, nextSeparator));
+                        item.setName(args.substring(index, nextSeparator));
                         break;
                     default:
                         break;

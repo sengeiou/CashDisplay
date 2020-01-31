@@ -26,7 +26,6 @@ public class PrefWorker {
     public static final int LOOK_BASKET = 0;            // shop in Kharkov
     public static final int LOOK_DMART = 1;             // shop in Dnepr
     public static final int LOOK_SUBWAY = 2;            // Kiev subway
-    public static final int[] PRODUCT_LIST_LOOK = {LOOK_BASKET, LOOK_DMART, LOOK_SUBWAY};
     // in early versions look code was determined from image name prefix
     @Deprecated
     private static final String PRODUCT_LIST_BACK_IMAGE_PREFIX = "custom_product_list_";
@@ -63,7 +62,7 @@ public class PrefWorker {
         prefValues.backgroundShoppingList = sharedPreferences.getString("background_shopping_list", "default_background_picture.png");
         prefValues.backgroundCashNotWork = sharedPreferences.getString("background_cash_not_work", "default_background_picture.png");
         prefValues.backgroundThanks = sharedPreferences.getString("background_thanks", "default_background_picture.png");
-        prefValues.productListLookCode = sharedPreferences.getInt("productListLookCode", PRODUCT_LIST_LOOK[0]);
+        prefValues.productListLookCode = sharedPreferences.getInt("productListLookCode", LOOK_BASKET);
 
         prefValues.dhcp = sharedPreferences.getBoolean("sDHCP", true);
         prefValues.ip = sharedPreferences.getString("sIP", "192.168.1.200");
@@ -125,7 +124,7 @@ public class PrefWorker {
         String strLookCode = prefValues.backgroundShoppingList.replaceAll("\\D+", "");
         if (prefValues.backgroundShoppingList.matches(PRODUCT_LIST_BACK_IMAGE_PREFIX + "\\d+.*")
                 && (Integer.valueOf(strLookCode) == LOOK_DMART)) {
-            sharedPreferences.edit().putInt("productListLookCode", PRODUCT_LIST_LOOK[LOOK_DMART]).apply();
+            sharedPreferences.edit().putInt("productListLookCode", LOOK_DMART).apply();
         }
     }
 }

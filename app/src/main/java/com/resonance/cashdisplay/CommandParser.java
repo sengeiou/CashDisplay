@@ -20,21 +20,22 @@ import static com.resonance.cashdisplay.MainActivity.MSG_ADD_PRODUCT_DEBUG;
  */
 public class CommandParser {
 
-    public static final Charset ENCODING_CHARSET = Charset.forName("cp866");//для работы с кассой
+    public static final Charset ENCODING_CHARSET = Charset.forName("cp866"); //для работы с кассой
     private final static String TAG = "CommandParser";
 
     private final static byte CMD_START_OF_TEXT = (byte) 1; //старт
-    private final static byte CMD_END_OF_TEXT = (byte) 2; //стоп
+    private final static byte CMD_END_OF_TEXT = (byte) 2;   //стоп
 
     //экран "Список покупок"
     private final String CMD_ADDL = "ADDL"; // Добавить товар в список  // ADDL0;1247;0;1;700;700;sik sadochok;5047
     private final String CMD_SETi = "SETi"; // Установить товар в указанной позиции списка
     private final String CMD_DELi = "DELi"; // Удалить товар из указанной позиции
     private final String CMD_CLRL = "CLRL"; // Очистить список товаров
+    private final String CMD_PRLS = "PRLS"; // Отобразить экран "Список покупок"
     private final String CMD_NWRK = "NWRK"; // Отобразить экран "Касса не работает"
     private final String CMD_THNK = "THNK"; // Отобразить экран "Спасибо за покупку"  THNK95E5
 
-    private final String[] arrComands2 = new String[]{CMD_ADDL, CMD_SETi, CMD_DELi, CMD_CLRL, CMD_NWRK, CMD_THNK};
+    private final String[] arrComands2 = new String[]{CMD_ADDL, CMD_SETi, CMD_DELi, CMD_CLRL, CMD_PRLS, CMD_NWRK, CMD_THNK};
 
     private final int LEN_EXT_BUFFER = 1024 * 4;
 
@@ -157,7 +158,7 @@ public class CommandParser {
                         myToast.show();
                         return;
                     }
-                    formatCommand.params = new String(buf, 4, lenBuf - 4, ENCODING_CHARSET);
+                    formatCommand.params = new String(buf, 4, lenBuf - 4 - 4, ENCODING_CHARSET);
                     handleCommand(formatCommand.command, formatCommand.params);
                 } catch (Exception e) {
                     Log.e(TAG, "Ошибка парсера(v2) :  " + e + " >>" + new String(buf, 0, lenBuf));
@@ -171,31 +172,35 @@ public class CommandParser {
     /**
      * Prepares data to send message to handler of screen "Список покупок"
      */
-    private void handleCommand(String command, String param) {
+    private void handleCommand(String command, String arg) {
         switch (command) {
             case CMD_ADDL:
-                sendToMain(MainActivity.MSG_ADD_TOVAR_PRODUCT_LIST, param, 0, 0);
-                Log.d("CMD", "ADDL :" + param);
+                sendToMain(MainActivity.MSG_ADD_TOVAR_PRODUCT_LIST, arg, 0, 0);
+                Log.d("CMD", "ADDL: " + arg);
                 break;
             case CMD_SETi:
-                sendToMain(MainActivity.MSG_SET_TOVAR_PRODUCT_LIST, param, 0, 0);
-                Log.d("CMD", "SETi :" + param);
+                sendToMain(MainActivity.MSG_SET_TOVAR_PRODUCT_LIST, arg, 0, 0);
+                Log.d("CMD", "SETi: " + arg);
                 break;
             case CMD_DELi:
-                sendToMain(MainActivity.MSG_DEL_TOVAR_PRODUCT_LIST, param, 0, 0);
-                Log.d("CMD", "DELi :" + param);
+                sendToMain(MainActivity.MSG_DEL_TOVAR_PRODUCT_LIST, arg, 0, 0);
+                Log.d("CMD", "DELi: " + arg);
                 break;
             case CMD_CLRL:
-                sendToMain(MainActivity.MSG_CLEAR_PRODUCT_LIST, param, 0, 0);
-                Log.d("CMD", "CLRL :" + param);
+                sendToMain(MainActivity.MSG_CLEAR_PRODUCT_LIST, arg, 0, 0);
+                Log.d("CMD", "CLRL: " + arg);
+                break;
+            case CMD_PRLS:
+                sendToMain(MainActivity.MSG_SET_SCREEN_PRODUCT_LIST, arg, 0, 0);
+                Log.d("CMD", "PRLS: " + arg);
                 break;
             case CMD_NWRK:
-                sendToMain(MainActivity.MSG_SET_SCREEN_NOT_WORK, param, 0, 0);
-                Log.d("CMD", "NWRK :" + param);
+                sendToMain(MainActivity.MSG_SET_SCREEN_NOT_WORK, arg, 0, 0);
+                Log.d("CMD", "NWRK: " + arg);
                 break;
             case CMD_THNK:
-                sendToMain(MainActivity.MSG_SET_SCREEN_THANKS, param, 0, 0);
-                Log.d("CMD", "THNK :" + param);
+                sendToMain(MainActivity.MSG_SET_SCREEN_THANKS, arg, 0, 0);
+                Log.d("CMD", "THNK: " + arg);
                 break;
             default:
                 break;

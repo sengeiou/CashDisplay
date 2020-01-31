@@ -22,6 +22,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_SUBWAY;
+
 
 public class AdapterProductList extends ArrayAdapter<ItemProductList> {
 
@@ -80,6 +82,17 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
         viewHolder.textViewDiscount.setText(String.format(Locale.ROOT, "%.02f", (double) dataModel.getDiscount() / 100));
         viewHolder.textViewSum.setText(String.format(Locale.ROOT, "%.02f", (double) dataModel.getSum() / 100));
         viewHolder.textViewProduct.setTag(position);
+
+        switch (PrefWorker.getValues().productListLookCode) {
+            case LOOK_SUBWAY:
+                if (dataModel.getCount() < 0)
+                    viewHolder.textViewCount.setText(R.string.unlimited);
+                if (dataModel.getSum() % 100 == 0)
+                    viewHolder.textViewSum.setText(String.format("%d", dataModel.getSum() / 100));
+                break;
+            default:
+                break;
+        }
 
         resultView = convertView;
 

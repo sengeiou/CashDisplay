@@ -14,6 +14,7 @@ import android.graphics.Point;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -33,6 +34,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
 import com.crashlytics.android.Crashlytics;
@@ -67,26 +69,27 @@ public class MainActivity extends Activity {
     public static final int MSG_SET_TOVAR_PRODUCT_LIST = 35;
     public static final int MSG_DEL_TOVAR_PRODUCT_LIST = 36;
     public static final int MSG_CLEAR_PRODUCT_LIST = 37;
-    public static final int MSG_SET_SCREEN_NOT_WORK = 38;
-    public static final int MSG_SET_SCREEN_THANKS = 39;
+    public static final int MSG_SET_SCREEN_PRODUCT_LIST = 38;
+    public static final int MSG_SET_SCREEN_NOT_WORK = 39;
+    public static final int MSG_SET_SCREEN_THANKS = 40;
     public static final int MSG_ADD_PRODUCT_DEBUG = 1234;
 
-    private PrefValues prefValues;       //настройки
-    private static UartWorker uartWorker;                   //обработчик UART
-    public static HttpServer httpServer = null;             //http сервер
-    private CommandParser cmdParser;                        //класс обработки команд и данных
-    private VideoSlideService videoSlideService;            //класс управления медиа
-    private Sound sound;                                    //звук
-    private ProductListWorker productListWorker;      //обслуживание списка товаров
+    private PrefValues prefValues;                          // настройки
+    private static UartWorker uartWorker;                   // обработчик UART
+    public static HttpServer httpServer = null;             // http сервер
+    private CommandParser cmdParser;                        // класс обработки команд и данных
+    private VideoSlideService videoSlideService;            // класс управления медиа
+    private Sound sound;                                    // звук
+    private ProductListWorker productListWorker;            // обслуживание списка товаров
     private ViewModel viewModel;
-    public static EthernetSettings ethernetSettings = null; //Настройка сети
+    public static EthernetSettings ethernetSettings = null; // Настройка сети
     public static UploadMedia uploadMedia;
-    public static UpdateFirmware updateFirmware = null;     //обновление ПО
+    public static UpdateFirmware updateFirmware = null;     // обновление ПО
 
     private static Modify_SU_Preferences su_preferences;
 
     public static Context context;
-    private static RelativeLayout[] relativeLayout;
+    public static RelativeLayout[] relativeLayout;
     public static Point sizeScreen;
 
     private static ImageView imageSdCardError;
@@ -128,6 +131,7 @@ public class MainActivity extends Activity {
         getWindow().setAttributes(attributes);
 
         context = this;
+        hideBarNavigation();
 
         //Получим настройки экрана
         Display display = this.getWindowManager().getDefaultDisplay();
@@ -195,7 +199,7 @@ public class MainActivity extends Activity {
 
         registerReceiver(changeSettings, new IntentFilter(CHANGE_SETTINGS));
         setBackgroundScreen();
-        setVisibleContext(CONTEXT_CONNECT, 0);
+        setVisibleContext(CONTEXT_CONNECT, null);
 
         new CheckSystemStart().run();
 
@@ -370,27 +374,30 @@ public class MainActivity extends Activity {
 
     /************************************************************************************/
 
-    public void setVisibleContext(int contextType, Object param) {
+    public void setVisibleContext(int contextType, @Nullable String args) {
         setVisibleLayer(CONTEXT_PRODUCT_LIST, View.INVISIBLE);
         setVisibleLayer(CONTEXT_CONNECT, View.INVISIBLE);
         setVisibleLayer(CONTEXT_THANKS, View.INVISIBLE);
         switch (contextType) {
             case CONTEXT_PRODUCT_LIST:
                 setVisibleLayer(CONTEXT_PRODUCT_LIST, View.VISIBLE);
+                productListWorker.onProductListShow(args);
                 break;
             case CONTEXT_CONNECT:
                 setVisibleLayer(CONTEXT_CONNECT, View.VISIBLE);
+                productListWorker.onProductListHide();
                 break;
             case CONTEXT_THANKS:
                 setVisibleLayer(CONTEXT_THANKS, View.VISIBLE);
+                productListWorker.onProductListHide();
                 break;
             default:
                 break;
         }
     }
 
-    private void setVisibleLayer(int contextLayer, int visible) {
-        relativeLayout[contextLayer].setVisibility(visible);
+    private void setVisibleLayer(int contextLayer, int visibility) {
+        relativeLayout[contextLayer].setVisibility(visibility);
         relativeLayout[contextLayer].invalidate();
     }
 
@@ -415,11 +422,11 @@ public class MainActivity extends Activity {
                 case UartWorker.ACTION_UART_OPEN:
                     break;
                 case UartWorker.ACTION_UART_CLOSED: //  closed
-                    setVisibleContext(CONTEXT_CONNECT, 0);
+                    setVisibleContext(CONTEXT_CONNECT, null);
                     break;
                 case UartWorker.ACTION_UART_ERROR: //  errors
                     Log.d(TAG, "ACTION_UART_ERROR");
-                    setVisibleContext(CONTEXT_CONNECT, 0);
+                    setVisibleContext(CONTEXT_CONNECT, null);
                     break;
             }
         }
@@ -435,26 +442,29 @@ public class MainActivity extends Activity {
             switch (msg.what) {
                 case MSG_ADD_TOVAR_PRODUCT_LIST:
                     productListWorker.addProductToList((String) msg.obj);
-                    setVisibleContext(CONTEXT_PRODUCT_LIST, msg.arg2);
+                    setVisibleContext(CONTEXT_PRODUCT_LIST, null);
                     break;
                 case MSG_SET_TOVAR_PRODUCT_LIST:
                     productListWorker.setProductToList((String) msg.obj);
-                    setVisibleContext(CONTEXT_PRODUCT_LIST, msg.arg2);
+                    setVisibleContext(CONTEXT_PRODUCT_LIST, null);
                     break;
                 case MSG_DEL_TOVAR_PRODUCT_LIST:
                     productListWorker.deleteProductFromList((String) msg.obj);
-                    setVisibleContext(CONTEXT_PRODUCT_LIST, msg.arg2);
+                    setVisibleContext(CONTEXT_PRODUCT_LIST, null);
                     break;
                 case MSG_CLEAR_PRODUCT_LIST:
-                    productListWorker.clearProductList((String) msg.obj);
+                    productListWorker.clearProductList();
+                    break;
+                case MSG_SET_SCREEN_PRODUCT_LIST:
+                    setVisibleContext(CONTEXT_PRODUCT_LIST, (String) msg.obj);
                     break;
                 case MSG_SET_SCREEN_NOT_WORK:
-                    productListWorker.clearProductList("MSG_SET_SCREEN_NOT_WORK");
-                    setVisibleContext(CONTEXT_CONNECT, msg.arg2);
+                    productListWorker.clearProductList();
+                    setVisibleContext(CONTEXT_CONNECT, null);
                     break;
                 case MSG_SET_SCREEN_THANKS:
-                    productListWorker.clearProductList("MSG_SET_SCREEN_THANKS");
-                    setVisibleContext(CONTEXT_THANKS, msg.arg2);
+                    productListWorker.clearProductList();
+                    setVisibleContext(CONTEXT_THANKS, null);
                     setEnableMedia(true);
                     resetMediaTime();
                     break;
@@ -467,6 +477,29 @@ public class MainActivity extends Activity {
             }
         }
     };
+
+    /*
+     * Прячем строку навигации
+     * * */
+    private void hideBarNavigation() {
+        runOnUiThread(() -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                View decorView = getWindow().getDecorView();
+                decorView.setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                                | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                                | View.SCREEN_STATE_ON
+                                | View.SYSTEM_UI_FLAG_LOW_PROFILE
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE);
+
+                decorView.invalidate();
+            }
+        });
+    }
 
     /**
      * Разрешить/запретить демонстрацию медиа
@@ -619,7 +652,7 @@ public class MainActivity extends Activity {
                         ethernetSettings.applyEthernetSettings(); //применение параметров
                     } else {
                         Log.w(TAG, "ОШИБКА, нет административных прав:" + result);
-                        setVisibleContext(CONTEXT_CONNECT, 0);
+                        setVisibleContext(CONTEXT_CONNECT, null);
                         viewModel.setStatusConnection("ПОМИЛКА, не були надані адміністративні права, " + "IP : " + EthernetSettings.getNetworkInterfaceIpAddress());
                         imageSdCardError.setImageResource(R.drawable.warning);
                         imageSdCardError.setVisibility(View.VISIBLE);
