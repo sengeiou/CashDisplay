@@ -33,8 +33,8 @@ import static com.resonance.cashdisplay.settings.PrefWorker.SMB2;
 /**
  * Класс управления загрузкой изображений товаров, видео, слайдов
  */
-public class UploadMedia {
-    public final String TAG = "UploadMedia";
+public class DownloadMedia {
+    public final String TAG = "DownloadMedia";
 
     private static final String NEW_LINE = System.getProperty("line.separator");
     private static final String DATE_FORMAT = "yyyy-MM-dd HH-mm-ss";
@@ -42,22 +42,22 @@ public class UploadMedia {
 
     public static File logFile;
 
-    public static final int UPLOAD_RESULT_SUCCESSFULL = 0;
-    public static final int UPLOAD_RESULT_NOT_FREE_MEMORY = 1;
-    public static final int UPLOAD_RESULT_SHARE_CONNECTION_ERROR = 2;
-    public static final int UPLOAD_RESULT_CONNECTION_ERROR = 3;
-    public static final int UPLOAD_RESULT_NOT_SUPPORT_PROTOCOL = 4;
-    public static final int UPLOAD_RESULT_BAD_ARGUMENTS = 5;
-    public static final int UPLOAD_RESULT_IO_ERROR = 6;
-    public static final int UPLOAD_RESULT_FILE_NOT_FOUND = 7;
-    public static final int UPLOAD_RESULT_ERROR_SMB_SERVER = 8;
+    public static final int DOWNLOAD_RESULT_SUCCESSFULL = 0;
+    public static final int DOWNLOAD_RESULT_NOT_FREE_MEMORY = 1;
+    public static final int DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR = 2;
+    public static final int DOWNLOAD_RESULT_CONNECTION_ERROR = 3;
+    public static final int DOWNLOAD_RESULT_NOT_SUPPORT_PROTOCOL = 4;
+    public static final int DOWNLOAD_RESULT_BAD_ARGUMENTS = 5;
+    public static final int DOWNLOAD_RESULT_IO_ERROR = 6;
+    public static final int DOWNLOAD_RESULT_FILE_NOT_FOUND = 7;
+    public static final int DOWNLOAD_RESULT_ERROR_SMB_SERVER = 8;
 
     public static final String IMG_URI = "/Documents/IMG/";
     public static final String VIDEO_URI = "/Documents/VIDEO/";
     public static final String SLIDE_URI = "/Documents/SLIDE/";
     public static final String IMG_SCREEN = "/Documents/SCREEN/";   // изображения экранов
 
-    private static boolean uploadTaskStarted = false;             // флаг активации загрузки файлов
+    private static boolean downloadTaskStarted = false;             // флаг активации загрузки файлов
 
     public static String[] destinationDirs = null;
     public static final int IMAGE = 0;
@@ -76,7 +76,7 @@ public class UploadMedia {
     private static HashMap<String, Object> slideParam;
     private static HashMap<String, Object> screenImgParam;
 
-    public UploadMedia(Context context) {
+    public DownloadMedia(Context context) {
 
         this.context = context;
 
@@ -115,7 +115,7 @@ public class UploadMedia {
     private SmbWorker.SmbEndDownloadCallback smbEndDownloadCallback = new SmbWorker.SmbEndDownloadCallback() {
         @Override
         public void onSmbEndDownload(int msg) {
-            uploadTaskStarted = false;  //флаг активации загрузки файлов
+            downloadTaskStarted = false;  //флаг активации загрузки файлов
         }
     };
 
@@ -135,7 +135,7 @@ public class UploadMedia {
     private SmbjWorker.SmbjEndDownloadCallback smbjEndDownloadCallback = new SmbjWorker.SmbjEndDownloadCallback() {
         @Override
         public void onSmbjEndDownload(int msg) {
-            uploadTaskStarted = false;//флаг активации загрузки файлов
+            downloadTaskStarted = false;//флаг активации загрузки файлов
         }
     };
 
@@ -157,15 +157,15 @@ public class UploadMedia {
     private FtpWorker.FtpEndDownloadCallback ftpEndDownloadCallback = new FtpWorker.FtpEndDownloadCallback() {
         @Override
         public void onFtpEndDownload(int msg) {
-            uploadTaskStarted = false; //флаг активации загрузки файлов
+            downloadTaskStarted = false; //флаг активации загрузки файлов
         }
     };
 
     /**
      * Инициация загрузки
      */
-    public void upload() {
-        if (uploadTaskStarted)
+    public void download() {
+        if (downloadTaskStarted)
             return;
         MainActivity.httpServer.sendQueWebStatus("Завантаження...", true);
 
@@ -248,13 +248,13 @@ public class UploadMedia {
         screenImgParam.put("extArrayScreenImg", new String[]{"*.png", "*.jpg"});
 
         if (prefValues.transferProtocol.equals(DEF_PROTOCOL[SMB1])) {
-            uploadTaskStarted = true;
+            downloadTaskStarted = true;
             smbWorker.doDownload(authParam, imgParam, videoParam, slideParam, screenImgParam);
         } else if (prefValues.transferProtocol.equals(DEF_PROTOCOL[SMB2])) {
-            uploadTaskStarted = true;
+            downloadTaskStarted = true;
             smbjWorker.doDownload(authParam, imgParam, videoParam, slideParam, screenImgParam);
         } else if (prefValues.transferProtocol.equals(DEF_PROTOCOL[FTP])) {
-            uploadTaskStarted = true;
+            downloadTaskStarted = true;
             ftpWorker.doDownload(authParam, imgParam, videoParam, slideParam, screenImgParam);
         }
     }
@@ -357,7 +357,7 @@ public class UploadMedia {
         Calendar c = Calendar.getInstance();
         c.setTime(currentDate);
 
-        logFile = new File(Environment.getExternalStorageDirectory(), "Upload " + EthernetSettings.getNetworkInterfaceIpAddress() + " " + dateFormat.format(c.getTime()) + ".log");
+        logFile = new File(Environment.getExternalStorageDirectory(), "Download " + EthernetSettings.getNetworkInterfaceIpAddress() + " " + dateFormat.format(c.getTime()) + ".log");
 
         //удалим существующий файл
         if (logFile.exists()) {
@@ -378,7 +378,7 @@ public class UploadMedia {
      *
      * @param text
      */
-    public static synchronized void appendToUploadLog(String text) {
+    public static synchronized void appendToDownloadLog(String text) {
         if (!logFile.exists())
             initLogFile();
 
@@ -396,7 +396,7 @@ public class UploadMedia {
     /**
      * Удаляет лог-файл
      */
-    public static synchronized void deleteUploadLog() {
+    public static synchronized void deleteDownloadLog() {
         //удалим существующий файл
         if (logFile.exists()) {
             logFile.delete();

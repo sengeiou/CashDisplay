@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.resonance.cashdisplay.load.UploadMedia.SLIDE_URI;
+import static com.resonance.cashdisplay.load.DownloadMedia.SLIDE_URI;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.

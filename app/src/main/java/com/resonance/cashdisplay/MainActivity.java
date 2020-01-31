@@ -41,7 +41,7 @@ import com.crashlytics.android.Crashlytics;
 import com.resonance.cashdisplay.databinding.ActivityMainBinding;
 import com.resonance.cashdisplay.eth.EthernetSettings;
 import com.resonance.cashdisplay.http.HttpServer;
-import com.resonance.cashdisplay.load.UploadMedia;
+import com.resonance.cashdisplay.load.DownloadMedia;
 import com.resonance.cashdisplay.product_list.ProductListWorker;
 import com.resonance.cashdisplay.settings.PrefValues;
 import com.resonance.cashdisplay.settings.PrefWorker;
@@ -83,7 +83,7 @@ public class MainActivity extends Activity {
     private ProductListWorker productListWorker;            // обслуживание списка товаров
     private ViewModel viewModel;
     public static EthernetSettings ethernetSettings = null; // Настройка сети
-    public static UploadMedia uploadMedia;
+    public static DownloadMedia downloadMedia;
     public static UpdateFirmware updateFirmware = null;     // обновление ПО
 
     private static Modify_SU_Preferences su_preferences;
@@ -159,7 +159,7 @@ public class MainActivity extends Activity {
         ethernetSettings = new EthernetSettings(this);
         ethernetSettings.setSetupLanCallback(mCallbackLanIsSet);
 
-        uploadMedia = new UploadMedia(this);
+        downloadMedia = new DownloadMedia(this);
 
         //обработчик команд и данных
         cmdParser = new CommandParser(viewModel, messageHandler, MainActivity.this);
@@ -250,7 +250,7 @@ public class MainActivity extends Activity {
         //установка фона экрана "Список покупок"
         Bitmap bitmap;
         Drawable drawable;
-        String uriBackgroundShoppingList = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundShoppingList.length() > 0) ? PrefWorker.getValues().backgroundShoppingList : "noimg");
+        String uriBackgroundShoppingList = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundShoppingList.length() > 0) ? PrefWorker.getValues().backgroundShoppingList : "noimg");
         File fileImg = new File(uriBackgroundShoppingList);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
@@ -262,7 +262,7 @@ public class MainActivity extends Activity {
         relativeLayout[CONTEXT_PRODUCT_LIST].invalidate();
 
         //Фонове зображення экрану "Каса не працює"
-        String uriBackgroundCashNotWork = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundCashNotWork.length() > 0) ? PrefWorker.getValues().backgroundCashNotWork : "noimg");
+        String uriBackgroundCashNotWork = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundCashNotWork.length() > 0) ? PrefWorker.getValues().backgroundCashNotWork : "noimg");
         fileImg = new File(uriBackgroundCashNotWork);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
@@ -283,7 +283,7 @@ public class MainActivity extends Activity {
         relativeLayout[CONTEXT_CONNECT].invalidate();
 
         //Фонове зображення экрану "Дякуємо за покупку"
-        String uriBackgroundThanks = ExtSDSource.getExternalSdCardPath() + uploadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundThanks.length() > 0) ? PrefWorker.getValues().backgroundThanks : "noimg");
+        String uriBackgroundThanks = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundThanks.length() > 0) ? PrefWorker.getValues().backgroundThanks : "noimg");
         fileImg = new File(uriBackgroundThanks);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
@@ -591,7 +591,7 @@ public class MainActivity extends Activity {
                     if (EthernetSettings.isConnected()) {
                         if (!loadMediaAtStartSystem && prefValues.downloadAtStart) {
                             loadMediaAtStartSystem = true;
-                            uploadMedia.upload();
+                            downloadMedia.download();
                         }
                         String networkInterfaceIpAddress = EthernetSettings.getNetworkInterfaceIpAddress();
                         viewModel.setStatusConnection(((stat.length() == 0) ? "IP : " + networkInterfaceIpAddress : stat));

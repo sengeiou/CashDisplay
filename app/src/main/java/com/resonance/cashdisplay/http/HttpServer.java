@@ -21,7 +21,7 @@ import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.eth.EthernetSettings;
-import com.resonance.cashdisplay.load.UploadMedia;
+import com.resonance.cashdisplay.load.DownloadMedia;
 import com.resonance.cashdisplay.settings.PrefValues;
 import com.resonance.cashdisplay.settings.PrefWorker;
 import com.resonance.cashdisplay.sound.Sound;
@@ -111,7 +111,7 @@ public class HttpServer {
         mServer.get("/get-log.*", getLogCallback);
         mServer.get("/getsettings", getSettingsCallback);
         mServer.get("/getstatus", getStatusCallback);
-        mServer.post("/upload_files", uploadFilesCallback);
+        mServer.post("/upload_files", downloadFilesCallback);
         mServer.post("/start_remote_update", startRemoteUpdateCallback);
         mServer.post("/start_reboot", startRebootCallback);
         mServer.post("/setsettings", setSettingsCallback);
@@ -293,7 +293,7 @@ public class HttpServer {
         }
     };
 
-    private final HttpServerRequestCallback uploadFilesCallback = new HttpServerRequestCallback() {
+    private final HttpServerRequestCallback downloadFilesCallback = new HttpServerRequestCallback() {
 
         @Override
         public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
@@ -303,7 +303,7 @@ public class HttpServer {
 
             Log.d(TAG, "** /upload_files");
             iCurStatus = STAT_LOAD_FILES;
-            MainActivity.uploadMedia.upload();
+            MainActivity.downloadMedia.download();
         }
     };
 
@@ -326,7 +326,7 @@ public class HttpServer {
 
             asyncHttpServerResponse.code(200);
             iCurStatus = STAT_IDLE;
-            UploadMedia.resetMediaPlay();
+            DownloadMedia.resetMediaPlay();
             Log.d(TAG, "** /start_reboot");
             try {
                 Thread.sleep(3000);

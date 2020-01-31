@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.R;
-import com.resonance.cashdisplay.load.UploadMedia;
+import com.resonance.cashdisplay.load.DownloadMedia;
 import com.resonance.cashdisplay.settings.PrefValues;
 import com.resonance.cashdisplay.settings.PrefWorker;
 import com.resonance.cashdisplay.utils.ImageUtils;
@@ -107,20 +107,20 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
      */
     public static Bitmap getImage(String codeProduct) {
 
-        String filepath = ExtSDSource.getExternalSdCardPath() + UploadMedia.IMG_URI + codeProduct + ".png";//Изображение товара
+        String filepath = ExtSDSource.getExternalSdCardPath() + DownloadMedia.IMG_URI + codeProduct + ".png";//Изображение товара
         File fileImg = new File(filepath);
 
         if (fileImg.exists()) {// PNG
             return ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
         } else {         //JPG
-            filepath = ExtSDSource.getExternalSdCardPath() + UploadMedia.IMG_URI + codeProduct + ".jpg";//Изображение товара
+            filepath = ExtSDSource.getExternalSdCardPath() + DownloadMedia.IMG_URI + codeProduct + ".jpg";//Изображение товара
             fileImg = new File(filepath);
             if (fileImg.exists()) {
                 return ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
             } else {
                 //покажем изображение по-умолчанию
                 PrefValues prefValues = PrefWorker.getValues();
-                filepath = ExtSDSource.getExternalSdCardPath() + UploadMedia.IMG_SCREEN + ((prefValues.defaultBackgroundImage.length() > 0) ? prefValues.defaultBackgroundImage : "noimg");
+                filepath = ExtSDSource.getExternalSdCardPath() + DownloadMedia.IMG_SCREEN + ((prefValues.defaultBackgroundImage.length() > 0) ? prefValues.defaultBackgroundImage : "noimg");
                 fileImg = new File(filepath);
 
                 if (fileImg.exists()) {

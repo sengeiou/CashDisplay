@@ -36,15 +36,15 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_BAD_ARGUMENTS;
-import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_CONNECTION_ERROR;
-import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_ERROR_SMB_SERVER;
-import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_FILE_NOT_FOUND;
-import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_IO_ERROR;
-import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_NOT_FREE_MEMORY;
-import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_NOT_SUPPORT_PROTOCOL;
-import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_SHARE_CONNECTION_ERROR;
-import static com.resonance.cashdisplay.load.UploadMedia.UPLOAD_RESULT_SUCCESSFULL;
+import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_BAD_ARGUMENTS;
+import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_CONNECTION_ERROR;
+import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_ERROR_SMB_SERVER;
+import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_FILE_NOT_FOUND;
+import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_IO_ERROR;
+import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_NOT_FREE_MEMORY;
+import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_NOT_SUPPORT_PROTOCOL;
+import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR;
+import static com.resonance.cashdisplay.load.DownloadMedia.DOWNLOAD_RESULT_SUCCESSFULL;
 
 public class SmbjWorker {
 
@@ -107,10 +107,10 @@ public class SmbjWorker {
 
     private class SmbjTask extends AsyncTask<HashMap<String, Object>, Void, Integer> {
 
-        UploadResult resultScreenImg = new UploadResult();
-        UploadResult resultImg = new UploadResult();
-        UploadResult resultVideo = new UploadResult();
-        UploadResult resultSlide = new UploadResult();
+        DownloadResult resultScreenImg = new DownloadResult();
+        DownloadResult resultImg = new DownloadResult();
+        DownloadResult resultVideo = new DownloadResult();
+        DownloadResult resultSlide = new DownloadResult();
 
         protected void onPreExecute() {
             super.onPreExecute();
@@ -159,7 +159,7 @@ public class SmbjWorker {
                     .withAuthenticators(new NtlmAuthenticator.Factory())
                     .build();
 
-            int result = UPLOAD_RESULT_SUCCESSFULL;
+            int result = DOWNLOAD_RESULT_SUCCESSFULL;
             Connection connection = null;
             Session session = null;
             // DiskShare share = null;
@@ -189,11 +189,11 @@ public class SmbjWorker {
             } catch (Exception e) {
                 Log.e(TAG, "Smbj Exception: " + e);
                 if (e.getMessage().contains(" is not supported")) {
-                    result = UPLOAD_RESULT_NOT_SUPPORT_PROTOCOL;
+                    result = DOWNLOAD_RESULT_NOT_SUPPORT_PROTOCOL;
                 } else if (e.getMessage().contains("Could not connect") || e.getMessage().contains("failed to connect")) {
-                    result = UPLOAD_RESULT_CONNECTION_ERROR;
+                    result = DOWNLOAD_RESULT_CONNECTION_ERROR;
                 } else if ((e.getMessage().contains("IllegalArgumentException")) || (e.getMessage().contains("Cannot require message signing when authenticating"))) {
-                    result = UPLOAD_RESULT_BAD_ARGUMENTS;
+                    result = DOWNLOAD_RESULT_BAD_ARGUMENTS;
                 }
             } finally {
                 try {
@@ -205,14 +205,14 @@ public class SmbjWorker {
                             if (!share.folderExists(logDir)) {
                                 share.mkdir(logDir);
                             }
-                            String remoteLogFile = logDir + "/" + UploadMedia.logFile.getName();
+                            String remoteLogFile = logDir + "/" + DownloadMedia.logFile.getName();
                             if (!share.fileExists(remoteLogFile)) {
                                 com.hierynomus.smbj.share.File file = share.openFile(remoteLogFile, EnumSet.of(AccessMask.GENERIC_ALL), null, SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_CREATE, null);
                                 file.close();
                             }
 
-                            SmbFiles.copy(UploadMedia.logFile, share, remoteLogFile, true);
-                            UploadMedia.deleteUploadLog();
+                            SmbFiles.copy(DownloadMedia.logFile, share, remoteLogFile, true);
+                            DownloadMedia.deleteDownloadLog();
                         } catch (IOException e) {
                             Log.e(TAG, "Smb IOException: " + e);
                         }
@@ -247,21 +247,21 @@ public class SmbjWorker {
             String extendedErrorVideo = "помилки";
             String extendedErrorScreenImg = "помилки";
 
-            if (resultImg.hasError == UPLOAD_RESULT_NOT_FREE_MEMORY)
+            if (resultImg.hasError == DOWNLOAD_RESULT_NOT_FREE_MEMORY)
                 extendedErrorImage = "недостатньо пам'ятi";
 
-            if (resultVideo.hasError == UPLOAD_RESULT_NOT_FREE_MEMORY)
+            if (resultVideo.hasError == DOWNLOAD_RESULT_NOT_FREE_MEMORY)
                 extendedErrorVideo = "недостатньо пам'ятi";
 
-            if (resultSlide.hasError == UPLOAD_RESULT_NOT_FREE_MEMORY)
+            if (resultSlide.hasError == DOWNLOAD_RESULT_NOT_FREE_MEMORY)
                 extendedErrorSlide = "недостатньо пам'ятi";
 
-            if (resultScreenImg.hasError == UPLOAD_RESULT_NOT_FREE_MEMORY)
+            if (resultScreenImg.hasError == DOWNLOAD_RESULT_NOT_FREE_MEMORY)
                 extendedErrorScreenImg = "недостатньо пам'ятi";
 
             switch (result) {
-                case UPLOAD_RESULT_SUCCESSFULL:
-                case UPLOAD_RESULT_SHARE_CONNECTION_ERROR:
+                case DOWNLOAD_RESULT_SUCCESSFULL:
+                case DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR:
                     String status =
                             "<font color=\"blue\"><B>Фоновi та допомiжнi зображення:</B><br></font>[" + (resultScreenImg.hasError > 0 ? extendedErrorScreenImg : ("завантажено : <B>" + resultScreenImg.countFiles + "</B>, iснуючих : <B>" + resultScreenImg.countSkipped + "</B>, видалено : <B>" + resultScreenImg.countDeleted) + "</B>];  <br>")
                                     + "<font color=\"blue\"><B>Зображення товарiв:</B><br></font>[" + (resultImg.hasError > 0 ? extendedErrorImage : ("завантажено : <B>" + resultImg.countFiles + "</B>, iснуючих : <B>" + resultImg.countSkipped + "</B>, видалено : <B>" + resultImg.countDeleted) + "</B>];  <br>")
@@ -269,20 +269,20 @@ public class SmbjWorker {
                                     + "<font color=\"blue\"><B>Слайди:</B><br></font>[" + (resultSlide.hasError > 0 ? extendedErrorSlide : ("завантажено : <B>" + resultSlide.countFiles + "</B>, iснуючих : <B>" + resultSlide.countSkipped + "</B>, видалено : <B>" + resultSlide.countDeleted) + "</B>];");
                     changeStatus(status, true);
                     break;
-                case UPLOAD_RESULT_NOT_SUPPORT_PROTOCOL:
+                case DOWNLOAD_RESULT_NOT_SUPPORT_PROTOCOL:
                     changeStatus("Сервер не підтримує протокол ", true);
                     break;
-                case UPLOAD_RESULT_CONNECTION_ERROR:
+                case DOWNLOAD_RESULT_CONNECTION_ERROR:
                     changeStatus("Неможливо пiдключитися до файлового сервера", true);
                     Log.e(TAG, "Неможливо пiдключитися до файлового сервера");
                     break;
-                case UPLOAD_RESULT_BAD_ARGUMENTS:
+                case DOWNLOAD_RESULT_BAD_ARGUMENTS:
                     changeStatus("Невiрнi параметри пiдключення до файлового сервера", true);
                     break;
-                case UPLOAD_RESULT_NOT_FREE_MEMORY:
+                case DOWNLOAD_RESULT_NOT_FREE_MEMORY:
                     changeStatus("недостатньо пам'яті на носії" + ExtSDSource.getAvailableMemory_SD(), true);
                     break;
-                case UPLOAD_RESULT_ERROR_SMB_SERVER:
+                case DOWNLOAD_RESULT_ERROR_SMB_SERVER:
                     changeStatus("Помилка сервера SMB", true);
                     break;
             }
@@ -296,13 +296,13 @@ public class SmbjWorker {
     // Загрузка файлов
     // Удаление ненужных файлов
     //
-    private UploadResult handleFiles(Session session, String shareFolder, String sourceFolder, String destFolder, String[] extensionFiles) {
+    private DownloadResult handleFiles(Session session, String shareFolder, String sourceFolder, String destFolder, String[] extensionFiles) {
 
-        UploadResult uploadResult = new UploadResult();
+        DownloadResult downloadResult = new DownloadResult();
         int divider = 0;
 
         String connectionStr = shareFolder + (sourceFolder.startsWith("/") ? "" : "/") + sourceFolder;
-        UploadMedia.appendToUploadLog("\n(SMB2) " + connectionStr);
+        DownloadMedia.appendToDownloadLog("\n(SMB2) " + connectionStr);
         changeStatus(mContext.getString(R.string.connect_to_server) + ": " + connectionStr, true);
 
         // получим список файлов уже существующих
@@ -319,43 +319,43 @@ public class SmbjWorker {
             if (share.isConnected()) {
 
                 changeStatus("Отримання списку файлів...", false);
-                UploadMedia.resetMediaPlay(); //остановка демонстрации видео/слайдов
+                DownloadMedia.resetMediaPlay(); //остановка демонстрации видео/слайдов
                 for (int i = 0; i < extensionFiles.length; i++) {
-                    UploadResult tmpUploadResult = downloadFromShareFolder(share, sourceFolder, extensionFiles[i], destFolder);
-                    uploadResult.countFiles += tmpUploadResult.countFiles;
-                    uploadResult.countSkipped += tmpUploadResult.countSkipped;
-                    uploadResult.countDeleted += tmpUploadResult.countDeleted;
-                    if (tmpUploadResult.hasError > UPLOAD_RESULT_SUCCESSFULL)
-                        uploadResult.hasError = tmpUploadResult.hasError;
-                    Log.d(TAG, "Загружено: " + uploadResult.countFiles + " ext:" + extensionFiles[i]);
+                    DownloadResult tmpDownloadResult = downloadFromShareFolder(share, sourceFolder, extensionFiles[i], destFolder);
+                    downloadResult.countFiles += tmpDownloadResult.countFiles;
+                    downloadResult.countSkipped += tmpDownloadResult.countSkipped;
+                    downloadResult.countDeleted += tmpDownloadResult.countDeleted;
+                    if (tmpDownloadResult.hasError > DOWNLOAD_RESULT_SUCCESSFULL)
+                        downloadResult.hasError = tmpDownloadResult.hasError;
+                    Log.d(TAG, "Загружено: " + downloadResult.countFiles + " ext:" + extensionFiles[i]);
                 }
-                UploadMedia.appendToUploadLog("Получено с сервера: " + (uploadResult.countFiles + uploadResult.countSkipped));
+                DownloadMedia.appendToDownloadLog("Получено с сервера: " + (downloadResult.countFiles + downloadResult.countSkipped));
                 share.close();
             } else {
                 changeStatus("Неможливо пiдключитися до " + shareFolder, false);
-                uploadResult.hasError = UPLOAD_RESULT_SHARE_CONNECTION_ERROR;
+                downloadResult.hasError = DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR;
             }
         } catch (Exception e) {
             Log.e(TAG, "Smbj Img Exception: " + e);
             changeStatus("Неможливо пiдключитися до " + shareFolder, false);
-            uploadResult.hasError = UPLOAD_RESULT_CONNECTION_ERROR;
+            downloadResult.hasError = DOWNLOAD_RESULT_CONNECTION_ERROR;
         }
 
         //Удалим файлы, которые были определены на удаление
         changeStatus("Видалення файлiв - " + listFilesAlreadyExists.size(), false);
         for (int i = 0; i < listFilesAlreadyExists.size(); i++) {
             new File(destFolder, listFilesAlreadyExists.get(i)).delete();
-            UploadMedia.appendToUploadLog("Удален: " + listFilesAlreadyExists.get(i));
-            uploadResult.countDeleted++;
+            DownloadMedia.appendToDownloadLog("Удален: " + listFilesAlreadyExists.get(i));
+            downloadResult.countDeleted++;
             if ((divider++) >= 50)
-                changeStatus("Видалення файлiв - " + uploadResult.countDeleted + " iз " + listFilesAlreadyExists.size(), false);
+                changeStatus("Видалення файлiв - " + downloadResult.countDeleted + " iз " + listFilesAlreadyExists.size(), false);
         }
 
-        return uploadResult;
+        return downloadResult;
     }
 
-    private UploadResult downloadFromShareFolder(DiskShare share, String shareSourceFolder, String fileSearchPattern, String destFolder) {
-        UploadResult dr = new UploadResult();
+    private DownloadResult downloadFromShareFolder(DiskShare share, String shareSourceFolder, String fileSearchPattern, String destFolder) {
+        DownloadResult dr = new DownloadResult();
 
         int divider = 0;
 
@@ -371,14 +371,14 @@ public class SmbjWorker {
 
             if (ExtSDSource.getAvailableMemory(MainActivity.context, ExtSDSource.DEFAULT_SD) < size) {
                 Log.e(TAG, "Not enough memory");
-                UploadMedia.appendToUploadLog("ОШИБКА, недостаточно места на SD карте: " + ExtSDSource.getAvailableMemory(MainActivity.context, ExtSDSource.DEFAULT_SD));
-                dr.hasError = UPLOAD_RESULT_NOT_FREE_MEMORY;
+                DownloadMedia.appendToDownloadLog("ОШИБКА, недостаточно места на SD карте: " + ExtSDSource.getAvailableMemory(MainActivity.context, ExtSDSource.DEFAULT_SD));
+                dr.hasError = DOWNLOAD_RESULT_NOT_FREE_MEMORY;
                 break;
             }
 
-            if (UploadMedia.ifAlreadyExistFile(destFolder, f.getFileName(), size)) {
+            if (DownloadMedia.ifAlreadyExistFile(destFolder, f.getFileName(), size)) {
                 Log.d(TAG, "Smbj skip file: " + shareSourceFolder + f.getFileName());
-                UploadMedia.appendToUploadLog("Перезаписан: " + f.getFileName());
+                DownloadMedia.appendToDownloadLog("Перезаписан: " + f.getFileName());
 
                 if (dr.countSkipped % 10 == 0) {
                     changeStatus("Перезаписан: " + f.getFileName(), true);
@@ -408,16 +408,16 @@ public class SmbjWorker {
                 while ((length = is.read(buffer)) != -1) {
                     bos.write(buffer, 0, length);
                 }
-                UploadMedia.appendToUploadLog("Загружен: " + f.getFileName() + " размер: " + size);
+                DownloadMedia.appendToDownloadLog("Загружен: " + f.getFileName() + " размер: " + size);
 
             } catch (FileNotFoundException e) {
                 Log.e(TAG, "Smbj FileNotFoundException :" + e);
                 changeStatus("Помилка, FileNotFoundException", true);
-                dr.hasError = UPLOAD_RESULT_FILE_NOT_FOUND;
+                dr.hasError = DOWNLOAD_RESULT_FILE_NOT_FOUND;
             } catch (IOException e) {
                 Log.e(TAG, "Smbj IOException :" + e);
                 changeStatus("Виникли помилки при завантаженнi файлiв", true);
-                dr.hasError = UPLOAD_RESULT_IO_ERROR;
+                dr.hasError = DOWNLOAD_RESULT_IO_ERROR;
             } finally {
                 try {
                     remoteSmbjFile.close();
@@ -432,13 +432,13 @@ public class SmbjWorker {
                         is.close();
                 } catch (IOException ex) {
                     Log.e(TAG, "Smbj IOException :" + ex);
-                    dr.hasError = UPLOAD_RESULT_IO_ERROR;
+                    dr.hasError = DOWNLOAD_RESULT_IO_ERROR;
                 }
             }
             dr.countFiles++;
 
             if ((divider++) >= 10) {
-                UploadMedia.resetMediaPlay(); // остановка демонстрации видео/слайдов
+                DownloadMedia.resetMediaPlay(); // остановка демонстрации видео/слайдов
                 changeStatus("Завантаження: [" + fileSearchPattern + "] " + dr.countFiles, true);
                 divider = 0;
             }
