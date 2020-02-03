@@ -13,8 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/list_item_height_look_2"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
-        tools:background="#000000">
+        android:orientation="horizontal">
 
         <!--    dummy, for compability only, must be in another list_item_look_x.xml (visibility = gone) -->
         <TextView
@@ -35,7 +34,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.4"
             android:gravity="center"
-            android:textColor="@color/list_item_text_look_2"
+            android:textColor="@color/text_subway"
             android:textSize="@dimen/list_item_text_look_2"
             tools:text="00" />
 
@@ -43,23 +42,23 @@
             android:id="@+id/textview_product"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2.7"
+            android:layout_weight="2.5"
             android:gravity="start|center_vertical"
             android:paddingLeft="7dp"
             android:paddingEnd="3dp"
-            android:textColor="@color/list_item_text_look_2"
+            android:textColor="@color/text_subway"
             android:textSize="@dimen/list_item_text_look_2"
-            tools:text="Product" />
+            tools:text="Проїзний на квітень 2020" />
 
         <TextView
             android:id="@+id/textview_count"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.9"
+            android:layout_weight="1.2"
             android:gravity="center"
             android:paddingStart="3dp"
             android:paddingEnd="3dp"
-            android:textColor="@color/list_item_text_look_2"
+            android:textColor="@color/text_subway"
             android:textSize="@dimen/list_item_text_look_2"
             tools:text="@string/tools_dummy_4" />
 
@@ -76,8 +75,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:visibility="gone">
 
             <!--        here will be value received from COM port, already with discount -->
             <TextView
@@ -86,7 +84,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center_vertical|end"
                 android:paddingStart="3dp"
-                android:textColor="@color/list_item_text_look_2"
+                android:textColor="@color/text_subway"
                 android:textSize="@dimen/list_item_text_look_2"
                 tools:text="@string/tools_dummy_5_dot_2" />
 
@@ -96,7 +94,7 @@
                 android:gravity="center_vertical|start"
                 android:paddingEnd="3dp"
                 android:text=" грн."
-                android:textColor="@color/list_item_text_look_2"
+                android:textColor="@color/text_subway"
                 android:textSize="@dimen/list_item_text_look_2" />
         </LinearLayout>
     </LinearLayout>
@@ -104,7 +102,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@color/list_item_divider_look_2" />
+        android:background="@color/text_subway" />
 
     <ImageView
         android:id="@+id/imageview_icon"

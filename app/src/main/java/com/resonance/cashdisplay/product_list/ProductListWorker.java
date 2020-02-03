@@ -10,6 +10,7 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.resonance.cashdisplay.MainActivity.layoutProductListLook;
 import static com.resonance.cashdisplay.MainActivity.listViewProducts;
 import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_SUBWAY;
 
@@ -103,29 +105,28 @@ public class ProductListWorker {
                     Log.d("PLW", "card " + args);
                     textViewCardNumber.setText(R.string.card_num);
                     textViewCardNumber.append(args);
-                } else
-                    textViewCardNumber.setText(context.getString(R.string.card_num) + context.getString(R.string.card_mask));
+                }
 
                 if (clockTimer == null) {
                     clockTimer = new Timer();
                     TextView textViewDateTime = ((Activity) context).findViewById(R.id.textview_date_time);
-                    DateFormat dateFormat0 = new SimpleDateFormat("dd MMMM yyyy HH mm", new Locale("uk"));
-                    DateFormat dateFormat1 = new SimpleDateFormat("dd MMMM yyyy HH:mm", new Locale("uk"));
+                    DateFormat dateFormat0 = new SimpleDateFormat("dd.MM.yyyy HH mm", new Locale("uk"));
+                    DateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy HH:mm", new Locale("uk"));
                     Date date = new Date(System.currentTimeMillis());
                     clockTimer.scheduleAtFixedRate(new TimerTask() {
-                        boolean trig = false;
+                        boolean flip = false;
 
                         @Override
                         public void run() {
                             date.setTime(System.currentTimeMillis());
-                            if (trig) {
+                            if (flip) {
                                 textViewDateTime.post(() ->
                                         textViewDateTime.setText(dateFormat0.format(date)));
                             } else {
                                 textViewDateTime.post(() ->
                                         textViewDateTime.setText(dateFormat1.format(date)));
                             }
-                            trig = !trig;
+                            flip = !flip;
                         }
                     }, 0, 500);
                 }
@@ -141,6 +142,9 @@ public class ProductListWorker {
     public void onProductListHide() {
         switch (PrefWorker.getValues().productListLookCode) {
             case LOOK_SUBWAY:
+                TextView textViewCardNumber = ((Activity) context).findViewById(R.id.textview_card_number);
+                textViewCardNumber.setText(context.getString(R.string.card_num) + context.getString(R.string.card_mask));
+
                 if (clockTimer != null) {
                     clockTimer.cancel();
                     clockTimer = null;
@@ -318,6 +322,16 @@ public class ProductListWorker {
         MainActivity.textViewTotalDiscount.setText(String.format(Locale.ROOT, "%.2f", (double) totalDiscount / 100));
         MainActivity.textViewTotalSum.setText(String.format(Locale.ROOT, "%.2f", (double) totalSum / 100));
         MainActivity.textViewTotalCount.setText(String.valueOf(arrayProductList.size()));
+
+        switch (PrefWorker.getValues().productListLookCode) {
+            case LOOK_SUBWAY:
+                ((LinearLayout) layoutProductListLook.findViewById(R.id.layout_sum)).setOrientation(LinearLayout.VERTICAL);
+                MainActivity.textViewTotalSum.setText(String.format(Locale.FRENCH, "%.2f", (double) totalSum / 100));
+                break;
+            default:
+                break;
+        }
+
         MainActivity.textViewDebug.append("MSG_totalSumWithoutDiscount: " + totalSumWithoutDiscount + "\n");
         MainActivity.textViewDebug.append("MSG_totalDiscount: " + totalDiscount + "\n");
         MainActivity.textViewDebug.append("MSG_totalSum: " + totalSum + "\n");

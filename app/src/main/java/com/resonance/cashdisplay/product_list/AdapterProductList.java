@@ -87,8 +87,6 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
             case LOOK_SUBWAY:
                 if (dataModel.getCount() < 0)
                     viewHolder.textViewCount.setText(R.string.unlimited);
-                if (dataModel.getSum() % 100 == 0)
-                    viewHolder.textViewSum.setText(String.format("%d", dataModel.getSum() / 100));
                 break;
             default:
                 break;

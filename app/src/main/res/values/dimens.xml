@@ -16,6 +16,10 @@
     <dimen name="list_item_height_look_2">126dp</dimen>  <!-- clear height without list item divider -->
     <dimen name="total_text_look_2">38dp</dimen>
     <dimen name="total_text_num_look_2">64dp</dimen>
+    <dimen name="item_name_large_2">64dp</dimen>
+    <dimen name="secondary_text_2">54dp</dimen>
+    <dimen name="primary_text_2">64dp</dimen>
+
 
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">0dp</dimen>
