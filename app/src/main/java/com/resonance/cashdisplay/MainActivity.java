@@ -329,6 +329,8 @@ public class MainActivity extends Activity {
         relativeLayout[CONTEXT_PRODUCT_LIST].addView(layoutProductListLook, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         relativeLayout[CONTEXT_PRODUCT_LIST].invalidate();
 
+        productListWorker.initUniqueComponents();
+
         listViewProducts = (ListView) layoutProductListLook.findViewById(R.id.listview_products);
         textViewTotalCount = (TextView) layoutProductListLook.findViewById(R.id.textview_total_count);
         textViewTotalSumWithoutDiscount = (TextView) layoutProductListLook.findViewById(R.id.textview_total_sum_without_discount);

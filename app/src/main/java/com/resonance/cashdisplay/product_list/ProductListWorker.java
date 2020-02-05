@@ -57,14 +57,14 @@ public class ProductListWorker {
     private ArrayList<ItemProductList> arrayProductList = new ArrayList<ItemProductList>();
 
     // used in all views
-    private LinearLayout layoutTotal;
+    private LinearLayout layoutTotal;           // layout of total sum for product list
 
     // used for LOOK_SUBWAY only
     private TextView textViewCardNumber;
-    private LinearLayout layoutItemsBlock;
-    private LinearLayout layoutItemExtra;
-    private LinearLayout layoutToPay;
-    private LinearLayout layoutList;
+    private LinearLayout layoutItemsBlock;      // layout of 1-2 items mode
+    private LinearLayout layoutItemExtra;       // second item for 1-2 items mode
+    private LinearLayout layoutToPay;           // "До сплати" for 1-2 items mode
+    private LinearLayout layoutList;            // layout of list mode (more than 2 items)
 
     public static Timer clockTimer;
 
@@ -75,20 +75,6 @@ public class ProductListWorker {
         fadeOut.setDuration(100);
         fadeIn = new AlphaAnimation(0, 1);
         fadeIn.setDuration(300);
-
-        switch (PrefWorker.getValues().productListLookCode) {
-            case LOOK_SUBWAY:
-                Activity mainActivity = (Activity) context;
-                textViewCardNumber = mainActivity.findViewById(R.id.textview_card_number);
-                layoutItemsBlock = mainActivity.findViewById(R.id.layout_items_block);    // layout of 1-2 items mode
-                layoutItemExtra = mainActivity.findViewById(R.id.layout_item_extra);      // second item for 1-2 items mode
-                layoutToPay = mainActivity.findViewById(R.id.layout_to_pay);              // "До сплати" for 1-2 items mode
-                layoutList = mainActivity.findViewById(R.id.layout_list);                 // layout of list mode (more than 2 items)
-                layoutTotal = mainActivity.findViewById(R.id.layout_total);               // layout of total sum for list mode
-                break;
-            default:
-                break;
-        }
 
         if (clockTimer != null) {
             clockTimer.cancel();
@@ -123,6 +109,28 @@ public class ProductListWorker {
     }
 
     /**
+     * Must be called after specified look set up, because make initialization of components,
+     * that are absent in another looks.
+     *
+     * @see PrefValues#productListLookCode for more information about looks
+     */
+    public void initUniqueComponents() {
+        switch (PrefWorker.getValues().productListLookCode) {
+            case LOOK_SUBWAY:
+                Activity mainActivity = (Activity) context;
+                textViewCardNumber = mainActivity.findViewById(R.id.textview_card_number);
+                layoutItemsBlock = mainActivity.findViewById(R.id.layout_items_block);
+                layoutItemExtra = mainActivity.findViewById(R.id.layout_item_extra);
+                layoutToPay = mainActivity.findViewById(R.id.layout_to_pay);
+                layoutList = mainActivity.findViewById(R.id.layout_list);
+                layoutTotal = mainActivity.findViewById(R.id.layout_total);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
      * Called when product list screen becomes visible.
      *
      * @param args contains String list of additional arguments various for different looks.
@@ -134,36 +142,26 @@ public class ProductListWorker {
             case LOOK_SUBWAY:
                 if (args != null) {
                     Log.d("PLW", "show=" + args);
-                    int argAmount = 3;                   // according "inner" protocol for this look
+                    int argAmount = 2;                   // according "inner" protocol for this look
 
-                    String[] argList = args.split(Character.toString((char) SYMBOL_SEPARATOR), argAmount);
+                    String[] argList = args.split(Character.toString((char) SYMBOL_SEPARATOR));
                     Log.d("PLW", "argList size = " + argList.length);
                     for (String str : argList) {
                         Log.d("PLW", "argList element = " + str);
                     }
 
-                    if (argList.length == 3) {
-                        switch (strToInt(argList[0])) {                       // amount of products argument
-                            case 1:
-                                layoutItemsBlock.setVisibility(View.VISIBLE);
-                                break;
-                            case 2:
-                                layoutItemsBlock.setVisibility(View.VISIBLE);
-                                layoutItemExtra.setVisibility(View.VISIBLE);
-                                break;
-                            default:
-                                layoutList.setVisibility(View.VISIBLE);       // list mode
-                                break;
-                        }
-
-                        if ("payment".equals(argList[1])) {                   // "payment" or "balance" argument
+                    if (argList.length == argAmount) {
+                        if ("payment".equals(argList[0])) {                   // "payment" or "balance" argument
                             textViewCardNumber.setText(R.string.card_num);
                             layoutToPay.setVisibility(View.VISIBLE);          // for 1-2 items mode
                             layoutTotal.setVisibility(View.VISIBLE);          // for list mode
-                        } else
+                        } else {
                             textViewCardNumber.setText(R.string.card_balance_num);
+                            layoutToPay.setVisibility(View.GONE);             // for 1-2 items mode
+                            layoutTotal.setVisibility(View.GONE);             // for list mode
+                        }
 
-                        textViewCardNumber.append(argList[2]);                // card number argument
+                        textViewCardNumber.append(argList[1]);                // card number argument
                     }
                 }
 
@@ -326,19 +324,36 @@ public class ProductListWorker {
 
         switch (PrefWorker.getValues().productListLookCode) {
             case LOOK_SUBWAY:
+                TextView textViewItemName = ((Activity) context).findViewById(R.id.textview_item_name);
+                TextView textViewItemCount = ((Activity) context).findViewById(R.id.textview_item_count);
+                TextView textViewItemExtraName = ((Activity) context).findViewById(R.id.textview_item_extra_name);
+                TextView textViewItemExtraCount = ((Activity) context).findViewById(R.id.textview_item_extra_count);
 
-                switch (arrayProductList.size()) {
+                switch (arrayProductList.size()) {     // current amount of products that are in list right now
                     case 0:
-
+                        layoutItemsBlock.setVisibility(View.INVISIBLE);
+                        layoutItemExtra.setVisibility(View.GONE);
+                        layoutList.setVisibility(View.INVISIBLE);
                         break;
                     case 1:
-
+                        layoutItemsBlock.setVisibility(View.VISIBLE);   // 1-2 items mode
+                        layoutItemExtra.setVisibility(View.GONE);
+                        layoutList.setVisibility(View.INVISIBLE);       // list mode
+                        ItemProductList item = arrayProductList.get(0);
+                        textViewItemName.setText(item.getName());
+                        textViewItemCount.setText((item.getCount() == -1) ? (context.getString(R.string.unlimited)) : (String.valueOf(item.getCount())));
                         break;
                     case 2:
-
+                        layoutItemsBlock.setVisibility(View.VISIBLE);   // 1-2 items mode
+                        layoutItemExtra.setVisibility(View.VISIBLE);
+                        layoutList.setVisibility(View.INVISIBLE);       // list mode
+                        item = arrayProductList.get(1);
+                        textViewItemExtraName.setText(item.getName());
+                        textViewItemExtraCount.setText((item.getCount() == -1) ? (context.getString(R.string.unlimited)) : (String.valueOf(item.getCount())));
                         break;
                     default:
-
+                        layoutItemsBlock.setVisibility(View.INVISIBLE); // 1-2 items mode
+                        layoutList.setVisibility(View.VISIBLE);         // list mode
                         break;
                 }
 
