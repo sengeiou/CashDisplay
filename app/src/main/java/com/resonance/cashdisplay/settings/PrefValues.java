@@ -21,13 +21,13 @@ public class PrefValues {
     public String mask;
     public String gateway;
     public String dns;
-    public String transferProtocol;//SMB1, SMB2, FTP
-    public String defaultBackgroundImage;//Фон по умолчанию на экране
+    public String transferProtocol;         //SMB1, SMB2, FTP
+    public String defaultBackgroundImage;   //Фон по умолчанию на экране
     public int timeSlideImage;
     public int videoOrSlide;
     public String backgroundShoppingList;
     public String backgroundCashNotWork;
     public String backgroundThanks;
 
-    public int productListLookCode;
+    public int productListLookCode;         // determines specified interface
 }

@@ -12,7 +12,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="5"
+        android:layout_weight="6"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -32,7 +32,7 @@
                 android:id="@+id/textview_card_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Картка\u000A№ 000000000000"
+                android:text="@string/card_default"
                 android:textColor="@color/text_subway"
                 android:textSize="38sp" />
 
@@ -50,18 +50,177 @@
             android:layout_height="500dp"
             android:visibility="gone" />
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:orientation="vertical">
+            android:layout_weight="3">
 
+            <LinearLayout
+                android:id="@+id/layout_items_block"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:visibility="invisible">
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"></Space>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="17"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/layout_item"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:orientation="vertical">
+
+                        <Space
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"></Space>
+
+                        <TextView
+                            android:id="@+id/textview_item_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/item_name_large_2"
+                            android:textStyle="bold"
+                            android:text="Передплачені поїздки" />
+
+                        <Space
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"></Space>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/trip_count"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/secondary_text_2" />
+
+                        <TextView
+                            android:id="@+id/textview_item_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/item_name_large_2"
+                            android:text="50" />
+
+                        <Space
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"></Space>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_item_extra"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/text_subway" />
+
+                        <Space
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"></Space>
+
+                        <TextView
+                            android:id="@+id/textview_item_extra_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/item_name_large_2"
+                            android:textStyle="bold"
+                            android:text="Проїзний на квітень 2020" />
+
+                        <Space
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"></Space>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/trip_count"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/secondary_text_2" />
+
+                        <TextView
+                            android:id="@+id/textview_item_extra_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/item_name_large_2"
+                            android:text="50" />
+
+                        <Space
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"></Space>
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/text_subway" />
+
+                        <Space
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"></Space>
+
+                    </LinearLayout>
+
+                    <!--    total for 1 or 2 items (also there is layout_total with the same value - for product list) -->
+                    <LinearLayout
+                        android:id="@+id/layout_to_pay"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1.5"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/to_pay"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/secondary_text_2" />
+
+                        <TextView
+                            android:id="@+id/textview_items_to_pay_sum"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/item_name_large_2"
+                            android:text="50" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--    layout_list is separate layout if total product amount is more than 2 -->
+            <!--    listview must be only visible-invisible (not gone), because too many code linked to it and GC works actively -->
             <LinearLayout
                 android:id="@+id/layout_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="invisible">
 
                 <LinearLayout
                     android:id="@+id/list_header"
@@ -97,19 +256,6 @@
                         android:textColor="@color/text_subway"
                         android:textSize="@dimen/list_header_text_look_2" />
 
-                    <!--     dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:visibility="gone" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:visibility="gone" />
-
                 </LinearLayout>
 
                 <ImageView
@@ -127,13 +273,15 @@
                     android:clickable="true"
                     tools:listitem="@layout/list_item_look_2" />
 
+                <!--    total for product list (also there is layout_to_pay with the same value - for 1 or 2 product items) -->
                 <LinearLayout
                     android:id="@+id/layout_total"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="2"
                     android:gravity="end"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
                     <!--    dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
                     <TextView
@@ -190,161 +338,7 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="4"
-                android:orientation="horizontal">
-
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"></Space>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="17"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:id="@+id/layout_item"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="2"
-                        android:orientation="vertical">
-
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"></Space>
-
-                        <TextView
-                            android:id="@+id/textview_item_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/item_name_large_2"
-                            android:textStyle="bold"
-                            tools:text="Передплачені поїздки" />
-
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"></Space>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/trip_count"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/secondary_text_2" />
-
-                        <TextView
-                            android:id="@+id/textview_item_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/item_name_large_2"
-                            tools:text="50" />
-
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"></Space>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/layout_item_extra"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="2"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/text_subway" />
-
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"></Space>
-
-                        <TextView
-                            android:id="@+id/textview_item_extra_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/item_name_large_2"
-                            android:textStyle="bold"
-                            tools:text="Проїзний на квітень 2020" />
-
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"></Space>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/trip_count"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/secondary_text_2" />
-
-                        <TextView
-                            android:id="@+id/textview_item_extra_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/item_name_large_2"
-                            tools:text="50" />
-
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"></Space>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/layout_to_pay"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1.5"
-                        android:orientation="vertical"
-                       >
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/text_subway" />
-
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"></Space>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/to_pay"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/secondary_text_2" />
-
-                        <TextView
-                            android:id="@+id/textview_items_to_pay_sum"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/item_name_large_2"
-                            tools:text="50" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-            </LinearLayout>
-
-        </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout

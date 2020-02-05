@@ -30,12 +30,17 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.resonance.cashdisplay.MainActivity.layoutProductListLook;
 import static com.resonance.cashdisplay.MainActivity.listViewProducts;
+import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_BASKET;
+import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_DMART;
 import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_SUBWAY;
 
 /**
- * Класс обрабатывает экран "Список товаров"
+ * Handles screen "Список покупок".
+ * Controls operations under list of goods (using appropriate adapter for list).
+ * Works with different looks and is recreated when new look is chosen.
+ *
+ * @see PrefValues#productListLookCode to understand looks
  */
 public class ProductListWorker {
 
@@ -51,6 +56,16 @@ public class ProductListWorker {
     private AdapterProductList adapterProductList;
     private ArrayList<ItemProductList> arrayProductList = new ArrayList<ItemProductList>();
 
+    // used in all views
+    private LinearLayout layoutTotal;
+
+    // used for LOOK_SUBWAY only
+    private TextView textViewCardNumber;
+    private LinearLayout layoutItemsBlock;
+    private LinearLayout layoutItemExtra;
+    private LinearLayout layoutToPay;
+    private LinearLayout layoutList;
+
     public static Timer clockTimer;
 
     public ProductListWorker(Context context) {
@@ -60,6 +75,20 @@ public class ProductListWorker {
         fadeOut.setDuration(100);
         fadeIn = new AlphaAnimation(0, 1);
         fadeIn.setDuration(300);
+
+        switch (PrefWorker.getValues().productListLookCode) {
+            case LOOK_SUBWAY:
+                Activity mainActivity = (Activity) context;
+                textViewCardNumber = mainActivity.findViewById(R.id.textview_card_number);
+                layoutItemsBlock = mainActivity.findViewById(R.id.layout_items_block);    // layout of 1-2 items mode
+                layoutItemExtra = mainActivity.findViewById(R.id.layout_item_extra);      // second item for 1-2 items mode
+                layoutToPay = mainActivity.findViewById(R.id.layout_to_pay);              // "До сплати" for 1-2 items mode
+                layoutList = mainActivity.findViewById(R.id.layout_list);                 // layout of list mode (more than 2 items)
+                layoutTotal = mainActivity.findViewById(R.id.layout_total);               // layout of total sum for list mode
+                break;
+            default:
+                break;
+        }
 
         if (clockTimer != null) {
             clockTimer.cancel();
@@ -75,13 +104,13 @@ public class ProductListWorker {
     public AdapterProductList createAdapterProductList(int lookCode) {
         int resource;
         switch (lookCode) {
-            case 0:
+            case LOOK_BASKET:
                 resource = R.layout.list_item_look_0;
                 break;
-            case 1:
+            case LOOK_DMART:
                 resource = R.layout.list_item_look_1;
                 break;
-            case 2:
+            case LOOK_SUBWAY:
                 resource = R.layout.list_item_look_2;
                 break;
             default:
@@ -95,16 +124,47 @@ public class ProductListWorker {
 
     /**
      * Called when product list screen becomes visible.
+     *
+     * @param args contains String list of additional arguments various for different looks.
+     *             For different looks there may be 0 or more arguments, that are divided from each
+     *             other with 0x03 symbols.
      */
     public void onProductListShow(@Nullable String args) {
         switch (PrefWorker.getValues().productListLookCode) {
             case LOOK_SUBWAY:
-                TextView textViewCardNumber = ((Activity) context).findViewById(R.id.textview_card_number);
                 if (args != null) {
-                    args = args.substring(0, args.indexOf(SYMBOL_SEPARATOR));
-                    Log.d("PLW", "card " + args);
-                    textViewCardNumber.setText(R.string.card_num);
-                    textViewCardNumber.append(args);
+                    Log.d("PLW", "show=" + args);
+                    int argAmount = 3;                   // according "inner" protocol for this look
+
+                    String[] argList = args.split(Character.toString((char) SYMBOL_SEPARATOR), argAmount);
+                    Log.d("PLW", "argList size = " + argList.length);
+                    for (String str : argList) {
+                        Log.d("PLW", "argList element = " + str);
+                    }
+
+                    if (argList.length == 3) {
+                        switch (strToInt(argList[0])) {                       // amount of products argument
+                            case 1:
+                                layoutItemsBlock.setVisibility(View.VISIBLE);
+                                break;
+                            case 2:
+                                layoutItemsBlock.setVisibility(View.VISIBLE);
+                                layoutItemExtra.setVisibility(View.VISIBLE);
+                                break;
+                            default:
+                                layoutList.setVisibility(View.VISIBLE);       // list mode
+                                break;
+                        }
+
+                        if ("payment".equals(argList[1])) {                   // "payment" or "balance" argument
+                            textViewCardNumber.setText(R.string.card_num);
+                            layoutToPay.setVisibility(View.VISIBLE);          // for 1-2 items mode
+                            layoutTotal.setVisibility(View.VISIBLE);          // for list mode
+                        } else
+                            textViewCardNumber.setText(R.string.card_balance_num);
+
+                        textViewCardNumber.append(argList[2]);                // card number argument
+                    }
                 }
 
                 if (clockTimer == null) {
@@ -128,7 +188,7 @@ public class ProductListWorker {
                             }
                             flip = !flip;
                         }
-                    }, 0, 500);
+                    }, 0, 50000);
                 }
                 break;
             default:
@@ -142,8 +202,12 @@ public class ProductListWorker {
     public void onProductListHide() {
         switch (PrefWorker.getValues().productListLookCode) {
             case LOOK_SUBWAY:
-                TextView textViewCardNumber = ((Activity) context).findViewById(R.id.textview_card_number);
-                textViewCardNumber.setText(context.getString(R.string.card_num) + context.getString(R.string.card_mask));
+                textViewCardNumber.setText(context.getString(R.string.card_default));
+                layoutItemsBlock.setVisibility(View.INVISIBLE);
+                layoutItemExtra.setVisibility(View.GONE);
+                layoutToPay.setVisibility(View.GONE);
+                layoutList.setVisibility(View.INVISIBLE);
+                layoutTotal.setVisibility(View.GONE);
 
                 if (clockTimer != null) {
                     clockTimer.cancel();
@@ -258,6 +322,41 @@ public class ProductListWorker {
         scrollToPosition(position, highlightItem);
         setProductImage(position, animProductImage);
         updateTotalValues();
+
+
+        switch (PrefWorker.getValues().productListLookCode) {
+            case LOOK_SUBWAY:
+
+                switch (arrayProductList.size()) {
+                    case 0:
+
+                        break;
+                    case 1:
+
+                        break;
+                    case 2:
+
+                        break;
+                    default:
+
+                        break;
+                }
+
+                int totalSum = 0;
+                for (int i = 0; i < arrayProductList.size(); i++) {
+                    ItemProductList selectedItem = arrayProductList.get(i);
+                    totalSum += selectedItem.getSum();
+                }
+
+                String sumTotalToPay = String.format(Locale.FRENCH, "%.2f", (double) totalSum / 100);
+                TextView textViewItemsToPaySum = ((Activity) context).findViewById(R.id.textview_items_to_pay_sum);
+                textViewItemsToPaySum.setText(sumTotalToPay);
+                MainActivity.textViewTotalSum.setText(sumTotalToPay);
+                break;
+            default:
+                break;
+        }
+
     }
 
     /**
@@ -322,16 +421,6 @@ public class ProductListWorker {
         MainActivity.textViewTotalDiscount.setText(String.format(Locale.ROOT, "%.2f", (double) totalDiscount / 100));
         MainActivity.textViewTotalSum.setText(String.format(Locale.ROOT, "%.2f", (double) totalSum / 100));
         MainActivity.textViewTotalCount.setText(String.valueOf(arrayProductList.size()));
-
-        switch (PrefWorker.getValues().productListLookCode) {
-            case LOOK_SUBWAY:
-                ((LinearLayout) layoutProductListLook.findViewById(R.id.layout_sum)).setOrientation(LinearLayout.VERTICAL);
-                MainActivity.textViewTotalSum.setText(String.format(Locale.FRENCH, "%.2f", (double) totalSum / 100));
-                break;
-            default:
-                break;
-        }
-
         MainActivity.textViewDebug.append("MSG_totalSumWithoutDiscount: " + totalSumWithoutDiscount + "\n");
         MainActivity.textViewDebug.append("MSG_totalDiscount: " + totalDiscount + "\n");
         MainActivity.textViewDebug.append("MSG_totalSum: " + totalSum + "\n");
@@ -347,68 +436,58 @@ public class ProductListWorker {
      */
     private ItemProductList parseData(String args) {
         ItemProductList item = new ItemProductList();
-        try {
-            int index = 0;
-            int nextSeparator;
-            int parametersAmount = 7;
+        int argAmount = 7;
+        // + 1 is tail string after last delimiter (cases, when last arg string will empty - "")
+        String[] argList = args.split(Character.toString((char) SYMBOL_SEPARATOR), argAmount + 1);
+        int argListLength = argList.length;
 
-            for (int parNum = 0; parNum < parametersAmount; parNum++) {
-                nextSeparator = args.indexOf(SYMBOL_SEPARATOR, index);
-                if (nextSeparator < 0) {
-                    item.setIndexPosition(-1);
-                    return item;
-                }
-                switch (parNum) {
-                    case 0:
-                        item.setIndexPosition(strToInt(args, index, nextSeparator));
-                        break;
-                    case 1:
-                        item.setCode(args.substring(index, nextSeparator));
-                        break;
-                    case 2:
-                        item.setDivisible(strToInt(args, index, nextSeparator));
-                        break;
-                    case 3:
-                        item.setCount(strToInt(args, index, nextSeparator));
-                        break;
-                    case 4:
-                        item.setPrice(strToLong(args, index, nextSeparator));
-                        break;
-                    case 5:
-                        item.setSum(strToLong(args, index, nextSeparator));
-                        break;
-                    case 6:
-                        item.setName(args.substring(index, nextSeparator));
-                        break;
-                    default:
-                        break;
-                }
-                index = nextSeparator + 1;
+        if (argListLength != (argAmount + 1)) {
+            item.setIndexPosition(-1);
+            return item;
+        }
+
+        for (int argNum = 0; argNum < argAmount; argNum++) {
+            switch (argNum) {
+                case 0:
+                    item.setIndexPosition(strToInt(argList[argNum]));
+                    break;
+                case 1:
+                    item.setCode(argList[argNum]);
+                    break;
+                case 2:
+                    item.setDivisible(strToInt(argList[argNum]));
+                    break;
+                case 3:
+                    item.setCount(strToInt(argList[argNum]));
+                    break;
+                case 4:
+                    item.setPrice(strToLong(argList[argNum]));
+                    break;
+                case 5:
+                    item.setSum(strToLong(argList[argNum]));
+                    break;
+                case 6:
+                    item.setName(argList[argNum]);
+                    break;
+                default:
+                    break;
             }
-        } catch (IndexOutOfBoundsException e) {
-            Log.e(TAG, "ERROR parseData: " + e);
-        } catch (Exception e) {
-            Log.e(TAG, "ERROR parseData: " + e);
         }
         return item;
     }
 
-    private Integer strToInt(String str, int beginIndex, int endIndex) {
+    private Integer strToInt(String str) {
         try {
-            return Integer.valueOf(str.substring(beginIndex, endIndex));
-        } catch (IndexOutOfBoundsException e) {
-            Log.e(TAG, "ERROR strToInt: " + e);
+            return Integer.valueOf(str);
         } catch (NumberFormatException e) {
             Log.e(TAG, "ERROR strToInt: " + e);
         }
         return 0;
     }
 
-    private Long strToLong(String str, int beginIndex, int endIndex) {
+    private Long strToLong(String str) {
         try {
-            return Long.valueOf(str.substring(beginIndex, endIndex));
-        } catch (IndexOutOfBoundsException e) {
-            Log.e(TAG, "ERROR strToLong: " + e);
+            return Long.valueOf(str);
         } catch (NumberFormatException e) {
             Log.e(TAG, "ERROR strToLong: " + e);
         }

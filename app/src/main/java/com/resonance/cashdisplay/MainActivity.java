@@ -54,6 +54,9 @@ import com.resonance.cashdisplay.utils.ImageUtils;
 import java.io.File;
 
 import static com.resonance.cashdisplay.eth.EthernetSettings.TIME_CHECK_DHCP_ENABLE;
+import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_BASKET;
+import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_DMART;
+import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_SUBWAY;
 
 public class MainActivity extends Activity {
 
@@ -306,13 +309,13 @@ public class MainActivity extends Activity {
 
         int resource;
         switch (lookCode) {
-            case 0:
+            case LOOK_BASKET:
                 resource = R.layout.layout_product_list_look_0;
                 break;
-            case 1:
+            case LOOK_DMART:
                 resource = R.layout.layout_product_list_look_1;
                 break;
-            case 2:
+            case LOOK_SUBWAY:
                 resource = R.layout.layout_product_list_look_2;
                 break;
             default:
