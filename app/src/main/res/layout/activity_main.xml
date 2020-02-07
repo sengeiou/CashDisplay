@@ -258,7 +258,7 @@
             android:visibility="visible">
 
             <ScrollView
-                android:id="@+id/scrollview"
+                android:id="@+id/scrollview_debug"
                 android:layout_width="500dp"
                 android:layout_height="300dp"
                 android:layout_gravity="center_horizontal|top"

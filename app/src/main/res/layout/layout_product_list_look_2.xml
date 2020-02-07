@@ -34,7 +34,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/card_default"
                 android:textColor="@color/text_subway"
-                android:textSize="38sp" />
+                android:textSize="38sp"
+                android:visibility="invisible"/>
 
             <Space
                 android:layout_width="match_parent"
@@ -51,6 +52,7 @@
             android:visibility="gone" />
 
         <FrameLayout
+            android:id="@+id/layout_products"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="3">
@@ -92,7 +94,7 @@
                             android:text="Передплачені поїздки"
                             android:textColor="@color/white"
                             android:textSize="@dimen/item_name_large_2"
-                            android:textStyle="bold" />
+                            android:fontFamily="@font/proba_nav2_bold"/>
 
                         <Space
                             android:layout_width="match_parent"
@@ -130,7 +132,7 @@
 
                         <ImageView
                             android:layout_width="match_parent"
-                            android:layout_height="1dp"
+                            android:layout_height="1px"
                             android:background="@color/text_subway" />
 
                         <Space
@@ -173,9 +175,11 @@
                             android:layout_weight="1"></Space>
 
                         <ImageView
+                            android:id="@+id/imageview_item_extra_bottom_line"
                             android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/text_subway" />
+                            android:layout_height="1px"
+                            android:background="@color/text_subway"
+                            android:visibility="gone"/>
 
                         <Space
                             android:layout_width="match_parent"

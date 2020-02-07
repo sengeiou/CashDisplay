@@ -428,8 +428,6 @@ public class HttpServer {
     }
 
     private boolean shouldPass(AsyncHttpServerRequest req, AsyncHttpServerResponse res) {
-        if ((httpConfig.userName.equals("") && httpConfig.password.equals("")))
-            return true;
         if (isStopped) {
             Log.w(TAG, "Сервер остановлен!!! (method shouldPass, condition isStopped).");
             res.code(503);
@@ -451,28 +449,20 @@ public class HttpServer {
         String authHeader = req.getHeaders().get("Authorization");
 
         if (!isAuth && !TextUtils.isEmpty(authHeader)) {
-
             String[] authData = new String(Base64.decode(authHeader.replace("Basic", "").trim(), Base64.DEFAULT))
-                    .split(":");
+                    .split(":", 2);         // 2 = 1 login + 1 password
 
-            switch (authData.length) {
-                case 1:                                                     // only login was typed
-                    if (httpConfig.userNameTestMode.equals(authData[0])) {  // tester name
-                        if (req.getPath().equals("/")) {       // only if request is from loginCallback)
-                            MainActivity.testMode = true;
-                            Intent intent = new Intent(MainActivity.CHANGE_SETTINGS);
-                            MainActivity.context.sendBroadcast(intent);
-                        }
-                        return true;
-                    }
-                    return httpConfig.userName.equals(authData[0])
-                            && httpConfig.password.equals("");
-                case 2:                                             // login and password were typed
-                    return (httpConfig.userName.equals(authData[0]) && httpConfig.password.equals(authData[1]))
-                            || (httpConfig.superUser.equals(authData[0]) && httpConfig.superPassword.equals(authData[1]));
-                default:                    // nor login nor password were typed (or typed mess data)
-                    return false;
+            if (httpConfig.userNameTestMode.equals(authData[0])) {  // tester name
+                if (req.getPath().equals("/")) {       // only if request is from loginCallback)
+                    MainActivity.testMode = true;
+                    Intent intent = new Intent(MainActivity.CHANGE_SETTINGS);
+                    MainActivity.context.sendBroadcast(intent);
+                }
+                return true;
             }
+
+            return (httpConfig.userName.equals(authData[0]) && httpConfig.password.equals(authData[1]))
+                    || (httpConfig.superUser.equals(authData[0]) && httpConfig.superPassword.equals(authData[1]));
         }
         return isAuth;
     }

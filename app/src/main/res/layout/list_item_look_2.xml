@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/list_item_background_grey"
+    android:background="@android:color/transparent"
     android:orientation="vertical">
 
     <LinearLayout

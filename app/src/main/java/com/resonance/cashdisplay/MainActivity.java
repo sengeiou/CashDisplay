@@ -29,6 +29,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -100,16 +101,17 @@ public class MainActivity extends Activity {
 
     public static View layoutProductListLook = null;    // represent layout_shopping_list_look_x.xml, where x - number of desired look
     // next block of views must be in every layout_shopping_list_look_x.xml to provide compability
+    public static LinearLayout layoutTotal;
     public static TextView textViewTotalCount;
     public static TextView textViewTotalSumWithoutDiscount;    // calculated value
     public static TextView textViewTotalDiscount;           // calculated value
     public static TextView textViewTotalSum;             // value for this view received from COM port
     public static ListView listViewProducts;
     public static TextView textViewDebug;
-    public static ScrollView scrollView;
+    public static ScrollView scrollViewDebug;
     public static ImageView imageViewProduct;
 
-    TextView tvVersion;
+    TextView textViewVersion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,8 +178,8 @@ public class MainActivity extends Activity {
         imageSdCardError = (ImageView) findViewById(R.id.imageview_sdcard_error);
         imageSdCardError.setVisibility(View.INVISIBLE);
 
-        tvVersion = (TextView) findViewById(R.id.textview_version);
-        tvVersion.setText("build :" + BuildConfig.VERSION_CODE);
+        textViewVersion = (TextView) findViewById(R.id.textview_version);
+        textViewVersion.setText("build :" + BuildConfig.VERSION_CODE);
         viewModel.setStatusConnection("ініціалізація системи");
         viewModel.setStatusConnection2("");
 
@@ -198,7 +200,7 @@ public class MainActivity extends Activity {
 
         textViewDebug = (TextView) findViewById(R.id.textview_debug);
         textViewDebug.setMovementMethod(new ScrollingMovementMethod());
-        scrollView = (ScrollView) findViewById(R.id.scrollview);
+        scrollViewDebug = (ScrollView) findViewById(R.id.scrollview_debug);
 
         registerReceiver(changeSettings, new IntentFilter(CHANGE_SETTINGS));
         setBackgroundScreen();
@@ -279,8 +281,8 @@ public class MainActivity extends Activity {
             findViewById(R.id.textview_cashbox_not_work).setVisibility(View.VISIBLE);
             findViewById(R.id.textview_emul2line_indicator_1).setVisibility(View.VISIBLE);
             findViewById(R.id.textview_emul2line_indicator_2).setVisibility(View.VISIBLE);
-            scrollView.setVisibility(View.VISIBLE);
-            new Handler().post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+            scrollViewDebug.setVisibility(View.VISIBLE);
+            new Handler().post(() -> scrollViewDebug.fullScroll(View.FOCUS_DOWN));
 
         }
         relativeLayout[CONTEXT_CONNECT].invalidate();
@@ -332,6 +334,7 @@ public class MainActivity extends Activity {
         productListWorker.initUniqueComponents();
 
         listViewProducts = (ListView) layoutProductListLook.findViewById(R.id.listview_products);
+        layoutTotal = layoutProductListLook.findViewById(R.id.layout_total);
         textViewTotalCount = (TextView) layoutProductListLook.findViewById(R.id.textview_total_count);
         textViewTotalSumWithoutDiscount = (TextView) layoutProductListLook.findViewById(R.id.textview_total_sum_without_discount);
         textViewTotalDiscount = (TextView) layoutProductListLook.findViewById(R.id.textview_total_discount);
