@@ -12,35 +12,39 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="6"
+        android:layout_weight="700"
         android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/layout_card_info"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="106"
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2" />
+                android:layout_weight="200" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textview_card_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/proba_nav2_regular"
+                android:lineSpacingMultiplier="1.18"
                 android:text="@string/card_default"
                 android:textColor="@color/text_subway"
-                android:textSize="38sp"
-                android:visibility="invisible"/>
+                android:textSize="31sp"
+                android:visibility="invisible"
+                tools:textColor="@color/green500"
+                tools:visibility="visible" />
 
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="3" />
+                android:layout_weight="340" />
 
         </LinearLayout>
 
@@ -52,17 +56,17 @@
             android:visibility="gone" />
 
         <FrameLayout
-            android:id="@+id/layout_products"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3">
+            android:layout_weight="300">
 
             <LinearLayout
                 android:id="@+id/layout_items_block"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:visibility="invisible">
+                android:visibility="invisible"
+                tools:visibility="visible">
 
                 <Space
                     android:layout_width="0dp"
@@ -72,49 +76,54 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="17"
+                    android:layout_weight="18"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:id="@+id/layout_item"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="2"
+                        android:layout_weight="43"
                         android:orientation="vertical">
 
                         <Space
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
-                            android:layout_weight="1"></Space>
+                            android:layout_weight="0.8"></Space>
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/textview_item_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/proba_nav2_bold"
                             android:text="Передплачені поїздки"
-                            android:textColor="@color/white"
+                            android:textColor="@color/text_subway"
                             android:textSize="@dimen/item_name_large_2"
-                            android:fontFamily="@font/proba_nav2_bold"/>
+                            tools:textColor="@color/green500" />
 
                         <Space
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
-                            android:layout_weight="1"></Space>
+                            android:layout_weight="1.2"></Space>
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/proba_nav2_regular"
                             android:text="@string/trip_count"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/secondary_text_2" />
+                            android:textColor="@color/text_subway"
+                            android:textSize="@dimen/secondary_text_2"
+                            tools:textColor="@color/green500" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/textview_item_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/proba_nav2_bold"
                             android:text="50"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/item_name_large_2" />
+                            android:textColor="@color/text_subway"
+                            android:textSize="@dimen/item_name_large_2"
+                            tools:textColor="@color/green500" />
 
                         <Space
                             android:layout_width="match_parent"
@@ -126,9 +135,10 @@
                         android:id="@+id/layout_item_extra"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="2"
+                        android:layout_weight="57"
                         android:orientation="vertical"
-                        android:visibility="gone">
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
                         <ImageView
                             android:layout_width="match_parent"
@@ -138,36 +148,41 @@
                         <Space
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
-                            android:layout_weight="1"></Space>
+                            android:layout_weight="0.8"></Space>
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/textview_item_extra_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Проїзний на квітень 2020"
-                            android:textColor="@color/white"
+                            android:fontFamily="@font/proba_nav2_bold"
+                            android:textColor="@color/text_subway"
                             android:textSize="@dimen/item_name_large_2"
-                            android:textStyle="bold" />
+                            tools:textColor="@color/green500" />
 
                         <Space
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
-                            android:layout_weight="1"></Space>
+                            android:layout_weight="1.2"></Space>
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/trip_count"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/secondary_text_2" />
+                            android:textColor="@color/text_subway"
+                            android:fontFamily="@font/proba_nav2_regular"
+                            android:textSize="@dimen/secondary_text_2"
+                            tools:textColor="@color/green500" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/textview_item_extra_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="50"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/item_name_large_2" />
+                            android:fontFamily="@font/proba_nav2_bold"
+                            android:textColor="@color/text_subway"
+                            android:textSize="@dimen/item_name_large_2"
+                            tools:textColor="@color/green500" />
 
                         <Space
                             android:layout_width="match_parent"
@@ -179,7 +194,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="1px"
                             android:background="@color/text_subway"
-                            android:visibility="gone"/>
+                            android:visibility="gone" />
 
                         <Space
                             android:layout_width="match_parent"
@@ -193,25 +208,46 @@
                         android:id="@+id/layout_to_pay"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="1.5"
+                        android:layout_weight="23"
                         android:orientation="vertical"
-                        android:visibility="gone">
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/proba_nav2_regular"
                             android:text="@string/to_pay"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/secondary_text_2" />
+                            android:textColor="@color/text_subway"
+                            android:textSize="@dimen/secondary_text_2"
+                            tools:textColor="@color/green500" />
 
-                        <TextView
-                            android:id="@+id/textview_items_to_pay_sum"
+                        <LinearLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="50"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/item_name_large_2" />
+                            android:layout_height="wrap_content">
 
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/textview_items_to_pay_sum"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/proba_nav2_bold"
+                                android:text="325,00"
+                                android:textColor="@color/text_subway"
+                                android:textSize="@dimen/item_name_large_2"
+                                tools:textColor="@color/green500" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/proba_nav2_semi_bold"
+                                android:gravity="bottom|end"
+                                android:paddingStart="15dp"
+                                android:text="₴"
+                                android:textColor="@color/text_subway"
+                                android:textSize="@dimen/secondary_text_2"
+                                tools:textColor="@color/green500" />
+
+                        </LinearLayout>
                     </LinearLayout>
 
                 </LinearLayout>
@@ -233,7 +269,7 @@
                     android:layout_weight="1"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.4"
@@ -242,7 +278,7 @@
                         android:textColor="@color/text_subway"
                         android:textSize="@dimen/list_header_text_look_2" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="2.5"
@@ -251,7 +287,7 @@
                         android:textColor="@color/text_subway"
                         android:textSize="@dimen/list_header_text_look_2" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1.2"
@@ -308,7 +344,7 @@
                         android:visibility="gone" />
 
                     <!--        here will be value received from COM port, already with discount -->
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/textview_to_pay"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -319,7 +355,7 @@
                         android:textSize="@dimen/total_text_look_2"
                         android:textStyle="bold" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/textview_total_sum"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -330,7 +366,7 @@
                         android:textSize="@dimen/total_text_num_look_2"
                         android:textStyle="bold" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="bottom|end"
@@ -348,22 +384,25 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="115"
         android:orientation="horizontal">
 
         <Space
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="20" />
+            android:layout_weight="24" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/textview_date_time"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:fontFamily="@font/proba_nav2_semi_bold"
             android:gravity="center"
-            android:text="-- ------- ---- --:--"
+            android:text="--.--.---- --:--"
             android:textColor="@color/text_subway"
-            android:textSize="42sp" />
+            android:textSize="38sp"
+            tools:text="01.01.2020 00:00"
+            tools:textColor="@color/green500" />
 
         <Space
             android:layout_width="wrap_content"
