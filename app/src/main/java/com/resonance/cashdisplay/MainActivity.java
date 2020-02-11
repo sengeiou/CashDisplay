@@ -35,7 +35,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
 
 import com.crashlytics.android.Crashlytics;
@@ -101,7 +100,7 @@ public class MainActivity extends Activity {
 
     public static View layoutProductListLook = null;    // represent layout_shopping_list_look_x.xml, where x - number of desired look
     // next block of views must be in every layout_shopping_list_look_x.xml to provide compability
-    public static ConstraintLayout layoutTotal;
+    public static ViewGroup layoutTotal;
     public static TextView textViewTotalCount;
     public static TextView textViewTotalSumWithoutDiscount;    // calculated value
     public static TextView textViewTotalDiscount;           // calculated value

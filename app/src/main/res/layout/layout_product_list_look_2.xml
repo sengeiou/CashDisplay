@@ -374,7 +374,8 @@
                             android:textColor="@color/text_subway"
                             android:textSize="@dimen/secondary_text_2"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent" />
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/textview_total_sum"
@@ -385,7 +386,7 @@
                             android:text="325,00"
                             android:textColor="@color/text_subway"
                             android:textSize="@dimen/item_name_large_2"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintBaseline_toBaselineOf="@+id/textview_to_pay"
                             app:layout_constraintStart_toEndOf="@+id/textview_to_pay" />
 
                         <androidx.appcompat.widget.AppCompatTextView
@@ -396,7 +397,7 @@
                             android:text="₴"
                             android:textColor="@color/text_subway"
                             android:textSize="@dimen/secondary_text_2"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintBaseline_toBaselineOf="@+id/textview_to_pay"
                             app:layout_constraintStart_toEndOf="@+id/textview_total_sum" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
