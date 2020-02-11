@@ -174,7 +174,7 @@ public class ProductListWorker {
                     textViewCardNumber.setVisibility(View.VISIBLE);
 
                     if (argList.length == argAmount) {
-                        if (argList[0].equals("balance")) {                   // "payment" or "balance" argument
+                        if (argList[0].equals("balance")) {                   // ### "payment" or "balance" argument ###
                             textViewCardNumber.setText(R.string.card_balance_num);
                             layoutToPay.setVisibility(View.GONE);             // for 1-2 items mode
                             layoutTotal.setVisibility(View.GONE);             // for list mode
@@ -185,7 +185,7 @@ public class ProductListWorker {
                             layoutTotal.setVisibility(View.VISIBLE);          // for list mode
                             imageViewItemExtraBottomLine.setVisibility(View.VISIBLE);
                         }
-                        textViewCardNumber.append(argList[1]);                // card number argument
+                        textViewCardNumber.append(argList[1]);                // ### card number argument ###
                     } else
                         textViewCardNumber.setText(R.string.card_default);    // for insurance (wrong args for some reason)
                 }
@@ -442,7 +442,7 @@ public class ProductListWorker {
                     new Handler().postDelayed(() -> {
                         doInstantly = true;
                         handleUniqueLooks();
-                    }, 50);
+                    }, 75);
                     return;
                 }
                 doInstantly = false;

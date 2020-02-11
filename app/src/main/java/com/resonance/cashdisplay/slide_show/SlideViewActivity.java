@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -50,9 +51,6 @@ public class SlideViewActivity extends AppCompatActivity {
 
     private Thread thread = null;
 
-
-
-
     /**
      * Some older devices needs a small delay between UI widget updates
      * and a change of the status and navigation bar.
@@ -84,7 +82,6 @@ public class SlideViewActivity extends AppCompatActivity {
             hide();
         }
     };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,14 +115,11 @@ public class SlideViewActivity extends AppCompatActivity {
     }
 
     BroadcastReceiver finishAlert = new BroadcastReceiver() {
-
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            StopSlideShow();
+            stopSlideShow();
         }
     };
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -134,20 +128,46 @@ public class SlideViewActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(mLayoutManager);
 
         // recyclerView.setItemAnimator(new DefaultItemAnimator());
-         recyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
 
         this.registerReceiver(this.finishAlert, new IntentFilter(FINISH_ALERT));
         delayedHide(1);
-        StartSlideShow();
+        startSlideShow();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        hideBarNavigation();
     }
 
     @Override
     public void onDestroy() {
-
         super.onDestroy();
         this.unregisterReceiver(finishAlert);
     }
 
+    /**
+     * Hide navigation bar
+     */
+    private void hideBarNavigation() {
+        runOnUiThread(() -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                View decorView = getWindow().getDecorView();
+                decorView.setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                                | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                                | View.SCREEN_STATE_ON
+                                | View.SYSTEM_UI_FLAG_LOW_PROFILE
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE);
+                decorView.invalidate();
+            }
+        });
+    }
 
     private void hide() {
         // Hide UI first
@@ -171,14 +191,15 @@ public class SlideViewActivity extends AppCompatActivity {
     }
     /*******************************************************************************************/
 
-    public void StartSlideShow(){
+    public void startSlideShow(){
         prepareSlideData();
     }
-    public void StopSlideShow(){
+
+    public void stopSlideShow(){
         Intent intent = new Intent(VideoSlideService.SLIDE_STOP_PLAY);
         MainActivity.context.sendBroadcast(intent);
 
-        Log.i(TAG, "StopSlideShow ");
+        Log.i(TAG, "stopSlideShow ");
         bShowSlide = false;
         this.finish();
     }
@@ -198,7 +219,7 @@ public class SlideViewActivity extends AppCompatActivity {
         {
             Log.w(TAG, "Источник слайдов не найден: " + dir.getName());
             showToast("Источник слайдов не найден: " + ExtSDSource.getExternalSdCardPath()+SLIDE_URI);
-            StopSlideShow();
+            stopSlideShow();
         }
 
         if (slideFilesArray==null) {
@@ -229,7 +250,7 @@ public class SlideViewActivity extends AppCompatActivity {
         if (mAdapter.getItemCount()>0) {
             ShowSlide();
         }else {
-           StopSlideShow();
+           stopSlideShow();
         }
 
     }
@@ -287,7 +308,7 @@ public class SlideViewActivity extends AppCompatActivity {
                     StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().timeSlideImage);
                    // Log.w(TAG, "2 Time to show  : " + PreferenceParams.getValues().sTimeSlideImage+" : "+PreferenceParams.getValues().sVideoOrSlide );
                 };
-            StopSlideShow();
+            stopSlideShow();
             }
 
     };

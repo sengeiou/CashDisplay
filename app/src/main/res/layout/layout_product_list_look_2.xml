@@ -3,6 +3,7 @@
 <!-- Look for Metro (Kiev subway) -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -66,7 +67,7 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:visibility="invisible"
-                tools:visibility="visible">
+                tools:visibility="gone">
 
                 <Space
                     android:layout_width="0dp"
@@ -83,7 +84,7 @@
                         android:id="@+id/layout_item"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="43"
+                        android:layout_weight="48"
                         android:orientation="vertical">
 
                         <Space
@@ -96,6 +97,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/proba_nav2_bold"
+                            android:singleLine="true"
                             android:text="Передплачені поїздки"
                             android:textColor="@color/text_subway"
                             android:textSize="@dimen/item_name_large_2"
@@ -135,7 +137,7 @@
                         android:id="@+id/layout_item_extra"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="57"
+                        android:layout_weight="50"
                         android:orientation="vertical"
                         android:visibility="gone"
                         tools:visibility="visible">
@@ -143,7 +145,7 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="1px"
-                            android:background="@color/text_subway" />
+                            android:background="@drawable/gradient_horizontal_white" />
 
                         <Space
                             android:layout_width="match_parent"
@@ -154,8 +156,9 @@
                             android:id="@+id/textview_item_extra_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Проїзний на квітень 2020"
                             android:fontFamily="@font/proba_nav2_bold"
+                            android:singleLine="true"
+                            android:text="Проїзний на квітень 2020"
                             android:textColor="@color/text_subway"
                             android:textSize="@dimen/item_name_large_2"
                             tools:textColor="@color/green500" />
@@ -168,9 +171,9 @@
                         <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/proba_nav2_regular"
                             android:text="@string/trip_count"
                             android:textColor="@color/text_subway"
-                            android:fontFamily="@font/proba_nav2_regular"
                             android:textSize="@dimen/secondary_text_2"
                             tools:textColor="@color/green500" />
 
@@ -178,8 +181,8 @@
                             android:id="@+id/textview_item_extra_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="50"
                             android:fontFamily="@font/proba_nav2_bold"
+                            android:text="50"
                             android:textColor="@color/text_subway"
                             android:textSize="@dimen/item_name_large_2"
                             tools:textColor="@color/green500" />
@@ -193,8 +196,9 @@
                             android:id="@+id/imageview_item_extra_bottom_line"
                             android:layout_width="match_parent"
                             android:layout_height="1px"
-                            android:background="@color/text_subway"
-                            android:visibility="gone" />
+                            android:background="@drawable/gradient_horizontal_white"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
 
                         <Space
                             android:layout_width="match_parent"
@@ -208,7 +212,7 @@
                         android:id="@+id/layout_to_pay"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="23"
+                        android:layout_weight="25.5"
                         android:orientation="vertical"
                         android:visibility="gone"
                         tools:visibility="visible">
@@ -260,19 +264,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:visibility="invisible">
+                android:visibility="invisible"
+                tools:visibility="visible">
 
                 <LinearLayout
                     android:id="@+id/list_header"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_weight="51"
                     android:orientation="horizontal">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.4"
+                        android:fontFamily="@font/proba_nav2_regular"
                         android:gravity="center"
                         android:text="@string/number_sign"
                         android:textColor="@color/text_subway"
@@ -282,6 +288,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="2.5"
+                        android:fontFamily="@font/proba_nav2_regular"
                         android:gravity="center"
                         android:text="@string/kind_of_service"
                         android:textColor="@color/text_subway"
@@ -291,6 +298,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1.2"
+                        android:fontFamily="@font/proba_nav2_regular"
                         android:gravity="center"
                         android:text="@string/trip_count"
                         android:textColor="@color/text_subway"
@@ -304,76 +312,94 @@
                     android:layout_height="1px"
                     android:background="@color/text_subway" />
 
-                <ListView
-                    android:id="@+id/listview_products"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="10"
-                    android:choiceMode="singleChoice"
-                    android:clickable="true"
-                    tools:listitem="@layout/list_item_look_2" />
-
-                <!--    total for product list (also there is layout_to_pay with the same value - for 1 or 2 product items) -->
                 <LinearLayout
-                    android:id="@+id/layout_total"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="2"
-                    android:gravity="end"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
+                    android:layout_weight="635"
+                    android:orientation="vertical">
 
-                    <!--    dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
-                    <TextView
-                        android:id="@+id/textview_total_discount"
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
+                    <ListView
+                        android:id="@+id/listview_products"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="508"
+                        android:choiceMode="singleChoice"
+                        android:clickable="true"
+                        tools:listitem="@layout/list_item_look_2" />
 
-                    <!--     dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
-                    <TextView
-                        android:id="@+id/textview_total_sum_without_discount"
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
+                    <!--    total for product list (also there is layout_to_pay with the same value - for 1 or 2 product items) -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/layout_total"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="127"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
-                    <TextView
-                        android:id="@+id/textview_total_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
+                        <!--    dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
+                        <TextView
+                            android:id="@+id/textview_total_discount"
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
 
-                    <!--        here will be value received from COM port, already with discount -->
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/textview_to_pay"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="bottom|end"
-                        android:paddingEnd="25dp"
-                        android:text="@string/to_pay_colon"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/total_text_look_2"
-                        android:textStyle="bold" />
+                        <!--     dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
+                        <TextView
+                            android:id="@+id/textview_total_sum_without_discount"
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/textview_total_sum"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical|end"
-                        android:paddingEnd="15dp"
-                        android:text="@string/tools_dummy_6_dot_2"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/total_text_num_look_2"
-                        android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/textview_total_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="bottom|end"
-                        android:paddingEnd="25dp"
-                        android:text="₴"
-                        android:textColor="@color/text_subway"
-                        android:textSize="54sp" />
+                        <!--        here will be value received from COM port, already with discount -->
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/textview_to_pay"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/proba_nav2_regular"
+                            android:paddingEnd="15dp"
+                            android:text="@string/to_pay_colon"
+                            android:textColor="@color/text_subway"
+                            android:textSize="@dimen/secondary_text_2"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/textview_total_sum"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/proba_nav2_bold"
+                            android:paddingEnd="15dp"
+                            android:text="325,00"
+                            android:textColor="@color/text_subway"
+                            android:textSize="@dimen/item_name_large_2"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/textview_to_pay" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/appCompatTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/proba_nav2_semi_bold"
+                            android:text="₴"
+                            android:textColor="@color/text_subway"
+                            android:textSize="@dimen/secondary_text_2"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/textview_total_sum" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </LinearLayout>
 
             </LinearLayout>

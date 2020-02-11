@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -37,7 +38,7 @@ public class VideoActivity extends AppCompatActivity {
     private static int seekVideoPosition = 0;
     private static String[] videoFilesArray;//массив со списком видео файлов
     private static int indexPlaingFile = 0;
-    private final String[] fileExtension = new String[]{"AVI","avi", "mp4", "MP4"};
+    private final String[] fileExtension = new String[]{"AVI", "avi", "mp4", "MP4"};
     private static String mediaDir = "";
 
     private static final int UI_ANIMATION_DELAY = 300;
@@ -60,7 +61,7 @@ public class VideoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-       // Log.i(TAG, "onCreate");
+        // Log.i(TAG, "onCreate");
         setContentView(R.layout.activity_video);
         delayedHide(1);
 
@@ -84,8 +85,8 @@ public class VideoActivity extends AppCompatActivity {
         String tmpFileContinuePlay = "";
         Bundle b = getIntent().getExtras();
 
-        if (b!=null) {
-           // Log.i(TAG, "onCreate savedInstanceState!= null");
+        if (b != null) {
+            // Log.i(TAG, "onCreate savedInstanceState!= null");
             seekVideoPosition = b.getInt("seekVideoPosition");//начальная позиция проигрывания видео
             tmpFileContinuePlay = b.getString("VideoFileToContinuePlay");
         }
@@ -93,46 +94,64 @@ public class VideoActivity extends AppCompatActivity {
         startPlay();
     }
 
-
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
+    protected void onStart() {
+        super.onStart();
+        hideBarNavigation();
     }
 
     @Override
     public void onDestroy() {
-
         super.onDestroy();
         this.unregisterReceiver(finishAlert);
     }
 
+    /**
+     * Hide navigation bar
+     */
+    private void hideBarNavigation() {
+        runOnUiThread(() -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                View decorView = getWindow().getDecorView();
+                decorView.setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                                | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                                | View.SCREEN_STATE_ON
+                                | View.SYSTEM_UI_FLAG_LOW_PROFILE
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE);
+                decorView.invalidate();
+            }
+        });
+    }
+
     BroadcastReceiver finishAlert = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent)
-        {
+        public void onReceive(Context context, Intent intent) {
             stopPlay();
         }
     };
 
-    MediaPlayer.OnCompletionListener mVideoViewCompletionListener = new MediaPlayer.OnCompletionListener()
-    {
+    MediaPlayer.OnCompletionListener mVideoViewCompletionListener = new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer arg0) {
             seekVideoPosition = 0;
-           // Log.i(TAG, "videoFilesArray.length " +videoFilesArray.length);
-            if (videoFilesArray.length>0) {
+            // Log.i(TAG, "videoFilesArray.length " +videoFilesArray.length);
+            if (videoFilesArray.length > 0) {
                 indexPlaingFile++;
-                indexPlaingFile %= videoFilesArray.length ;
+                indexPlaingFile %= videoFilesArray.length;
             }
-            Log.i(TAG, "Проигрывание видео завершено " );
+            Log.i(TAG, "Проигрывание видео завершено ");
             if (videoView != null)
                 videoView.stopPlayback();
             startPlay();
         }
     };
 
-    MediaPlayer.OnPreparedListener mVideoViewPreparedListener = new MediaPlayer.OnPreparedListener()
-    {
+    MediaPlayer.OnPreparedListener mVideoViewPreparedListener = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
             Log.i(TAG, "Медиа файл загружен и готов для воспроизведения");
@@ -146,46 +165,38 @@ public class VideoActivity extends AppCompatActivity {
         }
     };
 
-    MediaPlayer.OnErrorListener mVideoViewErrorListener = new MediaPlayer.OnErrorListener()
-    {
+    MediaPlayer.OnErrorListener mVideoViewErrorListener = new MediaPlayer.OnErrorListener() {
         @Override
         public boolean onError(MediaPlayer mp, int what, int extra) {
 
-            if (what==MediaPlayer.MEDIA_ERROR_UNKNOWN)
-                showToast("Не підтримується формат медiа файлу : "+videoFilesArray[indexPlaingFile]);
+            if (what == MediaPlayer.MEDIA_ERROR_UNKNOWN)
+                showToast("Не підтримується формат медiа файлу : " + videoFilesArray[indexPlaingFile]);
             else
-                showToast("Помилка завантаження медіа файлу : "+videoFilesArray[indexPlaingFile]);
-            Log.i(TAG, "Ошибка загрузки медиа файла: "+videoFilesArray[indexPlaingFile]+" what:"+what+", extra:"+extra);
+                showToast("Помилка завантаження медіа файлу : " + videoFilesArray[indexPlaingFile]);
+            Log.i(TAG, "Ошибка загрузки медиа файла: " + videoFilesArray[indexPlaingFile] + " what:" + what + ", extra:" + extra);
             indexPlaingFile++;
-            indexPlaingFile %= videoFilesArray.length ;
+            indexPlaingFile %= videoFilesArray.length;
             seekVideoPosition = 0;
 
 
-
-            if ((indexPlaingFile==0)&&(videoFilesArray.length==1)) {
+            if ((indexPlaingFile == 0) && (videoFilesArray.length == 1)) {
                 updateListMediaFiles("");
                 stopPlay();
-            }
-            else
+            } else
                 startPlay();
 
             return true;
         }
     };
 
-
-
-
-    private void updateListMediaFiles(String FileToContinue)
-    {
+    private void updateListMediaFiles(String FileToContinue) {
         File dir = new File(this.mediaDir);
-        if(dir.exists())
-        {
+        if (dir.exists()) {
             indexPlaingFile = 0;
-            videoFilesArray = dir.list(new FileOperation.FileExtensionFilter(fileExtension[0],fileExtension[1], fileExtension[2]));
+            videoFilesArray = dir.list(new FileOperation.FileExtensionFilter(fileExtension[0], fileExtension[1], fileExtension[2]));
             boolean isFound = false;
-            for(int i=0;i<videoFilesArray.length;i++){
-                if (videoFilesArray[i].equals(FileToContinue)){
+            for (int i = 0; i < videoFilesArray.length; i++) {
+                if (videoFilesArray[i].equals(FileToContinue)) {
                     indexPlaingFile = i;
                     isFound = true;
                     break;
@@ -194,9 +205,8 @@ public class VideoActivity extends AppCompatActivity {
             if (!isFound)
                 seekVideoPosition = 0;
 
-            Log.i(TAG, "Dir VIDEO files: " +videoFilesArray.length+" dir:"+mediaDir);
-        }else
-        {
+            Log.i(TAG, "Dir VIDEO files: " + videoFilesArray.length + " dir:" + mediaDir);
+        } else {
             seekVideoPosition = 0;
             Log.e(TAG, "Источник VIDEO не найден: " + this.mediaDir);
             showToast("Источник VIDEO не найден: " + this.mediaDir);
@@ -205,63 +215,61 @@ public class VideoActivity extends AppCompatActivity {
 
 
     private void startPlay() {
-       // Log.d(TAG, "StartPlay");
-        if (videoFilesArray==null) {
+        // Log.d(TAG, "StartPlay");
+        if (videoFilesArray == null) {
             stopPlay();
             return;
         }
 
-            try {
-                if (videoFilesArray.length > 0)
-                {
-                    if ((indexPlaingFile < videoFilesArray.length) && (indexPlaingFile >= 0)) {
-                        if (videoView != null) {
-                            Log.d(TAG, "2 StartPlay: " + videoView.isPlaying());
-                            if (!videoView.isPlaying()) {
-                                File fileTmp = new File(mediaDir + videoFilesArray[indexPlaingFile]);
-                                if (fileTmp.exists()) {
-                                    if (!FileOperation.isFileLocked(fileTmp)) {
-                                        Log.d(TAG, "Start play video: " + mediaDir + videoFilesArray[indexPlaingFile]);
-                                        Uri uriVideo = Uri.parse(mediaDir + videoFilesArray[indexPlaingFile]);
-                                        videoView.setVideoURI(uriVideo);
-                                        videoView.seekTo(seekVideoPosition);
-                                    }
-                                } else {
-                                    stopPlay();
+        try {
+            if (videoFilesArray.length > 0) {
+                if ((indexPlaingFile < videoFilesArray.length) && (indexPlaingFile >= 0)) {
+                    if (videoView != null) {
+                        Log.d(TAG, "2 StartPlay: " + videoView.isPlaying());
+                        if (!videoView.isPlaying()) {
+                            File fileTmp = new File(mediaDir + videoFilesArray[indexPlaingFile]);
+                            if (fileTmp.exists()) {
+                                if (!FileOperation.isFileLocked(fileTmp)) {
+                                    Log.d(TAG, "Start play video: " + mediaDir + videoFilesArray[indexPlaingFile]);
+                                    Uri uriVideo = Uri.parse(mediaDir + videoFilesArray[indexPlaingFile]);
+                                    videoView.setVideoURI(uriVideo);
+                                    videoView.seekTo(seekVideoPosition);
                                 }
+                            } else {
+                                stopPlay();
                             }
                         }
-                    } else {
-                        indexPlaingFile = 0;
                     }
                 } else {
-                    Log.i(TAG, "Видео файлов:" + videoFilesArray.length + ", тек. файл: " + indexPlaingFile+" - воспроизведение отложено");
-                    stopPlay();
+                    indexPlaingFile = 0;
                 }
-            }catch (Exception e){
+            } else {
+                Log.i(TAG, "Видео файлов:" + videoFilesArray.length + ", тек. файл: " + indexPlaingFile + " - воспроизведение отложено");
                 stopPlay();
             }
-
+        } catch (Exception e) {
+            stopPlay();
+        }
 
 
     }
 
     public void stopPlay() {
-       // Log.d(TAG, "StopPlay");
-        if(videoView!=null) {
+        // Log.d(TAG, "StopPlay");
+        if (videoView != null) {
             if (videoView.isPlaying()) {
                 seekVideoPosition = videoView.getCurrentPosition();//получим позицию воспроизведения
                 //  Log.w(TAG, "ОСТАНОВКА ВИДЕО");
                 videoView.stopPlayback();
-            }else
+            } else
                 seekVideoPosition = 0;
-                //передадим данные для последующего воспроизведения видео
-                Intent intent = new Intent(VideoSlideService.VIDEO_STOP_PLAY);
-                Bundle mBundle = new Bundle();
-                mBundle.putInt("seekVideoPosition", seekVideoPosition);
-                mBundle.putString("VideoFileToContinuePlay", ((videoFilesArray!=null)?(videoFilesArray.length>0?videoFilesArray[indexPlaingFile]:""):""));
-                intent.putExtras(mBundle);
-                MainActivity.context.sendBroadcast(intent);
+            //передадим данные для последующего воспроизведения видео
+            Intent intent = new Intent(VideoSlideService.VIDEO_STOP_PLAY);
+            Bundle mBundle = new Bundle();
+            mBundle.putInt("seekVideoPosition", seekVideoPosition);
+            mBundle.putString("VideoFileToContinuePlay", ((videoFilesArray != null) ? (videoFilesArray.length > 0 ? videoFilesArray[indexPlaingFile] : "") : ""));
+            intent.putExtras(mBundle);
+            MainActivity.context.sendBroadcast(intent);
 
         }
         this.finish();

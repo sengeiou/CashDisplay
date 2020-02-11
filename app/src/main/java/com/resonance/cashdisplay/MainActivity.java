@@ -29,13 +29,13 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
 
 import com.crashlytics.android.Crashlytics;
@@ -101,7 +101,7 @@ public class MainActivity extends Activity {
 
     public static View layoutProductListLook = null;    // represent layout_shopping_list_look_x.xml, where x - number of desired look
     // next block of views must be in every layout_shopping_list_look_x.xml to provide compability
-    public static LinearLayout layoutTotal;
+    public static ConstraintLayout layoutTotal;
     public static TextView textViewTotalCount;
     public static TextView textViewTotalSumWithoutDiscount;    // calculated value
     public static TextView textViewTotalDiscount;           // calculated value
@@ -136,7 +136,6 @@ public class MainActivity extends Activity {
         getWindow().setAttributes(attributes);
 
         context = this;
-        hideBarNavigation();
 
         //Получим настройки экрана
         Display display = this.getWindowManager().getDefaultDisplay();
@@ -209,6 +208,12 @@ public class MainActivity extends Activity {
         new CheckSystemStart().run();
 
         acceptFullScreen();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        hideBarNavigation();
     }
 
     /**
@@ -486,9 +491,9 @@ public class MainActivity extends Activity {
         }
     };
 
-    /*
-     * Прячем строку навигации
-     * * */
+    /**
+     * Hide navigation bar
+     */
     private void hideBarNavigation() {
         runOnUiThread(() -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -503,7 +508,6 @@ public class MainActivity extends Activity {
                                 | View.SYSTEM_UI_FLAG_LOW_PROFILE
                                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                                 | View.SYSTEM_UI_FLAG_IMMERSIVE);
-
                 decorView.invalidate();
             }
         });
