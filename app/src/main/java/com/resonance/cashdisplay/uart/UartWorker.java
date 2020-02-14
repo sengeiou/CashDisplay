@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 
-import com.crashlytics.android.Crashlytics;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.settings.PrefWorker;
@@ -164,7 +163,6 @@ public class UartWorker {
                 } catch (IOException e) {
                     e.printStackTrace();
                     sendMsgToParent(ACTION_UART_ERROR, null, 0);
-                    Crashlytics.logException(e);
                     return;
                 }
             }

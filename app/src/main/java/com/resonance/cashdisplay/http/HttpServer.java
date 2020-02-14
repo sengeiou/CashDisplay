@@ -8,7 +8,6 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Base64;
 
-import com.crashlytics.android.Crashlytics;
 import com.koushikdutta.async.AsyncServer;
 import com.koushikdutta.async.callback.CompletedCallback;
 import com.koushikdutta.async.http.body.AsyncHttpRequestBody;
@@ -65,7 +64,6 @@ public class HttpServer {
                 createServerAsync();
             } catch (Exception e) {
                 e.printStackTrace();
-                Crashlytics.logException(e);
             }
         }).start();
 
@@ -86,7 +84,6 @@ public class HttpServer {
                         createServerAsync();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Crashlytics.logException(e);
                     }
                 }).start();
             }
@@ -119,7 +116,6 @@ public class HttpServer {
             @Override
             public void onCompleted(Exception ex) {
                 Log.w(TAG, "**ErrorCallback.onCompleted");
-                Crashlytics.logException(ex);
             }
         });
         mServer.listen(mAsyncServer, httpConfig.port);
@@ -259,7 +255,6 @@ public class HttpServer {
                 System.gc();
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
-                Crashlytics.logException(e);
             }
         }
     };
@@ -288,7 +283,6 @@ public class HttpServer {
                 }
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
-                Crashlytics.logException(e);
             }
         }
     };

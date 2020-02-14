@@ -29,11 +29,9 @@ public class Sound implements MediaPlayer.OnCompletionListener {
     }
 
     public void playSound(String filename) {
-        AssetFileDescriptor afd = null;
 
-        try {
+        try (AssetFileDescriptor afd = mContext.getResources().getAssets().openFd(filename)) {
             Log.d(TAG, "PlaySound");
-            afd = mContext.getResources().getAssets().openFd(filename);
             player = new MediaPlayer();
 
             assert afd != null;

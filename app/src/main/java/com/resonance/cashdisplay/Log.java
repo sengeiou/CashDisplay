@@ -2,8 +2,6 @@ package com.resonance.cashdisplay;
 
 import android.os.Environment;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -144,35 +142,35 @@ public class Log {
     public static void i(String TAG, String message) {
         appendLog(TAG + " : " + message);
         if (mLogcatAppender) {
-            Crashlytics.log(android.util.Log.INFO, TAG, message);
+            android.util.Log.i(TAG, message);
         }
     }
 
     public static void d(String TAG, String message) {
         appendLog(TAG + " : " + message);
         if (mLogcatAppender) {
-            Crashlytics.log(android.util.Log.DEBUG, TAG, message);
+            android.util.Log.d(TAG, message);
         }
     }
 
     public static void e(String TAG, String message) {
         appendLog(TAG + " : " + message);
         if (mLogcatAppender) {
-            Crashlytics.log(android.util.Log.ERROR, TAG, message);
+            android.util.Log.e(TAG, message);
         }
     }
 
     public static void v(String TAG, String message) {
         appendLog(TAG + " : " + message);
         if (mLogcatAppender) {
-            Crashlytics.log(android.util.Log.VERBOSE, TAG, message);
+            android.util.Log.v(TAG, message);
         }
     }
 
     public static void w(String TAG, String message) {
         appendLog(TAG + " : " + message);
         if (mLogcatAppender) {
-            Crashlytics.log(android.util.Log.WARN, TAG, message);
+            android.util.Log.w(TAG, message);
         }
     }
 

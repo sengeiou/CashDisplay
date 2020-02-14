@@ -8,7 +8,7 @@
     <color name="list_item_text_look_1">@android:color/black</color>
     <color name="list_item_divider_look_1">@android:color/black</color>
 
-    <color name="text_subway">#FFFFFF</color>
+    <color name="text_subway_white">#FFFFFF</color>
 
 
     <color name="colorPrimary">#3F51B5</color>

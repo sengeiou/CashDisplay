@@ -1,5 +1,3 @@
-//https://console.firebase.google.com/
-//Идентификатор проекта: cashdisplay-resonance
 package com.resonance.cashdisplay;
 
 import android.app.Activity;
@@ -19,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.StrictMode;
 import android.provider.Settings;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Display;
@@ -37,7 +36,6 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
-import com.crashlytics.android.Crashlytics;
 import com.resonance.cashdisplay.databinding.ActivityMainBinding;
 import com.resonance.cashdisplay.eth.EthernetSettings;
 import com.resonance.cashdisplay.http.HttpServer;
@@ -114,12 +112,16 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+                .penaltyDeath()
+                .build());
         super.onCreate(savedInstanceState);
 
         new Log();      // this object is needful to use synchronized methods with lock on it (not on static class)
 
         String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        Crashlytics.setUserIdentifier(androidId);
         Log.d(TAG, "androidId: " + androidId);
 
         lanSetupAlready = false;
@@ -142,7 +144,6 @@ public class MainActivity extends Activity {
         display.getSize(sizeScreen);
         sizeScreen.y += 48;
         Log.d(TAG, "Size screen x:" + sizeScreen.x + ", y:" + sizeScreen.y);
-        Crashlytics.setString("screen_size", "x:" + sizeScreen.x + ", y:" + sizeScreen.y);
 
         //Получим настройки системы
         prefValues = PrefWorker.getValues();
@@ -387,19 +388,22 @@ public class MainActivity extends Activity {
     /************************************************************************************/
 
     public void setVisibleContext(int contextType, @Nullable String args) {
-        setVisibleLayer(CONTEXT_PRODUCT_LIST, View.INVISIBLE);
-        setVisibleLayer(CONTEXT_CONNECT, View.INVISIBLE);
-        setVisibleLayer(CONTEXT_THANKS, View.INVISIBLE);
         switch (contextType) {
             case CONTEXT_PRODUCT_LIST:
                 setVisibleLayer(CONTEXT_PRODUCT_LIST, View.VISIBLE);
+                setVisibleLayer(CONTEXT_CONNECT, View.INVISIBLE);
+                setVisibleLayer(CONTEXT_THANKS, View.INVISIBLE);
                 productListWorker.onProductListShow(args);
                 break;
             case CONTEXT_CONNECT:
+                setVisibleLayer(CONTEXT_PRODUCT_LIST, View.INVISIBLE);
                 setVisibleLayer(CONTEXT_CONNECT, View.VISIBLE);
+                setVisibleLayer(CONTEXT_THANKS, View.INVISIBLE);
                 productListWorker.onProductListHide();
                 break;
             case CONTEXT_THANKS:
+                setVisibleLayer(CONTEXT_PRODUCT_LIST, View.INVISIBLE);
+                setVisibleLayer(CONTEXT_CONNECT, View.INVISIBLE);
                 setVisibleLayer(CONTEXT_THANKS, View.VISIBLE);
                 productListWorker.onProductListHide();
                 break;
@@ -611,7 +615,6 @@ public class MainActivity extends Activity {
                         if (!ip.equals(networkInterfaceIpAddress)) {
                             ip = networkInterfaceIpAddress;
                             Log.d(TAG, "Подключение LAN : " + ip);
-                            Crashlytics.setString("ip_address", ip);
                         }
                     } else {
                         viewModel.setStatusConnection(((stat.length() == 0) ? "підключення LAN відсутнє" : stat));

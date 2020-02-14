@@ -19,9 +19,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.R;
+import com.resonance.cashdisplay.product_list.look2.SubwayArgs;
 import com.resonance.cashdisplay.settings.PrefValues;
 import com.resonance.cashdisplay.settings.PrefWorker;
 
@@ -43,6 +45,9 @@ import static com.resonance.cashdisplay.MainActivity.textViewTotalCount;
 import static com.resonance.cashdisplay.MainActivity.textViewTotalDiscount;
 import static com.resonance.cashdisplay.MainActivity.textViewTotalSum;
 import static com.resonance.cashdisplay.MainActivity.textViewTotalSumWithoutDiscount;
+import static com.resonance.cashdisplay.product_list.look2.SubwayArgs.SUBWAY_PRLS_CARD_BALANCE;
+import static com.resonance.cashdisplay.product_list.look2.SubwayArgs.SUBWAY_PRLS_CARD_PAYMENT;
+import static com.resonance.cashdisplay.product_list.look2.SubwayArgs.SUBWAY_PRLS_QR_TICKET;
 import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_BASKET;
 import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_DMART;
 import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_SUBWAY;
@@ -74,15 +79,15 @@ public class ProductListWorker {
     private LinearLayout layoutItemExtra;       // second item for 1-2 items mode
     private LinearLayout layoutToPay;           // "До сплати" for 1-2 items mode
     private LinearLayout layoutList;            // layout of list mode (more than 2 items)
+    private ConstraintLayout layoutCardInfo;
     private TextView textViewItemName;          // name of 1-st product for 1-2 items mode
     private TextView textViewItemCount;         // count of 1-st product for 1-2 items mode
     private TextView textViewItemExtraName;     // name of 2-nd product for 1-2 items mode
     private TextView textViewItemExtraCount;    // count of 2-nd product for 1-2 items mode
     private ImageView imageViewItemExtraBottomLine; // bottom line to delimit second product from to pay words
+    private SubwayArgs subwayArgs = new SubwayArgs();
 
     public static Timer clockTimer;
-
-    private boolean doInstantly = false;        // service field, see in code for more details
 
     public ProductListWorker(Context context) {
         this.context = context;
@@ -134,6 +139,7 @@ public class ProductListWorker {
         Activity mainActivity = (Activity) context;
         switch (PrefWorker.getValues().productListLookCode) {
             case LOOK_SUBWAY:
+                layoutCardInfo = mainActivity.findViewById(R.id.layout_card_info);
                 textViewCardNumber = mainActivity.findViewById(R.id.textview_card_number);
                 layoutItemsBlock = mainActivity.findViewById(R.id.layout_items_block);
                 textViewItemName = mainActivity.findViewById(R.id.textview_item_name);
@@ -152,42 +158,68 @@ public class ProductListWorker {
 
     /**
      * Called when product list screen becomes visible.
+     * *
      *
      * @param args contains String list of additional arguments various for different looks.
      *             For different looks there may be 0 or more arguments, that are divided from each
      *             other with 0x03 symbols.
+     *             <p>
+     *             For LOOK_SUBWAY - args amount = 3:
+     *             1 - sell mode, one of
+     *             {@value SubwayArgs#SUBWAY_PRLS_CARD_BALANCE},
+     *             {@value SubwayArgs#SUBWAY_PRLS_CARD_PAYMENT} or
+     *             {@value SubwayArgs#SUBWAY_PRLS_QR_TICKET};
+     *             2 - card number - any string, like "000000000000";
+     *             3 - items amount - integer number of items in current receipt;
      */
     public void onProductListShow(@Nullable String args) {
         switch (PrefWorker.getValues().productListLookCode) {
             case LOOK_SUBWAY:
                 if (args != null) {
                     Log.d("PLW", "show=" + args);
-                    int argAmount = 2;                   // according "inner" protocol for this look
 
-                    String[] argList = args.split(Character.toString((char) SYMBOL_SEPARATOR));
+                    imageViewProduct.setVisibility(View.INVISIBLE);
+                    textViewCardNumber.setVisibility(View.GONE);
+                    layoutToPay.setVisibility(View.GONE);             // for 1-2 items mode
+                    layoutTotal.setVisibility(View.GONE);             // for list mode
+                    imageViewItemExtraBottomLine.setVisibility(View.GONE);
+                    subwayArgs.isCard = true;
+                    subwayArgs.itemsAmount = 0;
 
                     // little animation when setting view (view group) visible or invisible
                     Transition transition = new Fade();
-                    transition.setDuration(120);
+                    transition.setDuration(1000);
+                    transition.addTarget(imageViewProduct);
                     transition.addTarget(textViewCardNumber);
-                    TransitionManager.beginDelayedTransition(relativeLayout[2], transition);    // scene root = product list
-                    textViewCardNumber.setVisibility(View.VISIBLE);
+                    TransitionManager.beginDelayedTransition(relativeLayout[2], transition);    // scene root = product list (relativeLayout[2])
 
-                    if (argList.length == argAmount) {
-                        if (argList[0].equals("balance")) {                   // ### "payment" or "balance" argument ###
-                            textViewCardNumber.setText(R.string.card_balance_num);
-                            layoutToPay.setVisibility(View.GONE);             // for 1-2 items mode
-                            layoutTotal.setVisibility(View.GONE);             // for list mode
-                            imageViewItemExtraBottomLine.setVisibility(View.GONE);
-                        } else {
-                            textViewCardNumber.setText(R.string.card_num);
-                            layoutToPay.setVisibility(View.VISIBLE);          // for 1-2 items mode
-                            layoutTotal.setVisibility(View.VISIBLE);          // for list mode
-                            imageViewItemExtraBottomLine.setVisibility(View.VISIBLE);
+                    String[] argList = args.split(Character.toString((char) SYMBOL_SEPARATOR));
+                    if (argList.length > 0) {
+                        switch (argList[0]) {
+                            case SUBWAY_PRLS_CARD_BALANCE:
+                                textViewCardNumber.setText(R.string.card_balance_num);
+                                if (argList.length > 1)
+                                    textViewCardNumber.append(argList[1]);        // card number argument
+                                break;
+                            case SUBWAY_PRLS_QR_TICKET:
+                                subwayArgs.isCard = false;
+                            case SUBWAY_PRLS_CARD_PAYMENT:
+                                if (argList[0].equals(SUBWAY_PRLS_CARD_PAYMENT)) {
+                                    textViewCardNumber.setText(R.string.card_num);
+                                    if (argList.length > 1) {
+                                        textViewCardNumber.append(argList[1]);    // card number argument
+                                    }
+                                }
+                                layoutToPay.setVisibility(View.VISIBLE);          // for 1-2 items mode
+                                layoutTotal.setVisibility(View.VISIBLE);          // for list mode
+                                imageViewItemExtraBottomLine.setVisibility(View.VISIBLE);
+                                break;
+                            default:
+                                break;
                         }
-                        textViewCardNumber.append(argList[1]);                // ### card number argument ###
-                    } else
-                        textViewCardNumber.setText(R.string.card_default);    // for insurance (wrong args for some reason)
+                    }
+                    if (argList.length > 2)
+                        subwayArgs.itemsAmount = strToInt(argList[2]);
                 }
 
                 if (clockTimer == null) {
@@ -225,8 +257,10 @@ public class ProductListWorker {
     public void onProductListHide() {
         switch (PrefWorker.getValues().productListLookCode) {
             case LOOK_SUBWAY:
-                textViewCardNumber.setVisibility(View.INVISIBLE);
+                textViewCardNumber.setVisibility(View.GONE);
                 textViewCardNumber.setText(context.getString(R.string.card_default));
+                imageViewProduct.setVisibility(View.INVISIBLE);
+                imageViewProduct.setBackground(null);
                 layoutItemsBlock.setVisibility(View.INVISIBLE);
                 layoutItemExtra.setVisibility(View.GONE);
                 layoutToPay.setVisibility(View.GONE);
@@ -437,64 +471,72 @@ public class ProductListWorker {
     private void handleUniqueLooks() {
         switch (PrefWorker.getValues().productListLookCode) {
             case LOOK_SUBWAY:
-                // provides executing of this method every time with delay
-                if (!doInstantly) {
-                    new Handler().postDelayed(() -> {
-                        doInstantly = true;
-                        handleUniqueLooks();
-                    }, 75);
+
+                if (arrayProductList.size() != subwayArgs.itemsAmount)
                     return;
-                }
-                doInstantly = false;
 
-                // little animation when setting view (view group) visible or invisible
-                Transition transition = new Fade();
-                transition.setDuration(200);
-                transition.addTarget(layoutItemsBlock);
-                transition.addTarget(layoutItemExtra);
-                transition.addTarget(layoutList);
-                TransitionManager.beginDelayedTransition(relativeLayout[2], transition);    // scene root = product list
+                new Handler().postDelayed(() -> {
+                    Transition transition = new Fade();
+                    transition.setDuration(150);        // 200
+                    transition.addTarget(layoutItemsBlock);
+                    transition.addTarget(layoutItemExtra);
+                    transition.addTarget(layoutList);
+                    TransitionManager.beginDelayedTransition(relativeLayout[2], transition);    // scene root = product list
 
-                switch (arrayProductList.size()) {     // current amount of products that are in list right now
-                    case 0:
-                        layoutItemsBlock.setVisibility(View.INVISIBLE);
-                        layoutItemExtra.setVisibility(View.GONE);
-                        layoutList.setVisibility(View.INVISIBLE);
-                        break;
-                    case 2:
-                        ItemProductList item = arrayProductList.get(1);
-                        textViewItemExtraName.setText(item.getName());
-                        textViewItemExtraCount.setText((item.getCount() == -1) ? (context.getString(R.string.unlimited)) : (String.valueOf(item.getCount())));
-                        layoutItemsBlock.setVisibility(View.VISIBLE);   // 1-2 items mode
-                        layoutItemExtra.setVisibility(View.VISIBLE);
-                        layoutList.setVisibility(View.INVISIBLE);       // list mode
-                    case 1:
-                        item = arrayProductList.get(0);
-                        textViewItemName.setText(item.getName());
-                        textViewItemCount.setText((item.getCount() == -1) ? (context.getString(R.string.unlimited)) : (String.valueOf(item.getCount())));
-                        layoutItemsBlock.setVisibility(View.VISIBLE);   // 1-2 items mode
-                        if (arrayProductList.size() == 1)
-                            layoutItemExtra.post(() -> {                // corrects flaw when specified view is going away
-                                layoutItemExtra.setVisibility(View.GONE);
-                            });
-                        layoutList.setVisibility(View.INVISIBLE);       // list mode
-                        break;
-                    default:
-                        layoutItemsBlock.setVisibility(View.INVISIBLE); // 1-2 items mode
-                        layoutList.setVisibility(View.VISIBLE);         // list mode
-                        break;
-                }
+                    switch (arrayProductList.size()) {     // current amount of products that are in list right now
+                        case 0:
+                            layoutItemsBlock.setVisibility(View.INVISIBLE);
+                            layoutItemExtra.setVisibility(View.GONE);
+                            layoutList.setVisibility(View.INVISIBLE);
+                            break;
+                        case 2:
+                            ItemProductList item = arrayProductList.get(1);
+                            textViewItemExtraName.setText(item.getName());
+                            textViewItemExtraCount.setText((item.getCount() == -1) ? (context.getString(R.string.unlimited)) : (String.valueOf(item.getCount())));
+                            layoutItemsBlock.setVisibility(View.VISIBLE);   // 1-2 items mode
+                            layoutItemExtra.setVisibility(View.VISIBLE);
+                            layoutList.setVisibility(View.INVISIBLE);       // list mode
+                        case 1:
+                            ((LinearLayout.LayoutParams) layoutCardInfo.getLayoutParams()).weight = 150;
+                            if (subwayArgs.isCard)
+                                imageViewProduct.setBackgroundResource(R.drawable.kyiv_smart_card_w300);
+                            else imageViewProduct.setBackgroundResource(R.drawable.qr_dummy_w300);
+                            item = arrayProductList.get(0);
+                            textViewItemName.setText(item.getName());
+                            textViewItemCount.setText((item.getCount() == -1) ? (context.getString(R.string.unlimited)) : (String.valueOf(item.getCount())));
+                            layoutItemsBlock.setVisibility(View.VISIBLE);   // 1-2 items mode
+                            if (arrayProductList.size() == 1)
+                                layoutItemExtra.post(() -> {                // corrects flaw when specified view is going away
+                                    layoutItemExtra.setVisibility(View.GONE);
+                                });
+                            layoutList.setVisibility(View.INVISIBLE);       // list mode
+                            break;
+                        default:
+                            ((LinearLayout.LayoutParams) layoutCardInfo.getLayoutParams()).weight = 100;
+                            if (subwayArgs.isCard)
+                                imageViewProduct.setBackgroundResource(R.drawable.kyiv_smart_card_w233);
+                            else imageViewProduct.setBackgroundResource(R.drawable.qr_dummy_w233);
+                            layoutItemsBlock.setVisibility(View.INVISIBLE); // 1-2 items mode
+                            layoutList.setVisibility(View.VISIBLE);         // list mode
+                            break;
+                    }
 
-                int totalSum = 0;
-                for (int i = 0; i < arrayProductList.size(); i++) {
-                    ItemProductList selectedItem = arrayProductList.get(i);
-                    totalSum += selectedItem.getSum();
-                }
+                    imageViewProduct.setVisibility(View.VISIBLE);
+                    if (subwayArgs.isCard)
+                        textViewCardNumber.setVisibility(View.VISIBLE);
 
-                String sumTotalToPay = String.format(Locale.FRENCH, "%.2f", (double) totalSum / 100);
-                TextView textViewItemsToPaySum = ((Activity) context).findViewById(R.id.textview_items_to_pay_sum);
-                textViewItemsToPaySum.setText(sumTotalToPay);
-                textViewTotalSum.setText(sumTotalToPay);
+                    int totalSum = 0;
+                    for (int i = 0; i < arrayProductList.size(); i++) {
+                        ItemProductList selectedItem = arrayProductList.get(i);
+                        totalSum += selectedItem.getSum();
+                    }
+
+                    String sumTotalToPay = String.format(Locale.FRENCH, "%.2f", (double) totalSum / 100);
+                    TextView textViewItemsToPaySum = ((Activity) context).findViewById(R.id.textview_items_to_pay_sum);
+                    textViewItemsToPaySum.setText(sumTotalToPay);
+                    textViewTotalSum.setText(sumTotalToPay);
+
+                }, 100);        // delay after card or qr image animation (for smoothness)
                 break;
             default:
                 break;

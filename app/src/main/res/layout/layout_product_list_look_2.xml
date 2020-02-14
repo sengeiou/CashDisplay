@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:background="#212042">
+    tools:background="@drawable/d">   <!--  #212042  -->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,47 +16,52 @@
         android:layout_weight="700"
         android:orientation="horizontal">
 
-        <LinearLayout
+        <!--       dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_card_info"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="106"
+            android:layout_weight="150"
             android:gravity="center_horizontal"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@+id/frameLayout"
+            app:layout_constraintStart_toStartOf="parent">
 
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="200" />
+            <ImageView
+                android:id="@+id/imageview_product"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="42dp"
+                android:layout_marginTop="48dp"
+                android:layout_marginEnd="48dp"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:background="@drawable/kyiv_smart_card_w300"
+                tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textview_card_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
                 android:fontFamily="@font/proba_nav2_regular"
                 android:lineSpacingMultiplier="1.18"
                 android:text="@string/card_default"
-                android:textColor="@color/text_subway"
+                android:textColor="@color/text_subway_white"
                 android:textSize="31sp"
                 android:visibility="invisible"
+                app:layout_constraintStart_toStartOf="@+id/imageview_product"
+                app:layout_constraintTop_toBottomOf="@+id/imageview_product"
                 tools:textColor="@color/green500"
                 tools:visibility="visible" />
 
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="340" />
-
-        </LinearLayout>
-
-        <!--       dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
-        <ImageView
-            android:id="@+id/imageview_product"
-            android:layout_width="400dp"
-            android:layout_height="500dp"
-            android:visibility="gone" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <FrameLayout
+            android:id="@+id/frameLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="300">
@@ -65,194 +70,183 @@
                 android:id="@+id/layout_items_block"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:visibility="invisible"
-                tools:visibility="gone">
-
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"></Space>
+                tools:visibility="visible">
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="18"
+                    android:id="@+id/layout_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="48"
                     android:orientation="vertical">
 
-                    <LinearLayout
-                        android:id="@+id/layout_item"
+                    <Space
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="48"
-                        android:orientation="vertical">
+                        android:layout_weight="0.8"></Space>
 
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="0.8"></Space>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/textview_item_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/proba_nav2_bold"
+                        android:singleLine="true"
+                        android:text="Передплачені поїздки"
+                        android:textColor="@color/text_subway_white"
+                        android:textSize="@dimen/item_name_large_2"
+                        tools:textColor="@color/green500" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/textview_item_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/proba_nav2_bold"
-                            android:singleLine="true"
-                            android:text="Передплачені поїздки"
-                            android:textColor="@color/text_subway"
-                            android:textSize="@dimen/item_name_large_2"
-                            tools:textColor="@color/green500" />
-
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1.2"></Space>
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/proba_nav2_regular"
-                            android:text="@string/trip_count"
-                            android:textColor="@color/text_subway"
-                            android:textSize="@dimen/secondary_text_2"
-                            tools:textColor="@color/green500" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/textview_item_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/proba_nav2_bold"
-                            android:text="50"
-                            android:textColor="@color/text_subway"
-                            android:textSize="@dimen/item_name_large_2"
-                            tools:textColor="@color/green500" />
-
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"></Space>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/layout_item_extra"
+                    <Space
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="50"
-                        android:orientation="vertical"
+                        android:layout_weight="1.2"></Space>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/proba_nav2_regular"
+                        android:text="@string/trip_count"
+                        android:textColor="@color/text_subway_white"
+                        android:textSize="@dimen/secondary_text_2"
+                        tools:textColor="@color/green500" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/textview_item_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/proba_nav2_bold"
+                        android:text="50"
+                        android:textColor="@color/text_subway_white"
+                        android:textSize="@dimen/item_name_large_2"
+                        tools:textColor="@color/green500" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"></Space>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_item_extra"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="50"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:background="@drawable/gradient_horizontal_white" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="0.8"></Space>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/textview_item_extra_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/proba_nav2_bold"
+                        android:singleLine="true"
+                        android:text="Проїзний на квітень 2020"
+                        android:textColor="@color/text_subway_white"
+                        android:textSize="@dimen/item_name_large_2"
+                        tools:textColor="@color/green500" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1.2"></Space>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/proba_nav2_regular"
+                        android:text="@string/trip_count"
+                        android:textColor="@color/text_subway_white"
+                        android:textSize="@dimen/secondary_text_2"
+                        tools:textColor="@color/green500" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/textview_item_extra_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/proba_nav2_bold"
+                        android:text="50"
+                        android:textColor="@color/text_subway_white"
+                        android:textSize="@dimen/item_name_large_2"
+                        tools:textColor="@color/green500" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"></Space>
+
+                    <ImageView
+                        android:id="@+id/imageview_item_extra_bottom_line"
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:background="@drawable/gradient_horizontal_white"
                         android:visibility="gone"
-                        tools:visibility="visible">
+                        tools:visibility="visible" />
 
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="1px"
-                            android:background="@drawable/gradient_horizontal_white" />
-
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="0.8"></Space>
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/textview_item_extra_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/proba_nav2_bold"
-                            android:singleLine="true"
-                            android:text="Проїзний на квітень 2020"
-                            android:textColor="@color/text_subway"
-                            android:textSize="@dimen/item_name_large_2"
-                            tools:textColor="@color/green500" />
-
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1.2"></Space>
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/proba_nav2_regular"
-                            android:text="@string/trip_count"
-                            android:textColor="@color/text_subway"
-                            android:textSize="@dimen/secondary_text_2"
-                            tools:textColor="@color/green500" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/textview_item_extra_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/proba_nav2_bold"
-                            android:text="50"
-                            android:textColor="@color/text_subway"
-                            android:textSize="@dimen/item_name_large_2"
-                            tools:textColor="@color/green500" />
-
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"></Space>
-
-                        <ImageView
-                            android:id="@+id/imageview_item_extra_bottom_line"
-                            android:layout_width="match_parent"
-                            android:layout_height="1px"
-                            android:background="@drawable/gradient_horizontal_white"
-                            android:visibility="gone"
-                            tools:visibility="visible" />
-
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"></Space>
-
-                    </LinearLayout>
-
-                    <!--    total for 1 or 2 items (also there is layout_total with the same value - for product list) -->
-                    <LinearLayout
-                        android:id="@+id/layout_to_pay"
+                    <Space
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="25.5"
-                        android:orientation="vertical"
-                        android:visibility="gone"
-                        tools:visibility="visible">
+                        android:layout_weight="1"></Space>
+
+                </LinearLayout>
+
+                <!--    total for 1 or 2 items (also there is layout_total with the same value - for product list) -->
+                <LinearLayout
+                    android:id="@+id/layout_to_pay"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="25.5"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/proba_nav2_regular"
+                        android:text="@string/to_pay"
+                        android:textColor="@color/text_subway_white"
+                        android:textSize="@dimen/secondary_text_2"
+                        tools:textColor="@color/green500" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/textview_items_to_pay_sum"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/proba_nav2_bold"
+                            android:text="325,00"
+                            android:textColor="@color/text_subway_white"
+                            android:textSize="@dimen/item_name_large_2"
+                            tools:textColor="@color/green500" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/proba_nav2_regular"
-                            android:text="@string/to_pay"
-                            android:textColor="@color/text_subway"
+                            android:fontFamily="@font/proba_nav2_semi_bold"
+                            android:gravity="bottom|end"
+                            android:paddingStart="15dp"
+                            android:text="₴"
+                            android:textColor="@color/text_subway_white"
                             android:textSize="@dimen/secondary_text_2"
                             tools:textColor="@color/green500" />
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/textview_items_to_pay_sum"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/proba_nav2_bold"
-                                android:text="325,00"
-                                android:textColor="@color/text_subway"
-                                android:textSize="@dimen/item_name_large_2"
-                                tools:textColor="@color/green500" />
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/proba_nav2_semi_bold"
-                                android:gravity="bottom|end"
-                                android:paddingStart="15dp"
-                                android:text="₴"
-                                android:textColor="@color/text_subway"
-                                android:textSize="@dimen/secondary_text_2"
-                                tools:textColor="@color/green500" />
-
-                        </LinearLayout>
                     </LinearLayout>
+
 
                 </LinearLayout>
             </LinearLayout>
@@ -264,8 +258,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:visibility="invisible"
-                tools:visibility="visible">
+                android:visibility="invisible">
 
                 <LinearLayout
                     android:id="@+id/list_header"
@@ -281,7 +274,7 @@
                         android:fontFamily="@font/proba_nav2_regular"
                         android:gravity="center"
                         android:text="@string/number_sign"
-                        android:textColor="@color/text_subway"
+                        android:textColor="@color/text_subway_white"
                         android:textSize="@dimen/list_header_text_look_2" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -291,7 +284,7 @@
                         android:fontFamily="@font/proba_nav2_regular"
                         android:gravity="center"
                         android:text="@string/kind_of_service"
-                        android:textColor="@color/text_subway"
+                        android:textColor="@color/text_subway_white"
                         android:textSize="@dimen/list_header_text_look_2" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -301,7 +294,7 @@
                         android:fontFamily="@font/proba_nav2_regular"
                         android:gravity="center"
                         android:text="@string/trip_count"
-                        android:textColor="@color/text_subway"
+                        android:textColor="@color/text_subway_white"
                         android:textSize="@dimen/list_header_text_look_2" />
 
                 </LinearLayout>
@@ -310,7 +303,7 @@
                     android:id="@+id/imageview_list_header_underline"
                     android:layout_width="match_parent"
                     android:layout_height="1px"
-                    android:background="@color/text_subway" />
+                    android:background="@color/text_subway_white" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -371,7 +364,7 @@
                             android:fontFamily="@font/proba_nav2_regular"
                             android:paddingEnd="15dp"
                             android:text="@string/to_pay_colon"
-                            android:textColor="@color/text_subway"
+                            android:textColor="@color/text_subway_white"
                             android:textSize="@dimen/secondary_text_2"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -384,7 +377,7 @@
                             android:fontFamily="@font/proba_nav2_bold"
                             android:paddingEnd="15dp"
                             android:text="325,00"
-                            android:textColor="@color/text_subway"
+                            android:textColor="@color/text_subway_white"
                             android:textSize="@dimen/item_name_large_2"
                             app:layout_constraintBaseline_toBaselineOf="@+id/textview_to_pay"
                             app:layout_constraintStart_toEndOf="@+id/textview_to_pay" />
@@ -395,7 +388,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/proba_nav2_semi_bold"
                             android:text="₴"
-                            android:textColor="@color/text_subway"
+                            android:textColor="@color/text_subway_white"
                             android:textSize="@dimen/secondary_text_2"
                             app:layout_constraintBaseline_toBaselineOf="@+id/textview_to_pay"
                             app:layout_constraintStart_toEndOf="@+id/textview_total_sum" />
@@ -426,7 +419,7 @@
             android:fontFamily="@font/proba_nav2_semi_bold"
             android:gravity="center"
             android:text="--.--.---- --:--"
-            android:textColor="@color/text_subway"
+            android:textColor="@color/text_subway_white"
             android:textSize="38sp"
             tools:text="01.01.2020 00:00"
             tools:textColor="@color/green500" />
