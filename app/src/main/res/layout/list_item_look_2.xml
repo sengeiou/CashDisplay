@@ -35,7 +35,7 @@
             android:fontFamily="@font/proba_nav2_semi_bold"
             android:layout_weight="0.4"
             android:gravity="center"
-            android:textColor="@color/text_subway_white"
+            android:textColor="@color/text_subway_title"
             android:textSize="@dimen/list_item_text_look_2"
             tools:text="00" />
 
@@ -48,7 +48,7 @@
             android:gravity="start|center_vertical"
             android:paddingLeft="7dp"
             android:paddingEnd="3dp"
-            android:textColor="@color/text_subway_white"
+            android:textColor="@color/text_subway_title"
             android:textSize="@dimen/list_item_text_look_2"
             tools:text="Проїзний на квітень 2020" />
 
@@ -61,7 +61,7 @@
             android:fontFamily="@font/proba_nav2_semi_bold"
             android:paddingStart="3dp"
             android:paddingEnd="3dp"
-            android:textColor="@color/text_subway_white"
+            android:textColor="@color/text_subway_title"
             android:textSize="@dimen/list_item_text_look_2"
             tools:text="@string/tools_dummy_4" />
 
@@ -88,7 +88,7 @@
                 android:gravity="center_vertical|end"
                 android:paddingStart="3dp"
                 android:fontFamily="@font/proba_nav2_semi_bold"
-                android:textColor="@color/text_subway_white"
+                android:textColor="@color/text_subway_title"
                 android:textSize="@dimen/list_item_text_look_2"
                 tools:text="@string/tools_dummy_5_dot_2" />
 
@@ -99,7 +99,7 @@
                 android:fontFamily="@font/proba_nav2_semi_bold"
                 android:paddingEnd="3dp"
                 android:text=" грн."
-                android:textColor="@color/text_subway_white"
+                android:textColor="@color/text_subway_title"
                 android:textSize="@dimen/list_item_text_look_2" />
         </LinearLayout>
     </LinearLayout>
@@ -107,7 +107,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@color/text_subway_white" />
+        android:background="@color/text_subway_title" />
 
     <ImageView
         android:id="@+id/imageview_icon"

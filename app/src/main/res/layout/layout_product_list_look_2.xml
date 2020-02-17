@@ -50,7 +50,7 @@
                 android:fontFamily="@font/proba_nav2_regular"
                 android:lineSpacingMultiplier="1.18"
                 android:text="@string/card_default"
-                android:textColor="@color/text_subway_white"
+                android:textColor="@color/text_subway_main"
                 android:textSize="31sp"
                 android:visibility="invisible"
                 app:layout_constraintStart_toStartOf="@+id/imageview_product"
@@ -93,7 +93,7 @@
                         android:fontFamily="@font/proba_nav2_bold"
                         android:singleLine="true"
                         android:text="Передплачені поїздки"
-                        android:textColor="@color/text_subway_white"
+                        android:textColor="@color/text_subway_title"
                         android:textSize="@dimen/item_name_large_2"
                         tools:textColor="@color/green500" />
 
@@ -107,7 +107,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/proba_nav2_regular"
                         android:text="@string/trip_count"
-                        android:textColor="@color/text_subway_white"
+                        android:textColor="@color/text_subway_secondary"
                         android:textSize="@dimen/secondary_text_2"
                         tools:textColor="@color/green500" />
 
@@ -117,7 +117,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/proba_nav2_bold"
                         android:text="50"
-                        android:textColor="@color/text_subway_white"
+                        android:textColor="@color/text_subway_value"
                         android:textSize="@dimen/item_name_large_2"
                         tools:textColor="@color/green500" />
 
@@ -153,7 +153,7 @@
                         android:fontFamily="@font/proba_nav2_bold"
                         android:singleLine="true"
                         android:text="Проїзний на квітень 2020"
-                        android:textColor="@color/text_subway_white"
+                        android:textColor="@color/text_subway_title"
                         android:textSize="@dimen/item_name_large_2"
                         tools:textColor="@color/green500" />
 
@@ -167,7 +167,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/proba_nav2_regular"
                         android:text="@string/trip_count"
-                        android:textColor="@color/text_subway_white"
+                        android:textColor="@color/text_subway_secondary"
                         android:textSize="@dimen/secondary_text_2"
                         tools:textColor="@color/green500" />
 
@@ -177,7 +177,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/proba_nav2_bold"
                         android:text="50"
-                        android:textColor="@color/text_subway_white"
+                        android:textColor="@color/text_subway_value"
                         android:textSize="@dimen/item_name_large_2"
                         tools:textColor="@color/green500" />
 
@@ -216,7 +216,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/proba_nav2_regular"
                         android:text="@string/to_pay"
-                        android:textColor="@color/text_subway_white"
+                        android:textColor="@color/text_subway_secondary"
                         android:textSize="@dimen/secondary_text_2"
                         tools:textColor="@color/green500" />
 
@@ -230,7 +230,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/proba_nav2_bold"
                             android:text="325,00"
-                            android:textColor="@color/text_subway_white"
+                            android:textColor="@color/text_subway_value"
                             android:textSize="@dimen/item_name_large_2"
                             tools:textColor="@color/green500" />
 
@@ -241,7 +241,7 @@
                             android:gravity="bottom|end"
                             android:paddingStart="15dp"
                             android:text="₴"
-                            android:textColor="@color/text_subway_white"
+                            android:textColor="@color/text_subway_value"
                             android:textSize="@dimen/secondary_text_2"
                             tools:textColor="@color/green500" />
 
@@ -274,7 +274,7 @@
                         android:fontFamily="@font/proba_nav2_regular"
                         android:gravity="center"
                         android:text="@string/number_sign"
-                        android:textColor="@color/text_subway_white"
+                        android:textColor="@color/text_subway_title"
                         android:textSize="@dimen/list_header_text_look_2" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -284,7 +284,7 @@
                         android:fontFamily="@font/proba_nav2_regular"
                         android:gravity="center"
                         android:text="@string/kind_of_service"
-                        android:textColor="@color/text_subway_white"
+                        android:textColor="@color/text_subway_title"
                         android:textSize="@dimen/list_header_text_look_2" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -294,7 +294,7 @@
                         android:fontFamily="@font/proba_nav2_regular"
                         android:gravity="center"
                         android:text="@string/trip_count"
-                        android:textColor="@color/text_subway_white"
+                        android:textColor="@color/text_subway_title"
                         android:textSize="@dimen/list_header_text_look_2" />
 
                 </LinearLayout>
@@ -303,7 +303,7 @@
                     android:id="@+id/imageview_list_header_underline"
                     android:layout_width="match_parent"
                     android:layout_height="1px"
-                    android:background="@color/text_subway_white" />
+                    android:background="@color/text_subway_title" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -364,7 +364,7 @@
                             android:fontFamily="@font/proba_nav2_regular"
                             android:paddingEnd="15dp"
                             android:text="@string/to_pay_colon"
-                            android:textColor="@color/text_subway_white"
+                            android:textColor="@color/text_subway_title"
                             android:textSize="@dimen/secondary_text_2"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -377,7 +377,7 @@
                             android:fontFamily="@font/proba_nav2_bold"
                             android:paddingEnd="15dp"
                             android:text="325,00"
-                            android:textColor="@color/text_subway_white"
+                            android:textColor="@color/text_subway_title"
                             android:textSize="@dimen/item_name_large_2"
                             app:layout_constraintBaseline_toBaselineOf="@+id/textview_to_pay"
                             app:layout_constraintStart_toEndOf="@+id/textview_to_pay" />
@@ -388,7 +388,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/proba_nav2_semi_bold"
                             android:text="₴"
-                            android:textColor="@color/text_subway_white"
+                            android:textColor="@color/text_subway_title"
                             android:textSize="@dimen/secondary_text_2"
                             app:layout_constraintBaseline_toBaselineOf="@+id/textview_to_pay"
                             app:layout_constraintStart_toEndOf="@+id/textview_total_sum" />
@@ -419,7 +419,7 @@
             android:fontFamily="@font/proba_nav2_semi_bold"
             android:gravity="center"
             android:text="--.--.---- --:--"
-            android:textColor="@color/text_subway_white"
+            android:textColor="@color/text_subway_main"
             android:textSize="38sp"
             tools:text="01.01.2020 00:00"
             tools:textColor="@color/green500" />
