@@ -10,9 +10,10 @@ import com.resonance.cashdisplay.settings.PrefWorker;
 public class KievSubwayArgs {
 
     public final static String SUBWAY_PRLS_CARD_BALANCE = "card_balance";
-    public final static String SUBWAY_PRLS_CARD_PAYMENT = "card_payment";
+    public final static String SUBWAY_PRLS_CARD_PAYMENT = "card_charging";
     public final static String SUBWAY_PRLS_QR_TICKET = "qr_ticket";
 
-    public boolean isCard = true;              // is current transaction is doing with card or qr-ticket
-    public int itemsAmount = 0;                // items amount for this receipt
+    public static boolean isQR = false;               // is current transaction is doing with qr-ticket (card in another case)
+    public static boolean isCharging = false;         // by default transaction is not payment, but balance view (actual only for card)
+    public static int itemsAmount = 0;                // items amount for this receipt
 }

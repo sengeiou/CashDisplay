@@ -48,6 +48,7 @@ import static com.resonance.cashdisplay.MainActivity.textViewTotalSumWithoutDisc
 import static com.resonance.cashdisplay.product_list.look2.KievSubwayArgs.SUBWAY_PRLS_CARD_BALANCE;
 import static com.resonance.cashdisplay.product_list.look2.KievSubwayArgs.SUBWAY_PRLS_CARD_PAYMENT;
 import static com.resonance.cashdisplay.product_list.look2.KievSubwayArgs.SUBWAY_PRLS_QR_TICKET;
+import static com.resonance.cashdisplay.product_list.look2.KievSubwayArgs.isCharging;
 import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_BASKET;
 import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_DMART;
 import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_SUBWAY;
@@ -79,13 +80,19 @@ public class ProductListWorker {
     private LinearLayout layoutItemsBlock;      // layout of 1-2 items mode
     private TextView textViewItemName;          // name of 1-st product for 1-2 items mode
     private TextView textViewItemCount;         // count of 1-st product for 1-2 items mode
+    private TextView textViewCostLabel1;        // word "Вартiсть"
+    private TextView textViewCostLabel2;        // word "Вартiсть"
+    private LinearLayout layoutItemCost1;       // layout for 1-st "value ₴" for 1-2 items mode
+    private LinearLayout layoutItemCost2;       // layout for 2-nd "value ₴" for 1-2 items mode
+    private TextView textViewItemCost;          // price of 1-st item in 1-2 items mode
+    private TextView textViewItemExtraCost;     // price of 2-nd item in 1-2 items mode
     private LinearLayout layoutItemExtra;       // second item for 1-2 items mode
     private TextView textViewItemExtraName;     // name of 2-nd product for 1-2 items mode
     private TextView textViewItemExtraCount;    // count of 2-nd product for 1-2 items mode
     private ImageView imageViewItemExtraBottomLine; // bottom line to delimit second product from to pay words
     private LinearLayout layoutToPay;           // "До сплати" for 1-2 items mode
     private LinearLayout layoutList;            // layout of list mode (more than 2 items)
-    private KievSubwayArgs kievSubwayArgs = new KievSubwayArgs();   // args from PRLS command
+    private TextView textviewListHeaderSum;     // text in header of list for "sum" column
 
     public static Timer clockTimer;
 
@@ -144,12 +151,19 @@ public class ProductListWorker {
                 layoutItemsBlock = mainActivity.findViewById(R.id.layout_items_block);
                 textViewItemName = mainActivity.findViewById(R.id.textview_item_name);
                 textViewItemCount = mainActivity.findViewById(R.id.textview_item_count);
+                textViewCostLabel1 = mainActivity.findViewById(R.id.textview_cost_label1);
+                textViewCostLabel2 = mainActivity.findViewById(R.id.textview_cost_label2);
+                layoutItemCost1 = mainActivity.findViewById(R.id.layout_item_cost1);
+                layoutItemCost2 = mainActivity.findViewById(R.id.layout_item_cost2);
+                textViewItemCost = mainActivity.findViewById(R.id.textview_item_cost);
+                textViewItemExtraCost = mainActivity.findViewById(R.id.textview_item_extra_cost);
                 layoutItemExtra = mainActivity.findViewById(R.id.layout_item_extra);
                 textViewItemExtraName = mainActivity.findViewById(R.id.textview_item_extra_name);
                 textViewItemExtraCount = mainActivity.findViewById(R.id.textview_item_extra_count);
                 imageViewItemExtraBottomLine = mainActivity.findViewById(R.id.imageview_item_extra_bottom_line);
                 layoutToPay = mainActivity.findViewById(R.id.layout_to_pay);
                 layoutList = mainActivity.findViewById(R.id.layout_list);
+                textviewListHeaderSum = mainActivity.findViewById(R.id.textview_list_header_sum);
                 break;
             default:
                 break;
@@ -183,8 +197,10 @@ public class ProductListWorker {
                     layoutToPay.setVisibility(View.GONE);             // for 1-2 items mode
                     layoutTotal.setVisibility(View.GONE);             // for list mode
                     imageViewItemExtraBottomLine.setVisibility(View.GONE);
-                    kievSubwayArgs.isCard = true;
-                    kievSubwayArgs.itemsAmount = 0;
+                    textviewListHeaderSum.setVisibility(View.GONE);
+                    KievSubwayArgs.isQR = false;
+                    KievSubwayArgs.isCharging = false;
+                    KievSubwayArgs.itemsAmount = 0;
 
                     String[] argList = args.split(Character.toString((char) SYMBOL_SEPARATOR));
                     if (argList.length > 0) {
@@ -195,7 +211,7 @@ public class ProductListWorker {
                                     textViewCardNumber.append(argList[1]);        // card number argument
                                 break;
                             case SUBWAY_PRLS_QR_TICKET:
-                                kievSubwayArgs.isCard = false;
+                                KievSubwayArgs.isQR = true;
                             case SUBWAY_PRLS_CARD_PAYMENT:
                                 if (argList[0].equals(SUBWAY_PRLS_CARD_PAYMENT)) {
                                     textViewCardNumber.setText(R.string.card_num);
@@ -206,13 +222,15 @@ public class ProductListWorker {
                                 layoutToPay.setVisibility(View.VISIBLE);          // for 1-2 items mode
                                 layoutTotal.setVisibility(View.VISIBLE);          // for list mode
                                 imageViewItemExtraBottomLine.setVisibility(View.VISIBLE);
+                                textviewListHeaderSum.setVisibility(View.VISIBLE);
+                                isCharging = true;
                                 break;
                             default:
                                 break;
                         }
                     }
                     if (argList.length > 2)
-                        kievSubwayArgs.itemsAmount = strToInt(argList[2]);
+                        KievSubwayArgs.itemsAmount = strToInt(argList[2]);
                 }
 
                 if (clockTimer == null) {
@@ -255,10 +273,15 @@ public class ProductListWorker {
                 imageViewProduct.setVisibility(View.INVISIBLE);
                 imageViewProduct.setBackground(null);
                 layoutItemsBlock.setVisibility(View.INVISIBLE);
+                textViewCostLabel1.setVisibility(View.GONE);
+                textViewCostLabel2.setVisibility(View.GONE);
+                layoutItemCost1.setVisibility(View.GONE);
+                layoutItemCost2.setVisibility(View.GONE);
                 layoutItemExtra.setVisibility(View.GONE);
                 layoutToPay.setVisibility(View.GONE);
                 layoutList.setVisibility(View.INVISIBLE);
                 layoutTotal.setVisibility(View.GONE);
+                textviewListHeaderSum.setVisibility(View.GONE);
 
                 if (clockTimer != null) {
                     clockTimer.cancel();
@@ -465,7 +488,7 @@ public class ProductListWorker {
         switch (PrefWorker.getValues().productListLookCode) {
             case LOOK_SUBWAY:
 
-                if (arrayProductList.size() != kievSubwayArgs.itemsAmount)
+                if (arrayProductList.size() != KievSubwayArgs.itemsAmount)
                     return;
 
                 new Handler().postDelayed(() -> {
@@ -486,17 +509,28 @@ public class ProductListWorker {
                             ItemProductList item = arrayProductList.get(1);
                             textViewItemExtraName.setText(item.getName());
                             textViewItemExtraCount.setText((item.getCount() == -1) ? (context.getString(R.string.unlimited)) : (String.valueOf(item.getCount())));
+                            if (isCharging) {
+                                textViewItemCost.setText(String.format(Locale.FRENCH, "%.02f", (double) item.getSum() / 100));
+                                textViewCostLabel1.setVisibility(View.VISIBLE);
+                                layoutItemCost1.setVisibility(View.VISIBLE);
+                            }
                             layoutItemsBlock.setVisibility(View.VISIBLE);   // 1-2 items mode
                             layoutItemExtra.setVisibility(View.VISIBLE);
                             layoutList.setVisibility(View.INVISIBLE);       // list mode
                         case 1:
                             ((LinearLayout.LayoutParams) layoutCardInfo.getLayoutParams()).weight = 150;
-                            if (kievSubwayArgs.isCard)
+                            if (KievSubwayArgs.isQR)
+                                imageViewProduct.setBackgroundResource(R.drawable.qr_dummy_w300);
+                            else
                                 imageViewProduct.setBackgroundResource(R.drawable.kyiv_smart_card_w300);
-                            else imageViewProduct.setBackgroundResource(R.drawable.qr_dummy_w300);
                             item = arrayProductList.get(0);
                             textViewItemName.setText(item.getName());
                             textViewItemCount.setText((item.getCount() == -1) ? (context.getString(R.string.unlimited)) : (String.valueOf(item.getCount())));
+                            if (isCharging) {
+                                textViewItemExtraCost.setText(String.format(Locale.FRENCH, "%.02f", (double) item.getSum() / 100));
+                                textViewCostLabel2.setVisibility(View.VISIBLE);
+                                layoutItemCost2.setVisibility(View.VISIBLE);
+                            }
                             layoutItemsBlock.setVisibility(View.VISIBLE);   // 1-2 items mode
                             if (arrayProductList.size() == 1)
                                 layoutItemExtra.post(() -> {                // corrects flaw when specified view is going away
@@ -506,16 +540,17 @@ public class ProductListWorker {
                             break;
                         default:
                             ((LinearLayout.LayoutParams) layoutCardInfo.getLayoutParams()).weight = 100;
-                            if (kievSubwayArgs.isCard)
+                            if (KievSubwayArgs.isQR)
+                                imageViewProduct.setBackgroundResource(R.drawable.qr_dummy_w233);
+                            else
                                 imageViewProduct.setBackgroundResource(R.drawable.kyiv_smart_card_w233);
-                            else imageViewProduct.setBackgroundResource(R.drawable.qr_dummy_w233);
                             layoutItemsBlock.setVisibility(View.INVISIBLE); // 1-2 items mode
                             layoutList.setVisibility(View.VISIBLE);         // list mode
                             break;
                     }
 
                     imageViewProduct.setVisibility(View.VISIBLE);
-                    if (kievSubwayArgs.isCard)
+                    if (!KievSubwayArgs.isQR)
                         textViewCardNumber.setVisibility(View.VISIBLE);
 
                     int totalSum = 0;
@@ -529,7 +564,7 @@ public class ProductListWorker {
                     textViewItemsToPaySum.setText(sumTotalToPay);
                     textViewTotalSum.setText(sumTotalToPay);
 
-                }, 100);        // delay after card or qr image animation (for smoothness)
+                }, 100);            // here delay provides smooth animation
                 break;
             default:
                 break;

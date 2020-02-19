@@ -10,10 +10,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.R;
 import com.resonance.cashdisplay.load.DownloadMedia;
+import com.resonance.cashdisplay.product_list.look2.KievSubwayArgs;
 import com.resonance.cashdisplay.settings.PrefValues;
 import com.resonance.cashdisplay.settings.PrefWorker;
 import com.resonance.cashdisplay.utils.ImageUtils;
@@ -40,6 +43,9 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
         TextView textViewDiscount;             // this value will be calculated
         TextView textViewSum;                  // value received from COM port
         ImageView imageViewIcon;
+
+        // used for LOOK_SUBWAY only
+        ConstraintLayout layoutSum;
     }
 
     public AdapterProductList(Context context, int resource, ArrayList<ItemProductList> data) {
@@ -69,6 +75,7 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
             viewHolder.textViewDiscount = (TextView) convertView.findViewById(R.id.textview_discount);
             viewHolder.textViewSum = (TextView) convertView.findViewById(R.id.textview_sum);
             viewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.imageview_icon);
+            viewHolder.layoutSum = (ConstraintLayout) convertView.findViewById(R.id.layout_sum);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (AdapterProductList.ViewHolder) convertView.getTag();
@@ -87,6 +94,10 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
             case LOOK_SUBWAY:
                 if (dataModel.getCount() < 0)
                     viewHolder.textViewCount.setText(R.string.unlimited);
+                if (KievSubwayArgs.isCharging)
+                    viewHolder.layoutSum.setVisibility(View.VISIBLE);
+                else
+                    viewHolder.layoutSum.setVisibility(View.GONE);
                 break;
             default:
                 break;

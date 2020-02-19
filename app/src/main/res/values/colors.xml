@@ -9,8 +9,8 @@
     <color name="list_item_divider_look_1">@android:color/black</color>
 
     <color name="text_subway_main">#FFFFFF</color>
-    <color name="text_subway_title">#ECFAFF</color>
-    <color name="text_subway_secondary">#DFDFDF</color>
+    <color name="text_subway_title">#DBDFFF</color>
+    <color name="text_subway_secondary">#DADADA</color>
     <color name="text_subway_value">@color/text_subway_main</color>
 
 

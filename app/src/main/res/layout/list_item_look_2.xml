@@ -3,6 +3,7 @@
 <!-- Look for Metro (Kiev subway) -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -32,10 +33,10 @@
             android:id="@+id/textview_npp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="0.3"
             android:fontFamily="@font/proba_nav2_semi_bold"
-            android:layout_weight="0.4"
             android:gravity="center"
-            android:textColor="@color/text_subway_title"
+            android:textColor="@color/text_subway_secondary"
             android:textSize="@dimen/list_item_text_look_2"
             tools:text="00" />
 
@@ -48,7 +49,7 @@
             android:gravity="start|center_vertical"
             android:paddingLeft="7dp"
             android:paddingEnd="3dp"
-            android:textColor="@color/text_subway_title"
+            android:textColor="@color/text_subway_main"
             android:textSize="@dimen/list_item_text_look_2"
             tools:text="Проїзний на квітень 2020" />
 
@@ -57,57 +58,68 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1.2"
-            android:gravity="center"
             android:fontFamily="@font/proba_nav2_semi_bold"
+            android:gravity="center"
             android:paddingStart="3dp"
             android:paddingEnd="3dp"
-            android:textColor="@color/text_subway_title"
+            android:textColor="@color/text_subway_value"
             android:textSize="@dimen/list_item_text_look_2"
             tools:text="@string/tools_dummy_4" />
 
-        <!--    dummy, for compability only, must be in another list_item_look_x.xml (visibility = gone) -->
         <TextView
             android:id="@+id/textview_price"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:fontFamily="@font/proba_nav2_semi_bold"
+            android:gravity="center"
+            android:paddingStart="3dp"
+            android:paddingEnd="3dp"
+            android:textColor="@color/text_subway_value"
+            android:textSize="@dimen/list_item_text_look_2"
             android:visibility="gone" />
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_sum"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:visibility="gone">
+            android:layout_weight="1.2"
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <!--        here will be value received from COM port, already with discount -->
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textview_sum"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|end"
-                android:paddingStart="3dp"
+                android:layout_height="wrap_content"
                 android:fontFamily="@font/proba_nav2_semi_bold"
-                android:textColor="@color/text_subway_title"
+                android:textColor="@color/text_subway_value"
                 android:textSize="@dimen/list_item_text_look_2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:text="@string/tools_dummy_5_dot_2" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|start"
+                android:id="@+id/appCompatTextView2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:fontFamily="@font/proba_nav2_semi_bold"
-                android:paddingEnd="3dp"
-                android:text=" грн."
-                android:textColor="@color/text_subway_title"
-                android:textSize="@dimen/list_item_text_look_2" />
-        </LinearLayout>
+                android:text=" ₴"
+                android:textColor="@color/text_subway_value"
+                android:textSize="40sp"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textview_sum"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textview_sum" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@color/text_subway_title" />
+        android:background="@drawable/gradient_horizontal_white" />
 
     <ImageView
         android:id="@+id/imageview_icon"
