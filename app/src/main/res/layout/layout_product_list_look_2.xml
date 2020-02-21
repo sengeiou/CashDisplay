@@ -8,15 +8,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:background="@drawable/d">   <!--  #212042  -->
+    tools:background="#212042">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="700"
         android:orientation="horizontal">
-
-        <!--       dummy, for compability only, must be in another layout_shopping_list_look_x.xml (visibility = gone) -->
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_card_info"
@@ -25,7 +23,7 @@
             android:layout_weight="150"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            app:layout_constraintEnd_toStartOf="@+id/frameLayout"
+            app:layout_constraintEnd_toStartOf="@+id/linearLayoutMain"
             app:layout_constraintStart_toStartOf="parent">
 
             <ImageView
@@ -60,22 +58,45 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <FrameLayout
-            android:id="@+id/frameLayout"
+        <LinearLayout
+            android:id="@+id/linearLayoutMain"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="300">
+            android:layout_weight="300"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textview_balance"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:fontFamily="@font/proba_nav2_bold"
+                android:gravity="center_vertical"
+                android:paddingEnd="50dp"
+                android:text="@string/balance"
+                android:textColor="#80E4D2"
+                android:textSize="@dimen/item_name_large_2"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/imageview_balance_underline"
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@drawable/gradient_horizontal_white"
+                android:visibility="gone" />
 
             <LinearLayout
-                android:id="@+id/layout_items_block"
+                android:id="@+id/layout_item_1_2_block"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="8"
                 android:orientation="vertical"
-                android:visibility="invisible"
+                android:visibility="gone"
                 tools:visibility="visible">
 
                 <LinearLayout
-                    android:id="@+id/layout_item"
+                    android:id="@+id/layout_item_1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="48"
@@ -87,7 +108,7 @@
                         android:layout_weight="0.8"></Space>
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/textview_item_name"
+                        android:id="@+id/textview_item1_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/proba_nav2_bold"
@@ -120,7 +141,7 @@
                                 tools:textColor="@color/green500" />
 
                             <Space
-                                android:layout_width="130dp"
+                                android:layout_width="115dp"
                                 android:layout_height="match_parent"></Space>
 
                             <androidx.appcompat.widget.AppCompatTextView
@@ -142,7 +163,7 @@
                             android:layout_height="match_parent">
 
                             <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/textview_item_count"
+                                android:id="@+id/textview_item1_count"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/proba_nav2_bold"
@@ -152,18 +173,18 @@
                                 tools:textColor="@color/green500" />
 
                             <Space
-                                android:layout_width="130dp"
+                                android:layout_width="115dp"
                                 android:layout_height="match_parent"></Space>
 
                             <LinearLayout
-                                android:id="@+id/layout_item_cost1"
+                                android:id="@+id/layout_item1_cost"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:visibility="gone"
                                 tools:visibility="visible">
 
                                 <androidx.appcompat.widget.AppCompatTextView
-                                    android:id="@+id/textview_item_cost"
+                                    android:id="@+id/textview_item1_cost"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/proba_nav2_bold"
@@ -196,7 +217,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/layout_item_extra"
+                    android:id="@+id/layout_item2"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="50"
@@ -215,7 +236,7 @@
                         android:layout_weight="0.8"></Space>
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/textview_item_extra_name"
+                        android:id="@+id/textview_item2_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/proba_nav2_bold"
@@ -249,7 +270,7 @@
                                 tools:textColor="@color/green500" />
 
                             <Space
-                                android:layout_width="130dp"
+                                android:layout_width="115dp"
                                 android:layout_height="match_parent"></Space>
 
                             <androidx.appcompat.widget.AppCompatTextView
@@ -271,7 +292,7 @@
                             android:layout_height="match_parent">
 
                             <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/textview_item_extra_count"
+                                android:id="@+id/textview_item2_count"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/proba_nav2_bold"
@@ -281,18 +302,18 @@
                                 tools:textColor="@color/green500" />
 
                             <Space
-                                android:layout_width="130dp"
+                                android:layout_width="115dp"
                                 android:layout_height="match_parent"></Space>
 
                             <LinearLayout
-                                android:id="@+id/layout_item_cost2"
+                                android:id="@+id/layout_item2_cost"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:visibility="gone"
                                 tools:visibility="visible">
 
                                 <androidx.appcompat.widget.AppCompatTextView
-                                    android:id="@+id/textview_item_extra_cost"
+                                    android:id="@+id/textview_item2_cost"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/proba_nav2_bold"
@@ -324,7 +345,7 @@
                         android:layout_weight="1"></Space>
 
                     <ImageView
-                        android:id="@+id/imageview_item_extra_bottom_line"
+                        android:id="@+id/imageview_item2_bottom_line"
                         android:layout_width="match_parent"
                         android:layout_height="1px"
                         android:background="@drawable/gradient_horizontal_white"
@@ -339,53 +360,53 @@
                 </LinearLayout>
 
                 <!--    total for 1 or 2 items (also there is layout_total with the same value - for product list) -->
-                <LinearLayout
-                    android:id="@+id/layout_to_pay"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_to_pay_1_2_items"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="25.5"
-                    android:orientation="vertical"
                     android:visibility="gone"
                     tools:visibility="visible">
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/textview_to_pay_1_2_items"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
                         android:fontFamily="@font/proba_nav2_regular"
                         android:text="@string/to_pay"
                         android:textColor="@color/text_subway_secondary"
                         android:textSize="@dimen/secondary_text_2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
                         tools:textColor="@color/green500" />
 
-                    <LinearLayout
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/textview_items_to_pay_sum"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/proba_nav2_bold"
+                        android:text="1325,00"
+                        android:textColor="@color/text_subway_value"
+                        android:textSize="@dimen/item_name_large_2"
+                        app:layout_constraintStart_toStartOf="@+id/textview_to_pay_1_2_items"
+                        app:layout_constraintTop_toBottomOf="@+id/textview_to_pay_1_2_items"
+                        tools:textColor="@color/green500" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/textview_items_to_pay_sum"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/proba_nav2_bold"
-                            android:text="1325,00"
-                            android:textColor="@color/text_subway_value"
-                            android:textSize="@dimen/item_name_large_2"
-                            tools:textColor="@color/green500" />
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/textview_grn1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/proba_nav2_semi_bold"
+                        android:paddingStart="15dp"
+                        android:text="₴"
+                        android:textColor="@color/text_subway_value"
+                        android:textSize="@dimen/secondary_text_2"
+                        app:layout_constraintBaseline_toBaselineOf="@+id/textview_items_to_pay_sum"
+                        app:layout_constraintStart_toEndOf="@+id/textview_items_to_pay_sum"
+                        tools:textColor="@color/green500" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/proba_nav2_semi_bold"
-                            android:gravity="bottom|end"
-                            android:paddingStart="15dp"
-                            android:text="₴"
-                            android:textColor="@color/text_subway_value"
-                            android:textSize="@dimen/secondary_text_2"
-                            tools:textColor="@color/green500" />
-
-                    </LinearLayout>
-
-
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
 
             <!--    layout_list is separate layout if total product amount is more than 2 -->
@@ -393,9 +414,11 @@
             <LinearLayout
                 android:id="@+id/layout_list"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="8"
                 android:orientation="vertical"
-                android:visibility="invisible">
+                android:visibility="gone"
+                tools:visibility="gone">
 
                 <LinearLayout
                     android:id="@+id/list_header"
@@ -420,6 +443,7 @@
                         android:layout_weight="2.5"
                         android:fontFamily="@font/proba_nav2_regular"
                         android:gravity="center"
+                        android:paddingEnd="65dp"
                         android:text="@string/kind_of_service"
                         android:textColor="@color/text_subway_secondary"
                         android:textSize="@dimen/list_header_text_look_2" />
@@ -505,6 +529,7 @@
                             app:layout_constraintStart_toStartOf="parent" />
 
                         <!--        here will be value received from COM port, already with discount -->
+
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/textview_to_pay"
                             android:layout_width="wrap_content"
@@ -515,6 +540,9 @@
                             android:textColor="@color/text_subway_secondary"
                             android:textSize="@dimen/secondary_text_2"
                             app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/textview_total_sum"
+                            app:layout_constraintHorizontal_bias="0.96"
+                            app:layout_constraintHorizontal_chainStyle="packed"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
@@ -528,6 +556,8 @@
                             android:textColor="@color/text_subway_value"
                             android:textSize="@dimen/item_name_large_2"
                             app:layout_constraintBaseline_toBaselineOf="@+id/textview_to_pay"
+                            app:layout_constraintEnd_toStartOf="@+id/appCompatTextView"
+                            app:layout_constraintHorizontal_bias="0.5"
                             app:layout_constraintStart_toEndOf="@+id/textview_to_pay" />
 
                         <androidx.appcompat.widget.AppCompatTextView
@@ -539,14 +569,17 @@
                             android:textColor="@color/text_subway_value"
                             android:textSize="@dimen/secondary_text_2"
                             app:layout_constraintBaseline_toBaselineOf="@+id/textview_to_pay"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
                             app:layout_constraintStart_toEndOf="@+id/textview_total_sum" />
+
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </LinearLayout>
 
             </LinearLayout>
 
-        </FrameLayout>
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout

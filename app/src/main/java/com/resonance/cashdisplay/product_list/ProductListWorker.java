@@ -10,6 +10,7 @@ import android.text.style.ForegroundColorSpan;
 import android.transition.Fade;
 import android.transition.Transition;
 import android.transition.TransitionManager;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.R;
@@ -74,27 +76,37 @@ public class ProductListWorker {
     private AdapterProductList adapterProductList;
     private ArrayList<ItemProductList> arrayProductList = new ArrayList<ItemProductList>();
 
+    public static Timer clockTimer;
+
+    // ********************************************************************************************
     // used for LOOK_SUBWAY only
     private ConstraintLayout layoutCardInfo;
     private TextView textViewCardNumber;
-    private LinearLayout layoutItemsBlock;      // layout of 1-2 items mode
-    private TextView textViewItemName;          // name of 1-st product for 1-2 items mode
-    private TextView textViewItemCount;         // count of 1-st product for 1-2 items mode
-    private TextView textViewCostLabel1;        // word "Вартiсть"
-    private TextView textViewCostLabel2;        // word "Вартiсть"
-    private LinearLayout layoutItemCost1;       // layout for 1-st "value ₴" for 1-2 items mode
-    private LinearLayout layoutItemCost2;       // layout for 2-nd "value ₴" for 1-2 items mode
-    private TextView textViewItemCost;          // price of 1-st item in 1-2 items mode
-    private TextView textViewItemExtraCost;     // price of 2-nd item in 1-2 items mode
-    private LinearLayout layoutItemExtra;       // second item for 1-2 items mode
-    private TextView textViewItemExtraName;     // name of 2-nd product for 1-2 items mode
-    private TextView textViewItemExtraCount;    // count of 2-nd product for 1-2 items mode
-    private ImageView imageViewItemExtraBottomLine; // bottom line to delimit second product from to pay words
-    private LinearLayout layoutToPay;           // "До сплати" for 1-2 items mode
-    private LinearLayout layoutList;            // layout of list mode (more than 2 items)
-    private TextView textviewListHeaderSum;     // text in header of list for "sum" column
 
-    public static Timer clockTimer;
+    private TextView textViewBalance;           // word "Баланс"
+    private ImageView imageViewBalanceUnderline;// line below word "Баланс"
+
+    private LinearLayout layoutItem12Block;     // layout of 1-2 items mode
+    private TextView textViewItem1Name;         // name of 1-st product for 1-2 items mode
+    private TextView textViewItem1Count;        // count of 1-st product for 1-2 items mode
+    private TextView textViewCostLabel1;        // word "Вартiсть"
+    private LinearLayout layoutItem1Cost;       // layout for 1-st "value ₴" for 1-2 items mode
+    private TextView textViewItem1Cost;         // price of 1-st item in 1-2 items mode
+
+    private LinearLayout layoutItem2;           // second item for 1-2 items mode
+    private TextView textViewItem2Name;         // name of 2-nd product for 1-2 items mode
+    private TextView textViewItem2Count;        // count of 2-nd product for 1-2 items mode
+    private TextView textViewCostLabel2;        // word "Вартiсть"
+    private LinearLayout layoutItem2Cost;       // layout for 2-nd "value ₴" for 1-2 items mode
+    private TextView textViewItem2Cost;         // price of 2-nd item in 1-2 items mode
+    private ImageView imageViewItem2BottomLine; // bottom line to delimit second product from to pay words
+
+    private ConstraintLayout layoutToPay12Items;// "До сплати" for 1-2 items mode
+    private ConstraintSet setLayoutToPay12Items = new ConstraintSet();
+
+    private TextView textviewListHeaderSum;     // text in header of list for "sum" column
+    private LinearLayout layoutList;            // layout of list mode (more than 2 items)
+    // ********************************************************************************************
 
     public ProductListWorker(Context context) {
         this.context = context;
@@ -148,22 +160,30 @@ public class ProductListWorker {
             case LOOK_SUBWAY:
                 layoutCardInfo = mainActivity.findViewById(R.id.layout_card_info);
                 textViewCardNumber = mainActivity.findViewById(R.id.textview_card_number);
-                layoutItemsBlock = mainActivity.findViewById(R.id.layout_items_block);
-                textViewItemName = mainActivity.findViewById(R.id.textview_item_name);
-                textViewItemCount = mainActivity.findViewById(R.id.textview_item_count);
+
+                textViewBalance = mainActivity.findViewById(R.id.textview_balance);
+                imageViewBalanceUnderline = mainActivity.findViewById(R.id.imageview_balance_underline);
+
+                layoutItem12Block = mainActivity.findViewById(R.id.layout_item_1_2_block);
+                textViewItem1Name = mainActivity.findViewById(R.id.textview_item1_name);
+                textViewItem1Count = mainActivity.findViewById(R.id.textview_item1_count);
                 textViewCostLabel1 = mainActivity.findViewById(R.id.textview_cost_label1);
+                layoutItem1Cost = mainActivity.findViewById(R.id.layout_item1_cost);
+                textViewItem1Cost = mainActivity.findViewById(R.id.textview_item1_cost);
+
+                layoutItem2 = mainActivity.findViewById(R.id.layout_item2);
+                textViewItem2Name = mainActivity.findViewById(R.id.textview_item2_name);
+                textViewItem2Count = mainActivity.findViewById(R.id.textview_item2_count);
                 textViewCostLabel2 = mainActivity.findViewById(R.id.textview_cost_label2);
-                layoutItemCost1 = mainActivity.findViewById(R.id.layout_item_cost1);
-                layoutItemCost2 = mainActivity.findViewById(R.id.layout_item_cost2);
-                textViewItemCost = mainActivity.findViewById(R.id.textview_item_cost);
-                textViewItemExtraCost = mainActivity.findViewById(R.id.textview_item_extra_cost);
-                layoutItemExtra = mainActivity.findViewById(R.id.layout_item_extra);
-                textViewItemExtraName = mainActivity.findViewById(R.id.textview_item_extra_name);
-                textViewItemExtraCount = mainActivity.findViewById(R.id.textview_item_extra_count);
-                imageViewItemExtraBottomLine = mainActivity.findViewById(R.id.imageview_item_extra_bottom_line);
-                layoutToPay = mainActivity.findViewById(R.id.layout_to_pay);
-                layoutList = mainActivity.findViewById(R.id.layout_list);
+                layoutItem2Cost = mainActivity.findViewById(R.id.layout_item2_cost);
+                textViewItem2Cost = mainActivity.findViewById(R.id.textview_item2_cost);
+                imageViewItem2BottomLine = mainActivity.findViewById(R.id.imageview_item2_bottom_line);
+
+                layoutToPay12Items = mainActivity.findViewById(R.id.layout_to_pay_1_2_items);
+                setLayoutToPay12Items.clone(layoutToPay12Items);
+
                 textviewListHeaderSum = mainActivity.findViewById(R.id.textview_list_header_sum);
+                layoutList = mainActivity.findViewById(R.id.layout_list);
                 break;
             default:
                 break;
@@ -194,10 +214,14 @@ public class ProductListWorker {
 
                     imageViewProduct.setVisibility(View.INVISIBLE);
                     textViewCardNumber.setVisibility(View.GONE);
-                    layoutToPay.setVisibility(View.GONE);             // for 1-2 items mode
+                    textViewBalance.setVisibility(View.GONE);
+                    textViewBalance.setGravity(Gravity.CENTER_VERTICAL);
+                    imageViewBalanceUnderline.setVisibility(View.GONE);
+                    layoutToPay12Items.setVisibility(View.GONE);      // for 1-2 items mode
                     layoutTotal.setVisibility(View.GONE);             // for list mode
-                    imageViewItemExtraBottomLine.setVisibility(View.GONE);
+                    imageViewItem2BottomLine.setVisibility(View.GONE);
                     textviewListHeaderSum.setVisibility(View.GONE);
+                    textViewCardNumber.setText(R.string.card_num);
                     KievSubwayArgs.isQR = false;
                     KievSubwayArgs.isCharging = false;
                     KievSubwayArgs.itemsAmount = 0;
@@ -206,22 +230,14 @@ public class ProductListWorker {
                     if (argList.length > 0) {
                         switch (argList[0]) {
                             case SUBWAY_PRLS_CARD_BALANCE:
-                                textViewCardNumber.setText(R.string.card_balance_num);
-                                if (argList.length > 1)
-                                    textViewCardNumber.append(argList[1]);        // card number argument
+                                KievSubwayArgs.isCharging = false;
                                 break;
                             case SUBWAY_PRLS_QR_TICKET:
                                 KievSubwayArgs.isQR = true;
                             case SUBWAY_PRLS_CARD_PAYMENT:
-                                if (argList[0].equals(SUBWAY_PRLS_CARD_PAYMENT)) {
-                                    textViewCardNumber.setText(R.string.card_num);
-                                    if (argList.length > 1) {
-                                        textViewCardNumber.append(argList[1]);    // card number argument
-                                    }
-                                }
-                                layoutToPay.setVisibility(View.VISIBLE);          // for 1-2 items mode
+                                layoutToPay12Items.setVisibility(View.VISIBLE);   // for 1-2 items mode
                                 layoutTotal.setVisibility(View.VISIBLE);          // for list mode
-                                imageViewItemExtraBottomLine.setVisibility(View.VISIBLE);
+                                imageViewItem2BottomLine.setVisibility(View.VISIBLE);
                                 textviewListHeaderSum.setVisibility(View.VISIBLE);
                                 isCharging = true;
                                 break;
@@ -229,33 +245,15 @@ public class ProductListWorker {
                                 break;
                         }
                     }
+                    if (argList.length > 1)
+                        textViewCardNumber.append(argList[1]);                    // card number argument
                     if (argList.length > 2)
                         KievSubwayArgs.itemsAmount = strToInt(argList[2]);
                 }
 
-                if (clockTimer == null) {
-                    clockTimer = new Timer();
-                    TextView textViewDateTime = ((Activity) context).findViewById(R.id.textview_date_time);
-                    DateFormat dateFormat0 = new SimpleDateFormat("dd.MM.yyyy HH mm", new Locale("uk"));
-                    DateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy HH:mm", new Locale("uk"));
-                    Date date = new Date(System.currentTimeMillis());
-                    clockTimer.scheduleAtFixedRate(new TimerTask() {
-                        boolean flip = false;
-
-                        @Override
-                        public void run() {
-                            date.setTime(System.currentTimeMillis());
-                            if (flip) {
-                                textViewDateTime.post(() ->
-                                        textViewDateTime.setText(dateFormat0.format(date)));
-                            } else {
-                                textViewDateTime.post(() ->
-                                        textViewDateTime.setText(dateFormat1.format(date)));
-                            }
-                            flip = !flip;
-                        }
-                    }, 0, 500);
-                }
+                DateFormat dateFormat0 = new SimpleDateFormat("dd.MM.yyyy HH:mm", new Locale("uk"));
+                DateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy HH mm", new Locale("uk"));
+                startClock(dateFormat0, dateFormat1);
                 break;
             default:
                 break;
@@ -272,14 +270,17 @@ public class ProductListWorker {
                 textViewCardNumber.setText(context.getString(R.string.card_default));
                 imageViewProduct.setVisibility(View.INVISIBLE);
                 imageViewProduct.setBackground(null);
-                layoutItemsBlock.setVisibility(View.INVISIBLE);
+                imageViewBalanceUnderline.setVisibility(View.GONE);
+                layoutItem12Block.setVisibility(View.GONE);
                 textViewCostLabel1.setVisibility(View.GONE);
                 textViewCostLabel2.setVisibility(View.GONE);
-                layoutItemCost1.setVisibility(View.GONE);
-                layoutItemCost2.setVisibility(View.GONE);
-                layoutItemExtra.setVisibility(View.GONE);
-                layoutToPay.setVisibility(View.GONE);
-                layoutList.setVisibility(View.INVISIBLE);
+                layoutItem1Cost.setVisibility(View.GONE);
+                layoutItem2Cost.setVisibility(View.GONE);
+                layoutItem2.setVisibility(View.GONE);
+                layoutToPay12Items.setVisibility(View.GONE);
+                setLayoutToPay12Items.setMargin(R.id.textview_to_pay_1_2_items, ConstraintSet.START, 0);      // shift from start of "До сплати" words
+                setLayoutToPay12Items.applyTo(layoutToPay12Items);
+                layoutList.setVisibility(View.GONE);
                 layoutTotal.setVisibility(View.GONE);
                 textviewListHeaderSum.setVisibility(View.GONE);
 
@@ -494,64 +495,88 @@ public class ProductListWorker {
                 new Handler().postDelayed(() -> {
                     Transition transition = new Fade();
                     transition.setDuration(150);        // 200
-                    transition.addTarget(layoutItemsBlock);
-                    transition.addTarget(layoutItemExtra);
+                    transition.addTarget(layoutItem12Block);
+                    transition.addTarget(layoutItem2);
                     transition.addTarget(layoutList);
                     TransitionManager.beginDelayedTransition(relativeLayout[2], transition);    // scene root = product list
 
                     switch (arrayProductList.size()) {     // current amount of products that are in list right now
                         case 0:
-                            layoutItemsBlock.setVisibility(View.INVISIBLE);
-                            layoutItemExtra.setVisibility(View.GONE);
-                            layoutList.setVisibility(View.INVISIBLE);
-                            break;
+                            imageViewProduct.setVisibility(View.INVISIBLE);
+                            textViewCardNumber.setVisibility(View.GONE);
+                            textViewBalance.setVisibility(View.GONE);
+                            imageViewBalanceUnderline.setVisibility(View.GONE);
+                            layoutItem12Block.setVisibility(View.GONE);
+                            layoutItem2.setVisibility(View.GONE);
+                            layoutList.setVisibility(View.GONE);
+                            return;
                         case 2:
                             ItemProductList item = arrayProductList.get(1);
-                            textViewItemExtraName.setText(item.getName());
-                            textViewItemExtraCount.setText((item.getCount() == -1) ? (context.getString(R.string.unlimited)) : (String.valueOf(item.getCount())));
+                            textViewItem2Name.setText(item.getName());
+                            textViewItem2Count.setText((item.getCount() == -1) ? (context.getString(R.string.unlimited)) : (String.valueOf(item.getCount())));
+
                             if (isCharging) {
-                                textViewItemCost.setText(String.format(Locale.FRENCH, "%.02f", (double) item.getSum() / 100));
+                                textViewItem1Cost.setText(String.format(Locale.FRENCH, "%.02f", (double) item.getSum() / 100));
                                 textViewCostLabel1.setVisibility(View.VISIBLE);
-                                layoutItemCost1.setVisibility(View.VISIBLE);
-                            }
-                            layoutItemsBlock.setVisibility(View.VISIBLE);   // 1-2 items mode
-                            layoutItemExtra.setVisibility(View.VISIBLE);
-                            layoutList.setVisibility(View.INVISIBLE);       // list mode
+                                layoutItem1Cost.setVisibility(View.VISIBLE);
+                            } else
+                                imageViewBalanceUnderline.setVisibility(View.VISIBLE);
+
+                            setLayoutToPay12Items.setMargin(R.id.textview_to_pay_1_2_items, ConstraintSet.START, 540);      // shift from start of "До сплати" words
+                            setLayoutToPay12Items.applyTo(layoutToPay12Items);
+
+                            layoutItem12Block.setVisibility(View.VISIBLE);   // 1-2 items mode
+                            layoutItem2.setVisibility(View.VISIBLE);
+                            layoutList.setVisibility(View.GONE);            // list mode
                         case 1:
                             ((LinearLayout.LayoutParams) layoutCardInfo.getLayoutParams()).weight = 150;
                             if (KievSubwayArgs.isQR)
                                 imageViewProduct.setBackgroundResource(R.drawable.qr_dummy_w300);
                             else
                                 imageViewProduct.setBackgroundResource(R.drawable.kyiv_smart_card_w300);
+
                             item = arrayProductList.get(0);
-                            textViewItemName.setText(item.getName());
-                            textViewItemCount.setText((item.getCount() == -1) ? (context.getString(R.string.unlimited)) : (String.valueOf(item.getCount())));
+                            textViewItem1Name.setText(item.getName());
+                            textViewItem1Count.setText((item.getCount() == -1) ? (context.getString(R.string.unlimited)) : (String.valueOf(item.getCount())));
+
                             if (isCharging) {
-                                textViewItemExtraCost.setText(String.format(Locale.FRENCH, "%.02f", (double) item.getSum() / 100));
+                                textViewItem2Cost.setText(String.format(Locale.FRENCH, "%.02f", (double) item.getSum() / 100));
                                 textViewCostLabel2.setVisibility(View.VISIBLE);
-                                layoutItemCost2.setVisibility(View.VISIBLE);
+                                layoutItem2Cost.setVisibility(View.VISIBLE);
                             }
-                            layoutItemsBlock.setVisibility(View.VISIBLE);   // 1-2 items mode
+
+                            if (!isCharging && arrayProductList.size() == 1)
+                                imageViewBalanceUnderline.setVisibility(View.GONE);
+
+                            layoutItem12Block.setVisibility(View.VISIBLE);   // 1-2 items mode
                             if (arrayProductList.size() == 1)
-                                layoutItemExtra.post(() -> {                // corrects flaw when specified view is going away
-                                    layoutItemExtra.setVisibility(View.GONE);
+                                layoutItem2.post(() -> {                // corrects flaw when specified view is going away
+                                    layoutItem2.setVisibility(View.GONE);
                                 });
-                            layoutList.setVisibility(View.INVISIBLE);       // list mode
+                            layoutList.setVisibility(View.GONE);       // list mode
                             break;
                         default:
                             ((LinearLayout.LayoutParams) layoutCardInfo.getLayoutParams()).weight = 100;
+                            textViewBalance.setGravity(Gravity.CENTER);
+
                             if (KievSubwayArgs.isQR)
                                 imageViewProduct.setBackgroundResource(R.drawable.qr_dummy_w233);
                             else
                                 imageViewProduct.setBackgroundResource(R.drawable.kyiv_smart_card_w233);
-                            layoutItemsBlock.setVisibility(View.INVISIBLE); // 1-2 items mode
+
+                            layoutItem12Block.setVisibility(View.GONE); // 1-2 items mode
                             layoutList.setVisibility(View.VISIBLE);         // list mode
+
+                            if (!isCharging)
+                                imageViewBalanceUnderline.setVisibility(View.VISIBLE);
                             break;
                     }
 
                     imageViewProduct.setVisibility(View.VISIBLE);
                     if (!KievSubwayArgs.isQR)
                         textViewCardNumber.setVisibility(View.VISIBLE);
+                    if (!isCharging)
+                        textViewBalance.setVisibility(View.VISIBLE);
 
                     int totalSum = 0;
                     for (int i = 0; i < arrayProductList.size(); i++) {
@@ -564,7 +589,7 @@ public class ProductListWorker {
                     textViewItemsToPaySum.setText(sumTotalToPay);
                     textViewTotalSum.setText(sumTotalToPay);
 
-                }, 100);            // here delay provides smooth animation
+                }, 100);            // here delay provides smooth animation (little time need to show image)
                 break;
             default:
                 break;
@@ -635,6 +660,42 @@ public class ProductListWorker {
             Log.e(TAG, "ERROR strToLong: " + e);
         }
         return 0L;
+    }
+
+    /**
+     * Provides clock for Product List screen.
+     * Every 500ms specified TextView will set text, provided in arguments to this method:
+     * arg1 - arg2 - arg1 - arg2 ....
+     * If second argument == null, then only 1-st argument will change specified TextView:
+     * arg1 - arg1 - arg1 - arg1 ....
+     *
+     * @param dateFormat0 main format, must be present necessarily;
+     * @param dateFormat1 is optional, and may be equal {@code null}.
+     */
+    private void startClock(DateFormat dateFormat0, @Nullable DateFormat dateFormat1) {
+        if (clockTimer == null) {
+            clockTimer = new Timer();
+            TextView textViewDateTime = ((Activity) context).findViewById(R.id.textview_date_time);
+            Date date = new Date(System.currentTimeMillis());
+            clockTimer.scheduleAtFixedRate(new TimerTask() {
+                boolean flip = true;
+
+                @Override
+                public void run() {
+                    date.setTime(System.currentTimeMillis());
+                    if (flip) {
+                        textViewDateTime.post(() ->
+                                textViewDateTime.setText(dateFormat0.format(date)));
+                        if (dateFormat1 == null)
+                            return;
+                    } else {
+                        textViewDateTime.post(() ->
+                                textViewDateTime.setText(dateFormat1.format(date)));
+                    }
+                    flip = !flip;
+                }
+            }, 0, 500);
+        }
     }
 
     public void showToast(String message) {

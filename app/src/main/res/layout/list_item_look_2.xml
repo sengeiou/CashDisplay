@@ -36,7 +36,7 @@
             android:layout_weight="0.3"
             android:fontFamily="@font/proba_nav2_semi_bold"
             android:gravity="center"
-            android:textColor="@color/text_subway_secondary"
+            android:textColor="@color/text_subway_main"
             android:textSize="@dimen/list_item_text_look_2"
             tools:text="00" />
 
@@ -49,7 +49,7 @@
             android:gravity="start|center_vertical"
             android:paddingLeft="7dp"
             android:paddingEnd="3dp"
-            android:textColor="@color/text_subway_main"
+            android:textColor="@color/text_subway_title"
             android:textSize="@dimen/list_item_text_look_2"
             tools:text="Проїзний на квітень 2020" />
 

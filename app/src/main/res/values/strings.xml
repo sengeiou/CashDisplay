@@ -56,8 +56,7 @@
     <string name="cost">Вартiсть</string>
     <string name="card_default">Картка\u000A№ 000000000000</string>
     <string name="card_num">Картка\u000A№\u0020</string>
-    <string name="card_balance_num">Баланс картки\u000A№\u0020</string>
-    <string name="card_mask">000000000000</string>
+    <string name="balance">Баланс</string>
     <string name="unlimited">без ліміту</string>
 
     <string name="tools_dummy_4">1234</string>

@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- Look for "Basket" shop (default)-->
+<!-- Look for "Basket" shop (default)
+     It is basic layout, which is "parent" of another layout_product_list_look_*.xml layouts.
+
+     Some components must be present in all layout_product_list_look_*.xml layouts,
+     though may be not used in them. In such case they are INVISIBLE or GONE.
+     Such approach provides handling of this layouts with single code, keeping universality of this code.
+-->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"

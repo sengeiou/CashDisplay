@@ -94,8 +94,10 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
             case LOOK_SUBWAY:
                 if (dataModel.getCount() < 0)
                     viewHolder.textViewCount.setText(R.string.unlimited);
-                if (KievSubwayArgs.isCharging)
+                if (KievSubwayArgs.isCharging) {
+                    viewHolder.textViewSum.setText(String.format(Locale.FRENCH, "%.2f", (double) dataModel.getSum() / 100));
                     viewHolder.layoutSum.setVisibility(View.VISIBLE);
+                }
                 else
                     viewHolder.layoutSum.setVisibility(View.GONE);
                 break;
