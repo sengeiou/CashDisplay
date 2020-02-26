@@ -610,7 +610,7 @@ public class ProductListWorker {
             transition.addTarget(layoutList);
             TransitionManager.beginDelayedTransition(relativeLayout[2], transition);    // scene root = product list
 
-            switch (arrayProductList.size()) {               // current amount of products that are in list right now
+            switch (KievSubwayArgs.itemsAmount) {               // current amount of products that are in list right now
                 case 0:
                     return;
                 case 2:
