@@ -66,17 +66,12 @@
             android:textSize="@dimen/list_item_text_look_2"
             tools:text="@string/tools_dummy_4" />
 
+        <!--    dummy, for compability only, must be in another list_item_look_x.xml (visibility = gone) -->
         <TextView
             android:id="@+id/textview_price"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:fontFamily="@font/proba_nav2_semi_bold"
-            android:gravity="center"
-            android:paddingStart="3dp"
-            android:paddingEnd="3dp"
-            android:textColor="@color/text_subway_value"
-            android:textSize="@dimen/list_item_text_look_2"
             android:visibility="gone" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -119,7 +114,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@drawable/gradient_horizontal_white" />
+        android:background="@drawable/gradient_horizontal_center_white" />
 
     <ImageView
         android:id="@+id/imageview_icon"

@@ -83,8 +83,9 @@
                 android:id="@+id/imageview_balance_underline"
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:background="@drawable/gradient_horizontal_white"
-                android:visibility="gone" />
+                android:background="@drawable/gradient_horizontal_center_white"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <LinearLayout
                 android:id="@+id/layout_item_1_2_block"
@@ -96,7 +97,7 @@
                 tools:visibility="visible">
 
                 <LinearLayout
-                    android:id="@+id/layout_item_1"
+                    android:id="@+id/layout_item1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="48"
@@ -226,9 +227,10 @@
                     tools:visibility="visible">
 
                     <ImageView
+                        android:id="@+id/imageview_item_1_2_delimiter"
                         android:layout_width="match_parent"
                         android:layout_height="1px"
-                        android:background="@drawable/gradient_horizontal_white" />
+                        android:background="@drawable/gradient_horizontal_center_white" />
 
                     <Space
                         android:layout_width="match_parent"
@@ -345,10 +347,10 @@
                         android:layout_weight="1"></Space>
 
                     <ImageView
-                        android:id="@+id/imageview_item2_bottom_line"
+                        android:id="@+id/imageview_item2_underline"
                         android:layout_width="match_parent"
                         android:layout_height="1px"
-                        android:background="@drawable/gradient_horizontal_white"
+                        android:background="@drawable/gradient_horizontal_center_white"
                         android:visibility="gone"
                         tools:visibility="visible" />
 
