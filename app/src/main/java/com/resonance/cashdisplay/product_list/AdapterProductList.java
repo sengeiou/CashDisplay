@@ -116,22 +116,22 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
      * @param codeProduct
      * @return
      */
-    public static Bitmap getImage(String codeProduct) {
+    public Bitmap getImage(String codeProduct) {
 
-        String filepath = ExtSDSource.getExternalSdCardPath() + DownloadMedia.IMG_URI + codeProduct + ".png";//Изображение товара
+        String filepath = ExtSDSource.getExternalSdCardPath(mContext) + DownloadMedia.IMG_URI + codeProduct + ".png";//Изображение товара
         File fileImg = new File(filepath);
 
         if (fileImg.exists()) {// PNG
             return ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
         } else {         //JPG
-            filepath = ExtSDSource.getExternalSdCardPath() + DownloadMedia.IMG_URI + codeProduct + ".jpg";//Изображение товара
+            filepath = ExtSDSource.getExternalSdCardPath(mContext) + DownloadMedia.IMG_URI + codeProduct + ".jpg";//Изображение товара
             fileImg = new File(filepath);
             if (fileImg.exists()) {
                 return ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
             } else {
                 //покажем изображение по-умолчанию
                 PrefValues prefValues = PrefWorker.getValues();
-                filepath = ExtSDSource.getExternalSdCardPath() + DownloadMedia.IMG_SCREEN + ((prefValues.defaultBackgroundImage.length() > 0) ? prefValues.defaultBackgroundImage : "noimg");
+                filepath = ExtSDSource.getExternalSdCardPath(mContext) + DownloadMedia.IMG_SCREEN + ((prefValues.defaultBackgroundImage.length() > 0) ? prefValues.defaultBackgroundImage : "noimg");
                 fileImg = new File(filepath);
 
                 if (fileImg.exists()) {

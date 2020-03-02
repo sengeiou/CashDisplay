@@ -173,13 +173,13 @@ public class DownloadMedia {
             return;
 
         //очистка хлама
-        File lostDir = new File(ExtSDSource.getExternalSdCardPath() + "/LOST.DIR");
+        File lostDir = new File(ExtSDSource.getExternalSdCardPath(context) + "/LOST.DIR");
         if (lostDir.exists()) {
             if (lostDir.isDirectory()) {
                 FileOperation.deleteRecursive(lostDir);
             }
         } else
-            Log.w(TAG, "Dir:" + ExtSDSource.getExternalSdCardPath() + "/LOST.DIR" + " - not exist");
+            Log.w(TAG, "Dir:" + ExtSDSource.getExternalSdCardPath(context) + "/LOST.DIR" + " - not exist");
 
         PrefValues prefValues = PrefWorker.getValues();
 
@@ -289,10 +289,10 @@ public class DownloadMedia {
 
         Log.d(TAG, "SD CARD isMounted:" + ExtSDSource.isMounted(context) + ", isReadOnly :" + ExtSDSource.isReadOnly());
 
-        destinationDirs = new String[]{ExtSDSource.getExternalSdCardPath() + IMG_URI,
-                ExtSDSource.getExternalSdCardPath() + VIDEO_URI,
-                ExtSDSource.getExternalSdCardPath() + SLIDE_URI,
-                ExtSDSource.getExternalSdCardPath() + IMG_SCREEN};
+        destinationDirs = new String[]{ExtSDSource.getExternalSdCardPath(context) + IMG_URI,
+                ExtSDSource.getExternalSdCardPath(context) + VIDEO_URI,
+                ExtSDSource.getExternalSdCardPath(context) + SLIDE_URI,
+                ExtSDSource.getExternalSdCardPath(context) + IMG_SCREEN};
 
         if (!ExtSDSource.isMounted(context)) {
             showToast("Вiдсутнiй SD носiй");

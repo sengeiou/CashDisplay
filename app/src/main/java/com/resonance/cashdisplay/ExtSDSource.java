@@ -95,11 +95,11 @@ public class ExtSDSource {
         return (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state));
     }
 
-    public static String getExternalSdCardPath() {
+    public static String getExternalSdCardPath(Context context) {
         String externalSdPath = null;
         Boolean isSDPresent = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
         if (isSDPresent) {
-            File[] storages = ContextCompat.getExternalFilesDirs(MainActivity.context, null);
+            File[] storages = ContextCompat.getExternalFilesDirs(context, null);
             for (File sdCardFile : storages) {
                 if (sdCardFile != null && !sdCardFile.toString().contains("emulated")) {
                     externalSdPath = sdCardFile.getPath().replaceFirst("\\/Android.*", "");

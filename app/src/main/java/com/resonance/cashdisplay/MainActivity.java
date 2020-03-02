@@ -17,7 +17,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.os.StrictMode;
 import android.provider.Settings;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Display;
@@ -112,11 +111,11 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-                .penaltyDeath()
-                .build());
+//        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+//                .detectAll()
+//                .penaltyLog()
+//                .penaltyDeath()
+//                .build());
         super.onCreate(savedInstanceState);
 
         new Log();      // this object is needful to use synchronized methods with lock on it (not on static class)
@@ -260,7 +259,7 @@ public class MainActivity extends Activity {
         //установка фона экрана "Список покупок"
         Bitmap bitmap;
         Drawable drawable;
-        String uriBackgroundShoppingList = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundShoppingList.length() > 0) ? PrefWorker.getValues().backgroundShoppingList : "noimg");
+        String uriBackgroundShoppingList = ExtSDSource.getExternalSdCardPath(context) + downloadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundShoppingList.length() > 0) ? PrefWorker.getValues().backgroundShoppingList : "noimg");
         File fileImg = new File(uriBackgroundShoppingList);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
@@ -272,7 +271,7 @@ public class MainActivity extends Activity {
         relativeLayout[CONTEXT_PRODUCT_LIST].invalidate();
 
         //Фонове зображення экрану "Каса не працює"
-        String uriBackgroundCashNotWork = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundCashNotWork.length() > 0) ? PrefWorker.getValues().backgroundCashNotWork : "noimg");
+        String uriBackgroundCashNotWork = ExtSDSource.getExternalSdCardPath(context) + downloadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundCashNotWork.length() > 0) ? PrefWorker.getValues().backgroundCashNotWork : "noimg");
         fileImg = new File(uriBackgroundCashNotWork);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
@@ -288,12 +287,11 @@ public class MainActivity extends Activity {
             findViewById(R.id.textview_emul2line_indicator_2).setVisibility(View.VISIBLE);
             scrollViewDebug.setVisibility(View.VISIBLE);
             new Handler().post(() -> scrollViewDebug.fullScroll(View.FOCUS_DOWN));
-
         }
         relativeLayout[CONTEXT_CONNECT].invalidate();
 
         //Фонове зображення экрану "Дякуємо за покупку"
-        String uriBackgroundThanks = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundThanks.length() > 0) ? PrefWorker.getValues().backgroundThanks : "noimg");
+        String uriBackgroundThanks = ExtSDSource.getExternalSdCardPath(context) + downloadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundThanks.length() > 0) ? PrefWorker.getValues().backgroundThanks : "noimg");
         fileImg = new File(uriBackgroundThanks);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);

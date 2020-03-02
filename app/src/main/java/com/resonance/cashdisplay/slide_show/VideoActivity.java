@@ -78,7 +78,7 @@ public class VideoActivity extends AppCompatActivity {
         videoView.forceLayout();
         videoView.setFitsSystemWindows(true);
 
-        this.mediaDir = ExtSDSource.getExternalSdCardPath() + DownloadMedia.VIDEO_URI;
+        this.mediaDir = ExtSDSource.getExternalSdCardPath(this) + DownloadMedia.VIDEO_URI;
 
         this.registerReceiver(this.finishAlert, new IntentFilter(FINISH_ALERT));
 

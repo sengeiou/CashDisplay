@@ -309,7 +309,7 @@ public class ProductListWorker {
     private void setProductImage(int position, boolean animProductImage) {
         if (adapterProductList.getCount() > 0) {
             ItemProductList selectedItem = adapterProductList.getItem(position);
-            Bitmap productImage = AdapterProductList.getImage(selectedItem.getCode());
+            Bitmap productImage = adapterProductList.getImage(selectedItem.getCode());
 
             fadeOut.setAnimationListener(new Animation.AnimationListener() {
                 @Override

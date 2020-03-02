@@ -97,15 +97,15 @@ public class SlideViewActivity extends AppCompatActivity {
 
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
-        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                | View.SCREEN_STATE_ON
-                | View.SYSTEM_UI_FLAG_LOW_PROFILE
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                | View.SYSTEM_UI_FLAG_IMMERSIVE);
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                        | View.SCREEN_STATE_ON
+                        | View.SYSTEM_UI_FLAG_LOW_PROFILE
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE);
         decorView.invalidate();
 
         Log.d(TAG, "onCreate");
@@ -176,8 +176,8 @@ public class SlideViewActivity extends AppCompatActivity {
             actionBar.hide();
         }
         // Schedule a runnable to remove the status and navigation bar after a delay
-       mHideHandler.removeCallbacks(mShowPart2Runnable);
-       mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
+        mHideHandler.removeCallbacks(mShowPart2Runnable);
+        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
     }
 
 
@@ -189,13 +189,14 @@ public class SlideViewActivity extends AppCompatActivity {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
     /*******************************************************************************************/
 
-    public void startSlideShow(){
+    public void startSlideShow() {
         prepareSlideData();
     }
 
-    public void stopSlideShow(){
+    public void stopSlideShow() {
         Intent intent = new Intent(VideoSlideService.SLIDE_STOP_PLAY);
         MainActivity.context.sendBroadcast(intent);
 
@@ -206,33 +207,31 @@ public class SlideViewActivity extends AppCompatActivity {
 
     private void prepareSlideData() {
 
-        File dir = new File(ExtSDSource.getExternalSdCardPath()+SLIDE_URI);
-        Log.i(TAG, "Dir slide files: " +dir.getPath());
+        File dir = new File(ExtSDSource.getExternalSdCardPath(this) + SLIDE_URI);
+        Log.i(TAG, "Dir slide files: " + dir.getPath());
 
         String[] slideFilesArray = null;
 
-        if(dir.exists())
-        {
+        if (dir.exists()) {
             slideFilesArray = dir.list(new FileOperation.FileExtensionFilter("jpg", "png"));
 
-        }else
-        {
+        } else {
             Log.w(TAG, "Источник слайдов не найден: " + dir.getName());
-            showToast("Источник слайдов не найден: " + ExtSDSource.getExternalSdCardPath()+SLIDE_URI);
+            showToast("Источник слайдов не найден: " + ExtSDSource.getExternalSdCardPath(this) + SLIDE_URI);
             stopSlideShow();
         }
 
-        if (slideFilesArray==null) {
-            showToast("нет слайдов для демонстрации: " + ExtSDSource.getExternalSdCardPath()+SLIDE_URI);
+        if (slideFilesArray == null) {
+            showToast("нет слайдов для демонстрации: " + ExtSDSource.getExternalSdCardPath(this) + SLIDE_URI);
             return;
         }
 
         movieList.clear();
 
-        for (int i=0;i<slideFilesArray.length;i++) {
+        for (int i = 0; i < slideFilesArray.length; i++) {
 
             Slide slide = new Slide();
-            slide.setPathToImgFile(ExtSDSource.getExternalSdCardPath()+SLIDE_URI+slideFilesArray[i]);
+            slide.setPathToImgFile(ExtSDSource.getExternalSdCardPath(this) + SLIDE_URI + slideFilesArray[i]);
             movieList.add(slide);
 
 
@@ -247,22 +246,21 @@ public class SlideViewActivity extends AppCompatActivity {
 
         Log.w(TAG, "количество изображений : " + mAdapter.getItemCount());
 
-        if (mAdapter.getItemCount()>0) {
+        if (mAdapter.getItemCount() > 0) {
             ShowSlide();
-        }else {
-           stopSlideShow();
+        } else {
+            stopSlideShow();
         }
 
     }
 
 
-    private void ShowSlide()
-    {
-        if (thread!=null)
+    private void ShowSlide() {
+        if (thread != null)
             thread.interrupt();
 
-       thread = new Thread(SlideThread);
-       thread.start();
+        thread = new Thread(SlideThread);
+        thread.start();
     }
 
 
@@ -271,45 +269,46 @@ public class SlideViewActivity extends AppCompatActivity {
         public void run() {
             bShowSlide = true;
 
-                long StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().timeSlideImage);
-           // Log.w(TAG, "Time to show  : " + PreferenceParams.getValues().sTimeSlideImage+" : "+PreferenceParams.getValues().sVideoOrSlide );
-                while (bShowSlide && (PrefWorker.getValues().videoOrSlide==PrefWorker.SLIDE)) {
+            long StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().timeSlideImage);
+            // Log.w(TAG, "Time to show  : " + PreferenceParams.getValues().sTimeSlideImage+" : "+PreferenceParams.getValues().sVideoOrSlide );
+            while (bShowSlide && (PrefWorker.getValues().videoOrSlide == PrefWorker.SLIDE)) {
 
-                    if (recyclerView != null) {
+                if (recyclerView != null) {
 
-                        if (recyclerView.getAdapter().getItemCount() == 0)
-                            prepareSlideData();
+                    if (recyclerView.getAdapter().getItemCount() == 0)
+                        prepareSlideData();
 
-                        if (recyclerView.getAdapter().getItemCount() > 0) {
+                    if (recyclerView.getAdapter().getItemCount() > 0) {
 
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
 
-                                    recyclerView.scrollToPosition(indexPicture);
-                                }
-                            });
-                            if (indexPicture++ >= recyclerView.getAdapter().getItemCount()) {
-                                indexPicture = 0;
+                                recyclerView.scrollToPosition(indexPicture);
                             }
+                        });
+                        if (indexPicture++ >= recyclerView.getAdapter().getItemCount()) {
+                            indexPicture = 0;
                         }
                     }
+                }
 
 
-                    while (StopTime > System.nanoTime()) {
-                        //Log.d(TAG, "StopTime:"+StopTime+", System.nanoTime(): "+System.nanoTime());
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
+                while (StopTime > System.nanoTime()) {
+                    //Log.d(TAG, "StopTime:"+StopTime+", System.nanoTime(): "+System.nanoTime());
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                    StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().timeSlideImage);
-                   // Log.w(TAG, "2 Time to show  : " + PreferenceParams.getValues().sTimeSlideImage+" : "+PreferenceParams.getValues().sVideoOrSlide );
-                };
-            stopSlideShow();
+
+                }
+                StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().timeSlideImage);
+                // Log.w(TAG, "2 Time to show  : " + PreferenceParams.getValues().sTimeSlideImage+" : "+PreferenceParams.getValues().sVideoOrSlide );
             }
+            ;
+            stopSlideShow();
+        }
 
     };
 
