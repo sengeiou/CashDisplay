@@ -17,10 +17,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.os.StrictMode;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,8 +33,10 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 
 import com.resonance.cashdisplay.databinding.ActivityMainBinding;
@@ -51,6 +54,8 @@ import com.resonance.cashdisplay.utils.ImageUtils;
 
 import java.io.File;
 
+import static com.resonance.cashdisplay.CommandParser.SYMBOL_SEPARATOR;
+import static com.resonance.cashdisplay.Constants.SCAN_BARCODE;
 import static com.resonance.cashdisplay.eth.EthernetSettings.TIME_CHECK_DHCP_ENABLE;
 import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_BASKET;
 import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_DMART;
@@ -110,13 +115,24 @@ public class MainActivity extends Activity {
 
     TextView textViewVersion;
 
+    private StringBuilder barcodeBuilder = new StringBuilder();
+    private AlertDialog dialog;
+    private Handler scanDialogCloser = new Handler();
+    private Runnable closeDialog = new Runnable() {
+        @Override
+        public void run() {
+            if (dialog != null)
+                dialog.dismiss();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-                .penaltyDeath()
-                .build());
+//        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+//                .detectAll()
+//                .penaltyLog()
+//                .penaltyDeath()
+//                .build());
         super.onCreate(savedInstanceState);
 
         new Log();      // this object is needful to use synchronized methods with lock on it (not on static class)
@@ -216,6 +232,47 @@ public class MainActivity extends Activity {
         hideBarNavigation();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        scanDialogCloser.post(closeDialog);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(changeSettings);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            char pressedKey = (char) event.getUnicodeChar();
+            barcodeBuilder.append(pressedKey);
+            Log.d(TAG, "pressedKey " + pressedKey);
+        }
+        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+            Log.d(TAG, "pressedKey " + "Enter");
+            showDialog(barcodeBuilder.toString());
+            barcodeBuilder = new StringBuilder();
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    public void showDialog(String barcode) {
+        Toast.makeText(this, "Считано: " + barcode, Toast.LENGTH_SHORT).show();
+        scanDialogCloser.post(closeDialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("")
+                .setTitle(barcode)
+                .setPositiveButton("OK", (dialog, id) -> {
+                });
+        dialog = builder.create();
+        dialog.show();
+        scanDialogCloser.removeCallbacks(closeDialog);
+        scanDialogCloser.postDelayed(closeDialog, 5000);
+    }
+
     /**
      * Программное нажатие кнопки при переходе в полноэкранный режим
      */
@@ -260,7 +317,7 @@ public class MainActivity extends Activity {
         //установка фона экрана "Список покупок"
         Bitmap bitmap;
         Drawable drawable;
-        String uriBackgroundShoppingList = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundShoppingList.length() > 0) ? PrefWorker.getValues().backgroundShoppingList : "noimg");
+        String uriBackgroundShoppingList = ExtSDSource.getExternalSdCardPath(context) + downloadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundShoppingList.length() > 0) ? PrefWorker.getValues().backgroundShoppingList : "noimg");
         File fileImg = new File(uriBackgroundShoppingList);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
@@ -272,7 +329,7 @@ public class MainActivity extends Activity {
         relativeLayout[CONTEXT_PRODUCT_LIST].invalidate();
 
         //Фонове зображення экрану "Каса не працює"
-        String uriBackgroundCashNotWork = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundCashNotWork.length() > 0) ? PrefWorker.getValues().backgroundCashNotWork : "noimg");
+        String uriBackgroundCashNotWork = ExtSDSource.getExternalSdCardPath(context) + downloadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundCashNotWork.length() > 0) ? PrefWorker.getValues().backgroundCashNotWork : "noimg");
         fileImg = new File(uriBackgroundCashNotWork);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
@@ -293,7 +350,7 @@ public class MainActivity extends Activity {
         relativeLayout[CONTEXT_CONNECT].invalidate();
 
         //Фонове зображення экрану "Дякуємо за покупку"
-        String uriBackgroundThanks = ExtSDSource.getExternalSdCardPath() + downloadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundThanks.length() > 0) ? PrefWorker.getValues().backgroundThanks : "noimg");
+        String uriBackgroundThanks = ExtSDSource.getExternalSdCardPath(context) + downloadMedia.IMG_SCREEN + ((PrefWorker.getValues().backgroundThanks.length() > 0) ? PrefWorker.getValues().backgroundThanks : "noimg");
         fileImg = new File(uriBackgroundThanks);
         if (fileImg.exists()) {
             bitmap = ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
@@ -339,6 +396,7 @@ public class MainActivity extends Activity {
         productListWorker.initUniqueComponents();
 
         listViewProducts = (ListView) layoutProductListLook.findViewById(R.id.listview_products);
+        listViewProducts.setFocusable(false);                    // to prevent focusing when barcode scanner in used
         layoutTotal = layoutProductListLook.findViewById(R.id.layout_total);
         textViewTotalCount = (TextView) layoutProductListLook.findViewById(R.id.textview_total_count);
         textViewTotalSumWithoutDiscount = (TextView) layoutProductListLook.findViewById(R.id.textview_total_sum_without_discount);
@@ -406,6 +464,13 @@ public class MainActivity extends Activity {
                 setVisibleLayer(CONTEXT_CONNECT, View.INVISIBLE);
                 setVisibleLayer(CONTEXT_THANKS, View.VISIBLE);
                 productListWorker.onProductListHide();
+
+                String[] argList;
+                if (!TextUtils.isEmpty(args)) {
+                    argList = args.split(Character.toString((char) SYMBOL_SEPARATOR), 3);
+                    if (argList[0].equals(SCAN_BARCODE))
+                        showDialog(argList[1]);
+                }
                 break;
             default:
                 break;
@@ -415,14 +480,6 @@ public class MainActivity extends Activity {
     private void setVisibleLayer(int contextLayer, int visibility) {
         relativeLayout[contextLayer].setVisibility(visibility);
         relativeLayout[contextLayer].invalidate();
-    }
-
-    /************************************************************************************/
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(changeSettings);
     }
 
     /***************************************
@@ -480,7 +537,7 @@ public class MainActivity extends Activity {
                     break;
                 case MSG_SET_SCREEN_THANKS:
                     productListWorker.clearProductList();
-                    setVisibleContext(CONTEXT_THANKS, null);
+                    setVisibleContext(CONTEXT_THANKS, (String) msg.obj);
                     setEnableMedia(true);
                     resetMediaTime();
                     break;

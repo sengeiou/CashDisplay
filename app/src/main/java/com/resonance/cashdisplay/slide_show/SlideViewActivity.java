@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -18,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.resonance.cashdisplay.CommandParser;
 import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.FileOperation;
 import com.resonance.cashdisplay.Log;
@@ -30,6 +32,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static com.resonance.cashdisplay.CommandParser.CMD_NWRK;
+import static com.resonance.cashdisplay.CommandParser.CMD_THNK;
+import static com.resonance.cashdisplay.CommandParser.SYMBOL_SEPARATOR;
+import static com.resonance.cashdisplay.Constants.SCAN_BARCODE;
 import static com.resonance.cashdisplay.load.DownloadMedia.SLIDE_URI;
 
 /**
@@ -42,7 +48,7 @@ public class SlideViewActivity extends AppCompatActivity {
     private List<Slide> movieList = new ArrayList<>();
     private RecyclerView recyclerView = null;
     private SlideViewAdapter mAdapter = null;
-    private Context mContext = null;
+    private Context mContext;
 
     public static final String FINISH_ALERT = "finish_alert";
 
@@ -50,6 +56,8 @@ public class SlideViewActivity extends AppCompatActivity {
     private static boolean bShowSlide = false;
 
     private Thread thread = null;
+
+    private StringBuilder barcodeBuilder = new StringBuilder();
 
     /**
      * Some older devices needs a small delay between UI widget updates
@@ -87,6 +95,8 @@ public class SlideViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mContext = this;
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//постоянно включен экран
         WindowManager.LayoutParams attributes = getWindow().getAttributes();
@@ -97,15 +107,15 @@ public class SlideViewActivity extends AppCompatActivity {
 
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
-        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                | View.SCREEN_STATE_ON
-                | View.SYSTEM_UI_FLAG_LOW_PROFILE
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                | View.SYSTEM_UI_FLAG_IMMERSIVE);
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                        | View.SCREEN_STATE_ON
+                        | View.SYSTEM_UI_FLAG_LOW_PROFILE
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE);
         decorView.invalidate();
 
         Log.d(TAG, "onCreate");
@@ -147,6 +157,19 @@ public class SlideViewActivity extends AppCompatActivity {
         this.unregisterReceiver(finishAlert);
     }
 
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            char pressedKey = (char) event.getUnicodeChar();
+            barcodeBuilder.append(pressedKey);
+        }
+        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+            CommandParser.handleCommand(CMD_NWRK, null);
+            CommandParser.handleCommand(CMD_THNK, SCAN_BARCODE + (char) SYMBOL_SEPARATOR + barcodeBuilder.toString());
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
     /**
      * Hide navigation bar
      */
@@ -176,8 +199,8 @@ public class SlideViewActivity extends AppCompatActivity {
             actionBar.hide();
         }
         // Schedule a runnable to remove the status and navigation bar after a delay
-       mHideHandler.removeCallbacks(mShowPart2Runnable);
-       mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
+        mHideHandler.removeCallbacks(mShowPart2Runnable);
+        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
     }
 
 
@@ -189,13 +212,14 @@ public class SlideViewActivity extends AppCompatActivity {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
     /*******************************************************************************************/
 
-    public void startSlideShow(){
+    public void startSlideShow() {
         prepareSlideData();
     }
 
-    public void stopSlideShow(){
+    public void stopSlideShow() {
         Intent intent = new Intent(VideoSlideService.SLIDE_STOP_PLAY);
         MainActivity.context.sendBroadcast(intent);
 
@@ -206,33 +230,31 @@ public class SlideViewActivity extends AppCompatActivity {
 
     private void prepareSlideData() {
 
-        File dir = new File(ExtSDSource.getExternalSdCardPath()+SLIDE_URI);
-        Log.i(TAG, "Dir slide files: " +dir.getPath());
+        File dir = new File(ExtSDSource.getExternalSdCardPath(mContext) + SLIDE_URI);
+        Log.i(TAG, "Dir slide files: " + dir.getPath());
 
         String[] slideFilesArray = null;
 
-        if(dir.exists())
-        {
+        if (dir.exists()) {
             slideFilesArray = dir.list(new FileOperation.FileExtensionFilter("jpg", "png"));
 
-        }else
-        {
+        } else {
             Log.w(TAG, "Источник слайдов не найден: " + dir.getName());
-            showToast("Источник слайдов не найден: " + ExtSDSource.getExternalSdCardPath()+SLIDE_URI);
+            showToast("Источник слайдов не найден: " + ExtSDSource.getExternalSdCardPath(mContext) + SLIDE_URI);
             stopSlideShow();
         }
 
-        if (slideFilesArray==null) {
-            showToast("нет слайдов для демонстрации: " + ExtSDSource.getExternalSdCardPath()+SLIDE_URI);
+        if (slideFilesArray == null) {
+            showToast("нет слайдов для демонстрации: " + ExtSDSource.getExternalSdCardPath(mContext) + SLIDE_URI);
             return;
         }
 
         movieList.clear();
 
-        for (int i=0;i<slideFilesArray.length;i++) {
+        for (int i = 0; i < slideFilesArray.length; i++) {
 
             Slide slide = new Slide();
-            slide.setPathToImgFile(ExtSDSource.getExternalSdCardPath()+SLIDE_URI+slideFilesArray[i]);
+            slide.setPathToImgFile(ExtSDSource.getExternalSdCardPath(mContext) + SLIDE_URI + slideFilesArray[i]);
             movieList.add(slide);
 
 
@@ -247,22 +269,21 @@ public class SlideViewActivity extends AppCompatActivity {
 
         Log.w(TAG, "количество изображений : " + mAdapter.getItemCount());
 
-        if (mAdapter.getItemCount()>0) {
+        if (mAdapter.getItemCount() > 0) {
             ShowSlide();
-        }else {
-           stopSlideShow();
+        } else {
+            stopSlideShow();
         }
 
     }
 
 
-    private void ShowSlide()
-    {
-        if (thread!=null)
+    private void ShowSlide() {
+        if (thread != null)
             thread.interrupt();
 
-       thread = new Thread(SlideThread);
-       thread.start();
+        thread = new Thread(SlideThread);
+        thread.start();
     }
 
 
@@ -271,45 +292,46 @@ public class SlideViewActivity extends AppCompatActivity {
         public void run() {
             bShowSlide = true;
 
-                long StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().timeSlideImage);
-           // Log.w(TAG, "Time to show  : " + PreferenceParams.getValues().sTimeSlideImage+" : "+PreferenceParams.getValues().sVideoOrSlide );
-                while (bShowSlide && (PrefWorker.getValues().videoOrSlide==PrefWorker.SLIDE)) {
+            long StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().timeSlideImage);
+            // Log.w(TAG, "Time to show  : " + PreferenceParams.getValues().sTimeSlideImage+" : "+PreferenceParams.getValues().sVideoOrSlide );
+            while (bShowSlide && (PrefWorker.getValues().videoOrSlide == PrefWorker.SLIDE)) {
 
-                    if (recyclerView != null) {
+                if (recyclerView != null) {
 
-                        if (recyclerView.getAdapter().getItemCount() == 0)
-                            prepareSlideData();
+                    if (recyclerView.getAdapter().getItemCount() == 0)
+                        prepareSlideData();
 
-                        if (recyclerView.getAdapter().getItemCount() > 0) {
+                    if (recyclerView.getAdapter().getItemCount() > 0) {
 
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
 
-                                    recyclerView.scrollToPosition(indexPicture);
-                                }
-                            });
-                            if (indexPicture++ >= recyclerView.getAdapter().getItemCount()) {
-                                indexPicture = 0;
+                                recyclerView.scrollToPosition(indexPicture);
                             }
+                        });
+                        if (indexPicture++ >= recyclerView.getAdapter().getItemCount()) {
+                            indexPicture = 0;
                         }
                     }
+                }
 
 
-                    while (StopTime > System.nanoTime()) {
-                        //Log.d(TAG, "StopTime:"+StopTime+", System.nanoTime(): "+System.nanoTime());
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
+                while (StopTime > System.nanoTime()) {
+                    //Log.d(TAG, "StopTime:"+StopTime+", System.nanoTime(): "+System.nanoTime());
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                    StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().timeSlideImage);
-                   // Log.w(TAG, "2 Time to show  : " + PreferenceParams.getValues().sTimeSlideImage+" : "+PreferenceParams.getValues().sVideoOrSlide );
-                };
-            stopSlideShow();
+
+                }
+                StopTime = System.nanoTime() + TimeUnit.SECONDS.toNanos(PrefWorker.getValues().timeSlideImage);
+                // Log.w(TAG, "2 Time to show  : " + PreferenceParams.getValues().sTimeSlideImage+" : "+PreferenceParams.getValues().sVideoOrSlide );
             }
+            ;
+            stopSlideShow();
+        }
 
     };
 

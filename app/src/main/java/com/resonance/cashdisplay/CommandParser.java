@@ -23,17 +23,18 @@ public class CommandParser {
     public static final Charset ENCODING_CHARSET = Charset.forName("cp866"); //для работы с кассой
     private final static String TAG = "CommandParser";
 
-    private final static byte CMD_START_OF_TEXT = (byte) 1; //старт
-    private final static byte CMD_END_OF_TEXT = (byte) 2;   //стоп
+    private static final byte CMD_START_OF_TEXT = (byte) 1; //старт
+    private static final byte CMD_END_OF_TEXT = (byte) 2;   //стоп
+    public static final byte SYMBOL_SEPARATOR = (byte) 0x03;
 
     //экран "Список покупок"
-    private final String CMD_ADDL = "ADDL"; // Добавить товар в список  // ADDL0;1247;0;1;700;700;sik sadochok;5047
-    private final String CMD_SETi = "SETi"; // Установить товар в указанной позиции списка
-    private final String CMD_DELi = "DELi"; // Удалить товар из указанной позиции
-    private final String CMD_CLRL = "CLRL"; // Очистить список товаров
-    private final String CMD_PRLS = "PRLS"; // Отобразить экран "Список покупок"
-    private final String CMD_NWRK = "NWRK"; // Отобразить экран "Касса не работает"
-    private final String CMD_THNK = "THNK"; // Отобразить экран "Спасибо за покупку"  THNK95E5
+    public static final String CMD_ADDL = "ADDL"; // Добавить товар в список  // ADDL0;1247;0;1;700;700;sik sadochok;5047
+    public static final String CMD_SETi = "SETi"; // Установить товар в указанной позиции списка
+    public static final String CMD_DELi = "DELi"; // Удалить товар из указанной позиции
+    public static final String CMD_CLRL = "CLRL"; // Очистить список товаров
+    public static final String CMD_PRLS = "PRLS"; // Отобразить экран "Список покупок"
+    public static final String CMD_NWRK = "NWRK"; // Отобразить экран "Касса не работает"
+    public static final String CMD_THNK = "THNK"; // Отобразить экран "Спасибо за покупку"  THNK95E5
 
     private final String[] arrComands2 = new String[]{CMD_ADDL, CMD_SETi, CMD_DELi, CMD_CLRL, CMD_PRLS, CMD_NWRK, CMD_THNK};
 
@@ -43,7 +44,7 @@ public class CommandParser {
     private static Boolean extHeadFound = false;
     private byte[] extBuf;
     private int indexExtBuf = 0;
-    private Handler mHandler;
+    private static Handler mHandler;
 
     private Display2x20Emulator display2x20Emulator;
 
@@ -57,7 +58,7 @@ public class CommandParser {
      * @param context
      */
     public CommandParser(ViewModel viewModel, Handler handler, Context context) {
-        this.mHandler = handler;
+        mHandler = handler;
         this.mContext = context;
         this.viewModel = viewModel;
         this.display2x20Emulator = new Display2x20Emulator();
@@ -172,7 +173,7 @@ public class CommandParser {
     /**
      * Prepares data to send message to handler of screen "Список покупок"
      */
-    private void handleCommand(String command, String arg) {
+    public static void handleCommand(String command, String arg) {
         switch (command) {
             case CMD_ADDL:
                 sendToMain(MainActivity.MSG_ADD_TOVAR_PRODUCT_LIST, arg, 0, 0);
@@ -227,7 +228,7 @@ public class CommandParser {
     /**
      * передача параметров на главное активити
      */
-    private void sendToMain(int typeParam, Object obj, int arg1, int arg2) {
+    private static void sendToMain(int typeParam, Object obj, int arg1, int arg2) {
         Message msg = new Message();
         msg.what = typeParam;
         msg.obj = obj;

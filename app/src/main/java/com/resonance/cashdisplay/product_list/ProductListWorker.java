@@ -37,6 +37,7 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.resonance.cashdisplay.CommandParser.SYMBOL_SEPARATOR;
 import static com.resonance.cashdisplay.MainActivity.imageViewProduct;
 import static com.resonance.cashdisplay.MainActivity.layoutTotal;
 import static com.resonance.cashdisplay.MainActivity.listViewProducts;
@@ -64,8 +65,6 @@ import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_SUBWAY;
 public class ProductListWorker {
 
     private final static String TAG = "ProductListWorker";
-
-    private final byte SYMBOL_SEPARATOR = (byte) 0x03;
 
     private Context context;
     // animations for products images
@@ -309,7 +308,7 @@ public class ProductListWorker {
     private void setProductImage(int position, boolean animProductImage) {
         if (adapterProductList.getCount() > 0) {
             ItemProductList selectedItem = adapterProductList.getItem(position);
-            Bitmap productImage = AdapterProductList.getImage(selectedItem.getCode());
+            Bitmap productImage = adapterProductList.getImage(selectedItem.getCode());
 
             fadeOut.setAnimationListener(new Animation.AnimationListener() {
                 @Override

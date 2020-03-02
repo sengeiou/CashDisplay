@@ -10,14 +10,17 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.MediaController;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.resonance.cashdisplay.CommandParser;
 import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.FileOperation;
 import com.resonance.cashdisplay.Log;
@@ -27,6 +30,10 @@ import com.resonance.cashdisplay.load.DownloadMedia;
 
 import java.io.File;
 
+import static com.resonance.cashdisplay.CommandParser.CMD_NWRK;
+import static com.resonance.cashdisplay.CommandParser.CMD_THNK;
+import static com.resonance.cashdisplay.CommandParser.SYMBOL_SEPARATOR;
+import static com.resonance.cashdisplay.Constants.SCAN_BARCODE;
 import static com.resonance.cashdisplay.slide_show.SlideViewActivity.FINISH_ALERT;
 
 public class VideoActivity extends AppCompatActivity {
@@ -35,6 +42,7 @@ public class VideoActivity extends AppCompatActivity {
 
     private MediaController mediaController;
     VideoView videoView;
+    private RelativeLayout videoLayout;
     private static int seekVideoPosition = 0;
     private static String[] videoFilesArray;//массив со списком видео файлов
     private static int indexPlaingFile = 0;
@@ -43,6 +51,8 @@ public class VideoActivity extends AppCompatActivity {
 
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
+
+    private StringBuilder barcodeBuilder = new StringBuilder();
 
     private static String CurrentPlaingFile = "";
 
@@ -78,7 +88,8 @@ public class VideoActivity extends AppCompatActivity {
         videoView.forceLayout();
         videoView.setFitsSystemWindows(true);
 
-        this.mediaDir = ExtSDSource.getExternalSdCardPath() + DownloadMedia.VIDEO_URI;
+        videoLayout = (RelativeLayout) findViewById(R.id.videoLayout);
+        this.mediaDir = ExtSDSource.getExternalSdCardPath(this) + DownloadMedia.VIDEO_URI;
 
         this.registerReceiver(this.finishAlert, new IntentFilter(FINISH_ALERT));
 
@@ -101,9 +112,30 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        videoLayout.setFocusable(true);                                // for barcode scanner
+        videoLayout.setFocusableInTouchMode(true);                     // for barcode scanner
+        videoLayout.requestFocus();                                    // for barcode scanner
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         this.unregisterReceiver(finishAlert);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            char pressedKey = (char) event.getUnicodeChar();
+            barcodeBuilder.append(pressedKey);
+        }
+        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+            CommandParser.handleCommand(CMD_NWRK, null);
+            CommandParser.handleCommand(CMD_THNK, SCAN_BARCODE + (char) SYMBOL_SEPARATOR + barcodeBuilder.toString());
+        }
+        return super.dispatchKeyEvent(event);
     }
 
     /**
