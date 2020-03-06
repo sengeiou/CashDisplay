@@ -2,6 +2,7 @@ package com.resonance.cashdisplay.product_list.look2;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
 import android.transition.Fade;
 import android.transition.Transition;
 import android.transition.TransitionManager;
@@ -22,6 +23,8 @@ import com.resonance.cashdisplay.product_list.ItemProductList;
 import com.resonance.cashdisplay.product_list.ProductListWorker;
 import com.resonance.cashdisplay.settings.PrefWorker;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
@@ -167,6 +170,12 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
                         .toString();
             if (argList.length > 2)
                 KievSubwayArgs.itemsAmount = strToInt(argList[2]);
+
+            DateFormat dateFormat0 = new SimpleDateFormat("dd.MM.yyyy HH:mm", new Locale("uk"));
+            DateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy HH mm", new Locale("uk"));
+            startClock(dateFormat0, dateFormat1);
+
+            new Handler().post(this);
         }
     }
 
@@ -182,7 +191,7 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
         Log.d("PLW", "dispItems = " + arrayProductListSize);
 
         Transition transition = new Fade();
-        transition.setDuration(150);
+        transition.setDuration(0);
         transition.addTarget(layoutItem12Block);
         transition.addTarget(layoutList);
         TransitionManager.beginDelayedTransition(relativeLayout[2], transition);    // scene root = product list
@@ -203,6 +212,8 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
                     setDefaultState();
                     return;
                 case 2:
+                    layoutList.setVisibility(View.GONE);                       // list mode
+
                     ItemProductList item;
                     if (arrayProductList.size() == arrayProductListSize)    // protection if size of List accidentally grew
                         item = arrayProductList.get(1);
@@ -240,6 +251,8 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
 
                     layoutItem2.setVisibility(View.VISIBLE);
                 case 1:
+                    layoutList.setVisibility(View.GONE);                       // list mode
+
                     if (arrayProductListSize == 1)
                         layoutItem2.setVisibility(View.GONE);
 
@@ -285,10 +298,11 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
                     else
                         imageViewProduct.setBackgroundResource(R.drawable.kyiv_smart_card_w300);
 
-                    layoutList.setVisibility(View.GONE);                       // list mode
                     layoutItem12Block.setVisibility(View.VISIBLE);             // 1-2 items mode
                     break;
                 default:
+                    layoutItem12Block.setVisibility(View.GONE);                // 1-2 items mode
+
                     ((LinearLayout.LayoutParams) layoutCardInfo.getLayoutParams()).weight = 100;
                     if (KievSubwayArgs.isQR)
                         imageViewProduct.setBackgroundResource(R.drawable.qr_dummy_w233);
@@ -308,12 +322,12 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
                         imageViewBalanceUnderline.setVisibility(View.VISIBLE);
                     }
 
-                    layoutItem12Block.setVisibility(View.GONE);                // 1-2 items mode
-                    layoutList.setVisibility(View.VISIBLE);                    // list mode
+                    layoutList.setVisibility(View.VISIBLE);                        // list mode
                     break;
             }
 
             if (KievSubwayArgs.isOtherGoods) {
+                layoutItem12Block.setVisibility(View.GONE);                        // 1-2 items mode
                 imageViewProduct.setVisibility(View.GONE);
                 textViewCardNumber.setVisibility(View.GONE);
                 ((LinearLayout.LayoutParams) layoutCardInfo.getLayoutParams()).weight = 0;
@@ -325,7 +339,6 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
                 textViewListHeaderSum.setVisibility(View.VISIBLE);
                 textViewTotalSum.setText(sumTotalToPay);
                 layoutTotal.setVisibility(View.VISIBLE);                           // list mode
-                layoutItem12Block.setVisibility(View.GONE);                        // 1-2 items mode
                 layoutList.setVisibility(View.VISIBLE);                            // list mode
                 return;
             } else {

@@ -18,12 +18,10 @@ import androidx.annotation.Nullable;
 import com.resonance.cashdisplay.Log;
 import com.resonance.cashdisplay.R;
 import com.resonance.cashdisplay.product_list.look2.HandlerLook2;
-import com.resonance.cashdisplay.product_list.look2.KievSubwayArgs;
 import com.resonance.cashdisplay.settings.PrefValues;
 import com.resonance.cashdisplay.settings.PrefWorker;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -125,7 +123,8 @@ public class ProductListWorker {
     }
 
     /**
-     * Called when product list screen becomes visible.
+     * Called when product list screen becomes visible
+     * (also when necessary to send new arguments to already visible product list screen).
      *
      * @param args contains String list of additional arguments various for different looks.
      *             For different looks there may be 0 or more arguments, that are divided from each
@@ -135,9 +134,6 @@ public class ProductListWorker {
         switch (PrefWorker.getValues().productListLookCode) {
             case LOOK_SUBWAY:
                 handlerLook2.onGetPRLSCommand(args);
-                DateFormat dateFormat0 = new SimpleDateFormat("dd.MM.yyyy HH:mm", new Locale("uk"));
-                DateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy HH mm", new Locale("uk"));
-                startClock(dateFormat0, dateFormat1);
                 break;
             default:
                 break;
@@ -275,7 +271,6 @@ public class ProductListWorker {
                 updateTotalValues();
                 break;
         }
-        handleUniqueLooks();
     }
 
     /**
@@ -345,23 +340,6 @@ public class ProductListWorker {
         textViewDebug.append("MSG_totalSum: " + totalSum + "\n");
         textViewDebug.append("MSG_totalCount: " + arrayProductList.size() + "\n");
         new Handler().post(() -> scrollViewDebug.fullScroll(View.FOCUS_DOWN));
-    }
-
-    /**
-     * Works with looks, that have unique components, which are absent in another looks.
-     *
-     * @see PrefValues#productListLookCode for more information about looks
-     */
-    private void handleUniqueLooks() {
-        switch (PrefWorker.getValues().productListLookCode) {
-            case LOOK_SUBWAY:
-                if (KievSubwayArgs.itemsAmount != arrayProductList.size())
-                    return;
-                new Handler().post(handlerLook2);
-                break;
-            default:
-                break;
-        }
     }
 
     /**
@@ -440,7 +418,7 @@ public class ProductListWorker {
      * @param dateFormat0 main format, must be present necessarily;
      * @param dateFormat1 is optional, and may be equal {@code null}.
      */
-    private void startClock(DateFormat dateFormat0, @Nullable DateFormat dateFormat1) {
+    protected void startClock(DateFormat dateFormat0, @Nullable DateFormat dateFormat1) {
         if (clockTimer == null) {
             clockTimer = new Timer();
             TextView textViewDateTime = ((Activity) context).findViewById(R.id.textview_date_time);
