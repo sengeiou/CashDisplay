@@ -441,6 +441,7 @@
                         android:textSize="@dimen/list_header_text_look_2" />
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/textview_list_header_product_name"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="2.5"
@@ -452,6 +453,7 @@
                         android:textSize="@dimen/list_header_text_look_2" />
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/textview_list_header_сount"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1.2"
@@ -462,7 +464,7 @@
                         android:textSize="@dimen/list_header_text_look_2" />
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/textview_list_header_sum"
+                        android:id="@+id/textview_list_header_price"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1.2"
@@ -472,6 +474,16 @@
                         android:textColor="@color/text_subway_secondary"
                         android:textSize="@dimen/list_header_text_look_2" />
 
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/textview_list_header_sum"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.2"
+                        android:fontFamily="@font/proba_nav2_regular"
+                        android:gravity="center"
+                        android:text="@string/sum"
+                        android:textColor="@color/text_subway_secondary"
+                        android:textSize="@dimen/list_header_text_look_2" />
                 </LinearLayout>
 
                 <ImageView

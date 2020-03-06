@@ -45,6 +45,7 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
         ImageView imageViewIcon;
 
         // used for LOOK_SUBWAY only
+        ConstraintLayout layoutPrice;
         ConstraintLayout layoutSum;
     }
 
@@ -75,6 +76,7 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
             viewHolder.textViewDiscount = (TextView) convertView.findViewById(R.id.textview_discount);
             viewHolder.textViewSum = (TextView) convertView.findViewById(R.id.textview_sum);
             viewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.imageview_icon);
+            viewHolder.layoutPrice = (ConstraintLayout) convertView.findViewById(R.id.layout_price);
             viewHolder.layoutSum = (ConstraintLayout) convertView.findViewById(R.id.layout_sum);
             convertView.setTag(viewHolder);
         } else {
@@ -94,11 +96,17 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
             case LOOK_SUBWAY:
                 if (dataModel.getCount() < 0)
                     viewHolder.textViewCount.setText(R.string.unlimited);
+
+                if (KievSubwayArgs.isOtherGoods) {
+                    viewHolder.textViewPrice.setText(String.format(Locale.FRENCH, "%.2f", (double) dataModel.getPrice() / 100));
+                    viewHolder.layoutPrice.setVisibility(View.VISIBLE);
+                } else
+                    viewHolder.layoutPrice.setVisibility(View.GONE);
+
                 if (KievSubwayArgs.isPayment) {
                     viewHolder.textViewSum.setText(String.format(Locale.FRENCH, "%.2f", (double) dataModel.getSum() / 100));
                     viewHolder.layoutSum.setVisibility(View.VISIBLE);
-                }
-                else
+                } else
                     viewHolder.layoutSum.setVisibility(View.GONE);
                 break;
             default:

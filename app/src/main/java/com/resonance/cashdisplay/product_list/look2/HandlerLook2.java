@@ -70,8 +70,11 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
     private ConstraintLayout layoutToPay12Items;// "До сплати" for 1-2 items mode
     private ConstraintSet setLayoutToPay12Items = new ConstraintSet();
 
-    private TextView textViewListHeaderSum;     // text in header of list for "sum" column (total price for item)
-    private LinearLayout layoutList;            // layout of list mode (more than 2 items)
+    private TextView textViewListHeaderProductName;// text in header of list for "name" column
+    private TextView textViewListHeaderCount;   // text in header of list for "count" column
+    private TextView textViewListHeaderPrice;   // text in header of list for "price" column
+    private TextView textViewListHeaderSum;     // text in header of list for "sum" column
+    private LinearLayout layoutList;            // layout of list mode
 
     public HandlerLook2(Context context, List<ItemProductList> arrayList) {
         super(context);
@@ -111,6 +114,9 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
         layoutToPay12Items = activity.findViewById(R.id.layout_to_pay_1_2_items);
         setLayoutToPay12Items.clone(layoutToPay12Items);
 
+        textViewListHeaderProductName = activity.findViewById(R.id.textview_list_header_product_name);
+        textViewListHeaderCount = activity.findViewById(R.id.textview_list_header_сount);
+        textViewListHeaderPrice = activity.findViewById(R.id.textview_list_header_price);
         textViewListHeaderSum = activity.findViewById(R.id.textview_list_header_sum);
         layoutList = activity.findViewById(R.id.layout_list);
 
@@ -274,11 +280,10 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
                     }
 
                     ((LinearLayout.LayoutParams) layoutCardInfo.getLayoutParams()).weight = 150;
-                    if (KievSubwayArgs.isQR) {
+                    if (KievSubwayArgs.isQR)
                         imageViewProduct.setBackgroundResource(R.drawable.qr_dummy_w300);
-                    } else {
+                    else
                         imageViewProduct.setBackgroundResource(R.drawable.kyiv_smart_card_w300);
-                    }
 
                     layoutList.setVisibility(View.GONE);                       // list mode
                     layoutItem12Block.setVisibility(View.VISIBLE);             // 1-2 items mode
@@ -291,12 +296,12 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
                         imageViewProduct.setBackgroundResource(R.drawable.kyiv_smart_card_w233);
 
                     if (KievSubwayArgs.isPayment) {
-                        textViewListHeaderSum.setVisibility(View.VISIBLE);
+                        textViewListHeaderPrice.setVisibility(View.VISIBLE);
                         textViewTotalSum.setText(sumTotalToPay);
                         layoutTotal.setVisibility(View.VISIBLE);               // list mode
                         imageViewBalanceUnderline.setVisibility(View.GONE);
                     } else {
-                        textViewListHeaderSum.setVisibility(View.GONE);
+                        textViewListHeaderPrice.setVisibility(View.GONE);
                         layoutTotal.setVisibility(View.GONE);                  // list mode
                         textViewBalance.setGravity(Gravity.CENTER);
                         imageViewBalanceUnderline.setBackgroundResource(R.drawable.gradient_horizontal_center_white);
@@ -307,6 +312,28 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
                     layoutList.setVisibility(View.VISIBLE);                    // list mode
                     break;
             }
+
+            if (KievSubwayArgs.isOtherGoods) {
+                imageViewProduct.setVisibility(View.GONE);
+                textViewCardNumber.setVisibility(View.GONE);
+                ((LinearLayout.LayoutParams) layoutCardInfo.getLayoutParams()).weight = 0;
+                textViewBalance.setVisibility(View.GONE);
+                imageViewBalanceUnderline.setVisibility(View.GONE);
+                textViewListHeaderProductName.setText(R.string.product_name);
+                textViewListHeaderCount.setText(R.string.amount);
+                textViewListHeaderPrice.setVisibility(View.VISIBLE);
+                textViewListHeaderSum.setVisibility(View.VISIBLE);
+                textViewTotalSum.setText(sumTotalToPay);
+                layoutTotal.setVisibility(View.VISIBLE);                           // list mode
+                layoutItem12Block.setVisibility(View.GONE);                        // 1-2 items mode
+                layoutList.setVisibility(View.VISIBLE);                            // list mode
+                return;
+            } else {
+                textViewListHeaderProductName.setText(R.string.kind_of_service);
+                textViewListHeaderCount.setText(R.string.trip_count);
+                textViewListHeaderSum.setVisibility(View.GONE);
+            }
+
         } catch (IndexOutOfBoundsException e) {
             Log.e("PLW", e.toString());
             setDefaultState();
@@ -360,6 +387,9 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
 
         layoutList.setVisibility(View.GONE);
         layoutTotal.setVisibility(View.GONE);
+        textViewListHeaderProductName.setText(R.string.kind_of_service);
+        textViewListHeaderCount.setText(R.string.trip_count);
+        textViewListHeaderPrice.setVisibility(View.GONE);
         textViewListHeaderSum.setVisibility(View.GONE);
 
         ((LinearLayout.LayoutParams) layoutCardInfo.getLayoutParams()).weight = 150;

@@ -66,13 +66,41 @@
             android:textSize="@dimen/list_item_text_look_2"
             tools:text="@string/tools_dummy_4" />
 
-        <!--    dummy, for compability only, must be in another list_item_look_x.xml (visibility = gone) -->
-        <TextView
-            android:id="@+id/textview_price"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_price"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:visibility="gone" />
+            android:layout_weight="1.2"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <!--        here will be value received from COM port, already with discount -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textview_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/proba_nav2_semi_bold"
+                android:textColor="@color/text_subway_value"
+                android:textSize="@dimen/list_item_text_look_2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@string/tools_dummy_5_dot_2" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/appCompatTextView1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/proba_nav2_semi_bold"
+                android:text=" ₴"
+                android:textColor="@color/text_subway_value"
+                android:textSize="40sp"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textview_price"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textview_price" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_sum"
