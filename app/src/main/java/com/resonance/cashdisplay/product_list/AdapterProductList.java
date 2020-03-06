@@ -22,7 +22,7 @@ import com.resonance.cashdisplay.settings.PrefWorker;
 import com.resonance.cashdisplay.utils.ImageUtils;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static com.resonance.cashdisplay.settings.PrefWorker.LOOK_SUBWAY;
@@ -48,7 +48,7 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
         ConstraintLayout layoutSum;
     }
 
-    public AdapterProductList(Context context, int resource, ArrayList<ItemProductList> data) {
+    public AdapterProductList(Context context, int resource, List<ItemProductList> data) {
         super(context, resource, data);
         this.mContext = context;
         this.listItemResourceId = resource;
@@ -94,7 +94,7 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
             case LOOK_SUBWAY:
                 if (dataModel.getCount() < 0)
                     viewHolder.textViewCount.setText(R.string.unlimited);
-                if (KievSubwayArgs.isCharging) {
+                if (KievSubwayArgs.isPayment) {
                     viewHolder.textViewSum.setText(String.format(Locale.FRENCH, "%.2f", (double) dataModel.getSum() / 100));
                     viewHolder.layoutSum.setVisibility(View.VISIBLE);
                 }

@@ -113,7 +113,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/proba_nav2_bold"
-                        android:singleLine="true"
+                        android:singleLine="false"
                         android:text="Передплачені поїздки"
                         android:textColor="@color/text_subway_title"
                         android:textSize="@dimen/item_name_large_2"
@@ -125,6 +125,7 @@
                         android:layout_weight="1.2"></Space>
 
                     <TableLayout
+                        android:id="@+id/layout_item1_data"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
