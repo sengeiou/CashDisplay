@@ -3,13 +3,11 @@ package com.resonance.cashdisplay.product_list.look2;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
-import android.transition.Fade;
-import android.transition.Transition;
-import android.transition.TransitionManager;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -30,7 +28,6 @@ import java.util.Locale;
 
 import static com.resonance.cashdisplay.MainActivity.imageViewProduct;
 import static com.resonance.cashdisplay.MainActivity.layoutTotal;
-import static com.resonance.cashdisplay.MainActivity.relativeLayout;
 import static com.resonance.cashdisplay.MainActivity.textViewTotalSum;
 import static com.resonance.cashdisplay.product_list.look2.KievSubwayArgs.SUBWAY_PRLS_CARD_BALANCE;
 import static com.resonance.cashdisplay.product_list.look2.KievSubwayArgs.SUBWAY_PRLS_CARD_CHARGING;
@@ -50,6 +47,7 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
     private ConstraintLayout layoutCardInfo;
     private TextView textViewCardNumber;
 
+    private Space spaceAdjusterItem1;           // space above the word "Баланс"
     private TextView textViewBalance;           // word "Баланс"
     private ImageView imageViewBalanceUnderline;// line below word "Баланс"
 
@@ -94,11 +92,13 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
         layoutCardInfo = activity.findViewById(R.id.layout_card_info);
         textViewCardNumber = activity.findViewById(R.id.textview_card_number);
 
+        spaceAdjusterItem1 = activity.findViewById(R.id.space_adjuster_item1);
         textViewBalance = activity.findViewById(R.id.textview_balance);
         imageViewBalanceUnderline = activity.findViewById(R.id.imageview_balance_underline);
 
         layoutItem12Block = activity.findViewById(R.id.layout_item_1_2_block);
         textViewItem1Name = activity.findViewById(R.id.textview_item1_name);
+        textViewItem1Name.setSelected(true);               // for scrolling single line horizontally
         layoutItem1Data = activity.findViewById(R.id.layout_item1_data);
         textViewItem1Count = activity.findViewById(R.id.textview_item1_count);
         textViewCostLabel1 = activity.findViewById(R.id.textview_cost_label1);
@@ -108,6 +108,7 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
         layoutItem2 = activity.findViewById(R.id.layout_item2);
         imageViewItem12Delimiter = activity.findViewById(R.id.imageview_item_1_2_delimiter);
         textViewItem2Name = activity.findViewById(R.id.textview_item2_name);
+        textViewItem2Name.setSelected(true);               // for scrolling single line horizontally
         textViewItem2Count = activity.findViewById(R.id.textview_item2_count);
         textViewCostLabel2 = activity.findViewById(R.id.textview_cost_label2);
         layoutItem2Cost = activity.findViewById(R.id.layout_item2_cost);
@@ -182,19 +183,13 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
     @Override
     public void run() {
         int arrayProductListSize = arrayProductList.size();
-        if (KievSubwayArgs.itemsAmount != arrayProductListSize) {   // control check right before UI operations
+        if (KievSubwayArgs.itemsAmount != arrayProductListSize) {            // control check right before UI operations
             setDefaultState();
             return;
         }
         KievSubwayArgs.itemsAmount = -1;
 
         Log.d("PLW", "dispItems = " + arrayProductListSize);
-
-        Transition transition = new Fade();
-        transition.setDuration(0);
-        transition.addTarget(layoutItem12Block);
-        transition.addTarget(layoutList);
-        TransitionManager.beginDelayedTransition(relativeLayout[2], transition);    // scene root = product list
 
         try {
             int totalSum = 0;
@@ -220,6 +215,7 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
                     else
                         throw new IndexOutOfBoundsException();
 
+                    spaceAdjusterItem1.setVisibility(View.GONE);
                     textViewItem1Name.setSingleLine(true);
 
                     textViewItem2Name.setText(item.getName());
@@ -260,6 +256,14 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
                         item = arrayProductList.get(0);
                     else
                         throw new IndexOutOfBoundsException();
+
+                    if (arrayProductListSize == 1) {
+                        spaceAdjusterItem1.setVisibility(View.VISIBLE);
+                        if (KievSubwayArgs.isPayment)
+                            ((LinearLayout.LayoutParams) spaceAdjusterItem1.getLayoutParams()).weight = 0.4f;
+                        else
+                            ((LinearLayout.LayoutParams) spaceAdjusterItem1.getLayoutParams()).weight = 0.8f;
+                    }
 
                     textViewBalance.setGravity(Gravity.CENTER_VERTICAL);
 
@@ -309,6 +313,8 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
                     else
                         imageViewProduct.setBackgroundResource(R.drawable.kyiv_smart_card_w233);
 
+                    spaceAdjusterItem1.setVisibility(View.GONE);
+
                     if (KievSubwayArgs.isPayment) {
                         textViewListHeaderPrice.setVisibility(View.VISIBLE);
                         textViewTotalSum.setText(sumTotalToPay);
@@ -331,6 +337,7 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
                 imageViewProduct.setVisibility(View.GONE);
                 textViewCardNumber.setVisibility(View.GONE);
                 ((LinearLayout.LayoutParams) layoutCardInfo.getLayoutParams()).weight = 0;
+                spaceAdjusterItem1.setVisibility(View.GONE);
                 textViewBalance.setVisibility(View.GONE);
                 imageViewBalanceUnderline.setVisibility(View.GONE);
                 textViewListHeaderProductName.setText(R.string.product_name);
@@ -378,6 +385,7 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
         textViewCardNumber.setVisibility(View.GONE);
         textViewCardNumber.setText(mContext.getString(R.string.card_default));
 
+        spaceAdjusterItem1.setVisibility(View.GONE);
         textViewBalance.setVisibility(View.GONE);
         textViewBalance.setGravity(Gravity.CENTER_VERTICAL);
         imageViewBalanceUnderline.setVisibility(View.GONE);

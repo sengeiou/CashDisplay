@@ -263,7 +263,10 @@ public class ProductListWorker {
                 updateTotalValues();
                 break;
             case LOOK_SUBWAY:
-                scrollToPosition(position, false);
+                if (arrayProductList.size() == 0)
+                    handlerLook2.setDefaultState();
+                else
+                    scrollToPosition(position, false);
                 break;
             default:
                 scrollToPosition(position, highlightItem);

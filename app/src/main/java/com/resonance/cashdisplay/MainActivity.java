@@ -244,6 +244,9 @@ public class MainActivity extends Activity {
             runOnUiThread(() -> {
                 setBackgroundScreen();
 
+                if (testMode)
+                    cmdParser = new CommandParser(viewModel, messageHandler, MainActivity.this);
+
                 productListWorker = new ProductListWorker(MainActivity.context);
                 setProductListLook();
             });
