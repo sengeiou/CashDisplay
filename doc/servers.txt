@@ -6,3 +6,7 @@ http://dev.ekka.com.ua/indicator/
 \\192.168.100.1\slava
 login slava
 password 17184
+
+91.224.97.14:3390
+Ф И 123456 1234567
+98753
