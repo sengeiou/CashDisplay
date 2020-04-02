@@ -12,6 +12,7 @@ import com.resonance.cashdisplay.settings.PrefValues;
 import com.resonance.cashdisplay.settings.PrefWorker;
 import com.resonance.cashdisplay.su.Modify_SU_Preferences;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Inet4Address;
@@ -44,6 +45,7 @@ public class EthernetSettings {
             (new IP_Settings("169.254.1.200", "255.255.0.0", "169.254.0.1", "8.8.8.8"))};
     public static boolean tempStatic = false;  // mode specifies that static address must be set temporary (if DHCP couldn't be received)
     public static final int TIME_CHECK_DHCP_ENABLE = 20000;
+    private static IP_Settings ipSettings;
 
     //private static final String CMD_ROOT = "busybox whoami";
     private static final String CMD_GET_IP_MASK = "ifconfig eth0";
@@ -75,7 +77,7 @@ public class EthernetSettings {
         if (prefValues.dhcp) {
             startDHCP();
         } else {
-            IP_Settings ipSettings = get_IP_MASK_GW();
+            ipSettings = get_IP_MASK_GW();
 
             Log.d(TAG, "STATIC ip: " + ipSettings.getIp() + " nm: " + ipSettings.getNetmask() + " gw:" + ipSettings.getGateway());
 
@@ -264,7 +266,11 @@ public class EthernetSettings {
     }
 
     /**
-     * Проверка наличия подключения LAN
+     * Check LAN connection.
+     * 1. Common case is through ConnectivityManager.
+     * 2. Case when when static IP is set in device and without working DHCP server in router
+     * (something wrong with DNS, though they are in device: net.dns1 = 8.8.8.8; net.dns2 = 8.8.4.4,
+     * but NetworkInfo nInfo = null). Used ping of gateway.
      *
      * @return
      */
@@ -274,6 +280,17 @@ public class EthernetSettings {
             ConnectivityManager cm = (ConnectivityManager) mContext.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo nInfo = cm.getActiveNetworkInfo();
             connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+            if (nInfo == null) {
+                try {
+                    Process ipProcess = Runtime.getRuntime().exec("ping -c 1 " + ipSettings.getGateway());
+                    int exitValue = ipProcess.waitFor();
+                    return (exitValue == 0);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             return connected;
         } catch (Exception e) {
             Log.e("Connectivity Exception", e.getMessage());
@@ -319,6 +336,8 @@ public class EthernetSettings {
                 currentStatus = "";
                 if (tempStatic)
                     currentStatus = "(тимчасово) IP: " + ip;
+
+                ipSettings = get_IP_MASK_GW();
             } catch (Exception e) {
                 e.printStackTrace();
             }

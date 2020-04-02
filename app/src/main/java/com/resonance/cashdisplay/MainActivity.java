@@ -93,7 +93,7 @@ public class MainActivity extends Activity {
     public static Point sizeScreen;
 
     private static ImageView imageSdCardError;
-    private static boolean lanSetupAlready = false;
+    private boolean lanSetupAlready = false;
 
     public static View layoutProductListLook = null;    // represent layout_shopping_list_look_x.xml, where x - number of desired look
     // next block of views must be in every layout_shopping_list_look_x.xml to provide compability
