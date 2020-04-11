@@ -16,6 +16,8 @@
     <string name="get_data_screenFiles">Перевірка файлiв фонових зображень...</string>
     <string name="try_connect_to_source">Перевiрка вмісту файлового ресурсу...</string>
 
+    <string name="not_connected">пiдключення LAN відсутнє</string>
+
     <string-array name="entriesSpeed">
         <item>9600</item>
         <item>19200</item>

@@ -59,9 +59,9 @@ public class PrefWorker {
         prefValues.timeSlideImage = sharedPreferences.getInt("sTimeSlideImage", 10);
 
         prefValues.defaultBackgroundImage = sharedPreferences.getString("sDefaultBackGroundImage", "default_background_picture.png");
-        prefValues.backgroundShoppingList = sharedPreferences.getString("background_shopping_list", "default_background_picture.png");
-        prefValues.backgroundCashNotWork = sharedPreferences.getString("background_cash_not_work", "default_background_picture.png");
-        prefValues.backgroundThanks = sharedPreferences.getString("background_thanks", "default_background_picture.png");
+        prefValues.backgroundShoppingList = sharedPreferences.getString("background_shopping_list", "screen_product_list_.png");
+        prefValues.backgroundCashNotWork = sharedPreferences.getString("background_cash_not_work", "screen_cash_not_work_.png");
+        prefValues.backgroundThanks = sharedPreferences.getString("background_thanks", "screen_thanks_.png");
         prefValues.productListLookCode = sharedPreferences.getInt("productListLookCode", LOOK_BASKET);
 
         prefValues.dhcp = sharedPreferences.getBoolean("sDHCP", true);

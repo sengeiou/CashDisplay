@@ -2,8 +2,6 @@ package com.resonance.cashdisplay.eth;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.provider.Settings;
 import android.text.TextUtils;
 
@@ -45,7 +43,7 @@ public class EthernetSettings {
             (new IP_Settings("169.254.1.200", "255.255.0.0", "169.254.0.1", "8.8.8.8"))};
     public static boolean tempStatic = false;  // mode specifies that static address must be set temporary (if DHCP couldn't be received)
     public static final int TIME_CHECK_DHCP_ENABLE = 20000;
-    private static IP_Settings ipSettings;
+    public static IP_Settings ipSettings;     // last received from system network parameters
 
     //private static final String CMD_ROOT = "busybox whoami";
     private static final String CMD_GET_IP_MASK = "ifconfig eth0";
@@ -79,11 +77,11 @@ public class EthernetSettings {
         } else {
             ipSettings = get_IP_MASK_GW();
 
-            Log.d(TAG, "STATIC ip: " + ipSettings.getIp() + " nm: " + ipSettings.getNetmask() + " gw:" + ipSettings.getGateway());
+            Log.d(TAG, "LAN now: ip: " + ipSettings.getIp() + " nm: " + ipSettings.getNetmask() + " gw:" + ipSettings.getGateway());
 
-            if (!ipSettings.getIp().contains(prefValues.ip)
-                    || !ipSettings.getNetmask().contains(prefValues.mask)
-                    || !ipSettings.getGateway().contains(prefValues.gateway)) {
+            if (!ipSettings.getIp().equals(prefValues.ip)
+                    || !ipSettings.getNetmask().equals(prefValues.mask)
+                    || !ipSettings.getGateway().equals(prefValues.gateway)) {
                 set_IP_MASK_GW(prefValues.ip, prefValues.mask, prefValues.gateway);
             }
         }
@@ -218,7 +216,7 @@ public class EthernetSettings {
     }
 
     /**
-     * Получение IP адреса
+     * Получение IP адреса (реальный на данный момент, установленный через DHCP или статика)
      */
     public static String getNetworkInterfaceIpAddress() {
         try {
@@ -267,31 +265,23 @@ public class EthernetSettings {
 
     /**
      * Check LAN connection.
-     * 1. Common case is through ConnectivityManager.
-     * 2. Case when when static IP is set in device and without working DHCP server in router
-     * (something wrong with DNS, though they are in device: net.dns1 = 8.8.8.8; net.dns2 = 8.8.4.4,
-     * but NetworkInfo nInfo = null). Used ping of gateway.
+     * 1. Common case is through ConnectivityManager (removed later on 09.04.2020).
+     * If DHCP server in router is enabled, always return true, even if there are no connect with router.
+     * 2. Case when when DHCP server disabled in router and NetworkInfo nInfo = cm.getActiveNetworkInfo() = null.
+     * So ping is used.
      *
      * @return
      */
     public static boolean isConnected() {
         boolean connected = false;
         try {
-            ConnectivityManager cm = (ConnectivityManager) mContext.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            if (nInfo == null) {
-                try {
-                    Process ipProcess = Runtime.getRuntime().exec("ping -c 1 " + ipSettings.getGateway());
-                    int exitValue = ipProcess.waitFor();
-                    return (exitValue == 0);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            return connected;
+            Process ipProcess = Runtime.getRuntime().exec("ping -c 1 " + ipSettings.getGateway());
+            int exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             Log.e("Connectivity Exception", e.getMessage());
         }
@@ -355,6 +345,8 @@ public class EthernetSettings {
                 Modify_SU_Preferences.executeCmd(CMD_DHCP_START, 0); //3000
                 Modify_SU_Preferences.executeCmd(CMD_ETH_UP, 0);     //5000
                 currentStatus = "";
+
+                ipSettings = get_IP_MASK_GW();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -373,10 +365,10 @@ public class EthernetSettings {
         if (tmpStr.contains("eth0: ip")) {
             int indexStart = tmpStr.indexOf("eth0: ip", 0) + "eth0: ip".length();
             int indexStop = tmpStr.indexOf("mask", indexStart);
-            settings.setIp(tmpStr.substring(indexStart, indexStop));
+            settings.setIp(tmpStr.substring(indexStart, indexStop).trim());
             indexStart = tmpStr.indexOf("mask", 0) + "mask".length();
             indexStop = tmpStr.indexOf("flags", indexStart);
-            settings.setNetmask(tmpStr.substring(indexStart, indexStop));
+            settings.setNetmask(tmpStr.substring(indexStart, indexStop).trim());
         }
         settings.setGateway(get_GW());
         return settings;
@@ -393,8 +385,7 @@ public class EthernetSettings {
         if (tmpStr.contains("default via")) {
             int indexStart = tmpStr.indexOf("default via", 0) + "default via".length();
             int indexStop = tmpStr.indexOf("dev eth0", indexStart);
-            result = tmpStr.substring(indexStart, indexStop);
-
+            result = tmpStr.substring(indexStart, indexStop).trim();
         }
         return result;
     }

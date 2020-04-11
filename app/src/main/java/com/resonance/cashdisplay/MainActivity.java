@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
@@ -107,7 +108,8 @@ public class MainActivity extends Activity {
     public static ScrollView scrollViewDebug;
     public static ImageView imageViewProduct;
 
-    TextView textViewVersion;
+    private TextView textViewVersion;
+    private TextView textViewConnectStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,7 +179,9 @@ public class MainActivity extends Activity {
         imageSdCardError.setVisibility(View.INVISIBLE);
 
         textViewVersion = (TextView) findViewById(R.id.textview_version);
+        textViewConnectStatus = findViewById(R.id.textview_connect_status);  // widget of viewModel.setStatusConnection
         textViewVersion.setText("build :" + BuildConfig.VERSION_CODE);
+        textViewConnectStatus.setHintTextColor(Color.parseColor("#333333"));
         viewModel.setStatusConnection("ініціалізація системи");
         viewModel.setStatusConnection2("");
 
@@ -587,8 +591,8 @@ public class MainActivity extends Activity {
             viewModel.setStatusConnection(ethernetSettings.getCurrentStatus());
 
             while (!isInterrupted()) {
-
                 try {
+                    PrefValues prefValues = PrefWorker.getValues();
                     // not the best place, but good for SD card absence detection
                     runOnUiThread(() -> {
                         if (!ExtSDSource.isMounted(context)) {
@@ -616,10 +620,20 @@ public class MainActivity extends Activity {
                         if (!ip.equals(networkInterfaceIpAddress)) {
                             ip = networkInterfaceIpAddress;
                             Log.d(TAG, "Подключение LAN : " + ip);
+                            if (!prefValues.dhcp) {     // return static IP, enabled DHCP server may overwrite static settings (e.g. after cable reconnection)
+                                ethernetSettings.applyEthernetSettings();
+                            }
                         }
                     } else {
-                        viewModel.setStatusConnection(((stat.length() == 0) ? "підключення LAN відсутнє" : stat));
-                        viewModel.setStatusConnection2(((stat.length() == 0) ? "підключення LAN відсутнє" : stat));
+                        runOnUiThread(() -> {
+                            if (!prefValues.dhcp) {
+                                viewModel.setStatusConnection("");
+                                textViewConnectStatus.setHint(getString(R.string.not_connected) +" (" + prefValues.ip + ")");
+                            } else {
+                                textViewConnectStatus.setHint("");
+                                viewModel.setStatusConnection(((stat.length() == 0) ? "підключення LAN відсутнє" : stat));
+                            }
+                        });
                         Log.d(TAG, "Подключение LAN отсутствует");
                         ip = "";
                     }
@@ -627,7 +641,7 @@ public class MainActivity extends Activity {
                     e.printStackTrace();
                 }
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(4000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

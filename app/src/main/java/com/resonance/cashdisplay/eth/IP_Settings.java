@@ -22,12 +22,12 @@ public class IP_Settings {
         ip = ipAddress;
     }
 
-    public void setNetmask(String Netmask) {
-        netmask = Netmask;
+    public void setNetmask(String netmask) {
+        this.netmask = netmask;
     }
 
-    public void setGateway(String Gateway) {
-        gateway = Gateway;
+    public void setGateway(String gateway) {
+        this.gateway = gateway;
     }
 
 

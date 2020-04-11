@@ -387,14 +387,15 @@ public class HttpServer {
                 prefValues.backgroundThanks = (String) jsonObject.get("image_screen_thanks");
                 prefValues.productListLookCode = Integer.parseInt((String) jsonObject.get("product_list_look_code"));
 
-                boolean prevDHCP = prefValues.dhcp;             // save to compare below with new value
-                prefValues.ip = (String) jsonObject.get("stat_adress");
-                prefValues.mask = (String) jsonObject.get("stat_mask");
-                prefValues.gateway = (String) jsonObject.get("stat_gate");
-                prefValues.dns = (String) jsonObject.get("stat_dns");
+                boolean dhcpOld = prefValues.dhcp;
+                String ipOld = prefValues.ip;
+                String maskOld = prefValues.mask;
+                String gatewayOld = prefValues.gateway;
                 prefValues.dhcp = (boolean) jsonObject.get("dhcp");
-                if (!(prevDHCP && prefValues.dhcp))   // if was DHCP and become DHCP - don't apply network settings
-                    MainActivity.ethernetSettings.applyEthernetSettings();  //контроль измененмя сетевых настроек
+                prefValues.ip = ((String) jsonObject.get("stat_adress")).trim();
+                prefValues.mask = ((String) jsonObject.get("stat_mask")).trim();
+                prefValues.gateway = ((String) jsonObject.get("stat_gate")).trim();
+                prefValues.dns = ((String) jsonObject.get("stat_dns")).trim();
 
                 prefValues.admin = (String) jsonObject.get("admin_user");
                 prefValues.adminPassw = (String) jsonObject.get("admin_pass");
@@ -402,14 +403,20 @@ public class HttpServer {
 
                 PrefWorker.setValues(prefValues);
 
+                if (prefValues.dhcp != dhcpOld)
+                    MainActivity.ethernetSettings.applyEthernetSettings();
+                else if (!prefValues.dhcp
+                        && (!prefValues.ip.equals(ipOld) || !prefValues.mask.equals(maskOld) || !prefValues.gateway.equals(gatewayOld)))
+                    MainActivity.ethernetSettings.applyEthernetSettings();
+
                 //сигнал на изменение настройки UART
                 Intent intent = new Intent(UART_CHANGE_SETTINGS);
                 MainActivity.context.sendBroadcast(intent);
                 intent = new Intent(MainActivity.CHANGE_SETTINGS);
                 MainActivity.context.sendBroadcast(intent);
                 iCurStatusMsg = "Збереження виконано ";
-            } catch (JSONException e) {
-                Log.e(TAG, "JSONException: " + e.getMessage());
+            } catch (Exception e) {
+                Log.e(TAG, "Exception: " + e.getMessage());
             }
         }
     };
