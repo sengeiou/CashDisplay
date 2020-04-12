@@ -13,6 +13,7 @@ import android.graphics.Point;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,6 +38,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
 import com.resonance.cashdisplay.databinding.ActivityMainBinding;
+import com.resonance.cashdisplay.eth.ConnectivityReceiver;
 import com.resonance.cashdisplay.eth.EthernetSettings;
 import com.resonance.cashdisplay.http.HttpServer;
 import com.resonance.cashdisplay.load.DownloadMedia;
@@ -84,6 +86,7 @@ public class MainActivity extends Activity {
     private ProductListWorker productListWorker;            // обслуживание списка товаров
     private ViewModel viewModel;
     public static EthernetSettings ethernetSettings = null; // Настройка сети
+    private BroadcastReceiver connectivityReceiver;
     public static DownloadMedia downloadMedia;
     public static UpdateFirmware updateFirmware = null;     // обновление ПО
 
@@ -163,6 +166,8 @@ public class MainActivity extends Activity {
 
         ethernetSettings = new EthernetSettings(this);
         ethernetSettings.setSetupLanCallback(mCallbackLanIsSet);
+        connectivityReceiver = new ConnectivityReceiver();
+        registerReceiver(connectivityReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         downloadMedia = new DownloadMedia(this);
 
@@ -426,8 +431,11 @@ public class MainActivity extends Activity {
 
     @Override
     public void onDestroy() {
+        if (changeSettings != null)
+            unregisterReceiver(changeSettings);
+        if (connectivityReceiver != null)
+            unregisterReceiver(connectivityReceiver);
         super.onDestroy();
-        unregisterReceiver(changeSettings);
     }
 
     /***************************************
@@ -628,7 +636,7 @@ public class MainActivity extends Activity {
                         runOnUiThread(() -> {
                             if (!prefValues.dhcp) {
                                 viewModel.setStatusConnection("");
-                                textViewConnectStatus.setHint(getString(R.string.not_connected) +" (" + prefValues.ip + ")");
+                                textViewConnectStatus.setHint(getString(R.string.not_connected) + " (" + prefValues.ip + ")");
                             } else {
                                 textViewConnectStatus.setHint("");
                                 viewModel.setStatusConnection(((stat.length() == 0) ? "підключення LAN відсутнє" : stat));
