@@ -125,7 +125,7 @@ public class ExtSDSource {
                 size /= 1024;
 
                 if (size >= 1024) {
-                    suffix = "ГB";
+                    suffix = "GB";
                     size /= 1024;
                 }
             }

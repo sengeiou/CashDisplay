@@ -174,31 +174,31 @@ public class SmbWorker {
             super.onPostExecute(result);
             Log.d(TAG, "SmbTask result : " + result);
 
-            String extendedErrorScreenImg = "підключення до сервера не вдалося";
-            String extendedErrorImage = "підключення до сервера не вдалося";
-            String extendedErrorSlide = "підключення до сервера не вдалося";
-            String extendedErrorVideo = "підключення до сервера не вдалося";
+            String extendedErrorScreenImg = " підключення до сервера не вдалося ";
+            String extendedErrorImage = " підключення до сервера не вдалося ";
+            String extendedErrorSlide = " підключення до сервера не вдалося ";
+            String extendedErrorVideo = " підключення до сервера не вдалося ";
 
             if (resultScreenImg.hasError == DOWNLOAD_RESULT_NOT_FREE_MEMORY)
-                extendedErrorScreenImg = "недостатньо пам'ятi";
+                extendedErrorScreenImg = " недостатньо пам'ятi ";
 
             if (resultImg.hasError == DOWNLOAD_RESULT_NOT_FREE_MEMORY)
-                extendedErrorImage = "недостатньо пам'ятi";
+                extendedErrorImage = " недостатньо пам'ятi ";
 
             if (resultVideo.hasError == DOWNLOAD_RESULT_NOT_FREE_MEMORY)
-                extendedErrorVideo = "недостатньо пам'ятi";
+                extendedErrorVideo = " недостатньо пам'ятi ";
 
             if (resultSlide.hasError == DOWNLOAD_RESULT_NOT_FREE_MEMORY)
-                extendedErrorSlide = "недостатньо пам'ятi";
+                extendedErrorSlide = " недостатньо пам'ятi ";
 
             switch (result) {
                 case DOWNLOAD_RESULT_SUCCESSFULL:
                 case DOWNLOAD_RESULT_SHARE_CONNECTION_ERROR:
                     String status =
-                            "<font color=\"blue\"><B>Фоновi та допомiжнi зображення:</B><br></font>[" + (resultScreenImg.hasError > 0 ? extendedErrorScreenImg : ("завантажено : <B>" + resultScreenImg.countFiles + "</B>, iснуючих : <B>" + resultScreenImg.countSkipped + "</B>, видалено : <B>" + resultScreenImg.countDeleted) + "</B>];  <br>")
-                                    + "<font color=\"blue\"><B>Зображення товарiв:</B><br></font>[" + (resultImg.hasError > 0 ? extendedErrorImage : ("завантажено : <B>" + resultImg.countFiles + "</B>, iснуючих : <B>" + resultImg.countSkipped + "</B>, видалено : <B>" + resultImg.countDeleted) + "</B>];  <br>")
-                                    + "<font color=\"blue\"><B>Вiдео:</B><br></font>[" + (resultVideo.hasError > 0 ? extendedErrorVideo : ("завантажено : <B>" + resultVideo.countFiles + "</B>, iснуючих : <B>" + resultVideo.countSkipped + "</B>, видалено : <B>" + resultVideo.countDeleted) + "</B>];  <br>")
-                                    + "<font color=\"blue\"><B>Слайди:</B><br></font>[" + (resultSlide.hasError > 0 ? extendedErrorSlide : ("завантажено : <B>" + resultSlide.countFiles + "</B>, iснуючих : <B>" + resultSlide.countSkipped + "</B>, видалено : <B>" + resultSlide.countDeleted) + "</B>];");
+                            "<font color=\"blue\"><B>Фоновi та допомiжнi зображення:</B><br></font>[" + (resultScreenImg.hasError > 0 ? extendedErrorScreenImg : ("завантажено : <B>" + resultScreenImg.countFiles + "</B>, iснуючих : <B>" + resultScreenImg.countSkipped + "</B>, видалено : <B>" + resultScreenImg.countDeleted)) + "</B>];  <br>"
+                                    + "<font color=\"blue\"><B>Зображення товарiв:</B><br></font>[" + (resultImg.hasError > 0 ? extendedErrorImage : ("завантажено : <B>" + resultImg.countFiles + "</B>, iснуючих : <B>" + resultImg.countSkipped + "</B>, видалено : <B>" + resultImg.countDeleted)) + "</B>];  <br>"
+                                    + "<font color=\"blue\"><B>Вiдео:</B><br></font>[" + (resultVideo.hasError > 0 ? extendedErrorVideo : ("завантажено : <B>" + resultVideo.countFiles + "</B>, iснуючих : <B>" + resultVideo.countSkipped + "</B>, видалено : <B>" + resultVideo.countDeleted)) + "</B>];  <br>"
+                                    + "<font color=\"blue\"><B>Слайди:</B><br></font>[" + (resultSlide.hasError > 0 ? extendedErrorSlide : ("завантажено : <B>" + resultSlide.countFiles + "</B>, iснуючих : <B>" + resultSlide.countSkipped + "</B>, видалено : <B>" + resultSlide.countDeleted)) + "</B>];";
                     changeStatus(status, true);
                     break;
                 case DOWNLOAD_RESULT_NOT_SUPPORT_PROTOCOL:
@@ -232,7 +232,7 @@ public class SmbWorker {
 
         if (smb == null) {
             Log.d(TAG, "Соединение c " + connectionStr + " - не удалось");
-            changeStatus("підключення до сервера не вдалося:" + connectionStr, true);
+            changeStatus("Підключення до сервера не вдалося: " + connectionStr, true);
             result.hasError = DOWNLOAD_RESULT_CONNECTION_ERROR;
         } else {
             Log.d(TAG, "Соединение c " + connectionStr);
@@ -245,8 +245,10 @@ public class SmbWorker {
         String URL = url;
         NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication("", usr, passw);
 
-        System.setProperty("jcifs.smb.client.responseTimeout", "2000"); // default: 30000 millisec.
-        System.setProperty("jcifs.smb.client.soTimeout", "2000"); // default: 35000 millisec.
+//        System.setProperty("jcifs.smb.client.responseTimeout", "2000"); // default: 30000 millisec. (not works)
+//        System.setProperty("jcifs.smb.client.soTimeout", "2000"); // default: 35000 millisec. (not works)
+        jcifs.Config.setProperty("jcifs.smb.client.responseTimeout", "2000");
+        jcifs.Config.setProperty("jcifs.smb.client.soTimeout", "2000");
 
         boolean anonymous = ((usr.length() == 0 && passw.length() == 0) ? true : false);
 
