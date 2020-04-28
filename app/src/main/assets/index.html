@@ -370,6 +370,9 @@
     let raw_request_counter = 0;
 
     let def_poll_period_sec = 10;
+	
+	let isScrollYEnabled = true;
+	let prevStatusMsg = "";
 
     const NO_CONNECTION = -1;
     const NO_DATA = -2;
@@ -686,6 +689,14 @@
           }
         //  }
           document.getElementById("id_lab_sdcard_state").innerHTML = myArr.sdcard_state;
+		  
+		  if (isScrollYEnabled
+		      && myArr.CurStatusMsg.includes("Фоновi та допомiжнi зображення")) {
+			prevStatusMsg = myArr.CurStatusMsg;
+			isScrollYEnabled = false;
+		    setTimeout(scrollToSmoothly, 500, 3000);	// 500ms, 3000 - argument (Y coordinates)
+		  } else if (!myArr.CurStatusMsg.includes(prevStatusMsg))
+		    isScrollYEnabled = true;
         }
 
         if (!passed && (self.last_status == NO_CONNECTION)) {
