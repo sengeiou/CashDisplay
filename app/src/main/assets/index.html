@@ -216,7 +216,7 @@
 			    <div id="product_list_look_code_div" class="form-group" style="display: none; margin-bottom: 272px">
                   <label>Iнтерфейс списку покупок:</label>
                   <select class="select-img-pl btn btn-light" id="select_pl_look_code" style="border: 1px solid #CCC; background-color:#fff; width: 100%; height: 253px; margin-right: 2%; float: left;">
-                    <option value="0" class="look-0" >0) Basket</option>
+                    <option value="0" class="look-0">0) Basket</option>
                     <option value="1" class="look-1">1) Dmart</option>
 					<option value="2" class="look-2">2) Метро</option>
                   </select>
@@ -794,15 +794,10 @@
           document.getElementById("stat_adress").value = myArr.stat_adress;
           document.getElementById("stat_mask").value = myArr.stat_mask;
           document.getElementById("stat_gate").value = myArr.stat_gate;
-          document.getElementById("option_dynamic").checked = myArr.dhcp;
-
-          document.getElementById("option_static").checked = !myArr.dhcp;
           document.getElementById("stat_dns").value = myArr.stat_dns;
           document.getElementById("id_background_img").value = myArr.def_background_img;
 
           document.getElementById("time_slide_image_input").value = myArr.time_slide_image;
-          document.getElementById("option_video_play").checked = myArr.option_video_slide;
-          document.getElementById("option_slide_play").checked = !myArr.option_video_slide;
 
           document.getElementById("lab_current_ver").innerHTML = "Поточна версiя: " + myArr.lab_current_ver;
 
@@ -813,18 +808,16 @@
           def_stat_dns = myArr.stat_dns;
           def_option_dynamic = myArr.dhcp;
 
-          if (myArr.dhcp === false) {
+          if (myArr.dhcp === false) 				// only this need, click on label, not radio
             $("#stat").click();
-          } else {
+          else 
             $("#dynam").click();
-          }
+          
 
-          if (myArr.option_video_slide === true) {
+          if (myArr.option_video_slide === true) 	// only this need, click on label, not radio
             $("#video").click();
-            console.log("********#video");
-          } else {
+          else
             $("#slide").click();
-          }
 
           // $("#font-select").val(myArr.font_name);
           $("#protocol_select").val(myArr.protocol);
@@ -954,10 +947,10 @@
         stat_dns: document.getElementById("stat_dns").value,
         admin_user: document.getElementById("admin_user").value,
         admin_pass: document.getElementById("admin_pass").value,
-        dhcp: document.getElementById("option_dynamic").checked,
+        dhcp: document.getElementById("option_dynamic").checked,					// only check of radio here, not label
 
         time_slide_image: document.getElementById("time_slide_image_input").value,
-        option_video_slide:  document.getElementById("option_video_play").checked,
+        option_video_slide:  document.getElementById("option_video_play").checked,	// only check of radio here, not label
 
         def_background_img: document.getElementById("id_background_img").value,
        // font_name:$("#font-select").val(),        // get value by Оберіть шрифт
