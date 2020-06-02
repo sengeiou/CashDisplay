@@ -12,7 +12,7 @@
     <dimen name="total_text_num_look_1">36dp</dimen>
 
     <dimen name="list_header_text_look_2">28sp</dimen>
-    <dimen name="list_item_text_look_2">46sp</dimen>
+    <dimen name="list_item_text_look_2">44sp</dimen>
     <dimen name="list_item_height_look_2">126dp</dimen>  <!-- clear height without list item divider -->
     <dimen name="total_text_look_2">38sp</dimen>
     <dimen name="total_text_num_look_2">64sp</dimen>

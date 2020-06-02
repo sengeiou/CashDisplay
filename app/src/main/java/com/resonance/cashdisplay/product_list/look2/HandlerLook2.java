@@ -316,11 +316,13 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
                     spaceAdjusterItem1.setVisibility(View.GONE);
 
                     if (KievSubwayArgs.isPayment) {
+                        ((LinearLayout.LayoutParams) textViewListHeaderCount.getLayoutParams()).weight = 0.8f;
                         textViewListHeaderPrice.setVisibility(View.VISIBLE);
                         textViewTotalSum.setText(sumTotalToPay);
                         layoutTotal.setVisibility(View.VISIBLE);               // list mode
                         imageViewBalanceUnderline.setVisibility(View.GONE);
                     } else {
+                        ((LinearLayout.LayoutParams) textViewListHeaderCount.getLayoutParams()).weight = 1.4f;
                         textViewListHeaderPrice.setVisibility(View.GONE);
                         layoutTotal.setVisibility(View.GONE);                  // list mode
                         textViewBalance.setGravity(Gravity.CENTER);
@@ -328,7 +330,7 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
                         imageViewBalanceUnderline.setVisibility(View.VISIBLE);
                     }
 
-                    layoutList.setVisibility(View.VISIBLE);                        // list mode
+                    layoutList.setVisibility(View.VISIBLE);                    // list mode
                     break;
             }
 
@@ -341,7 +343,6 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
                 textViewBalance.setVisibility(View.GONE);
                 imageViewBalanceUnderline.setVisibility(View.GONE);
                 textViewListHeaderProductName.setText(R.string.product_name);
-                textViewListHeaderCount.setText(R.string.amount);
                 textViewListHeaderPrice.setVisibility(View.VISIBLE);
                 textViewListHeaderSum.setVisibility(View.VISIBLE);
                 textViewTotalSum.setText(sumTotalToPay);
@@ -350,7 +351,6 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
                 return;
             } else {
                 textViewListHeaderProductName.setText(R.string.kind_of_service);
-                textViewListHeaderCount.setText(R.string.trip_count);
                 textViewListHeaderSum.setVisibility(View.GONE);
             }
 
@@ -409,7 +409,7 @@ public class HandlerLook2 extends ProductListWorker implements Runnable {
         layoutList.setVisibility(View.GONE);
         layoutTotal.setVisibility(View.GONE);
         textViewListHeaderProductName.setText(R.string.kind_of_service);
-        textViewListHeaderCount.setText(R.string.trip_count);
+        ((LinearLayout.LayoutParams) textViewListHeaderCount.getLayoutParams()).weight = 0.8f;
         textViewListHeaderPrice.setVisibility(View.GONE);
         textViewListHeaderSum.setVisibility(View.GONE);
 

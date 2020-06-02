@@ -44,20 +44,20 @@
             android:id="@+id/textview_product"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2.5"
+            android:layout_weight="3"
             android:fontFamily="@font/proba_nav2_semi_bold"
             android:gravity="start|center_vertical"
             android:paddingLeft="7dp"
             android:paddingEnd="3dp"
             android:textColor="@color/text_subway_title"
             android:textSize="@dimen/list_item_text_look_2"
-            tools:text="Проїзний на квітень 2020" />
+            tools:text="ПРОЇЗНИЙ НА ЛИСТОПАД (124 ПОЇЗДКА)" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/textview_count"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1.2"
+            android:layout_weight="0.8"
             android:fontFamily="@font/proba_nav2_semi_bold"
             android:gravity="center"
             android:paddingStart="3dp"
@@ -72,7 +72,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1.2"
             android:visibility="gone"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <!--        here will be value received from COM port, already with discount -->
             <androidx.appcompat.widget.AppCompatTextView

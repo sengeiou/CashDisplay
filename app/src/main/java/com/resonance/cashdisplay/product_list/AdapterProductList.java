@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -105,9 +106,12 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
 
                 if (KievSubwayArgs.isPayment) {
                     viewHolder.textViewSum.setText(String.format(Locale.FRENCH, "%.2f", (double) dataModel.getSum() / 100));
+                    ((LinearLayout.LayoutParams) viewHolder.textViewCount.getLayoutParams()).weight = 0.8f;
                     viewHolder.layoutSum.setVisibility(View.VISIBLE);
-                } else
+                } else {
+                    ((LinearLayout.LayoutParams) viewHolder.textViewCount.getLayoutParams()).weight = 1.4f;
                     viewHolder.layoutSum.setVisibility(View.GONE);
+                }
                 break;
             default:
                 break;

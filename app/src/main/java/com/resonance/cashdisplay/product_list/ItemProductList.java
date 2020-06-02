@@ -1,6 +1,5 @@
 package com.resonance.cashdisplay.product_list;
 
-
 public class ItemProductList {
     private int indexPosition = -1;
     private int n = 0;
@@ -8,10 +7,10 @@ public class ItemProductList {
     private int divisible = 0;
     private int count = 0;
     private long price = 0;
-    private long sum = 0;      // value from command from COM port
+    private long sum = 0;                  // value from command from COM port
     private String name = "";
     private long sumWithoutDiscount = 0;   // calculated value
-    private long discount = 0;              // calculated value
+    private long discount = 0;             // calculated value
 
     public ItemProductList() {
         this.indexPosition = -1;

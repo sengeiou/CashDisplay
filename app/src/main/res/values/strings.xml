@@ -44,7 +44,7 @@
 
     <string name="number_sign">№</string>
     <string name="product_name">Найменування</string>
-    <string name="amount">Кiлькiсть</string>
+    <string name="amount">Кількість</string>
     <string name="price">Цiна</string>
     <string name="sum">Сума</string>
     <string name="discount">Знижка</string>
@@ -54,13 +54,13 @@
     <string name="total">Разом</string>
 
     <string name="kind_of_service">Вид послуги</string>
-    <string name="trip_count">Кількість поїздок</string>
     <string name="cost">Вартiсть</string>
     <string name="card_default">Картка\u000A№ 000000000000</string>
     <string name="card_num">Картка\u000A№\u0020</string>
     <string name="balance">Баланс</string>
     <string name="unlimited">без ліміту</string>
 
+    <string name="tools_dummy_3">123</string>
     <string name="tools_dummy_4">1234</string>
     <string name="tools_dummy_5_dot_2">123.45</string>
     <string name="tools_dummy_6_dot_3">123.456</string>

@@ -23,6 +23,7 @@
             android:layout_weight="150"
             android:gravity="center_horizontal"
             android:orientation="vertical"
+            tools:visibility="visible"
             app:layout_constraintEnd_toStartOf="@+id/linearLayoutMain"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -101,7 +102,7 @@
                 android:layout_weight="8"
                 android:orientation="vertical"
                 android:visibility="gone"
-                tools:visibility="visible">
+                tools:visibility="gone">
 
                 <LinearLayout
                     android:id="@+id/layout_item1"
@@ -148,13 +149,13 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/proba_nav2_regular"
-                                android:text="@string/trip_count"
+                                android:text="@string/amount"
                                 android:textColor="@color/text_subway_secondary"
                                 android:textSize="@dimen/secondary_text_2"
                                 tools:textColor="@color/green500" />
 
                             <Space
-                                android:layout_width="115dp"
+                                android:layout_width="320dp"
                                 android:layout_height="match_parent"></Space>
 
                             <androidx.appcompat.widget.AppCompatTextView
@@ -282,13 +283,13 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/proba_nav2_regular"
-                                android:text="@string/trip_count"
+                                android:text="@string/amount"
                                 android:textColor="@color/text_subway_secondary"
                                 android:textSize="@dimen/secondary_text_2"
                                 tools:textColor="@color/green500" />
 
                             <Space
-                                android:layout_width="115dp"
+                                android:layout_width="320dp"
                                 android:layout_height="match_parent"></Space>
 
                             <androidx.appcompat.widget.AppCompatTextView
@@ -436,7 +437,7 @@
                 android:layout_weight="8"
                 android:orientation="vertical"
                 android:visibility="gone"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
                 <LinearLayout
                     android:id="@+id/list_header"
@@ -459,7 +460,7 @@
                         android:id="@+id/textview_list_header_product_name"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="2.5"
+                        android:layout_weight="3"
                         android:fontFamily="@font/proba_nav2_regular"
                         android:gravity="center"
                         android:paddingEnd="65dp"
@@ -471,10 +472,10 @@
                         android:id="@+id/textview_list_header_сount"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1.2"
+                        android:layout_weight="0.8"
                         android:fontFamily="@font/proba_nav2_regular"
                         android:gravity="center"
-                        android:text="@string/trip_count"
+                        android:text="@string/amount"
                         android:textColor="@color/text_subway_secondary"
                         android:textSize="@dimen/list_header_text_look_2" />
 
@@ -486,6 +487,7 @@
                         android:fontFamily="@font/proba_nav2_regular"
                         android:gravity="center"
                         android:text="@string/cost"
+                        tools:visibility="visible"
                         android:textColor="@color/text_subway_secondary"
                         android:textSize="@dimen/list_header_text_look_2" />
 
@@ -498,7 +500,8 @@
                         android:gravity="center"
                         android:text="@string/sum"
                         android:textColor="@color/text_subway_secondary"
-                        android:textSize="@dimen/list_header_text_look_2" />
+                        android:textSize="@dimen/list_header_text_look_2"
+                        tools:visibility="gone" />
                 </LinearLayout>
 
                 <ImageView
