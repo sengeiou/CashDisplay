@@ -108,9 +108,9 @@ public class HttpServer {
         mServer.get("/get-log.*", getLogCallback);
         mServer.get("/getsettings", getSettingsCallback);
         mServer.get("/getstatus", getStatusCallback);
-        mServer.post("/upload_files", downloadFilesCallback);
-        mServer.post("/start_remote_update", startRemoteUpdateCallback);
-        mServer.post("/start_reboot", startRebootCallback);
+        mServer.get("/upload_files", uploadFilesCallback);
+        mServer.get("/start_remote_update", startRemoteUpdateCallback);
+        mServer.get("/start_reboot", startRebootCallback);
         mServer.post("/setsettings", setSettingsCallback);
         mServer.setErrorCallback(new CompletedCallback() {
             @Override
@@ -262,39 +262,33 @@ public class HttpServer {
     private final HttpServerRequestCallback getStatusCallback = new HttpServerRequestCallback() {
         @Override
         public void onRequest(final AsyncHttpServerRequest request, final AsyncHttpServerResponse response) {
-            if (!shouldPass(request, response)) {
+            if (!shouldPass(request, response))
                 return;
-            }
 
             try {
-                JSONObject responseBody = new JSONObject();
+                JSONObject jsonObject = new JSONObject();
 
-                responseBody.put("status", iCurStatus);
-                responseBody.put("CurStatusMsg", iCurStatusMsg);
-                responseBody.put("lab_current_ver", BuildConfig.VERSION_CODE);
-                responseBody.put("sdcard_state", "<font color=\"blue\"><B>пам`ятi вiльно " + ExtSDSource.getAvailableMemory_SD() + "</B></font> ");
+                jsonObject.put("status", iCurStatus);
+                jsonObject.put("CurStatusMsg", iCurStatusMsg);
+                jsonObject.put("lab_current_ver", BuildConfig.VERSION_CODE);
+                jsonObject.put("sdcard_state", "<font color=\"blue\"><B>пам`ятi вiльно " + ExtSDSource.getAvailableMemory_SD() + "</B></font> ");
 
-                response.send(responseBody.toString());
+                response.code(200);
+                response.send(jsonObject.toString());
                 System.gc();
-
-                if (iCurStatus == STAT_SAVE) {
-                    iCurStatusMsg = "";
-                    iCurStatus = STAT_IDLE;
-                }
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
             }
         }
     };
 
-    private final HttpServerRequestCallback downloadFilesCallback = new HttpServerRequestCallback() {
+    private final HttpServerRequestCallback uploadFilesCallback = new HttpServerRequestCallback() {
 
         @Override
         public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
 
             asyncHttpServerResponse.code(200);
             asyncHttpServerResponse.send("");
-
             Log.d(TAG, "** /upload_files");
             iCurStatus = STAT_LOAD_FILES;
             MainActivity.downloadMedia.download();
@@ -307,8 +301,11 @@ public class HttpServer {
         public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
 
             asyncHttpServerResponse.code(200);
+            asyncHttpServerResponse.send("");
             Log.d(TAG, "** /start_remote_update");
             iCurStatus = STAT_LOAD_FIRMWARE;
+            iCurStatusMsg = "Команда на оновлення ПЗ...";
+
             MainActivity.updateFirmware.update();
         }
     };
@@ -319,8 +316,10 @@ public class HttpServer {
         public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
 
             asyncHttpServerResponse.code(200);
+            asyncHttpServerResponse.send("");
             iCurStatus = STAT_IDLE;
             DownloadMedia.resetMediaPlay();
+
             Log.d(TAG, "** /start_reboot");
             try {
                 Thread.sleep(3000);
@@ -336,10 +335,12 @@ public class HttpServer {
         public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
 
             AsyncHttpRequestBody requestBody = asyncHttpServerRequest.getBody();
+            Log.d(TAG, "** /setsettings" + requestBody);
+
             asyncHttpServerResponse.code(200);
+            asyncHttpServerResponse.getHeaders().set("Cache-Control", "no-cache");
             asyncHttpServerResponse.send("");
 
-            Log.d(TAG, "** /setsettings" + requestBody);
             iCurStatus = STAT_SAVE;
             iCurStatusMsg = "Збереження налаштуваннь ";
 
@@ -414,7 +415,20 @@ public class HttpServer {
                 MainActivity.context.sendBroadcast(intent);
                 intent = new Intent(MainActivity.CHANGE_SETTINGS);
                 MainActivity.context.sendBroadcast(intent);
+                iCurStatus = STAT_SAVE;
                 iCurStatusMsg = "Збереження виконано ";
+
+                if (iCurStatus == STAT_SAVE) {
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        iCurStatus = STAT_IDLE;
+                        iCurStatusMsg = "";
+                    }).start();
+                }
             } catch (Exception e) {
                 Log.e(TAG, "Exception: " + e.getMessage());
             }

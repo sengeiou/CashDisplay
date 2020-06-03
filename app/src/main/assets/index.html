@@ -205,13 +205,13 @@
                 <input type="text" class="form-control" id="id_background_img" data-toggle="tooltip" title="">
 
                 <label>Фонове зображення екрану "Список покупок":</label>
-                <input type="text" class="form-control" id="id_back_screen_shoppinglist" title="Вкажiть назву файлу зображення, що буде вiдображатись на екранi 'Список покупок'">
+                <input type="text" class="form-control" id="id_back_screen_shoppinglist" title="Назва файлу зображення, що буде вiдображатись на екранi 'Список покупок'">
   
                 <label>Фонове зображення екрану "Каса не працює":</label>
-                <input type="text" class="form-control" id="id_back_screen_cash_not_work" title="Вкажiть назву файлу зображення, що буде вiдображатись на екранi 'Каса не працює'">
+                <input type="text" class="form-control" id="id_back_screen_cash_not_work" title="Назва файлу зображення, що буде вiдображатись на екранi 'Каса не працює'">
 
                 <label>Фонове зображення екрану "Дякуємо за покупку":</label>
-                <input type="text" class="form-control" id="id_back_screen_thanks" title="Вкажiть назву файлу зображення, що буде вiдображатись на екранi 'Дякуємо за покупку'">
+                <input type="text" class="form-control" id="id_back_screen_thanks" title="Назва файлу зображення, що буде вiдображатись на екранi 'Дякуємо за покупку'">
 			
 			    <div id="product_list_look_code_div" class="form-group" style="margin-bottom: 272px">
                   <label>Iнтерфейс екрану "Список покупок":</label>
@@ -380,6 +380,8 @@
 	
 	let plLookCode = 0;		// using for "screen_product_list_", "screen_cash_not_work_", "screen_thanks_" to track product list look code
 
+	let onerrorRepeat = 0;		// for errors in POST requests (will use 5 max)
+	
 /**************************************************************************************/
 
     function validate_ip(ip) {
@@ -860,29 +862,30 @@
       httpRequest.send();
     });
 
+/**************************************************************************************/	
+	
     document.querySelector("#btn_upload_files").addEventListener("click", function (e) {
-      console.log("Sending");
+      console.log("Click btn_upload_files");
       let httpRequest = new XMLHttpRequest();
       httpRequest.onreadystatechange = function (data) {
         if (httpRequest.readyState === XMLHttpRequest.DONE 
 		    && httpRequest.status === 200) {
           //Отправка данных успешна
-          console.log("Exec OK");
+          console.log("RESPONSE OK");
         } else {
-          console.log("#1 Exec ERROR!!!!");
+          console.log("WAIT RESPONSE");
         }
       };
-      let jsonData = {
-        exec_param: 1,
-      };
-      httpRequest.open("POST", "/upload_files");
-      httpRequest.send(JSON.stringify(jsonData));
-      document.getElementById("status").innerHTML = "Очікування на завантаження...";
+      httpRequest.open("GET", "/upload_files");
+      httpRequest.send();
+    //  document.getElementById("status").innerHTML = "Очікування на завантаження...";
     });
+
+/**************************************************************************************/
 	
     document.querySelector("#btn_apply").addEventListener("click", function (e) {
     
-	  console.log("Sending... ");
+      console.log("Click btn_apply");
       //проверка на корректный IP
       if (document.getElementById("option_static").checked === true ) {
         if (validate_ip(document.getElementById("stat_adress").value) === false) {
@@ -908,7 +911,8 @@
 	      && (def_option_dynamic != document.getElementById("option_dynamic").checked)) {
 	    console.log("option_dynamic: " + document.getElementById("option_dynamic").checked + "   def_option_dynamic:" + def_option_dynamic);
 	    // предупреждение об изменении DHCP value
-        if (confirm("Ви змінили налаштування підключення, зв'язок буде втрачено, продовжити?")) {
+        if (confirm("\nПараметри мережі змiнено, зв'язок з пристроєм буде втрачено.\n\n"
+	        + "Продовжити?")) {
           // сохраним для анализа при записи настроек
           def_option_dynamic = document.getElementById("option_dynamic").checked;
         } else
@@ -926,7 +930,8 @@
         console.log(" stat_gate: " + document.getElementById("stat_gate").value + "   def_stat_gate:" + def_stat_gate);
         console.log(" stat_dns: " + document.getElementById("stat_dns").value + "   def_stat_dns:" + def_stat_dns);
         // предупреждение об изменении IP, MASK, GW
-        if (confirm("Ви змінили налаштування підключення, зв'язок буде втрачено, продовжити?")) {
+        if (confirm("\nПараметри мережі змiнено, зв'язок з пристроєм буде втрачено.\n\n"
+	        + "Продовжити?")) {
           // сохраним для анализа при записи настроек
           def_option_dynamic = document.getElementById("option_dynamic").checked;
           def_stat_adress = document.getElementById("stat_adress").value;
@@ -942,9 +947,9 @@
         if (httpRequest.readyState === XMLHttpRequest.DONE
 		    && httpRequest.status === 200) {
           //Отправка данных успешна
-          console.log("Send OK");
+          console.log("RESPONSE OK");
         } else {
-          console.log("#1 Send ERROR!!! status:" + httpRequest.status + " state:" + httpRequest.readyState);
+          console.log("WAIT RESPONSE, status:" + httpRequest.status + " state:" + httpRequest.readyState);
         }
       };
 	  
@@ -985,20 +990,37 @@
 		
       httpRequest.open("POST", "/setsettings");
       httpRequest.send(JSON.stringify(jsonData));
-      document.getElementById("status").innerHTML = "Очікування на збереження...";
+	  
+	  httpRequest.onload = function() {
+        if (httpRequest.status === 200)
+		  onerrorRepeat = 0;
+      };
+	  
+	  httpRequest.onerror = function() {
+	    if (onerrorRepeat < 5) {
+	      onerrorRepeat++;
+	      console.log("httpRequest.onerror, onerrorRepeat=" + onerrorRepeat);
+	      httpRequest.open("POST", "/setsettings");
+          httpRequest.send(JSON.stringify(jsonData));
+		} else
+		  onerrorRepeat = 0;
+      };
+    //  document.getElementById("status").innerHTML = "Очікування на збереження...";
     });
 
+/**************************************************************************************/	
+	
     document.querySelector("#btn_remote_update").addEventListener("click", function (e) {
       console.log("Click btn_remote_update");
       let httpRequest_u = new XMLHttpRequest();
       httpRequest_u.onreadystatechange = function (data) {
         if (httpRequest_u.readyState === XMLHttpRequest.DONE && httpRequest_u.status === 200 ) {
-          console.log("btn_remote_update OK");//Отправка данных успешна
+          console.log("RESPONSE OK");//Отправка данных успешна
         } else {
-          console.log("btn_remote_update Send ERROR! status:" + httpRequest_u.status + " state:" + httpRequest_u.readyState);
+          console.log("WAIT RESPONSE, status:" + httpRequest_u.status + " state:" + httpRequest_u.readyState);
         }
       };
-      httpRequest_u.open("POST", "/start_remote_update");
+      httpRequest_u.open("GET", "/start_remote_update");
       httpRequest_u.send();
       document.getElementById("status").innerHTML = "Запит на оновлення відправлено...";
     });
@@ -1016,14 +1038,14 @@
       let httpRequest_u = new XMLHttpRequest();
       httpRequest_u.onreadystatechange = function(data) {
         if (httpRequest_u.readyState === XMLHttpRequest.DONE && httpRequest_u.status === 200) {
-          console.log("btn_reboot OK");//Отправка данных успешна
+          console.log("RESPONSE OK");//Отправка данных успешна
         } else {
-          console.log("btn_reboot Send ERROR! status:" + httpRequest_u.status + " state:" + httpRequest_u.readyState);
+          console.log("WAIT RESPONSE, status:" + httpRequest_u.status + " state:" + httpRequest_u.readyState);
         }
       };
       last_status = NO_DATA;
       document.getElementById("status").innerHTML = "Перезавантаження...";
-      httpRequest_u.open("POST", "/start_reboot");
+      httpRequest_u.open("GET", "/start_reboot");
       httpRequest_u.send();
     });
 
