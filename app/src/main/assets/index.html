@@ -382,6 +382,8 @@
 
 	let onerrorRepeat = 0;		// for errors in POST requests (will use 5 max)
 	
+	let callGetSettings = true;
+
 /**************************************************************************************/
 
     function validate_ip(ip) {
@@ -722,21 +724,28 @@
 		    isScrollYEnabled = true;
         }
 
+		if (passed && callGetSettings) {
+		  callGetSettings = false;
+		  getSettings();
+		}
         if (!passed && (self.last_status == NO_CONNECTION)) {
           last_status = NO_CONNECTION;
           document.getElementById("status").innerHTML = "Помилка зв'язку";
           document.getElementById("status").style.color = "Red";
+		  callGetSettings = true;
           console.log("Error get status");
         }
         if (!passed && (raw_request_counter > 5)) {
           raw_request_counter = 0;
           document.getElementById("status").innerHTML = "Втрачено зв'язок з пристроєм";
           document.getElementById("status").style.color = "Red";
+  		  callGetSettings = true;
         }
       };
 
       raw_request_counter = raw_request_counter + 1; // счетчик необработанных запросов
       httpRequest.open("GET", "/getstatus");
+	  httpRequest.timeout = 2000; // time in milliseconds
       httpRequest.send();
 
       window.setTimeout(poll_status, def_poll_period_sec * 100);
@@ -744,7 +753,7 @@
 
 /**************************************************************************************/
 
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
       document.body.style.backgroundColor = "#edf1fa";
       createSelectImgPL();		// product list looks selector
 	  
@@ -781,7 +790,10 @@
       document.getElementById("status").innerHTML = "Немає даних";
       last_status = NO_DATA;
       poll_status();
+	  getSettings();
+	});
 	  
+	function getSettings() {
       let httpRequest = new XMLHttpRequest();
       httpRequest.onreadystatechange = function (data) {
         if (httpRequest.readyState === XMLHttpRequest.DONE 
@@ -860,7 +872,7 @@
       };
       httpRequest.open("GET", "/getsettings");
       httpRequest.send();
-    });
+    }
 
 /**************************************************************************************/	
 	
