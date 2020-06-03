@@ -204,21 +204,21 @@
                 <label>Зображення, що буде замінювати відсутній файл зображення товару:</label>
                 <input type="text" class="form-control" id="id_background_img" data-toggle="tooltip" title="">
 
-                <label>Фонове зображення экрану "Список покупок":</label>
+                <label>Фонове зображення екрану "Список покупок":</label>
                 <input type="text" class="form-control" id="id_back_screen_shoppinglist" title="Вкажiть назву файлу зображення, що буде вiдображатись на екранi 'Список покупок'">
   
-                <label>Фонове зображення экрану "Каса не працює":</label>
+                <label>Фонове зображення екрану "Каса не працює":</label>
                 <input type="text" class="form-control" id="id_back_screen_cash_not_work" title="Вкажiть назву файлу зображення, що буде вiдображатись на екранi 'Каса не працює'">
 
-                <label>Фонове зображення экрану "Дякуємо за покупку":</label>
+                <label>Фонове зображення екрану "Дякуємо за покупку":</label>
                 <input type="text" class="form-control" id="id_back_screen_thanks" title="Вкажiть назву файлу зображення, що буде вiдображатись на екранi 'Дякуємо за покупку'">
 			
-			    <div id="product_list_look_code_div" class="form-group" style="display: none; margin-bottom: 272px">
-                  <label>Iнтерфейс списку покупок:</label>
+			    <div id="product_list_look_code_div" class="form-group" style="margin-bottom: 272px">
+                  <label>Iнтерфейс екрану "Список покупок":</label>
                   <select class="select-img-pl btn btn-light" id="select_pl_look_code" style="border: 1px solid #CCC; background-color:#fff; width: 100%; height: 253px; margin-right: 2%; float: left;">
-                    <option value="0" class="look-0">0) Basket</option>
-                    <option value="1" class="look-1">1) Dmart</option>
-					<option value="2" class="look-2">2) Метро</option>
+                    <option value="0" class="look-0">Basket</option>
+                    <option value="1" class="look-1">Dmart</option>
+			<!--	<option value="2" class="look-2">Метро</option>  -->
                   </select>
                 </div>
 
@@ -378,7 +378,7 @@
     const NO_DATA = -2;
     let last_status = NO_DATA;
 	
-	let lastProductListLookCode = 0;		// using for "screen_product_list_", "screen_cash_not_work_", "screen_thanks_"
+	let plLookCode = 0;		// using for "screen_product_list_", "screen_cash_not_work_", "screen_thanks_" to track product list look code
 
 /**************************************************************************************/
 
@@ -426,7 +426,7 @@
       selectImgPlClass.addClass(optionClass);
     }
 	
-    // Формируем select и его обработчики
+    // Формируем select и его обработчики      // Set the currently selected option and its picture (adding corresponding class), then set click listener
     function createSelectImgPL() {
       // получаем выпадающий список с уже очищенными классами
       var selectImgPlClass = cleanSelect('.select-img-pl');
@@ -461,19 +461,16 @@
 	
 	// method that assists to change names of corresponding specified inputs
 	function changeBackScreenName() {  
-	  if ($("#id_back_screen_shoppinglist").val() === ("screen_product_list_" + lastProductListLookCode + ".png")
-	      && $("#id_back_screen_cash_not_work").val() === ("screen_cash_not_work_" + lastProductListLookCode + ".png")
-		  && $("#id_back_screen_thanks").val() === ("screen_thanks_" + lastProductListLookCode + ".png")) {
-		let newProductListLookCode = $("#select_pl_look_code").val();
-		$("#id_back_screen_shoppinglist").val("screen_product_list_" + newProductListLookCode + ".png");
-		$("#id_back_screen_cash_not_work").val("screen_cash_not_work_" + newProductListLookCode + ".png");
-		$("#id_back_screen_thanks").val("screen_thanks_" + newProductListLookCode + ".png");
-		lastProductListLookCode = newProductListLookCode;
+	  if ($("#id_back_screen_shoppinglist").val() === ("screen_product_list_" + plLookCode + ".png")
+	      && $("#id_back_screen_cash_not_work").val() === ("screen_cash_not_work_" + plLookCode + ".png")
+		  && $("#id_back_screen_thanks").val() === ("screen_thanks_" + plLookCode + ".png")) {
+		plLookCode = $("#select_pl_look_code").val();
+		$("#id_back_screen_shoppinglist").val("screen_product_list_" + plLookCode + ".png");
+		$("#id_back_screen_cash_not_work").val("screen_cash_not_work_" + plLookCode + ".png");
+		$("#id_back_screen_thanks").val("screen_thanks_" + plLookCode + ".png");
 	  }
 	}
 	
-/**************************************************************************************/
-
 	function scrollToSmoothly(scroolToY) {
       window.scrollTo({
 	    top: scroolToY, 
@@ -481,14 +478,22 @@
 	  });
     }
 
-    $('html').keydown(function(eventObject) {         // catch key events
+    $('html').keydown(function(eventObject) {       // catch key events
 	  if (event.ctrlKey && event.altKey && event.shiftKey && event.keyCode === 73) {		// ctrl+shift+alt+"I"
-	    alert('Надано доступ до вибору iнтерфейсу "Список покупок"');
+	    alert('\nНадано доступ до всiх iнтерфейсiв екрану "Список покупок".');
 		$("#pills-settings-tab").click();
-		$("#product_list_look_code_div").show();
+		showAllLooksOfPL();
+		$("#select_pl_look_code").val(plLookCode);
+		createSelectImgPL();					    // this line is not obligatory
 		setTimeout(scrollToSmoothly, 300, 3000);	// 300ms, 3000 - argument (Y coordinates)
 	  }
 	});
+	      
+    function showAllLooksOfPL() {
+	  $("#select_pl_look_code").html("<option value=\"0\" class=\"look-0\">Basket</option>" 
+		   					 	   + "<option value=\"1\" class=\"look-1\">Dmart</option>"
+								   + "<option value=\"2\" class=\"look-2\">Метро</option>");
+    }
 		
 /**************************************************************************************/		
 		
@@ -802,8 +807,11 @@
           document.getElementById("id_back_screen_shoppinglist").value = myArr.image_screen_shoppinglist;
           document.getElementById("id_back_screen_cash_not_work").value = myArr.image_screen_cash_not_work;
           document.getElementById("id_back_screen_thanks").value = myArr.image_screen_thanks;
-		  $("#select_pl_look_code").val(myArr.product_list_look_code);
-		  lastProductListLookCode = $("#select_pl_look_code").val();
+		  plLookCode = myArr.product_list_look_code;
+	      if (plLookCode === 2) {	// product list look codes: 2 - Metro (here are list of hidden looks)
+	        showAllLooksOfPL();
+	      }
+		  $("#select_pl_look_code").val(plLookCode);
 		  createSelectImgPL();
 		  
           document.getElementById("volume_video").value = myArr.volume;
