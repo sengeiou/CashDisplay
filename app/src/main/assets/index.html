@@ -377,6 +377,8 @@
     const NO_CONNECTION = -1;
     const NO_DATA = -2;
     let last_status = NO_DATA;
+	
+	let lastProductListLookCode = 0;		// using for "screen_product_list_", "screen_cash_not_work_", "screen_thanks_"
 
 /**************************************************************************************/
 
@@ -439,6 +441,7 @@
 	      addClassToSelect(select);
 		  $(this).css({ height: "253px"});
 		  isSelectImgPlExpanded = false;
+		  changeBackScreenName();		  
 	    } else {
           // Устанавливаем размер, равный количеству элементов
           this.size = $(this).find('option').length;
@@ -455,6 +458,19 @@
 	    $('.select-img-pl').click();
 	  }
 	});
+	
+	// method that assists to change names of corresponding specified inputs
+	function changeBackScreenName() {  
+	  if ($("#id_back_screen_shoppinglist").val() === ("screen_product_list_" + lastProductListLookCode + ".png")
+	      && $("#id_back_screen_cash_not_work").val() === ("screen_cash_not_work_" + lastProductListLookCode + ".png")
+		  && $("#id_back_screen_thanks").val() === ("screen_thanks_" + lastProductListLookCode + ".png")) {
+		let newProductListLookCode = $("#select_pl_look_code").val();
+		$("#id_back_screen_shoppinglist").val("screen_product_list_" + newProductListLookCode + ".png");
+		$("#id_back_screen_cash_not_work").val("screen_cash_not_work_" + newProductListLookCode + ".png");
+		$("#id_back_screen_thanks").val("screen_thanks_" + newProductListLookCode + ".png");
+		lastProductListLookCode = newProductListLookCode;
+	  }
+	}
 	
 /**************************************************************************************/
 
@@ -787,6 +803,7 @@
           document.getElementById("id_back_screen_cash_not_work").value = myArr.image_screen_cash_not_work;
           document.getElementById("id_back_screen_thanks").value = myArr.image_screen_thanks;
 		  $("#select_pl_look_code").val(myArr.product_list_look_code);
+		  lastProductListLookCode = $("#select_pl_look_code").val();
 		  createSelectImgPL();
 		  
           document.getElementById("volume_video").value = myArr.volume;
