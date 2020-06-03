@@ -6,7 +6,7 @@
           **********
                   if (testMode) {
                       cmdParser = new CommandParser(viewModel, messageHandler, MainActivity.this);
-                      cmdParser.doBufferData();
+                      cmdParser.doBufferData(new byte[0], 0);
                   }
           **********
       };
@@ -22,8 +22,18 @@
         String[] q = new String[20];
 
         /********************************
-        *             METRO
-        *********************************/
+         *    BASKET (common products)
+         *********************************/
+
+//        q[0] = "\u0001ADDL0\u00031348\u00031\u00035461\u00031071\u00035849\u0003Apelsini zabotlivo viraschennie v Italii\u000309DD\u0002";
+//        q[1] = "\u0001ADDL1\u00031349\u00031\u00032410\u00037458\u000317800\u0003bananas\u0003397F\u0002";
+//        q[2] = "\u0001ADDL2\u00031350\u00031\u00031579\u0003512\u0003758\u0003Burachok borschevoy\u0003A063\u0002";
+//        q[3] = "\u0001ADDL0\u00030\u00030\u0003-1\u00031000\u000310000\u0003Product\u00033E3B\u0002";
+
+
+        /********************************
+         *             METRO
+         *********************************/
 
 //        q[0] = "\u0001ADDL0\u00030\u00030\u000350\u00030\u000399900\u0003ПРОЇЗНИЙ НА ВЕРЕСЕНЬ (124 ПОЇЗДКА)\u0003B926\u0002";
 //        q[1] = "\u0001PRLScard_purchase\u0003000000002647\u00031\u0003FCA7\u0002";

@@ -1,8 +1,6 @@
 package com.resonance.cashdisplay.product_list;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,16 +11,10 @@ import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.resonance.cashdisplay.ExtSDSource;
-import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.R;
-import com.resonance.cashdisplay.load.DownloadMedia;
 import com.resonance.cashdisplay.product_list.look2.KievSubwayArgs;
-import com.resonance.cashdisplay.settings.PrefValues;
 import com.resonance.cashdisplay.settings.PrefWorker;
-import com.resonance.cashdisplay.utils.ImageUtils;
 
-import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
@@ -120,39 +112,6 @@ public class AdapterProductList extends ArrayAdapter<ItemProductList> {
         resultView = convertView;
 
         return resultView;
-    }
-
-    /**
-     * Получение изображения товара по коду товара из файлолвого хранилища
-     *
-     * @param codeProduct
-     * @return
-     */
-    public Bitmap getImage(String codeProduct) {
-
-        String filepath = ExtSDSource.getExternalSdCardPath(mContext) + DownloadMedia.IMG_URI + codeProduct + ".png";//Изображение товара
-        File fileImg = new File(filepath);
-
-        if (fileImg.exists()) {// PNG
-            return ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
-        } else {         //JPG
-            filepath = ExtSDSource.getExternalSdCardPath(mContext) + DownloadMedia.IMG_URI + codeProduct + ".jpg";//Изображение товара
-            fileImg = new File(filepath);
-            if (fileImg.exists()) {
-                return ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
-            } else {
-                //покажем изображение по-умолчанию
-                PrefValues prefValues = PrefWorker.getValues();
-                filepath = ExtSDSource.getExternalSdCardPath(mContext) + DownloadMedia.IMG_SCREEN + ((prefValues.defaultBackgroundImage.length() > 0) ? prefValues.defaultBackgroundImage : "noimg");
-                fileImg = new File(filepath);
-
-                if (fileImg.exists()) {
-                    return ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
-                } else {
-                    return BitmapFactory.decodeResource(MainActivity.context.getResources(), R.drawable.noimagefound);
-                }
-            }
-        }
     }
 }
 

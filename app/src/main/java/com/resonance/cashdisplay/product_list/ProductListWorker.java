@@ -3,6 +3,7 @@ package com.resonance.cashdisplay.product_list;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Handler;
 import android.text.Spannable;
@@ -15,12 +16,17 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.resonance.cashdisplay.ExtSDSource;
 import com.resonance.cashdisplay.Log;
+import com.resonance.cashdisplay.MainActivity;
 import com.resonance.cashdisplay.R;
+import com.resonance.cashdisplay.load.DownloadMedia;
 import com.resonance.cashdisplay.product_list.look2.HandlerLook2;
 import com.resonance.cashdisplay.settings.PrefValues;
 import com.resonance.cashdisplay.settings.PrefWorker;
+import com.resonance.cashdisplay.utils.ImageUtils;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -293,7 +299,7 @@ public class ProductListWorker {
     private void setProductImage(int position, boolean animProductImage) {
         if (adapterProductList.getCount() > 0) {
             ItemProductList selectedItem = adapterProductList.getItem(position);
-            Bitmap productImage = adapterProductList.getImage(selectedItem.getCode());
+            Bitmap productImage = getImage(selectedItem.getCode());
 
             fadeOut.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -409,6 +415,39 @@ public class ProductListWorker {
             Log.e(TAG, "ERROR strToLong: " + e);
         }
         return 0L;
+    }
+
+    /**
+     * Получение изображения товара по коду товара из файлолвого хранилища
+     *
+     * @param codeProduct
+     * @return
+     */
+    public Bitmap getImage(String codeProduct) {
+
+        String filepath = ExtSDSource.getExternalSdCardPath(context) + DownloadMedia.IMG_URI + codeProduct + ".png";//Изображение товара
+        File fileImg = new File(filepath);
+
+        if (fileImg.exists()) {// PNG
+            return ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
+        } else {         //JPG
+            filepath = ExtSDSource.getExternalSdCardPath(context) + DownloadMedia.IMG_URI + codeProduct + ".jpg";//Изображение товара
+            fileImg = new File(filepath);
+            if (fileImg.exists()) {
+                return ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
+            } else {
+                //покажем изображение по-умолчанию
+                PrefValues prefValues = PrefWorker.getValues();
+                filepath = ExtSDSource.getExternalSdCardPath(context) + DownloadMedia.IMG_SCREEN + ((prefValues.defaultBackgroundImage.length() > 0) ? prefValues.defaultBackgroundImage : "noimg");
+                fileImg = new File(filepath);
+
+                if (fileImg.exists()) {
+                    return ImageUtils.getImage(fileImg, MainActivity.sizeScreen, false);
+                } else {
+                    return BitmapFactory.decodeResource(MainActivity.context.getResources(), R.drawable.noimagefound);
+                }
+            }
+        }
     }
 
     /**
