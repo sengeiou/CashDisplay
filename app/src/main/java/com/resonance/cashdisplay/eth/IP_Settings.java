@@ -42,4 +42,13 @@ public class IP_Settings {
     public String getGateway() {
         return this.gateway;
     }
+
+    @Override
+    public String toString() {
+        return "IP_Settings{" +
+                "ip=" + ip +
+                ", netmask=" + netmask +
+                ", gateway=" + gateway +
+                '}';
+    }
 }

@@ -262,8 +262,8 @@ public class HttpServer {
     private final HttpServerRequestCallback getStatusCallback = new HttpServerRequestCallback() {
         @Override
         public void onRequest(final AsyncHttpServerRequest request, final AsyncHttpServerResponse response) {
-            if (!shouldPass(request, response))
-                return;
+//            if (!shouldPass(request, response))    // no need, cos page, cached in browser, causes ugly blinking of login dialog
+//                return;
 
             try {
                 JSONObject jsonObject = new JSONObject();

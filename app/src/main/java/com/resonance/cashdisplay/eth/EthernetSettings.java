@@ -266,8 +266,9 @@ public class EthernetSettings {
     /**
      * Check LAN connection.
      * 1. Common case is through ConnectivityManager (removed later on 09.04.2020).
-     * If DHCP server in router is enabled, always return true, even if there are no connect with router.
-     * 2. Case when when DHCP server disabled in router and NetworkInfo nInfo = cm.getActiveNetworkInfo() = null.
+     * If DHCP server in router is enabled, always return true, even if there are no connect with router
+     * (obviously, it is cases when static IP set in device and it shows static IP, but have connect with router using dynamic).
+     * 2. Case when DHCP server disabled in router and NetworkInfo nInfo = cm.getActiveNetworkInfo() = null.
      * So ping is used.
      *
      * @return
@@ -318,10 +319,10 @@ public class EthernetSettings {
         new Thread(() -> {
             try {
                 currentStatus = "встановлення статичної адреси...";
-                Modify_SU_Preferences.executeCmd(CMD_SET_IP_MASK, 500);
+                Modify_SU_Preferences.executeCmd(CMD_SET_IP_MASK, 0);
                 if (gw.length() > 0) {
-                    Modify_SU_Preferences.executeCmd(CMD_DELETE_ALL_GW, 500);
-                    Modify_SU_Preferences.executeCmd(CMD_SET_GW, 500);
+                    Modify_SU_Preferences.executeCmd(CMD_DELETE_ALL_GW, 0);
+                    Modify_SU_Preferences.executeCmd(CMD_SET_GW, 0);
                 }
                 currentStatus = "";
                 if (tempStatic)
@@ -371,6 +372,7 @@ public class EthernetSettings {
             settings.setNetmask(tmpStr.substring(indexStart, indexStop).trim());
         }
         settings.setGateway(get_GW());
+        Log.w(TAG, settings.toString());
         return settings;
     }
 
